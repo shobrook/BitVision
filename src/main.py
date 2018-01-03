@@ -35,7 +35,9 @@ Technical Indicators:
 ### Setup ###
 
 
-sys.path.insert(0, '/modules')
+import sys
+
+sys.path.insert(0, "modules")
 
 import analysis
 import training
