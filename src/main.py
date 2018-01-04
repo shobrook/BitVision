@@ -44,6 +44,8 @@ import training
 import pandas as pd
 import preprocessing
 
+print("Fetching data...")
+
 # Loads network-based datasets
 CONF_TIME = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
 BLOCK_SIZE = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/AVBLS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
@@ -75,6 +77,8 @@ NETWORK_DATA = [CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RAT
 ### Preprocessing ###
 
 
+print("Preprocessing data...")
+
 data = (PRICES.pipe(preprocessing.calculate_indicators)
 	.pipe(preprocessing.merge_datasets, set_b=NETWORK_DATA)
 	.pipe(preprocessing.fix_null_vals)
@@ -85,6 +89,7 @@ data = (PRICES.pipe(preprocessing.calculate_indicators)
 ### Analysis ###
 
 
+print("Analyzing features...\n")
 print(data.describe())
 analysis.plot_corr_matrix(data)
 
@@ -92,17 +97,29 @@ analysis.plot_corr_matrix(data)
 ### Training ###
 
 
-train_set, test_set = (data.pipe(training.fix_outliers)
-	.pipe(training.balance)
-	.pipe(training.split)
-)
+print("Training models...")
 
-log_reg = training.LogisticRegression(train_set)
-log_reg.test(test_set)
+# Generate training and testing data
+x_train, x_test, y_train, y_test = (data.pipe(training.fix_outliers).pipe(training.unbalanced_split))
+
+# Logistic Regression
+log_reg = training.LogRegression(x_train, y_train)
+log_reg.test(x_test, y_test)
+
+# Random Forest 
+rand_forest = training.RandForest(x_train, y_train)
+rand_forest.test(x_test, y_test)
 
 
 ### Evaluation ###
 
 
+print("Evaluating models...")
+
+# Logistic Regression
 log_reg.plot_cnf_matrix()
-log_reg.calculate_metrics()
+print(log_reg.calculate_metrics())
+
+# Random Forest
+rand_forest.plot_cnf_matrix()
+print(rand_forest.calculate_metrics())
