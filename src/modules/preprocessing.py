@@ -3,6 +3,9 @@ import dateutil.parser as dp
 from realtime_talib import Indicator
 
 def calculate_indicators(ohlcv):
+	"""Extracts technical indicators from OHLCV data."""
+	print("\tCalculating technical indicators")
+
 	ohlcv = ohlcv.drop(["Volume (BTC)", "Weighted Price"], axis=1)
 	ohlcv.columns = ["Date", "Open", "High", "Low", "Close", "Volume"]
 
@@ -32,31 +35,25 @@ def calculate_indicators(ohlcv):
 	"""
 
 	# Momentum
-	print("Calculating MOM...")
 	mom1 = ((Indicator(temp_ohlcv, "MOM", 1)).getHistorical(lag=1))[::-1]
 	mom3 = ((Indicator(temp_ohlcv, "MOM", 3)).getHistorical(lag=1))[::-1]
 
 	# Average Directional Index
-	print("Calculating ADX...")
 	adx14 = ((Indicator(temp_ohlcv, "ADX", 14)).getHistorical(lag=1))[::-1]
 	adx20 = ((Indicator(temp_ohlcv, "ADX", 20)).getHistorical(lag=1))[::-1]
 
 	# Williams %R
-	print("Calculating WILLR...")
 	willr = ((Indicator(temp_ohlcv, "WILLR", 14)).getHistorical(lag=1))[::-1]
 
 	# Relative Strength Index
-	print("Calculating RSI...")
 	rsi6 = ((Indicator(temp_ohlcv, "RSI", 6)).getHistorical(lag=1))[::-1]
 	rsi12 = ((Indicator(temp_ohlcv, "RSI", 12)).getHistorical(lag=1))[::-1]
 
 	# Moving Average Convergence Divergence
-	print("Calculating MACD...")
 	macd, macd_signal, macd_hist = (Indicator(temp_ohlcv, "MACD", 12, 26, 9)).getHistorical(lag=1)
 	macd, macd_signal, macd_hist = macd[::-1], macd_signal[::-1], macd_hist[::-1]
 	
 	# Exponential Moving Average
-	print("Calculating EMA...")
 	ema6 = ((Indicator(temp_ohlcv, "MA", 6, 1)).getHistorical(lag=1))[::-1]
 	ema12 = ((Indicator(temp_ohlcv, "MA", 12, 1)).getHistorical(lag=1))[::-1]
 
@@ -73,7 +70,7 @@ def calculate_indicators(ohlcv):
 
 def merge_datasets(set_a, set_b):
 	"""Merges set A and set B into a single dataset, organized by date."""
-	print("Merging datasets...")
+	print("\tMerging datasets")
 
 	merged = set_a
 	for attr in set_b: merged = pd.merge(merged, attr, on="Date")
@@ -82,15 +79,15 @@ def merge_datasets(set_a, set_b):
 
 def fix_null_vals(dataset):
 	"""Implements the Last Observation Carried Forward (LOCF) method to fill missing values."""
-	if dataset.isnull().any().any() == False: 
-		print("No null values found...")
-		return dataset
-	else:
-		print("Fixing null values...") 
-		return dataset.fillna(method="ffill")
+	print("\tFixing null values")
+
+	if dataset.isnull().any().any() == False: return dataset
+	else: return dataset.fillna(method="ffill")
 
 def calculate_labels(dataset):
 	"""Transforms daily price data into binary values indicating price change."""
+	print("\tCalculating price movements")
+
 	trends = [None]
 	for index in range(dataset.shape[0] - 1):
 		difference = dataset.iloc[index]["Close"] - dataset.iloc[index + 1]["Close"]
