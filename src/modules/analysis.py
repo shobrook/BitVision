@@ -1,6 +1,9 @@
-# Determine the type of distribution for each feature
-# Determine the type of noise for each feature (?)
-# Identify outliers (anomaly detection)
+"""
+TODO:
+	- Determine the type of distribution for each feature
+	- Determine the type of noise for each feature (?)
+	- Identify outliers (anomaly detection)
+"""
 
 import seaborn as sns
 import numpy as np
@@ -47,6 +50,3 @@ def plot_cnf_matrix(y_pred, y_test):
 	plt.xlabel("Predicted Label")
 
 	plt.show()
-
-
-# Calculate each model's accuracy, prevalance, F1 score, TPR, FPR, FNR, TNR, PPV, FDR, FOR, NPV, LR+, LR-, and DOR
