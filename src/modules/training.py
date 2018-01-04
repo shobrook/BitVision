@@ -1,23 +1,33 @@
-# Fix outliers, if necessary
-# Balance the dataset
-# Split dataset into training and test sets
-# Normalize both sets
-# Implement a feature selection algorithm for each model
-# Automate model evaluation and try at least three different algorithms
-# Plot confusion matrices for each model
-# Calculate each model's accuracy, prevalance, F1 score, TPR, FPR, FNR, TNR, PPV, FDR, FOR, NPV, LR+, LR-, and DOR
+"""
+TODO:
+	- Handle outliers (either normalize or remove them)
+	- Calculate each model's classification accuracy, prevalance, F1 score, TPR, FPR, FNR, TNR, PPV, FDR, FOR, NPV, LR+, LR-, and DOR
+	- Define a SVM class
+	- Randomize the balanced train/test splitting
+	- Create a "models" superclass that LogRegression and RandForest inherit from
+	- Create a custom GridSearchCV scoring function
+	- Find out why feature scaling causes the balanced data to behave so differently
+	- Fix the "Numerical issues were encountered" error thrown during feature scaling
+"""
 
 import analysis
+import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn import preprocessing
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, make_scorer
 
 def fix_outliers(dataset):
-	"""Detects and transforms (or removes) outliers."""
+	print("\tFixing outliers")
 
-def balance(dataset):
+	return dataset
 
-def split(dataset):
+def balanced_split(dataset):
+	print("\tSplitting data into *balanced* training and test sets")
+
 	groups = {str(label): group for label, group in dataset.groupby("Trend")}
 
 	min_length = min(len(groups["1.0"]), len(groups["-1.0"]))
@@ -26,99 +36,101 @@ def split(dataset):
 	train_set = pd.concat([groups["1.0"][0:int(.8*min_length)], groups["-1.0"][0:int(.8*min_length)]], axis=0)
 	test_set = pd.concat([groups["1.0"][int(.8*min_length):], groups["-1.0"][int(.8*min_length):]], axis=0)
 
-	return (train_set, test_set)
+	return (train_set.drop(["Date", "Trend"], axis=1).values, test_set.drop(["Date", "Trend"], axis=1).values, 
+		train_set["Trend"].values, test_set["Trend"].values)
 
-class LogisticRegression(object):
-	def __init__(self, train_set):
-		x_train, y_train = train_set.drop("Trend", axis=1), train_set["Trend"]
+def unbalanced_split(dataset):
+	print("\tSplitting data into unbalanced training and test sets")
+
+	dataset = dataset.drop("Date", axis=1)
+	return train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=.2, random_state=25)
+
+class LogRegression(object):
+	def __init__(self, x_train, y_train):
 		self.model = self.generate_model(x_train, y_train)
 
 	"""
 	def select_features(self):
+
+	def score_function(y_true, y_pred):
 	"""
 
-	def normalize(self, dataset):
-
 	def generate_model(self, x_train, y_train):
+		print("\tFitting a logistic regression model")
+
+		score_function = make_scorer(score_func=accuracy_score, greater_is_better=True)
 		grid = {"penalty": ["l1", "l2"],
-			"dual": [True, False],
 			"tol": [.00001, .0001, .001, .01, .1],
 			"C": [.01, .1, 1.0, 10, 100, 1000],
 			"max_iter": [100, 150, 175, 200, 300, 500]
 		}
 
 		log_reg = LogisticRegression()
-		optimized_log_reg = GridSearchCV(estimator=log_reg, param_grid=grid, scoring=) # Implement a custom scoring function
-		optimized_log_reg.fit(x_train, y_train)
+		#optimized_log_reg = GridSearchCV(estimator=log_reg, param_grid=grid, scoring=score_function, n_jobs=4)
+		#optimized_log_reg.fit(preprocessing.scale(x_train), y_train)
 
-		return optimized_log_reg.best_estimator_ # Check if this returns a fitted model
+		#print(optimized_rand_forest.best_params_)
 
-	def test(self, test_set):
-		self.y_test = test_set["Trend"]
-		self.y_pred = self.model.predict(test_set.drop("Trend", axis=1))
+		#return optimized_log_reg.best_estimator_
+
+		log_reg.fit(preprocessing.scale(x_train), y_train)
+		return log_reg
+
+	def test(self, x_test, y_test):
+		print("\tTesting")
+
+		self.y_test = y_test
+		self.y_pred = self.model.predict(preprocessing.scale(x_test))
 
 	def plot_cnf_matrix(self):
 		plt.figure()
 		analysis.plot_cnf_matrix(self.y_pred, self.y_test)
 
 	def calculate_metrics(self):
+		return accuracy_score(self.y_test, self.y_pred)
 
-"""
-class RandomForest(object):
-	def __init__(train_set, test_set):
+	def get_feature_importances(self):
+		return self.model.feature_importances_
 
+class RandForest(object):
+	def __init__(self, x_train, y_train):
+		self.model = self.generate_model(x_train, y_train)
 
+	"""
+	def select_features(self):
 
-from sklearn.feature_selection import RFE
-from sklearn import metrics
-from sklearn.ensemble import ExtraTreesClassifier
+	def score_function(y_true, y_pred):
+	"""
 
-def rank_features(data):
-	X = data.drop(["Trend", "Date"], axis=1)
-	Y = data["Trend"]
-	model = ExtraTreesClassifier()
-	model.fit(X, Y)
+	def generate_model(self, x_train, y_train):
+		print("\tFitting a random forest classifier")
 
-	return model.feature_importances_
+		score_function = make_scorer(score_func=accuracy_score, greater_is_better=True)
+		grid = {"n_estimators": [10, 100, 150, 200, 250, 300, 400, 500, 525, 550, 575, 1000]}
 
-def feature_selection(data):
-	X = data.drop(["Trend", "Date"], axis=1)
-	Y = data["Trend"]
-	model = LogisticRegression()
-	rfe = RFE(model, 12)
-	rfe = rfe.fit(X, Y)
+		rand_forest = RandomForestClassifier(n_estimators=1000, max_features=None)
+		#optimized_rand_forest = GridSearchCV(estimator=rand_forest, param_grid=grid, scoring=score_function, n_jobs=4)
+		#optimized_rand_forest.fit(preprocessing.scale(x_train), y_train)
 
-	return {"Support": rfe.support_, "Ranking": rfe.ranking_}
+		#print(optimized_rand_forest.best_params_)
 
-data = data.drop("Date", axis=1)
-x_train, x_test, y_train, y_test = train_test_split(data.drop("Trend", axis=1).values, data["Trend"].values, test_size=.2, random_state=25)
+		#return optimized_rand_forest.best_estimator_
 
-### Training the Model ###
+		rand_forest.fit(preprocessing.scale(x_train), y_train)
+		return rand_forest
 
-#from pylab import rcParams
-#from sklearn import preprocessing
-from sklearn.linear_model import LogisticRegression
-#from sklearn.pipeline import Pipeline
-#from sklearn.base import BaseEstimator, TransformerMixin
-#from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
+	def test(self, x_test, y_test):
+		print("\tTesting")
 
-log_reg = LogisticRegression() # {'penalty': ['l1','l2'], 'C': [0.001,0.01,0.1,1,10,100,1000]}
-log_reg.fit(x_train, y_train)
+		self.y_test = y_test
+		self.y_pred = self.model.predict(preprocessing.scale(x_test))
 
-y_pred = log_reg.predict(x_test)
+	def plot_cnf_matrix(self):
+		plt.figure()
+		analysis.plot_cnf_matrix(self.y_pred, self.y_test)
 
-print(accuracy_score(y_test, y_pred))
+	def calculate_metrics(self):
+		return accuracy_score(self.y_test, self.y_pred)
 
-# Random Forest
-
-rand_forest = RandomForestClassifier(n_estimators=520)
-rand_forest.fit(x_train, y_train)
-
-y_pred = rand_forest.predict(x_test)
-
-print(accuracy_score(y_test, y_pred))
-"""
+	def get_feature_importances(self):
+		return self.model.feature_importances_
