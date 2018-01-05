@@ -3,16 +3,18 @@ TODO:
 	- Determine the type of distribution for each feature
 	- Determine the type of noise for each feature (?)
 	- Identify outliers (anomaly detection)
+	- Check if the specificity and sensitivity calculations are correct
 """
 
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 import itertools
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, roc_curve
 from sklearn.metrics import confusion_matrix
 
 def plot_corr_matrix(dataset):
+	"""Plots a Pearson correlation matrix between features."""
 	sns.set(style="white")
 	matrix = dataset.corr(method="pearson")
 
@@ -28,6 +30,7 @@ def plot_corr_matrix(dataset):
 	plt.show()
 
 def plot_cnf_matrix(y_pred, y_test):
+	"""Plots a confusion matrix."""
 	matrix = confusion_matrix(y_test, y_pred)
 	classes = ["0", "1"]
 	
@@ -50,3 +53,21 @@ def plot_cnf_matrix(y_pred, y_test):
 	plt.xlabel("Predicted Label")
 
 	plt.show()
+
+def accuracy(y_test, y_pred):
+	"""Returns classification accuracy."""
+	return accuracy_score(y_test, y_pred)
+
+def precision(y_test, y_pred):
+	"""Returns classification precision."""
+	return precision_score(y_test, y_pred)
+
+def specificity(y_test, y_pred):
+	"""Returns the False Positive Rate."""
+	matrix = confusion_matrix(y_test, y_pred)
+
+	return float(matrix[0][1]) / float(matrix[1][1])
+
+def sensitivity(specificity):
+	"""Returns the True Positive Rate."""
+	return 1 - specificity
