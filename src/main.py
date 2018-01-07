@@ -1,6 +1,7 @@
 """
 TODO:
 	- Check Quandl for other candidate Blockchain-related datasets
+	- Explore options for caching data set
 
 Blockchain Network Attributes:
 	- CONF_TIME: Median time for a TXN to be accepted into a mined block and added to the public ledger [USED]
@@ -110,7 +111,7 @@ x_train, x_test, y_train, y_test = (data.pipe(training.fix_outliers).pipe(traini
 log_reg = training.Model(estimator="LogisticRegression", x_train=x_train, y_train=y_train)
 log_reg.test(x_test, y_test)
 
-# Random Forest 
+# Random Forest
 rand_forest = training.Model(estimator="RandomForest", x_train=x_train, y_train=y_train)
 rand_forest.test(x_test, y_test)
 

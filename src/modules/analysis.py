@@ -35,7 +35,7 @@ def plot_cnf_matrix(y_pred, y_test):
 
 	matrix = confusion_matrix(y_test, y_pred)
 	classes = ["0", "1"]
-	
+
 	plt.imshow(matrix, interpolation="nearest", cmap=plt.cm.Blues)
 	plt.title("Confusion Matrix")
 	plt.colorbar()
@@ -57,15 +57,16 @@ def plot_cnf_matrix(y_pred, y_test):
 	plt.show()
 
 def accuracy(y_test, y_pred):
-	"""Returns classification accuracy."""
+	"""Returns classification accuracy. Measures correct classification"""
 	return accuracy_score(y_test, y_pred)
 
 def precision(y_test, y_pred):
-	"""Returns classification precision."""
+	"""Returns positive prediction value. How good is the classifier at identifying
+	uptrends"""
 	return precision_score(y_test, y_pred)
 
 def specificity(y_test, y_pred):
-	"""Returns the False Positive Rate."""
+	"""Returns the True Negative Rate."""
 	matrix = confusion_matrix(y_test, y_pred)
 
 	return float(matrix[0][1]) / float(matrix[1][1])
