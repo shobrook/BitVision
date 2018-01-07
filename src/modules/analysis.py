@@ -63,9 +63,16 @@ def plot_cnf_matrix(y_pred, y_test):
 	plt.ylabel("True Label")
 	plt.xlabel("Predicted Label")
 
-	# Instead of plt.show(), we want to save the image in the current directory
-	#plt.show()
-	filename = "confusionMatrix" + str(counter) + ".png"
+	filename = ""
+
+	#Save the image in the current directory
+	if counter == 0:
+		filename = "ConfusionMatrixLogisticRegression.png"
+	elif counter == 1:
+		filename = "ConfusionMatrixRandomForest.png"
+	else:
+		filename = "ConfusionMatrixSVG.png"
+
 	plt.savefig(filename, bbox_inches='tight')
 	increment_counter()
 
