@@ -1,8 +1,6 @@
 """
 TODO:
-	- Determine the type of distribution for each feature
-	- Determine the type of noise for each feature (?)
-	- Identify outliers (anomaly detection)
+	- Decompose each feature into trend, seasonal, and noise components
 	- Check if the specificity and sensitivity calculations are correct
 """
 
@@ -15,6 +13,8 @@ from sklearn.metrics import confusion_matrix
 
 def plot_corr_matrix(dataset):
 	"""Plots a Pearson correlation matrix between features."""
+	print("\tPlotting correlation matrix")
+
 	sns.set(style="white")
 	matrix = dataset.corr(method="pearson")
 
@@ -31,6 +31,8 @@ def plot_corr_matrix(dataset):
 
 def plot_cnf_matrix(y_pred, y_test):
 	"""Plots a confusion matrix."""
+	print("\tPlotting confusion matrix")
+
 	matrix = confusion_matrix(y_test, y_pred)
 	classes = ["0", "1"]
 	
