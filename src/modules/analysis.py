@@ -2,6 +2,8 @@
 TODO:
 	- Decompose each feature into trend, seasonal, and noise components
 	- Check if the specificity and sensitivity calculations are correct
+	- Instead of displaying correlation and confusion matrices, just generate them and
+	  save as JPEGs
 """
 
 import seaborn as sns
@@ -13,7 +15,7 @@ from sklearn.metrics import confusion_matrix
 
 def plot_corr_matrix(dataset):
 	"""Plots a Pearson correlation matrix between features."""
-	print("\tPlotting correlation matrix")
+	print("\tGenerating correlation matrix")
 
 	sns.set(style="white")
 	matrix = dataset.corr(method="pearson")
@@ -31,7 +33,7 @@ def plot_corr_matrix(dataset):
 
 def plot_cnf_matrix(y_pred, y_test):
 	"""Plots a confusion matrix."""
-	print("\tPlotting confusion matrix")
+	print("\tGenerating confusion matrix")
 
 	matrix = confusion_matrix(y_test, y_pred)
 	classes = ["0", "1"]
@@ -54,6 +56,7 @@ def plot_cnf_matrix(y_pred, y_test):
 	plt.ylabel("True Label")
 	plt.xlabel("Predicted Label")
 
+	# Instead of plt.show(), we want to save the image in the directory
 	plt.show()
 
 def accuracy(y_test, y_pred):
