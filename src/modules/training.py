@@ -2,11 +2,11 @@
 TODO:
 	- Randomize the balanced train/test splitting (try applying scikit-learn's test/train splitter)
 	- Create a custom GridSearchCV scoring function
-	- Check if you're standardizing features properly and using the right input formats during training and testing
 """
 
 import analysis
 import pandas as pd
+from sklearn.svm import SVC
 import matplotlib.pyplot as plt
 #from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
@@ -48,7 +48,7 @@ class Model(object):
 	def __init__(self, estimator, x_train, y_train):
 		if estimator == "LogisticRegression": self.model = self.fit_log_reg(x_train, y_train)
 		elif estimator == "RandomForest": self.model = self.fit_rand_forest(x_train, y_train)
-		elif estimator == "SVM": self.model = self.fit_svm(x_train, y_train)
+		elif estimator == "SVC": self.model = self.fit_svc(x_train, y_train)
 		else: print("\tError: Invalid model type")
 
 	def fit_log_reg(self, x_train, y_train):
@@ -73,7 +73,7 @@ class Model(object):
 		#return optimized_log_reg.best_estimator_
 
 		log_reg.fit(self.scaler.transform(x_train), y_train)
-		
+
 		return log_reg
 
 	def fit_rand_forest(self, x_train, y_train):
@@ -97,10 +97,19 @@ class Model(object):
 
 		return rand_forest
 
-	def fit_svm(self, x_train, y_train):
-		"""Trains a Support Vector Machine and performs a grid search to find
+	def fit_svc(self, x_train, y_train):
+		"""Trains a Support Vector Classifier and performs a grid search to find
 		   optimal hyperparameter values."""
-		return None
+		print("\tFitting a support vector classifier")
+
+		self.scaler = StandardScaler()
+		self.scaler.fit(x_train)
+
+		svc = SVC(kernel="rbf")
+
+		svc.fit(self.scaler.transform(x_train), y_train)
+
+		return svc
 
 	def test(self, x_test, y_test):
 		"""Tests the model on the test set."""
@@ -116,7 +125,6 @@ class Model(object):
 	def evaluate(self):
 		"""Calculates the model's classification accuracy, sensitivity, precision,
 		   and specificity."""
-
 		return {"Accuracy": analysis.accuracy(self.y_pred, self.y_test),
 			"Precision": analysis.precision(self.y_pred, self.y_test),
 			"Specificity": analysis.specificity(self.y_pred, self.y_test),
