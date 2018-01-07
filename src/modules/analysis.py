@@ -29,7 +29,14 @@ def plot_corr_matrix(dataset):
 	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0,
 	            square=True, linewidths=.5, cbar_kws={"shrink": .5})
 
-	plt.show()
+	#plt.show()
+	plt.savefig('correlationMatrix.png', bbox_inches='tight')
+
+counter = 0
+
+def increment_counter():
+	global counter
+	counter = counter + 1
 
 def plot_cnf_matrix(y_pred, y_test):
 	"""Plots a confusion matrix."""
@@ -56,8 +63,11 @@ def plot_cnf_matrix(y_pred, y_test):
 	plt.ylabel("True Label")
 	plt.xlabel("Predicted Label")
 
-	# Instead of plt.show(), we want to save the image in the directory
-	plt.show()
+	# Instead of plt.show(), we want to save the image in the current directory
+	#plt.show()
+	filename = "confusionMatrix" + str(counter) + ".png"
+	plt.savefig(filename, bbox_inches='tight')
+	increment_counter()
 
 def accuracy(y_test, y_pred):
 	"""Returns classification accuracy. Measures correct classification"""

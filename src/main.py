@@ -97,7 +97,7 @@ data = (PRICES.pipe(preprocessing.calculate_indicators)
 print("Analyzing features...")
 
 #print(data.describe())
-#analysis.plot_corr_matrix(data)
+analysis.plot_corr_matrix(data)
 
 
 ### Training ###
@@ -125,13 +125,13 @@ svc.test(x_test, y_test)
 print("Evaluating models...")
 
 # Logistic Regression
-#log_reg.plot_cnf_matrix()
+log_reg.plot_cnf_matrix()
 print("\tLogistic Regression: ", json.dumps(log_reg.evaluate(), indent=15))
 
 # Random Forest
-#rand_forest.plot_cnf_matrix()
+rand_forest.plot_cnf_matrix()
 print("\tRandom Forest: ", json.dumps(rand_forest.evaluate(), indent=15))
 
 # Support Vector Classifier
-#svc.plot_cnf_matrix()
+svc.plot_cnf_matrix()
 print("\tSupport Vector Classifier: ", json.dumps(svc.evaluate(), indent=15))
