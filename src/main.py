@@ -2,7 +2,7 @@
 TODO:
 	- Check Quandl for other candidate Blockchain-related datasets
 
-Network-Based Attributes:
+Blockchain Network Attributes:
 	- CONF_TIME: Median time for a TXN to be accepted into a mined block and added to the public ledger [USED]
 	- BLOCK_SIZE: Average block size in MB [USED]
 	- TXN_COST: Miners revenue divided by number of TXNs [USED]
@@ -95,7 +95,7 @@ data = (PRICES.pipe(preprocessing.calculate_indicators)
 print("Analyzing features...\n")
 
 #print(data.describe())
-#analysis.plot_corr_matrix(data)
+analysis.plot_corr_matrix(data)
 
 
 ### Training ###
@@ -114,6 +114,10 @@ log_reg.test(x_test, y_test)
 rand_forest = training.Model(estimator="RandomForest", x_train=x_train, y_train=y_train)
 rand_forest.test(x_test, y_test)
 
+# Support Vector Classifier
+svc = training.Model(estimator="SVC", x_train=x_train, y_train=y_train)
+svc.test(x_test, y_test)
+
 
 ### Evaluation ###
 
@@ -127,3 +131,7 @@ print(log_reg.evaluate())
 # Random Forest
 rand_forest.plot_cnf_matrix()
 print(rand_forest.evaluate())
+
+# Support Vector Classifier
+svc.plot_cnf_matrix()
+print(svc.evaluate())
