@@ -43,6 +43,7 @@ import sys
 
 sys.path.insert(0, "modules")
 
+import json
 import analysis
 import training
 import pandas as pd
@@ -93,10 +94,10 @@ data = (PRICES.pipe(preprocessing.calculate_indicators)
 ### Analysis ###
 
 
-print("Analyzing features...\n")
+print("Analyzing features...")
 
 #print(data.describe())
-analysis.plot_corr_matrix(data)
+#analysis.plot_corr_matrix(data)
 
 
 ### Training ###
@@ -119,20 +120,18 @@ rand_forest.test(x_test, y_test)
 svc = training.Model(estimator="SVC", x_train=x_train, y_train=y_train)
 svc.test(x_test, y_test)
 
-
 ### Evaluation ###
-
 
 print("Evaluating models...")
 
 # Logistic Regression
-log_reg.plot_cnf_matrix()
-print(log_reg.evaluate())
+#log_reg.plot_cnf_matrix()
+print("\tLogistic Regression: ", json.dumps(log_reg.evaluate(), indent=15))
 
 # Random Forest
-rand_forest.plot_cnf_matrix()
-print(rand_forest.evaluate())
+#rand_forest.plot_cnf_matrix()
+print("\tRandom Forest: ", json.dumps(rand_forest.evaluate(), indent=15))
 
 # Support Vector Classifier
-svc.plot_cnf_matrix()
-print(svc.evaluate())
+#svc.plot_cnf_matrix()
+print("\tSupport Vector Classifier: ", json.dumps(svc.evaluate(), indent=15))
