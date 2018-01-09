@@ -120,7 +120,9 @@ rand_forest.test(x_test, y_test)
 svc = training.Model(estimator="SVC", x_train=x_train, y_train=y_train)
 svc.test(x_test, y_test)
 
+
 ### Evaluation ###
+
 
 print("Evaluating models...")
 

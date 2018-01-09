@@ -4,6 +4,7 @@ TODO:
 	- Check if the specificity and sensitivity calculations are correct
 	- Instead of displaying correlation and confusion matrices, just generate them and
 	  save as JPEGs
+	- Add cross-validation
 """
 
 import seaborn as sns
