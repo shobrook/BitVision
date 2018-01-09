@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 import itertools
 from sklearn.metrics import accuracy_score, precision_score, roc_curve
 from sklearn.metrics import confusion_matrix
-import os
+import os.path
 
 counter = 0
-path_to_parent_dir = os.path.dirname(os.getcwd())
+parent_dir_path = os.path.dirname(os.getcwd())
 
 def plot_corr_matrix(dataset):
 	"""Plots a Pearson correlation matrix between features."""
@@ -34,7 +34,7 @@ def plot_corr_matrix(dataset):
 	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0,
 	            square=True, linewidths=.5, cbar_kws={"shrink": .5})
 
-	plt.savefig(path_to_parent_dir + "/img/correlationMatrix.png", bbox_inches='tight')
+	plt.savefig(parent_dir_path + "/img/corr_matrix.png", bbox_inches='tight')
 
 def increment_counter():
 	global counter
@@ -69,13 +69,13 @@ def plot_cnf_matrix(y_pred, y_test):
 
 	#Save the image in the current directory
 	if counter == 0:
-		filename = "/img/ConfusionMatrixLogisticRegression.png"
+		filename = "/img/conf_matrix_log_regression.png"
 	elif counter == 1:
-		filename = "/img/ConfusionMatrixRandomForest.png"
+		filename = "/img/conf_matrix_rand_forest.png"
 	else:
-		filename = "/img/ConfusionMatrixSVG.png"
+		filename = "/img/conf_matrix_svg.png"
 
-	plt.savefig(path_to_parent_dir + filename, bbox_inches='tight')
+	plt.savefig(parent_dir_path + filename, bbox_inches='tight')
 	increment_counter()
 
 def accuracy(y_test, y_pred):

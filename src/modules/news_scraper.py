@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
-
 # The scrapeconfig.py config file contains all xpaths for the websites that are being scraped
 # Since this scraper is modular, you can edit the scrapeconfig.py file to use this
 # scraper to collect data from ANY news website with a results and article page
@@ -13,6 +10,7 @@
 #Change these in case the website changes; modular, doesn't break anything else
 #References parsed LXML tree, so just putting it in the loop for now
 #Need to do if statements, otherwise you'd get list index errors
+
 def pageConfig(source, tree):
 
 	#Sometimes a link is broken and it returns a 404, just checking page title
@@ -24,46 +22,65 @@ def pageConfig(source, tree):
 
 	#In general, we find all paragraphs in the article body section, and then just merge them with join
 	if source == 'newsbitcoin':
-		config = {'articleTitle': tree.xpath('//h1[@class="entry-title"]')[0].text,
-							#'articleText': " ".join(str(paragraph.text_content()) for paragraph in tree.xpath('//div[@class="td-post-content"]/p')),
-							'articleAuthor': " & ".join(str(author.text) for author in tree.xpath('//div[@class="td-post-author-name"]/a')),
-							'articleDate': tree.xpath('//meta[@property="article:published_time"]')[0].get('content')}
-
+		try:
+			config = {'articleTitle': tree.xpath('//h1[@class="entry-title"]')[0].text,
+								#'articleText': " ".join(str(paragraph.text_content()) for paragraph in tree.xpath('//div[@class="td-post-content"]/p')),
+								'articleAuthor': " & ".join(str(author.text) for author in tree.xpath('//div[@class="td-post-author-name"]/a')),
+								'articleDate': tree.xpath('//meta[@property="article:published_time"]')[0].get('content')}
+		except:
+			print("\n######### NEWSBITCOIN PARSING ERROR #########\n")
+			config = {"articleTitle": "N/A", "articleAuthor": "N/A", "articleDate": "N/A"}
 	#Also doing the join for authors, as there might be more than one, or none at all
 	elif source == 'bloomberg':
-		config = {'articleTitle':tree.xpath('//h1[contains(@class, "__hed")]/span')[0].text,
-							#'articleText':" ".join(str(paragraph.text_content()) for paragraph in tree.xpath('//div[@class="body-copy"]/p')),
-							'articleAuthor':" & ".join(str(author.text) for author in tree.xpath('//div[@class="author"]')),
-							'articleDate':tree.xpath('//time[@class="article-timestamp"]')[0].get('datetime')}
-
+		try:
+			config = {'articleTitle':tree.xpath('//h1[contains(@class, "__hed")]/span')[0].text,
+								#'articleText':" ".join(str(paragraph.text_content()) for paragraph in tree.xpath('//div[@class="body-copy"]/p')),
+								'articleAuthor':" & ".join(str(author.text) for author in tree.xpath('//div[@class="author"]')),
+								'articleDate':tree.xpath('//time[@class="article-timestamp"]')[0].get('datetime')}
+		except:
+			print("\n######### BLOOMBERG PARSING ERROR #########\n")
+			config = {"articleTitle": "N/A", "articleAuthor": "N/A", "articleDate": "N/A"}
 	#Reuters seems to append random chars to div classes, so use regexp 'contains' to bypass
 	elif source == 'reuters':
-		config = {'articleTitle':tree.xpath('//h1')[0].text,
+		try:
+			config = {'articleTitle':tree.xpath('//h1')[0].text,
 							#'articleText':" ".join(str(paragraph.text_content()) for paragraph in tree.xpath('//div[contains(@class, "ArticleBody_body_")]/p')),
 							'articleAuthor':" & ".join(str(author.text) for author in tree.xpath('//p[contains(@class, "ArticleHeader_byline_")]/a')),
 							'articleDate':tree.xpath('//div[contains(@class, "ArticleHeader_date_")]')[0].text}
-
+		except:
+			print("\n######### REUTERS PARSING ERROR #########\n")
+			config = {"articleTitle": "N/A", "articleAuthor": "N/A", "articleDate": "N/A"}
 	#NOTE: WSJ has a paywall - if you want the full article text, set the appropriate headers and cookies in parseHTML function (I don't have them)
 	#For now, only the article snippet will be collected
 	elif source == 'wsj':
-		config = {'articleTitle':tree.xpath('//h1[@class="wsj-article-headline"]')[0].text,
+		try:
+			config = {'articleTitle':tree.xpath('//h1[@class="wsj-article-headline"]')[0].text,
 							#'articleText':" ".join(str(paragraph.text_content()) for paragraph in tree.xpath('//div[@class="wsj-snippet-body"]/p')),
 							'articleAuthor':" & ".join(str(author.text) for author in tree.xpath('//span[@class="name"]')),
 							'articleDate':tree.xpath('//time[@class="timestamp"]')[0].text}
-
+		except:
+			print("\n######### WSJ PARSING ERROR #########\n")
+			config = {"articleTitle": "N/A", "articleAuthor": "N/A", "articleDate": "N/A"}
 	elif source == 'cnbc':
-		config = {'articleTitle':tree.xpath('//h1[@class="title"]')[0].text,
+		try:
+			config = {'articleTitle':tree.xpath('//h1[@class="title"]')[0].text,
 							#'articleText':" ".join(str(paragraph.text_content()) for paragraph in tree.xpath('//div[@itemprop="articleBody"]/p')),
 							'articleAuthor':" & ".join(str(author.text) for author in tree.xpath('//span[@itemprop="name"]')),
 							'articleDate':tree.xpath('//time[@class="datestamp"]')[0].get('datetime')}
-
+		except:
+			print("\n######### CNBC PARSING ERROR #########\n")
+			config = {"articleTitle": "N/A", "articleAuthor": "N/A", "articleDate": "N/A"}
 	elif source == 'coindesk':
-		config = {'articleTitle':tree.xpath('//h3[@class="featured-article-title"]')[0].text,
+		try:
+			config = {'articleTitle':tree.xpath('//h3[@class="featured-article-title"]')[0].text,
 							#'articleText':" ".join(str(paragraph.text_content()) for paragraph in tree.xpath('//div[@class="article-content-container noskimwords"]/p')),
 							'articleAuthor':" & ".join(str(author.text) for author in tree.xpath('//div[@class="article-meta"]/p[@class="timeauthor"]/a')),
 							'articleDate':tree.xpath('//div[@class="article-meta"]/p[@class="timeauthor"]/time')[0].get('datetime')}
+		except:
+			print("\n######### COINDESK PARSING ERROR #########\n")
+			config = {"articleTitle": "N/A", "articleAuthor": "N/A", "articleDate": "N/A"}
 	else:
-		sys.exit('Source channel for this article not defined, check collectArticles() function')
+		config = {"articleTitle": "N/A", "articleAuthor": "N/A", "articleDate": "N/A"}
 
 	#Return it here instead of inside if-statement, will terminate before anyways if no config is found
 	return config
@@ -154,6 +171,7 @@ import multiprocessing
 import re
 import requests
 import json
+import ftfy
 
 #Parsing CLI arguments
 import argparse
@@ -206,13 +224,13 @@ def collectArticles(urls, source, args, filename):
 		config = pageConfig(source, tree)
 
 		#If page was not found, continue to next URL
-		if not config:
+		if config == None:
 			continue
 
 		#Based on xpaths defined above, call correct selector for current source
 		#Could just pass the config selectors to the array, but for the sake of cleanliness...
 
-		articleTitle = config['articleTitle']
+		articleTitle = ftfy.fix_text(config['articleTitle'])
 		#articleText = config['articleText']
 		articleAuthor = config['articleAuthor']
 		#Storing it as a datetime object
