@@ -147,13 +147,19 @@ svc.test(x_test, y_test)
 print("Evaluating models...")
 
 # Logistic Regression
+print("\tLogistic Regression Estimator")
 log_reg.plot_cnf_matrix()
-print("\tLogistic Regression: ", json.dumps(log_reg.evaluate(), indent=15))
+print("\t\tCross Validation: ", json.dumps(log_reg.cross_validate(x_train, y_train), indent=25))
+print("\t\tEvaluation: ", json.dumps(log_reg.evaluate(), indent=25))
 
 # Random Forest
+print("\tRandom Forest Classifier")
 rand_forest.plot_cnf_matrix()
-print("\tRandom Forest: ", json.dumps(rand_forest.evaluate(), indent=15))
+print("\t\tCross Validation: ", json.dumps(rand_forest.cross_validate(x_train, y_train), indent=25))
+print("\t\tEvaluation: ", json.dumps(rand_forest.evaluate(), indent=25))
 
 # Support Vector Classifier
+print("\tSupport Vector Classifier")
 svc.plot_cnf_matrix()
-print("\tSupport Vector Classifier: ", json.dumps(svc.evaluate(), indent=15))
+print("\t\tCross Validation: ", json.dumps(log_reg.cross_validate(x_train, y_train), indent=25))
+print("\t\tEvaluation: ", json.dumps(svc.evaluate(), indent=25))
