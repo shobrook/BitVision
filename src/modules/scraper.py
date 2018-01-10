@@ -125,4 +125,8 @@ if __name__ == '__main__':
 
 	for source in visit_sources:
 		process = multiprocessing.Process(target=get_article_urls, args=(source, args))
+<<<<<<< HEAD
+process.start()
+=======
 		process.start()
+>>>>>>> master
