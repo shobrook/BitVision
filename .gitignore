@@ -5,3 +5,5 @@
 img/correlation_matrix.png
 .DS_Store
 img/correlation_matrix.png
+*.png
+img/conf_matrix_rand_forest.png
