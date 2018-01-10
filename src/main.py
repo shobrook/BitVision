@@ -94,9 +94,9 @@ def preprocess():
 	)
 	return processed_data
 
-def cache_data(data):
+def cache_data(data, path):
 	print("Caching data...")
-	data.to_csv(blockchain_network_data_path, sep=',',index = False)
+	data.to_csv(path, sep=',',index = False)
 
 ### Preprocessing ###
 
@@ -110,7 +110,7 @@ if not os.path.isfile(blockchain_network_data_path) or (int(time.time()) - os.pa
 	print("\tValid data set not found...")
 	fetch_network_data()
 	data = preprocess()
-	cache_data(data)
+	cache_data(data, blockchain_network_data_path)
 
 else: # Read from CSV
 	print("\tValid data set found...")
