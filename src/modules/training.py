@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 #from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -121,6 +122,10 @@ class Model(object):
 		"""Plots a confusion matrix to evaluate the test results."""
 		plt.figure()
 		analysis.plot_cnf_matrix(self.y_pred, self.y_test)
+
+	def cross_validate(self, x_train, y_train):
+		"""Computes and displays K-Fold cross-validation with 5 iterations."""
+		return analysis.display_scores(cross_val_score(self.model, x_train, y_train, scoring="accuracy", cv=5))
 
 	def evaluate(self):
 		"""Calculates the model's classification accuracy, sensitivity, precision,
