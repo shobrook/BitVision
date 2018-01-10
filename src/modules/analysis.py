@@ -2,9 +2,6 @@
 TODO:
 	- Decompose each feature into trend, seasonal, and noise components
 	- Check if the specificity and sensitivity calculations are correct
-	- Instead of displaying correlation and confusion matrices, just generate them and
-	  save as JPEGs
-	- Add cross-validation
 """
 
 import seaborn as sns
@@ -42,7 +39,7 @@ def increment_counter():
 
 def plot_cnf_matrix(y_pred, y_test):
 	"""Plots a confusion matrix."""
-	print("\tGenerating confusion matrix")
+	print("\t\tGenerating confusion matrix")
 
 	matrix = confusion_matrix(y_test, y_pred)
 	classes = ["0", "1"]
@@ -73,7 +70,7 @@ def plot_cnf_matrix(y_pred, y_test):
 	elif counter == 1:
 		filename = "/img/conf_matrix_rand_forest.png"
 	else:
-		filename = "/img/conf_matrix_svg.png"
+		filename = "/img/conf_matrix_svc.png"
 
 	plt.savefig(parent_dir_path + filename, bbox_inches='tight')
 	increment_counter()
@@ -96,3 +93,10 @@ def specificity(y_test, y_pred):
 def sensitivity(specificity):
 	"""Returns the True Positive Rate."""
 	return 1 - specificity
+
+def display_scores(scores):
+	"""Displays cross-validation scores, the mean, and standard deviation"""
+	return {#"Scores": list(scores),
+		"Mean": scores.mean(),
+		"Standard Deviation": scores.std()
+	}
