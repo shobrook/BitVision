@@ -23,12 +23,12 @@ cleaned_testing_headlines = []
 
 # Remove stop words
 print("Cleaning testing headlines...")
-for index in range(len(training_data)):
-    cleaned_training_headlines.append(" ".join(word2vec.review_to_wordlist(training_data[index][1], True)))
+for index in range(len(training_data[1])):
+    cleaned_training_headlines.append(" ".join(word2vec.review(training_data[index][1], True)))
 
 print("Cleaning training headlines...")
-for index in range(len(testing_data)):
-    cleaned_testing_headlines.append(" ".join(word2vec.review_to_wordlist(testing_data[index][1], True)))
+for index in range(len(testing_data[1])):
+    cleaned_testing_headlines.append(" ".join(word2vec.review(testing_data[index][1], True)))
 
 # Create bag-of-words model. Dictionary of word frequency in a piece of text. Tokenization
 vectorizer = CountVectorizer(analyzer = "word",tokenizer = None, preprocessor = None, stop_words = None, max_features = 5000)
