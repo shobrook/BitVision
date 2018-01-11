@@ -1,6 +1,7 @@
 import multiprocessing
 import re
 import requests
+import pandas as pd
 import json
 import ftfy
 import argparse
@@ -13,6 +14,96 @@ import sys
 import importlib
 
 importlib.reload(sys)
+
+def preprocess():
+	"""Preprocesses the blockchain network data"""
+	print("Preprocessing data...")
+
+	processed_data = (PRICES.pipe(preprocessing.calculate_indicators)
+		.pipe(preprocessing.merge_datasets, set_b=NETWORK_DATA)
+		.pipe(preprocessing.fix_null_vals)
+		.pipe(preprocessing.calculate_labels)
+	)
+	return processed_data
+
+def fetch_network_data():
+	"""Fetches Blockchain Network Data"""
+	print("\tFetching blockchain network data...")
+
+	global NETWORK_DATA, PRICES
+
+	# Loads network-based datasets
+	CONF_TIME = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	BLOCK_SIZE = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/AVBLS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	TXN_COST = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/CPTRA.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	DIFFICULTY = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/DIFF.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	TXN_COUNT = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/NTRAN.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	HASH_RATE = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/HRATE.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	MARKET_CAP = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/MKTCP.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	MINERS_REV = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/MIREV.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	BLOCK_TXN = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/NTRBL.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	UNIQUE_ADDR = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/NADDU.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	TOTAL_BTC = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/TOTBC.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+	TXN_FEES = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+
+	# Loads Bitstamp's OHLCV dataset
+	PRICES = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
+
+	# Assigns column names
+	CONF_TIME.columns, BLOCK_SIZE.columns = ["Date", "Conf. Time"], ["Date", "Block Size"]
+	TXN_COST.columns, DIFFICULTY.columns = ["Date", "TXN Cost"], ["Date", "Difficulty"]
+	TXN_COUNT.columns, HASH_RATE.columns = ["Date", "TXNs per Day"], ["Date", "Hash Rate (GH/s)"]
+	MARKET_CAP.columns, MINERS_REV.columns = ["Date", "Market Cap"], ["Date", "Miners Revenue"]
+	BLOCK_TXN.columns, UNIQUE_ADDR.columns = ["Date", "TXNs per Block"], ["Date", "Unique Addresses"]
+	TOTAL_BTC.columns, TXN_FEES.columns = ["Date", "Total BTC"], ["Date", "TXN Fees"]
+
+	NETWORK_DATA = [CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RATE, MARKET_CAP, MINERS_REV, BLOCK_TXN, UNIQUE_ADDR, TOTAL_BTC, TXN_FEES]
+
+def fetch_new_data(path):
+	"""Fetch new data or read from cache if the latest modification time is over 24 hours ago."""
+	
+	# Blockchain data
+	if path.split("/")[-1] == "blockchain_network_data.csv":
+		print("Looking for recent cached version of Blockchain Network data...")
+
+		# If data doesn't exist or last modification time more than 24 hours ago, get new data
+		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
+			print("\tValid data set not found...")
+			fetch_network_data()
+			btc_price_data = preprocess()
+			cache_data(btc_price_data, path)
+			return btc_price_data
+
+		else: # Read from CSV
+			print("\tValid data set found in cache...")
+			print("\tReading...")
+			btc_price_data = pd.read_csv(path, sep=",")
+			return btc_price_data
+
+	# Headline data
+	if path.split("/")[-1] == "news_headlines.csv":
+		print("Looking for recent cached version of headline data...")
+
+		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
+			print("\tValid data set not found...")
+			
+			# TODO: import scraper to scrape things and save them
+			# 
+			# cache_data(headline_data, path)
+			# return headline_data
+		else: # Read from CSV
+			print("\tValid data set found in cache...")
+			print("\tReading...")
+			headline_data = pd.read_csv(path, sep=",")
+			return headline_data
+
+def cache_data(data, path_to_file):
+	"""Caches data to path_to_file"""
+	print("Caching data...")
+	data.to_csv(path_to_file, sep=',',index = False)
+
+
+
 
 def page_config(source, tree):
 	"""Defines a config with XPATH selectors for each article's properties."""
