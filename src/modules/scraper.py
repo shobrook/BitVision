@@ -7,6 +7,7 @@ import argparse
 from lxml import html, etree
 from dateutil.parser import parse as dateParse
 import csv
+import os
 import time
 import sys
 import importlib
@@ -79,7 +80,9 @@ def collect_articles(urls, source, args, filename):
 		if args.scrape_year and dateParse(config["date"]).year < int(args.scrape_year): break
 		elif args.scrape_year and int(str(dateParse(config["date"]).year)) != int(args.scrape_year): pass
 		else:
-			csv_writer = csv.writer(open(filename, "a"))
+			# csv_writer = csv.writer(open(filename, "a"))
+			print("PATH:",os.path.dirname(os.path.dirname(os.getcwd())) + "/data/" + filename)
+			csv_writer = csv.writer(open(os.path.dirname(os.path.dirname(os.getcwd())) + "/data/" + filename, "a"))
 			csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
 
 def get_article_urls(source, args):
