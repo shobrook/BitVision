@@ -54,7 +54,7 @@ import preprocessing
 ### Getting data ###
 
 blockchain_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/blockchain_network_data.csv")
-headline_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/news_headlines.csv")
+headline_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/")
 
 ### Analysis ###
 

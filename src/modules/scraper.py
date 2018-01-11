@@ -81,21 +81,40 @@ def fetch_new_data(path):
 			return btc_price_data
 
 	# Headline data
-	if path.split("/")[-1] == "news_headlines.csv":
+	else:
 		print("Looking for recent cached version of headline data...")
 
-		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
+		coindesk_path = path + "coindesk_headlines.csv"
+		btc_news_path = path + "news_bitcoin_headlines.csv"
+
+		# TODO: Fix this block, potentially scrap the corresponding else bc it makes no sense anymore
+		# Maybe pull the 24 hr check bc that also doesn't really make sense
+		if (not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path) or 
+					  (int(time.time()) - os.path.getmtime(coindesk_path)) > 86400 or 
+					  (int(time.time()) - os.path.getmtime(btc_news_path)) > 86400):
+
 			print("\tValid data set not found...")
+			# If one of the headline data files is missing, delete the other and repopulate
+			if not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path):
+				if not os.path.isfile(btc_news_path):
+					os.remove(btc_news_path)
+				if not os.path.isfile(coindesk_path):
+					os.remove(coindesk_path)
+
+				#SCRAPE ALL HEADLINES
+			else :
+				#SCRAPE ONLY UPDATED HEADLINES
+			scrape_headlines()
+			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
+			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
+			return (coindesk_headlines, btc_news_headlines)
 			
-			# TODO: import scraper to scrape things and save them
-			# 
-			# cache_data(headline_data, path)
-			# return headline_data
 		else: # Read from CSV
 			print("\tValid data set found in cache...")
 			print("\tReading...")
-			headline_data = pd.read_csv(path, sep=",")
-			return headline_data
+			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
+			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
+			return (coindesk_headlines, btc_news_headlines)
 
 def cache_data(data, path_to_file):
 	"""Caches data to path_to_file"""
@@ -207,7 +226,7 @@ def get_article_urls(source, args):
 		current_page += 1
 		urls = []
 
-if __name__ == '__main__':
+def scrape_headlines():
 	parser = argparse.ArgumentParser(description="Scrape cryptocurrency-related news articles")
 	parser.add_argument("--year", dest="scrape_year", required=False, help="Specify a specific year to collect from")
 	parser.add_argument("--sources", nargs="+", dest="sources", help="Set the news websites you want to collect from", required=False)
