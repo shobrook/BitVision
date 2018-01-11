@@ -35,10 +35,7 @@ Technical Indicators:
 	- EMA: Exponential Moving Average
 """
 
-
 ### Setup ###
-
-
 import sys
 
 sys.path.insert(0, "modules")
@@ -51,11 +48,56 @@ import analysis
 import training
 import pandas as pd
 import preprocessing
+# import sentiment
+
+def fetch_new_data(path):
+	"""Fetch new data or read from cache if the latest modification time is over 24 hours ago."""
+	
+	# Blockchain data
+	if path == blockchain_network_data_path:
+		print("Looking for recent cached version of Blockchain Network data...")
+
+		# If data doesn't exist or last modification time more than 24 hours ago, get new data
+		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
+			print("\tValid data set not found...")
+			fetch_network_data()
+			btc_price_data = preprocess()
+			cache_data(btc_price_data, path)
+			return btc_price_data
+
+		else: # Read from CSV
+			print("\tValid data set found in cache...")
+			print("\tReading...")
+			btc_price_data = pd.read_csv(path, sep=",")
+			return btc_price_data
+
+	# Headline data
+	if path == headline_data_path:
+		print("Looking for recent cached version of headline data...")
+
+		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
+			print("\tValid data set not found...")
+			
+			# TODO: import scraper to scrape things and save them
+			# 
+			# cache_data(headline_data, path)
+			# return headline_data
+		else: # Read from CSV
+			print("\tValid data set found in cache...")
+			print("\tReading...")
+			headline_data = pd.read_csv(path, sep=",")
+			return headline_data
+
+def cache_data(data, path_to_file):
+	"""Caches data to path_to_file"""
+	print("Caching data...")
+	data.to_csv(path_to_file, sep=',',index = False)
 
 def fetch_network_data():
+	"""Fetches Blockchain Network Data"""
 	print("\tFetching blockchain network data...")
 
-	global CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RATE, MARKET_CAP, MINERS_REV, BLOCK_TXN, UNIQUE_ADDR, TOTAL_BTC, TXN_FEES, PRICES, NETWORK_DATA
+	global NETWORK_DATA, PRICES
 
 	# Loads network-based datasets
 	CONF_TIME = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
@@ -85,6 +127,7 @@ def fetch_network_data():
 	NETWORK_DATA = [CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RATE, MARKET_CAP, MINERS_REV, BLOCK_TXN, UNIQUE_ADDR, TOTAL_BTC, TXN_FEES]
 
 def preprocess():
+	"""Preprocesses the blockchain network data"""
 	print("Preprocessing data...")
 
 	processed_data = (PRICES.pipe(preprocessing.calculate_indicators)
@@ -94,41 +137,28 @@ def preprocess():
 	)
 	return processed_data
 
-def cache_data(data, path):
-	print("Caching data...")
-	data.to_csv(path, sep=',',index = False)
+### Relevant file paths ###
 
-### Preprocessing ###
+blockchain_network_data_path = os.path.dirname(os.getcwd()) + "/data/blockchain_network_data.csv"
+headline_data_path = os.path.dirname(os.getcwd()) + "/data/news_headlines.csv"
 
-blockchain_network_data_path = os.path.dirname(os.getcwd()) + "/datasets/blockchain_network_data.csv"
-data = []
+### Getting data ###
 
-# If data doesn't exist or last modification time more than 24 hours ago, get new data
-print("Looking for recent cached version of blockchain network data...")
+blockchain_data = fetch_new_data(blockchain_network_data_path)
+headline_data = fetch_new_data(headline_data_path)
 
-if not os.path.isfile(blockchain_network_data_path) or (int(time.time()) - os.path.getmtime(blockchain_network_data_path)) > 86400 :
-	print("\tValid data set not found...")
-	fetch_network_data()
-	data = preprocess()
-	cache_data(data, blockchain_network_data_path)
-
-else: # Read from CSV
-	print("\tValid data set found...")
-	print("\tReading...")
-	data = pd.read_csv(blockchain_network_data_path, sep=",")
 
 ### Analysis ###
 
 print("Analyzing features...")
-
-analysis.plot_corr_matrix(data)
+analysis.plot_corr_matrix(blockchain_data)
 
 ### Training ###
 
 print("Fitting models...")
 
 # Generate training and testing data
-x_train, x_test, y_train, y_test = (data.pipe(training.fix_outliers).pipe(training.unbalanced_split, test_size=.2))
+x_train, x_test, y_train, y_test = (blockchain_data.pipe(training.fix_outliers).pipe(training.unbalanced_split, test_size=.2))
 
 # Logistic Regression
 log_reg = training.Model(estimator="LogisticRegression", x_train=x_train, y_train=y_train)
