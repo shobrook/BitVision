@@ -147,7 +147,6 @@ headline_data_path = os.path.dirname(os.getcwd()) + "/data/news_headlines.csv"
 blockchain_data = fetch_new_data(blockchain_network_data_path)
 headline_data = fetch_new_data(headline_data_path)
 
-
 ### Analysis ###
 
 print("Analyzing features...")
