@@ -87,7 +87,7 @@ def collect_articles(urls, source, args, filename):
 
 def get_article_urls(source, args):
 	"""Main function."""
-	filename = source + "_ARTICLES_" + str(int(time.time())) + ".csv"
+	filename = source.lower() + "_headlines.csv"
 	urls, current_page = [], 1
 	has_next_page, out_of_range = True, False
 
