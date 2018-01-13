@@ -1,8 +1,3 @@
-"""
-TODO:
-	- Check a random sample from each TA-Lib output to ensure the indicators were calculated correctly
-"""
-
 import pandas as pd
 import dateutil.parser as dp
 from realtime_talib import Indicator
