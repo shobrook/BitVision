@@ -26,7 +26,7 @@ def page_config(source, tree):
 		except: config = {"title": "N/A", "date": "N/A"}
 	elif source == "coindesk":
 		try: config = {"title": tree.xpath('//h3[@class="article-top-title"]')[0].text,
-				"date": "N/A"
+				"date": tree.xpath('//span[@class="article-container-left-timestamp"]/text()')
 			}
 		except: config = {"title": "N/A", "date": "N/A"}
 	else: config = {"title": "N/A", "date": "N/A"}
@@ -124,9 +124,6 @@ if __name__ == '__main__':
 	else: visit_sources = all_sources
 
 	for source in visit_sources:
-		process = multiprocessing.Process(target=get_article_urls, args=(source, args))
-<<<<<<< HEAD
-process.start()
-=======
-		process.start()
->>>>>>> master
+		get_article_urls(source, args)
+		#process = multiprocessing.Process(target=get_article_urls, args=(source, args))
+		#process.start()
