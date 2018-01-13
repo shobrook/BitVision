@@ -1,8 +1,4 @@
 """
-TODO:
-	- Check Quandl for other candidate Blockchain-related datasets
-	- Explore options for caching data set
-
 Blockchain Network Attributes:
 	- CONF_TIME: Median time for a TXN to be accepted into a mined block and added to the public ledger [USED]
 	- BLOCK_SIZE: Average block size in MB [USED]
@@ -119,11 +115,15 @@ else: # Read from CSV
 
 ### Analysis ###
 
+
 print("Analyzing features...")
 
+#print(data.describe())
 analysis.plot_corr_matrix(data)
 
+
 ### Training ###
+
 
 print("Fitting models...")
 
@@ -142,7 +142,9 @@ rand_forest.test(x_test, y_test)
 svc = training.Model(estimator="SVC", x_train=x_train, y_train=y_train)
 svc.test(x_test, y_test)
 
+
 ### Evaluation ###
+
 
 print("Evaluating models...")
 
