@@ -35,10 +35,7 @@ Technical Indicators:
 	- EMA: Exponential Moving Average
 """
 
-
 ### Setup ###
-
-
 import sys
 
 sys.path.insert(0, "modules")
@@ -47,88 +44,29 @@ import os.path
 import json
 import csv
 import time
+import scraper
 import analysis
 import training
 import pandas as pd
 import preprocessing
+# import sentiment
 
-def fetch_network_data():
-	print("\tFetching blockchain network data...")
+### Getting data ###
 
-	global CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RATE, MARKET_CAP, MINERS_REV, BLOCK_TXN, UNIQUE_ADDR, TOTAL_BTC, TXN_FEES, PRICES, NETWORK_DATA
-
-	# Loads network-based datasets
-	CONF_TIME = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	BLOCK_SIZE = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/AVBLS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	TXN_COST = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/CPTRA.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	DIFFICULTY = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/DIFF.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	TXN_COUNT = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/NTRAN.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	HASH_RATE = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/HRATE.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	MARKET_CAP = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/MKTCP.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	MINERS_REV = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/MIREV.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	BLOCK_TXN = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/NTRBL.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	UNIQUE_ADDR = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/NADDU.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	TOTAL_BTC = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/TOTBC.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-	TXN_FEES = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-
-	# Loads Bitstamp's OHLCV dataset
-	PRICES = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-
-	# Assigns column names
-	CONF_TIME.columns, BLOCK_SIZE.columns = ["Date", "Conf. Time"], ["Date", "Block Size"]
-	TXN_COST.columns, DIFFICULTY.columns = ["Date", "TXN Cost"], ["Date", "Difficulty"]
-	TXN_COUNT.columns, HASH_RATE.columns = ["Date", "TXNs per Day"], ["Date", "Hash Rate (GH/s)"]
-	MARKET_CAP.columns, MINERS_REV.columns = ["Date", "Market Cap"], ["Date", "Miners Revenue"]
-	BLOCK_TXN.columns, UNIQUE_ADDR.columns = ["Date", "TXNs per Block"], ["Date", "Unique Addresses"]
-	TOTAL_BTC.columns, TXN_FEES.columns = ["Date", "Total BTC"], ["Date", "TXN Fees"]
-
-	NETWORK_DATA = [CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RATE, MARKET_CAP, MINERS_REV, BLOCK_TXN, UNIQUE_ADDR, TOTAL_BTC, TXN_FEES]
-
-def preprocess():
-	print("Preprocessing data...")
-
-	processed_data = (PRICES.pipe(preprocessing.calculate_indicators)
-		.pipe(preprocessing.merge_datasets, set_b=NETWORK_DATA)
-		.pipe(preprocessing.fix_null_vals)
-		.pipe(preprocessing.calculate_labels)
-	)
-	return processed_data
-
-def cache_data(data, path):
-	print("Caching data...")
-	data.to_csv(path, sep=',',index = False)
-
-### Preprocessing ###
-
-blockchain_network_data_path = os.path.dirname(os.getcwd()) + "/datasets/blockchain_network_data.csv"
-data = []
-
-# If data doesn't exist or last modification time more than 24 hours ago, get new data
-print("Looking for recent cached version of blockchain network data...")
-
-if not os.path.isfile(blockchain_network_data_path) or (int(time.time()) - os.path.getmtime(blockchain_network_data_path)) > 86400 :
-	print("\tValid data set not found...")
-	fetch_network_data()
-	data = preprocess()
-	cache_data(data, blockchain_network_data_path)
-
-else: # Read from CSV
-	print("\tValid data set found...")
-	print("\tReading...")
-	data = pd.read_csv(blockchain_network_data_path, sep=",")
+blockchain_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/blockchain_network_data.csv")
+headline_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/")
 
 ### Analysis ###
 
 print("Analyzing features...")
-
-analysis.plot_corr_matrix(data)
+analysis.plot_corr_matrix(blockchain_data)
 
 ### Training ###
 
 print("Fitting models...")
 
 # Generate training and testing data
-x_train, x_test, y_train, y_test = (data.pipe(training.fix_outliers).pipe(training.unbalanced_split, test_size=.2))
+x_train, x_test, y_train, y_test = (blockchain_data.pipe(training.fix_outliers).pipe(training.unbalanced_split, test_size=.2))
 
 # Logistic Regression
 log_reg = training.Model(estimator="LogisticRegression", x_train=x_train, y_train=y_train)
