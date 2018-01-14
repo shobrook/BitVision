@@ -31,7 +31,10 @@ Technical Indicators:
 	- EMA: Exponential Moving Average
 """
 
+
 ### Setup ###
+
+
 import sys
 
 sys.path.insert(0, "modules")
@@ -45,24 +48,33 @@ import analysis
 import training
 import pandas as pd
 import preprocessing
-# import sentiment
+#import sentiment
 
-### Getting data ###
 
-blockchain_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/blockchain_network_data.csv")
-headline_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/")
+### Data Bus ###
+
+
+def preprocessor(prices, network_data):
+	"""Runs the OHLCV and blockchain datasets through a preprocessing pipeline."""
+	print("Preprocessing data...")
+
+	return (prices.pipe(preprocessing.calculate_indicators)
+		.pipe(preprocessing.merge_datasets, set_b=network_data)
+		.pipe(preprocessing.fix_null_vals)
+		.pipe(preprocessing.calculate_labels)
+	)
+
+blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_network_data.csv", preprocessor)
+headline_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/", preprocessor)
+
 
 ### Analysis ###
 
 
 print("Analyzing features...")
-<<<<<<< HEAD
 
 #print(data.describe())
-analysis.plot_corr_matrix(data)
-=======
 analysis.plot_corr_matrix(blockchain_data)
->>>>>>> master
 
 
 ### Training ###
