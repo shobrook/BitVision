@@ -1,3 +1,5 @@
+### Setup ###
+
 import multiprocessing
 import re
 import requests
@@ -15,22 +17,12 @@ import importlib
 
 importlib.reload(sys)
 
-def preprocess():
-	"""Preprocesses the blockchain network data"""
-	print("Preprocessing data...")
 
-	processed_data = (PRICES.pipe(preprocessing.calculate_indicators)
-		.pipe(preprocessing.merge_datasets, set_b=NETWORK_DATA)
-		.pipe(preprocessing.fix_null_vals)
-		.pipe(preprocessing.calculate_labels)
-	)
-	return processed_data
+### Blockchain and OHLCV Data ###
 
-def fetch_network_data():
-	"""Fetches Blockchain Network Data"""
-	print("\tFetching blockchain network data...")
 
-	global NETWORK_DATA, PRICES
+def fetch_blockchain_data():
+	"""Fetches datasets related to the Blockchain network and Bitcoin price."""
 
 	# Loads network-based datasets
 	CONF_TIME = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
@@ -59,69 +51,10 @@ def fetch_network_data():
 
 	NETWORK_DATA = [CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RATE, MARKET_CAP, MINERS_REV, BLOCK_TXN, UNIQUE_ADDR, TOTAL_BTC, TXN_FEES]
 
-def fetch_new_data(path):
-	"""Fetch new data or read from cache if the latest modification time is over 24 hours ago."""
-	
-	# Blockchain data
-	if path.split("/")[-1] == "blockchain_network_data.csv":
-		print("Looking for recent cached version of Blockchain Network data...")
-
-		# If data doesn't exist or last modification time more than 24 hours ago, get new data
-		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
-			print("\tValid data set not found...")
-			fetch_network_data()
-			btc_price_data = preprocess()
-			cache_data(btc_price_data, path)
-			return btc_price_data
-
-		else: # Read from CSV
-			print("\tValid data set found in cache...")
-			print("\tReading...")
-			btc_price_data = pd.read_csv(path, sep=",")
-			return btc_price_data
-
-	# Headline data
-	else:
-		print("Looking for recent cached version of headline data...")
-
-		coindesk_path = path + "coindesk_headlines.csv"
-		btc_news_path = path + "news_bitcoin_headlines.csv"
-
-		# TODO: Fix this block, potentially scrap the corresponding else bc it makes no sense anymore
-		# Maybe pull the 24 hr check bc that also doesn't really make sense
-		if (not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path) or 
-					  (int(time.time()) - os.path.getmtime(coindesk_path)) > 86400 or 
-					  (int(time.time()) - os.path.getmtime(btc_news_path)) > 86400):
-
-			print("\tValid data set not found...")
-			# If one of the headline data files is missing, delete the other and repopulate
-			if not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path):
-				if not os.path.isfile(btc_news_path):
-					os.remove(btc_news_path)
-				if not os.path.isfile(coindesk_path):
-					os.remove(coindesk_path)
-
-				#SCRAPE ALL HEADLINES
-			else :
-				#SCRAPE ONLY UPDATED HEADLINES
-			scrape_headlines()
-			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
-			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
-			return (coindesk_headlines, btc_news_headlines)
-			
-		else: # Read from CSV
-			print("\tValid data set found in cache...")
-			print("\tReading...")
-			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
-			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
-			return (coindesk_headlines, btc_news_headlines)
-
-def cache_data(data, path_to_file):
-	"""Caches data to path_to_file"""
-	print("Caching data...")
-	data.to_csv(path_to_file, sep=',',index = False)
+	return (PRICES, NETWORK_DATA)
 
 
+### News Headlines ###
 
 
 def page_config(source, tree):
@@ -237,11 +170,74 @@ def scrape_headlines():
 	else: visit_sources = all_sources
 
 	for source in visit_sources:
-<<<<<<< HEAD
-		get_article_urls(source, args)
-		#process = multiprocessing.Process(target=get_article_urls, args=(source, args))
-		#process.start()
-=======
 		process = multiprocessing.Process(target=get_article_urls, args=(source, args))
 		process.start()
->>>>>>> master
+
+
+### Fetching and Caching ###
+
+
+def cache_data(data, path_to_file):
+	"""Caches data to path_to_file"""
+	print("Caching data...")
+	data.to_csv(path_to_file, sep=',',index = False)
+
+def fetch_data(path, preprocessor):
+	"""Fetches updated datasets or reads from the cache if the last fetch was
+	   performed under 24hrs ago."""
+	
+	# Blockchain network attributes
+	if path.split("/")[-1] == "blockchain_network_data.csv":
+		print("Checking most recently cached version of Blockchain data")
+
+		# If data doesn't exist or last modification time was more than 24hrs ago, fetch updated data
+		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
+			print("\tUpdating datasets")
+
+			prices, network_data = fetch_blockchain_data()
+			processed_data = preprocessor(prices, network_data)
+			cache_data(processed_data, path)
+
+			return processed_data
+
+		# Otherwise pull dataset from the cache
+		else:
+			print("\tPulling datasets from cache")
+			return pd.read_csv(path, sep=",")
+
+	# Bitcoin news headlines
+	else:
+		print("Checking most recently cached version of news headline data")
+
+		coindesk_path = path + "coindesk_headlines.csv"
+		btc_news_path = path + "news_bitcoin_headlines.csv"
+
+		# TODO: Fix this block, potentially scrap the corresponding else bc it makes no sense anymore
+		# Maybe pull the 24 hr check bc that also doesn't really make sense
+		if (not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path) or 
+					  (int(time.time()) - os.path.getmtime(coindesk_path)) > 86400 or 
+					  (int(time.time()) - os.path.getmtime(btc_news_path)) > 86400):
+
+			print("\tUpdating datasets")
+
+			# If one of the headline data files is missing, delete the other and repopulate
+			if not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path):
+				if not os.path.isfile(btc_news_path):
+					os.remove(btc_news_path)
+				if not os.path.isfile(coindesk_path):
+					os.remove(coindesk_path)
+
+				#SCRAPE ALL HEADLINES
+			else :
+				#SCRAPE ONLY UPDATED HEADLINES
+			scrape_headlines()
+			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
+			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
+			return (coindesk_headlines, btc_news_headlines)
+			
+		else: # Read from CSV
+			print("\tValid data set found in cache...")
+			print("\tReading...")
+			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
+			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
+			return (coindesk_headlines, btc_news_headlines)
