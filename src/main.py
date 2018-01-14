@@ -1,8 +1,4 @@
 """
-TODO:
-	- Check Quandl for other candidate Blockchain-related datasets
-	- Explore options for caching data set
-
 Blockchain Network Attributes:
 	- CONF_TIME: Median time for a TXN to be accepted into a mined block and added to the public ledger [USED]
 	- BLOCK_SIZE: Average block size in MB [USED]
@@ -35,7 +31,10 @@ Technical Indicators:
 	- EMA: Exponential Moving Average
 """
 
+
 ### Setup ###
+
+
 import sys
 
 sys.path.insert(0, "modules")
@@ -49,19 +48,37 @@ import analysis
 import training
 import pandas as pd
 import preprocessing
-# import sentiment
+#import sentiment
 
-### Getting data ###
 
-blockchain_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/blockchain_network_data.csv")
-headline_data = scraper.fetch_new_data(os.path.dirname(os.getcwd()) + "/data/")
+### Data Bus ###
+
+
+def preprocessor(prices, network_data):
+	"""Runs the OHLCV and blockchain datasets through a preprocessing pipeline."""
+	print("Preprocessing data...")
+
+	return (prices.pipe(preprocessing.calculate_indicators)
+		.pipe(preprocessing.merge_datasets, set_b=network_data)
+		.pipe(preprocessing.fix_null_vals)
+		.pipe(preprocessing.calculate_labels)
+	)
+
+blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_network_data.csv", preprocessor)
+headline_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/", preprocessor)
+
 
 ### Analysis ###
 
+
 print("Analyzing features...")
+
+#print(data.describe())
 analysis.plot_corr_matrix(blockchain_data)
 
+
 ### Training ###
+
 
 print("Fitting models...")
 
@@ -80,7 +97,9 @@ rand_forest.test(x_test, y_test)
 svc = training.Model(estimator="SVC", x_train=x_train, y_train=y_train)
 svc.test(x_test, y_test)
 
+
 ### Evaluation ###
+
 
 print("Evaluating models...")
 

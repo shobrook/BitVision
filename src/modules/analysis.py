@@ -1,9 +1,3 @@
-"""
-TODO:
-	- Decompose each feature into trend, seasonal, and noise components
-	- Check if the specificity and sensitivity calculations are correct
-"""
-
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt

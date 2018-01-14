@@ -1,5 +1,6 @@
 BitVision
 ======
-![An Engineer Syllogism](img/engineer_syllogism.png)
+**The goal of this project is to predict daily Bitcoin price movements using machine learning algorithms.** Unlike other approaches we've seen, our feature set is comprehensive and includes technical indicators, blockchain network data (hash rate, miner's revenue, etc.), and sentiment scores of cryptocurrency-related news articles.
 
-**BitVision is a proof-of-concept that uses machine learning to predict daily Bitcoin price movements.** The feature set consists of technical indicators, blockchain network data, and sentiment scores of cryptocurrency-related news articles. Three models are trained and evaluated: a logistic regressor, a random forest classifier, and a support vector classifier. Classification accuracies of 53%, 52%, and 55% have been achieved with each model, respectively.
+
+Three learning models are trained and evaluated: a logistic regressor, random forest classifier, and support vector classifier. Experimental results suggest a 50-60% accuracy in predicting the sign of next-day price change.

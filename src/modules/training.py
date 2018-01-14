@@ -1,4 +1,4 @@
-"""
+ """
 TODO:
 	- Randomize the balanced train/test splitting (try applying scikit-learn's test/train splitter)
 	- Create a custom GridSearchCV scoring function
@@ -53,8 +53,8 @@ class Model(object):
 		else: print("\tError: Invalid model type")
 
 	def fit_log_reg(self, x_train, y_train):
-		"""Trains a Logistic Regression estimator and performs a grid search to find
-		   optimal hyperparameter values."""
+		"""Trains a Logistic Regression estimator and performs a grid search
+		   to find optimal hyperparameter values."""
 		print("\tFitting a logistic regression estimator")
 
 		self.scaler = StandardScaler()
