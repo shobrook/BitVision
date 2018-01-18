@@ -227,9 +227,14 @@ def fetch_data(path, preprocessor):
 				if not os.path.isfile(coindesk_path):
 					os.remove(coindesk_path)
 
-				#TODO: SCRAPE ALL HEADLINES
-			else :
-				#TODO: SCRAPE ONLY UPDATED HEADLINES
+				#Scrape all headlines bc of corrupt data set
+
+				scrape_headlines()
+				coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
+				btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
+				return (coindesk_headlines, btc_news_headlines)
+
+			else: # TODO: SCRAPE ONLY UPDATED HEADLINES
 				scrape_headlines()
 				coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
 				btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
