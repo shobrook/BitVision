@@ -124,8 +124,8 @@ def collect_articles(urls, source, args, filename):
 		elif args.scrape_year and int(str(dateParse(config["date"]).year)) != int(args.scrape_year): pass
 		else:
 			# csv_writer = csv.writer(open(filename, "a"))
-			print("PATH:",os.path.dirname(os.path.dirname(os.getcwd())) + "/data/" + filename)
-			csv_writer = csv.writer(open(os.path.dirname(os.path.dirname(os.getcwd())) + "/data/" + filename, "a"))
+			print("PATH:",os.path.dirname(os.getcwd()) + "/data/" + filename)
+			csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/data/" + filename, "a"))
 			csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
 
 def get_article_urls(source, args):
@@ -227,13 +227,13 @@ def fetch_data(path, preprocessor):
 				if not os.path.isfile(coindesk_path):
 					os.remove(coindesk_path)
 
-				#SCRAPE ALL HEADLINES
+				#TODO: SCRAPE ALL HEADLINES
 			else :
-				#SCRAPE ONLY UPDATED HEADLINES
-			scrape_headlines()
-			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
-			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
-			return (coindesk_headlines, btc_news_headlines)
+				#TODO: SCRAPE ONLY UPDATED HEADLINES
+				scrape_headlines()
+				coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
+				btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
+				return (coindesk_headlines, btc_news_headlines)
 			
 		else: # Read from CSV
 			print("\tValid data set found in cache...")
