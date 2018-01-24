@@ -70,7 +70,7 @@ def page_config(source, tree):
 		except: config = {"title": "N/A", "date": "N/A"}
 	elif source == "coindesk":
 		try: config = {"title": tree.xpath('//h3[@class="article-top-title"]')[0].text,
-				"date": tree.xpath('//span[@class="article-container-left-timestamp"]/text()')
+				"date": (tree.xpath('//span[@class="article-container-left-timestamp"]/text()'))[1]
 			}
 		except: config = {"title": "N/A", "date": "N/A"}
 	else: config = {"title": "N/A", "date": "N/A"}
@@ -112,7 +112,7 @@ def parse_html(url):
 	page = requests.get(url, headers=headers)
 	return html.fromstring(page.content)
 
-def collect_articles(urls, source, args, filename):
+def collect_articles(urls, source, end_date, filename):
 	"""Loops over all the URLs collected in the parent function."""
 	for url in urls:
 		tree = parse_html(url)
@@ -120,15 +120,16 @@ def collect_articles(urls, source, args, filename):
 
 		print(url)
 
-		if args.scrape_year and dateParse(config["date"]).year < int(args.scrape_year): break
-		elif args.scrape_year and int(str(dateParse(config["date"]).year)) != int(args.scrape_year): pass
+		if end_date and dateParse(config["date"]).year < int(end_date): break
+		elif end_date and int(dateParse(config["date"]).year) != int(end_date): pass
 		else:
-			# csv_writer = csv.writer(open(filename, "a"))
+			print("FILENAME:",filename)
+			csv_writer = csv.writer(open(filename, "a"))
 			print("PATH:",os.path.dirname(os.getcwd()) + "/data/" + filename)
 			csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/data/" + filename, "a"))
 			csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
 
-def get_article_urls(source, args):
+def get_article_urls(source, end_date):
 	"""Main function."""
 	filename = source.lower() + "_headlines.csv"
 	urls, current_page = [], 1
@@ -140,9 +141,9 @@ def get_article_urls(source, args):
 		items = tree.xpath(config[source]["item_XPATH"])
 
 		for item in items:
-			if config[source]["date_on_page"] and config[source]["date_ordered"] and args.scrape_year:
+			if config[source]["date_on_page"] and config[source]["date_ordered"] and end_date:
 				date = dateParse(item.xpath(config[source]["date_XPATH"])[0].get("datetime"))
-				if date.year < int(args.scrape_year): out_of_range = True
+				if date.year < int(end_date): out_of_range = True
 
 			url = item.xpath(config[source]["url_XPATH"])[0].get("href")
 
@@ -154,25 +155,18 @@ def get_article_urls(source, args):
 
 		if len(items) < config[source]["results_per_page"]: has_next_page = False
 
-		collect_articles(urls, source, args, filename)
+		collect_articles(urls, source, end_date, filename)
 
 		current_page += 1
 		urls = []
 
-def scrape_headlines():
-	parser = argparse.ArgumentParser(description="Scrape cryptocurrency-related news articles")
-	parser.add_argument("--year", dest="scrape_year", required=False, help="Specify a specific year to collect from")
-	parser.add_argument("--sources", nargs="+", dest="sources", help="Set the news websites you want to collect from", required=False)
-	args = parser.parse_args()
+def scrape_headlines(end_date):
+	for source in ["coindesk", "news_bitcoin"]:
+		get_article_urls(source, end_date)
+		#process = multiprocessing.Process(target=get_article_urls, args=(source, end_date))
+		#process.start()
 
-	all_sources = ["coindesk", "news_bitcoin"]
-	if args.sources: visit_sources = args.sources
-	else: visit_sources = all_sources
-
-	for source in visit_sources:
-		process = multiprocessing.Process(target=get_article_urls, args=(source, args))
-		process.start()
-
+scrape_headlines(2018)
 
 ### Fetching and Caching ###
 
