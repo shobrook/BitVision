@@ -124,8 +124,8 @@ def collect_articles(urls, source, args, filename):
 		elif args.scrape_year and int(str(dateParse(config["date"]).year)) != int(args.scrape_year): pass
 		else:
 			# csv_writer = csv.writer(open(filename, "a"))
-			print("PATH:",os.path.dirname(os.path.dirname(os.getcwd())) + "/data/" + filename)
-			csv_writer = csv.writer(open(os.path.dirname(os.path.dirname(os.getcwd())) + "/data/" + filename, "a"))
+			print("PATH:",os.path.dirname(os.getcwd()) + "/data/" + filename)
+			csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/data/" + filename, "a"))
 			csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
 
 def get_article_urls(source, args):
@@ -188,11 +188,11 @@ def fetch_data(path, preprocessor):
 	
 	# Blockchain network attributes
 	if path.split("/")[-1] == "blockchain_network_data.csv":
-		print("Checking most recently cached version of Blockchain data")
+		print("Checking most recently cached version of Blockchain data...")
 
 		# If data doesn't exist or last modification time was more than 24hrs ago, fetch updated data
 		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
-			print("\tUpdating datasets")
+			print("\tUpdating datasets...")
 
 			prices, network_data = fetch_blockchain_data()
 			processed_data = preprocessor(prices, network_data)
@@ -202,12 +202,12 @@ def fetch_data(path, preprocessor):
 
 		# Otherwise pull dataset from the cache
 		else:
-			print("\tPulling datasets from cache")
+			print("\tPulling datasets from cache...")
 			return pd.read_csv(path, sep=",")
 
 	# Bitcoin news headlines
 	else:
-		print("Checking most recently cached version of news headline data")
+		print("Checking most recently cached version of news headline data...")
 
 		coindesk_path = path + "coindesk_headlines.csv"
 		btc_news_path = path + "news_bitcoin_headlines.csv"
@@ -227,13 +227,18 @@ def fetch_data(path, preprocessor):
 				if not os.path.isfile(coindesk_path):
 					os.remove(coindesk_path)
 
-				#SCRAPE ALL HEADLINES
-			else :
-				#SCRAPE ONLY UPDATED HEADLINES
-			scrape_headlines()
-			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
-			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
-			return (coindesk_headlines, btc_news_headlines)
+				#Scrape all headlines due to corrupt data set
+
+				scrape_headlines()
+				coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
+				btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
+				return (coindesk_headlines, btc_news_headlines)
+
+			else: # TODO: SCRAPE ONLY UPDATED HEADLINES
+				scrape_headlines()
+				coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
+				btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
+				return (coindesk_headlines, btc_news_headlines)
 			
 		else: # Read from CSV
 			print("\tValid data set found in cache...")
