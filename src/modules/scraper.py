@@ -64,22 +64,28 @@ def page_config(source, tree):
 	if any(filter in title for filter in not_found_filters): return False # Checking for broken links
 
 	if source == "news_bitcoin":
-		try: config = {"title": tree.xpath('//h1[@class="entry-title"]')[0].text,
+		try: config = {
+				"title": tree.xpath('//h1[@class="entry-title"]')[0].text,
 				"date": tree.xpath('//meta[@property="article:published_time"]')[0].get("content")
 			}
 		except: config = {"title": "N/A", "date": "N/A"}
 	elif source == "coindesk":
-		try: config = {"title": tree.xpath('//h3[@class="article-top-title"]')[0].text,
-				"date": (tree.xpath('//span[@class="article-container-left-timestamp"]/text()'))[1]
+		try: config = {
+				"title": tree.xpath('//h3[@class="article-top-title"]')[0].text,
+				"date": ((tree.xpath('//span[@class="article-container-left-timestamp"]/text()'))[1]).strip("\n")
 			}
 		except: config = {"title": "N/A", "date": "N/A"}
 	else: config = {"title": "N/A", "date": "N/A"}
+
+	print(config)
 
 	return config
 
 def results_config(current_page):
 	"""Returns a config for each source's search results page."""
-	return {"coindesk": {"page_url": "https://www.coindesk.com/page/" + str(current_page) + "/?s=Bitcoin",
+	return {
+		"coindesk": {
+			"page_url": "https://www.coindesk.com/page/" + str(current_page) + "/?s=Bitcoin",
 			"item_XPATH": '//div[@class="post-info"]', # XPATH for the search result item container
 			"url_XPATH": "./h3/a", # XPATH for url to full article, relative from item_XPATH
 			"date_on_page": True, # Whether it's possible to collect datetime objects from the results page
@@ -87,7 +93,8 @@ def results_config(current_page):
 			"base_url": "https://coindesk.com",
 			"results_per_page": 10,
 			"date_XPATH": './p[@class="timeauthor"]/time'}, # XPATH for article date, will look for datetime object
-		"news_bitcoin": {"page_url": "https://news.bitcoin.com/page/" + str(current_page) + "/?s=Bitcoin",
+		"news_bitcoin": {
+			"page_url": "https://news.bitcoin.com/page/" + str(current_page) + "/?s=Bitcoin",
 			"item_XPATH": '//div[@class="item-details"]',
 			"url_XPATH": "./h3/a",
 			"date_on_page": True,
@@ -100,7 +107,8 @@ def results_config(current_page):
 
 def parse_html(url):
 	"""Handles web requests and parses HTML into an lxml tree."""
-	headers = {"accept-encoding": "gzip, deflate, br",
+	headers = {
+		"accept-encoding": "gzip, deflate, br",
 		"accept-language": "en-US,en;q=0.8",
 		"upgrade-insecure-requests": "1",
 		"user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
@@ -118,15 +126,15 @@ def collect_articles(urls, source, end_date, filename):
 		tree = parse_html(url)
 		config = page_config(source, tree)
 
-		print(url)
+		reduced_config_date = dateParse(config["date"]).strftime("%Y-%m-%d")
 
-		if end_date and dateParse(config["date"]).year < int(end_date): break
-		elif end_date and int(dateParse(config["date"]).year) != int(end_date): pass
+		if end_date and dateParse(reduced_config_date) < dateParse(end_date): break
+		elif end_date and dateParse(reduced_config_date) != dateParse(end_date): pass
 		else:
-			print("FILENAME:",filename)
-			csv_writer = csv.writer(open(filename, "a"))
-			print("PATH:",os.path.dirname(os.getcwd()) + "/data/" + filename)
-			csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/data/" + filename, "a"))
+			# csv_writer = csv.writer(open(filename, "a"))
+			print("PATH:",os.path.dirname(os.getcwd()) + "/../data/" + filename)
+			# csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/data/" + filename, "a"))
+			csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/../data/" + filename, "a"))
 			csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
 
 def get_article_urls(source, end_date):
@@ -141,9 +149,11 @@ def get_article_urls(source, end_date):
 		items = tree.xpath(config[source]["item_XPATH"])
 
 		for item in items:
+			print(config[source]["date_on_page"])
 			if config[source]["date_on_page"] and config[source]["date_ordered"] and end_date:
-				date = dateParse(item.xpath(config[source]["date_XPATH"])[0].get("datetime"))
-				if date.year < int(end_date): out_of_range = True
+				date = (dateParse(item.xpath(config[source]["date_XPATH"])[0].get("datetime"))).strftime("%Y-%m-%d")
+
+				if dateParse(date) <= dateParse(end_date): out_of_range = True
 
 			url = item.xpath(config[source]["url_XPATH"])[0].get("href")
 
@@ -161,12 +171,11 @@ def get_article_urls(source, end_date):
 		urls = []
 
 def scrape_headlines(end_date):
-	for source in ["coindesk", "news_bitcoin"]:
-		get_article_urls(source, end_date)
-		#process = multiprocessing.Process(target=get_article_urls, args=(source, end_date))
-		#process.start()
+	# TODO: Make the end_date parameter optional
+	for source in ["news_bitcoin", "coindesk"]:
+		process = multiprocessing.Process(target=get_article_urls, args=(source, end_date))
+		process.start()
 
-scrape_headlines(2018)
 
 ### Fetching and Caching ###
 
@@ -179,7 +188,7 @@ def cache_data(data, path_to_file):
 def fetch_data(path, preprocessor):
 	"""Fetches updated datasets or reads from the cache if the last fetch was
 	   performed under 24hrs ago."""
-	
+
 	# Blockchain network attributes
 	if path.split("/")[-1] == "blockchain_network_data.csv":
 		print("Checking most recently cached version of Blockchain data...")
@@ -208,8 +217,8 @@ def fetch_data(path, preprocessor):
 
 		# TODO: Fix this block, potentially scrap the corresponding else bc it makes no sense anymore
 		# Maybe pull the 24 hr check bc that also doesn't really make sense
-		if (not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path) or 
-					  (int(time.time()) - os.path.getmtime(coindesk_path)) > 86400 or 
+		if (not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path) or
+					  (int(time.time()) - os.path.getmtime(coindesk_path)) > 86400 or
 					  (int(time.time()) - os.path.getmtime(btc_news_path)) > 86400):
 
 			print("\tUpdating datasets")
@@ -233,10 +242,11 @@ def fetch_data(path, preprocessor):
 				coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
 				btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
 				return (coindesk_headlines, btc_news_headlines)
-			
+
 		else: # Read from CSV
-			print("\tValid data set found in cache...")
-			print("\tReading...")
+			print("\tPulling datasets from cache")
 			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
 			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
 			return (coindesk_headlines, btc_news_headlines)
+
+scrape_headlines("2018-01-20")
