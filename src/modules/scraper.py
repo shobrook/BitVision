@@ -1,5 +1,6 @@
 ### Setup ###
 
+
 import multiprocessing
 import re
 import requests
@@ -22,7 +23,7 @@ importlib.reload(sys)
 
 
 def fetch_blockchain_data():
-	"""Fetches datasets related to the Blockchain network and Bitcoin price."""
+	"""Fetches datasets related to Blockchain network activity."""
 
 	# Loads network-based datasets
 	CONF_TIME = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
@@ -38,9 +39,6 @@ def fetch_blockchain_data():
 	TOTAL_BTC = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/TOTBC.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
 	TXN_FEES = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
 
-	# Loads Bitstamp's OHLCV dataset
-	PRICES = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-
 	# Assigns column names
 	CONF_TIME.columns, BLOCK_SIZE.columns = ["Date", "Conf. Time"], ["Date", "Block Size"]
 	TXN_COST.columns, DIFFICULTY.columns = ["Date", "TXN Cost"], ["Date", "Difficulty"]
@@ -49,9 +47,11 @@ def fetch_blockchain_data():
 	BLOCK_TXN.columns, UNIQUE_ADDR.columns = ["Date", "TXNs per Block"], ["Date", "Unique Addresses"]
 	TOTAL_BTC.columns, TXN_FEES.columns = ["Date", "Total BTC"], ["Date", "TXN Fees"]
 
-	NETWORK_DATA = [CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RATE, MARKET_CAP, MINERS_REV, BLOCK_TXN, UNIQUE_ADDR, TOTAL_BTC, TXN_FEES]
+	return [CONF_TIME, BLOCK_SIZE, TXN_COST, DIFFICULTY, TXN_COUNT, HASH_RATE, MARKET_CAP, MINERS_REV, BLOCK_TXN, UNIQUE_ADDR, TOTAL_BTC, TXN_FEES]
 
-	return (PRICES, NETWORK_DATA)
+def fetch_price_data():
+	"""Fetches Bitstamp's OHLCV dataset."""
+	return pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
 
 
 ### News Headlines ###
@@ -66,18 +66,16 @@ def page_config(source, tree):
 	if source == "news_bitcoin":
 		try: config = {
 				"title": tree.xpath('//h1[@class="entry-title"]')[0].text,
-				"date": tree.xpath('//meta[@property="article:published_time"]')[0].get("content")
+				"date": dateParse(tree.xpath('//meta[@property="article:published_time"]')[0].get("content")).strftime("%Y-%m-%d")
 			}
 		except: config = {"title": "N/A", "date": "N/A"}
 	elif source == "coindesk":
 		try: config = {
 				"title": tree.xpath('//h3[@class="article-top-title"]')[0].text,
-				"date": ((tree.xpath('//span[@class="article-container-left-timestamp"]/text()'))[1]).strip("\n")
+				"date": dateParse(((tree.xpath('//span[@class="article-container-left-timestamp"]/text()'))[1]).strip("\n")).strftime("%Y-%m-%d")
 			}
 		except: config = {"title": "N/A", "date": "N/A"}
 	else: config = {"title": "N/A", "date": "N/A"}
-
-	print(config)
 
 	return config
 
@@ -126,14 +124,10 @@ def collect_articles(urls, source, end_date, filename):
 		tree = parse_html(url)
 		config = page_config(source, tree)
 
-		reduced_config_date = dateParse(config["date"]).strftime("%Y-%m-%d")
+		print(url)
 
-		if end_date and dateParse(reduced_config_date) < dateParse(end_date): break
-		elif end_date and dateParse(reduced_config_date) != dateParse(end_date): pass
+		if end_date and dateParse(config["date"]) < dateParse(end_date): break
 		else:
-			# csv_writer = csv.writer(open(filename, "a"))
-			print("PATH:",os.path.dirname(os.getcwd()) + "/../data/" + filename)
-			# csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/data/" + filename, "a"))
 			csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/../data/" + filename, "a"))
 			csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
 
@@ -149,7 +143,6 @@ def get_article_urls(source, end_date):
 		items = tree.xpath(config[source]["item_XPATH"])
 
 		for item in items:
-			print(config[source]["date_on_page"])
 			if config[source]["date_on_page"] and config[source]["date_ordered"] and end_date:
 				date = (dateParse(item.xpath(config[source]["date_XPATH"])[0].get("datetime"))).strftime("%Y-%m-%d")
 
@@ -185,68 +178,57 @@ def cache_data(data, path_to_file):
 	print("Caching data...")
 	data.to_csv(path_to_file, sep=',',index = False)
 
-def fetch_data(path, preprocessor):
+def fetch_data(path):
 	"""Fetches updated datasets or reads from the cache if the last fetch was
 	   performed under 24hrs ago."""
 
-	# Blockchain network attributes
-	if path.split("/")[-1] == "blockchain_network_data.csv":
-		print("Checking most recently cached version of Blockchain data...")
+	# Blockchain data
+	if path.split("/")[-1] == "blockchain_data.csv":
+		# If data doesn't exist or last modification time was > 24hrs ago, fetch updated data
+		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400:
+			print("\tUpdating Blockchain data")
 
-		# If data doesn't exist or last modification time was more than 24hrs ago, fetch updated data
-		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400 :
-			print("\tUpdating datasets...")
-
-			prices, network_data = fetch_blockchain_data()
-			processed_data = preprocessor(prices, network_data)
-			cache_data(processed_data, path)
-
-			return processed_data
-
+			return fetch_blockchain_data() # TODO: Save data to cache
 		# Otherwise pull dataset from the cache
 		else:
-			print("\tPulling datasets from cache...")
-			return pd.read_csv(path, sep=",")
+			print("\tPulling Blockchain data from cache")
 
+			return pd.read_csv(path, sep=",")
+	# Bitcoin OHLCV data
+	elif path.split("/")[-1] == "price_data.csv":
+		if not os.path.isfile(path) or (int(time.time() - os.path.getmtime(path)) > 86400):
+			print("\tUpdating OHLCV data")
+
+			return fetch_price_data() # TODO: Save data to cache
+		else:
+			print("\tPulling OHLCV data from cache")
+			
+			return pd.read_csv(path, sep=",")
 	# Bitcoin news headlines
 	else:
-		print("Checking most recently cached version of news headline data...")
-
 		coindesk_path = path + "coindesk_headlines.csv"
 		btc_news_path = path + "news_bitcoin_headlines.csv"
 
-		# TODO: Fix this block, potentially scrap the corresponding else bc it makes no sense anymore
-		# Maybe pull the 24 hr check bc that also doesn't really make sense
-		if (not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path) or
-					  (int(time.time()) - os.path.getmtime(coindesk_path)) > 86400 or
-					  (int(time.time()) - os.path.getmtime(btc_news_path)) > 86400):
+		# Corrupt dataset
+		if not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path):
+			if os.path.isfile(btc_news_path): os.remove(btc_news_path)
+			if os.path.isfile(coindesk_path): os.remove(coindesk_path)
 
-			print("\tUpdating datasets")
+			print("\tRescraping headline data")
 
-			# If one of the headline data files is missing, delete the other and repopulate
-			if not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path):
-				if not os.path.isfile(btc_news_path):
-					os.remove(btc_news_path)
-				if not os.path.isfile(coindesk_path):
-					os.remove(coindesk_path)
+			scrape_headlines("2013-01-01")
 
-				#Scrape all headlines due to corrupt data set
+			# TODO: Wait until scrape_headlines() call is finished before returning dataframes
 
-				scrape_headlines()
-				coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
-				btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
-				return (coindesk_headlines, btc_news_headlines)
+			return (pd.read_csv(coindesk_path, sep=","), pd.read_csv(btc_news_path, sep=","))
+		elif ((int(time.time()) - os.path.getmtime(coindesk_path)) > 86400 or 
+			(int(time.time()) - os.path.getmtime(btc_news_path)) > 86400):
+			print("\tUpdating headline data")
 
-			else: # TODO: SCRAPE ONLY UPDATED HEADLINES
-				scrape_headlines()
-				coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
-				btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
-				return (coindesk_headlines, btc_news_headlines)
+			# TODO: Convert os.path.getmtime(path) into %Y-%m-%d format, call scrape_headlines(mtime_date), then concatenate both CSVs together
 
-		else: # Read from CSV
-			print("\tPulling datasets from cache")
-			coindesk_headlines = pd.read_csv(coindesk_path, sep=",")
-			btc_news_headlines = pd.read_csv(btc_news_path, sep=",")
-			return (coindesk_headlines, btc_news_headlines)
+		# Pull dataset from cache
+		else:
+			print("\tPulling headline data from cache")
 
-scrape_headlines("2018-01-20")
+			return (pd.read_csv(coindesk_path, sep=","), pd.read_csv(btc_news_path, sep=","))
