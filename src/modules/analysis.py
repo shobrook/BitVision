@@ -25,7 +25,7 @@ def plot_corr_matrix(dataset):
 	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0,
 	            square=True, linewidths=.5, cbar_kws={"shrink": .5})
 
-	plt.savefig(parent_dir_path + "/img/corr_matrix.png", bbox_inches='tight')
+	plt.savefig(parent_dir_path + "/img/correlation_matrix.png", bbox_inches='tight')
 
 def increment_counter():
 	global counter
@@ -60,11 +60,11 @@ def plot_cnf_matrix(y_pred, y_test):
 
 	#Save the image in the current directory
 	if counter == 0:
-		filename = "/img/conf_matrix_log_regression.png"
+		filename = "/img/log_reg_confusion_matrix.png"
 	elif counter == 1:
-		filename = "/img/conf_matrix_rand_forest.png"
+		filename = "/img/rand_forest_confusion_matrix.png"
 	else:
-		filename = "/img/conf_matrix_svc.png"
+		filename = "/img/svc_confusion_matrix.png"
 
 	plt.savefig(parent_dir_path + filename, bbox_inches='tight')
 	increment_counter()
