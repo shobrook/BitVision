@@ -1,6 +1,7 @@
 ### Setup ###
 
 
+import preprocessing
 import multiprocessing
 import re
 import requests
@@ -77,6 +78,8 @@ def page_config(source, tree):
 		except: config = {"title": "N/A", "date": "N/A"}
 	else: config = {"title": "N/A", "date": "N/A"}
 
+	print(config)
+
 	return config
 
 def results_config(current_page):
@@ -124,12 +127,14 @@ def collect_articles(urls, source, end_date, filename):
 		tree = parse_html(url)
 		config = page_config(source, tree)
 
-		print(url)
-
-		if end_date and dateParse(config["date"]) < dateParse(end_date): break
-		else:
-			csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/../data/" + filename, "a"))
-			csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
+		try:
+			if end_date and dateParse(config["date"]) < dateParse(end_date): break
+			else:
+				csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/../data/" + filename, "a"))
+				csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
+		except:
+			print("\nEXCEPTION OCCURED\n")
+			pass
 
 def get_article_urls(source, end_date):
 	"""Main function."""
@@ -166,17 +171,14 @@ def get_article_urls(source, end_date):
 def scrape_headlines(end_date):
 	# TODO: Make the end_date parameter optional
 	for source in ["news_bitcoin", "coindesk"]:
-		process = multiprocessing.Process(target=get_article_urls, args=(source, end_date))
-		process.start()
+		get_article_urls(source, end_date)
+		#process = multiprocessing.Process(target=get_article_urls, args=(source, end_date))
+		#process.start()
+	return 0
 
 
 ### Fetching and Caching ###
 
-
-def cache_data(data, path_to_file):
-	"""Caches data to path_to_file"""
-	print("Caching data...")
-	data.to_csv(path_to_file, sep=',',index = False)
 
 def fetch_data(path):
 	"""Fetches updated datasets or reads from the cache if the last fetch was
@@ -188,7 +190,11 @@ def fetch_data(path):
 		if not os.path.isfile(path) or (int(time.time()) - os.path.getmtime(path)) > 86400:
 			print("\tUpdating Blockchain data")
 
-			return fetch_blockchain_data() # TODO: Save data to cache
+			blockchain_data = fetch_blockchain_data()
+			merged = preprocessing.merge_datasets(blockchain_data[0], blockchain_data[1:])
+			merged.to_csv(path, sep=',',index = False)
+
+			return blockchain_data
 		# Otherwise pull dataset from the cache
 		else:
 			print("\tPulling Blockchain data from cache")
@@ -199,7 +205,10 @@ def fetch_data(path):
 		if not os.path.isfile(path) or (int(time.time() - os.path.getmtime(path)) > 86400):
 			print("\tUpdating OHLCV data")
 
-			return fetch_price_data() # TODO: Save data to cache
+			price_data = fetch_price_data()
+			price_data.to_csv(path, sep=',',index = False)
+
+			return price_data
 		else:
 			print("\tPulling OHLCV data from cache")
 			
@@ -209,7 +218,7 @@ def fetch_data(path):
 		coindesk_path = path + "coindesk_headlines.csv"
 		btc_news_path = path + "news_bitcoin_headlines.csv"
 
-		# Corrupt dataset
+		# Corrupted dataset
 		if not os.path.isfile(btc_news_path) or not os.path.isfile(coindesk_path):
 			if os.path.isfile(btc_news_path): os.remove(btc_news_path)
 			if os.path.isfile(coindesk_path): os.remove(coindesk_path)
@@ -232,3 +241,5 @@ def fetch_data(path):
 			print("\tPulling headline data from cache")
 
 			return (pd.read_csv(coindesk_path, sep=","), pd.read_csv(btc_news_path, sep=","))
+
+scrape_headlines("2013-01-01")

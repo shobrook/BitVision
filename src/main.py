@@ -20,15 +20,18 @@ import preprocessing
 ### Data Bus ###
 
 
+print("Fetching data...")
+
 price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
-#coindesk_headlines, bitcoin_news_headlines = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/")
-
-# TODO: Fetch the scored dataset
+coindesk_headlines, bitcoin_news_headlines = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/")
+headline
 
 
 ### Preprocessing ###
 
+
+print("Preprocessing data...")
 
 data = (price_data.pipe(preprocessing.calculate_indicators)
 	.pipe(preprocessing.merge_datasets, set_b=blockchain_data)
