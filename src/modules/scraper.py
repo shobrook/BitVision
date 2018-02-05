@@ -123,6 +123,9 @@ def parse_html(url):
 
 def collect_articles(urls, source, end_date, filename):
 	"""Loops over all the URLs collected in the parent function."""
+
+	print(urls)
+
 	for url in urls:
 		tree = parse_html(url)
 		config = page_config(source, tree)
@@ -169,12 +172,16 @@ def get_article_urls(source, end_date):
 		urls = []
 
 def scrape_headlines(end_date):
-	# TODO: Make the end_date parameter optional
 	for source in ["news_bitcoin", "coindesk"]:
 		get_article_urls(source, end_date)
 		#process = multiprocessing.Process(target=get_article_urls, args=(source, end_date))
 		#process.start()
 	return 0
+
+"""
+def get_popularity(headlines):
+	# Scrapes # of tweets for each headline link
+"""
 
 
 ### Fetching and Caching ###
@@ -192,9 +199,9 @@ def fetch_data(path):
 
 			blockchain_data = fetch_blockchain_data()
 			merged = preprocessing.merge_datasets(blockchain_data[0], blockchain_data[1:])
-			merged.to_csv(path, sep=',',index = False)
+			merged.to_csv(path, sep=',', index = False)
 
-			return blockchain_data
+			return merged
 		# Otherwise pull dataset from the cache
 		else:
 			print("\tPulling Blockchain data from cache")
@@ -206,7 +213,7 @@ def fetch_data(path):
 			print("\tUpdating OHLCV data")
 
 			price_data = fetch_price_data()
-			price_data.to_csv(path, sep=',',index = False)
+			price_data.to_csv(path, sep=',', index = False)
 
 			return price_data
 		else:
@@ -241,5 +248,3 @@ def fetch_data(path):
 			print("\tPulling headline data from cache")
 
 			return (pd.read_csv(coindesk_path, sep=","), pd.read_csv(btc_news_path, sep=","))
-
-scrape_headlines("2013-01-01")

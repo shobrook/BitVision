@@ -14,36 +14,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, make_scorer
-
-def fix_outliers(dataset):
-	"""Fixes (either normalizes or removes) outliers."""
-	print("\tFixing outliers")
-
-	return dataset
-
-def balanced_split(dataset, test_size):
-	"""Randomly splits dataset into balanced training and test sets."""
-	print("\tSplitting data into *balanced* training and test sets")
-
-	groups = {str(label): group for label, group in dataset.groupby("Trend")}
-
-	min_length = min(len(groups["1.0"]), len(groups["-1.0"]))
-	groups["1.0"], groups["-1.0"] = groups["1.0"][:min_length], groups["-1.0"][:min_length]
-
-	train_set = pd.concat([groups["1.0"][0:int((1-test_size)*min_length)], groups["-1.0"][0:int((1-test_size)*min_length)]], axis=0)
-	test_set = pd.concat([groups["1.0"][int((1-test_size)*min_length):], groups["-1.0"][int((1-test_size)*min_length):]], axis=0)
-
-	return (train_set.drop(["Date", "Trend"], axis=1).values, test_set.drop(["Date", "Trend"], axis=1).values, 
-		train_set["Trend"].values, test_set["Trend"].values)
-
-def unbalanced_split(dataset, test_size):
-	"""Randomly splits dataset into unbalanced training and test sets."""
-	print("\tSplitting data into *unbalanced* training and test sets")
-
-	dataset = dataset.drop("Date", axis=1)
-	return train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=25)
 
 class Model(object):
 	def __init__(self, estimator, x_train, y_train):
@@ -130,11 +101,11 @@ class Model(object):
 	def evaluate(self):
 		"""Calculates the model's classification accuracy, sensitivity, precision,
 		   and specificity."""
-		return {"Accuracy": analysis.accuracy(self.y_pred, self.y_test),
-			"Precision": analysis.precision(self.y_pred, self.y_test),
-			"Specificity": analysis.specificity(self.y_pred, self.y_test),
-			"Sensitivity": analysis.sensitivity(analysis.specificity(self.y_pred, self.y_test))
-		}
+		
+		print("\t\t\tAccuracy: ", analysis.accuracy(self.y_pred, self.y_test))
+		print("\t\t\tPrecision: ", analysis.precision(self.y_pred, self.y_test))
+		print("\t\t\tSpecificity: ", analysis.specificity(self.y_pred, self.y_test))
+		print("\t\t\tSensitivity: ", analysis.sensitivity(analysis.specificity(self.y_pred, self.y_test)))
 
 	def get_feature_importances(self):
 		"""Returns a list of the most important features."""
