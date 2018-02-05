@@ -1,6 +1,7 @@
 import pandas as pd
 import dateutil.parser as dp
 from realtime_talib import Indicator
+from sklearn.model_selection import train_test_split
 
 def calculate_indicators(ohlcv):
 	"""Extracts technical indicators from OHLCV data."""
@@ -68,12 +69,22 @@ def calculate_indicators(ohlcv):
 
 	return ohlcv
 
+"""
+def calculate_sentiment(dataset):
+	# TODO: Check for duplicate headlines
+	# TODO: Consolidate scores for each headline into one score per date, using # of tweets to calculate a weighted average
+"""
+
 def merge_datasets(set_a, set_b):
 	"""Merges set A and set B into a single dataset, organized by date."""
-	print("\tMerging datasets")
 
-	merged = set_a
-	for attr in set_b: merged = pd.merge(merged, attr, on="Date")
+	if type(set_b) == list:
+		merged = set_a
+		for attr in set_b: merged = pd.merge(merged, attr, on="Date")
+		#for attr in set_c: merged = pd.merge(merged, attr, on="Date")
+	else:
+		print("\tMerging datasets")
+		merged = pd.merge(set_a, set_b, on="Date")
 
 	return merged
 
@@ -99,3 +110,31 @@ def calculate_labels(dataset):
 	dataset = dataset.drop(dataset.index[0])
 
 	return dataset
+
+def fix_outliers(dataset):
+	"""Fixes (either normalizes or removes) outliers."""
+	print("\tFixing outliers")
+
+	return dataset
+
+def balanced_split(dataset, test_size):
+	"""Randomly splits dataset into balanced training and test sets."""
+	print("\tSplitting data into *balanced* training and test sets")
+
+	groups = {str(label): group for label, group in dataset.groupby("Trend")}
+
+	min_length = min(len(groups["1.0"]), len(groups["-1.0"]))
+	groups["1.0"], groups["-1.0"] = groups["1.0"][:min_length], groups["-1.0"][:min_length]
+
+	train_set = pd.concat([groups["1.0"][0:int((1-test_size)*min_length)], groups["-1.0"][0:int((1-test_size)*min_length)]], axis=0)
+	test_set = pd.concat([groups["1.0"][int((1-test_size)*min_length):], groups["-1.0"][int((1-test_size)*min_length):]], axis=0)
+
+	return (train_set.drop(["Date", "Trend"], axis=1).values, test_set.drop(["Date", "Trend"], axis=1).values, 
+		train_set["Trend"].values, test_set["Trend"].values)
+
+def unbalanced_split(dataset, test_size):
+	"""Randomly splits dataset into unbalanced training and test sets."""
+	print("\tSplitting data into *unbalanced* training and test sets")
+
+	dataset = dataset.drop("Date", axis=1)
+	return train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=25)
