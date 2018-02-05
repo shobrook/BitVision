@@ -13,49 +13,59 @@ import scraper
 import analysis
 import training
 import pandas as pd
-import preprocessing
+import preprocessing as ppc
 #import sentiment
 
 
 ### Data Bus ###
 
 
-print("Fetching data...")
+print("Fetching data")
 
 price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
-coindesk_headlines, bitcoin_news_headlines = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/")
-headline
+#coindesk_headlines, bitcoin_news_headlines = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/")
+#coindesk_headlines = 
 
 
 ### Preprocessing ###
 
 
-print("Preprocessing data...")
+print("Preprocessing")
 
-data = (price_data.pipe(preprocessing.calculate_indicators)
-	.pipe(preprocessing.merge_datasets, set_b=blockchain_data)
-	.pipe(preprocessing.fix_null_vals)
-	.pipe(preprocessing.calculate_labels)
+data = (price_data.pipe(ppc.calculate_indicators)
+	.pipe(ppc.merge_datasets, set_b=blockchain_data)
+	.pipe(ppc.fix_null_vals)
+	.pipe(ppc.calculate_labels)
 )
 
+"""
+x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
+	.pipe(ppc.merge_datasets, set_b=blockchain_data, set_c=(coindesk_headlines.pipe(scraper.get_popularity)
+		.pipe(ppc.calculate_sentiment)))
+	.pipe(ppc.fix_null_vals)
+	.pipe(ppc.calculate_labels)
+	.pipe(ppc.fix_outliers)
+	.pipe(ppc.unbalanced_split, test_size=.2)
+)
+"""
 
 ### Analysis ###
 
 
-print("Analyzing features...")
+#print("Analyzing features...")
 
 #print(data.describe())
-analysis.plot_corr_matrix(data)
+#analysis.plot_corr_matrix(data)
 
 
-### Training ###
+### Training and Testing ###
 
 
-print("Fitting models...")
+print("Fitting models")
 
 # Generate training and testing data
-x_train, x_test, y_train, y_test = (data.pipe(training.fix_outliers).pipe(training.unbalanced_split, test_size=.2))
+x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.unbalanced_split, test_size=.2))
 
 # Logistic Regression
 log_reg = training.Model(estimator="LogisticRegression", x_train=x_train, y_train=y_train)
@@ -73,22 +83,28 @@ svc.test(x_test, y_test)
 ### Evaluation ###
 
 
-print("Evaluating models...")
+print("Evaluating")
 
 # Logistic Regression
 print("\tLogistic Regression Estimator")
 log_reg.plot_cnf_matrix()
-print("\t\tCross Validation: ", json.dumps(log_reg.cross_validate(x_train, y_train), indent=25))
-print("\t\tEvaluation: ", json.dumps(log_reg.evaluate(), indent=25))
+print("\t\tCross Validation Results:")
+log_reg.cross_validate(x_train, y_train)
+print("\t\tTest Results:")
+log_reg.evaluate()
 
 # Random Forest
 print("\tRandom Forest Classifier")
 rand_forest.plot_cnf_matrix()
-print("\t\tCross Validation: ", json.dumps(rand_forest.cross_validate(x_train, y_train), indent=25))
-print("\t\tEvaluation: ", json.dumps(rand_forest.evaluate(), indent=25))
+print("\t\tCross Validation Results:")
+rand_forest.cross_validate(x_train, y_train)
+print("\t\tTest Results:")
+rand_forest.evaluate()
 
 # Support Vector Classifier
 print("\tSupport Vector Classifier")
 svc.plot_cnf_matrix()
-print("\t\tCross Validation: ", json.dumps(log_reg.cross_validate(x_train, y_train), indent=25))
-print("\t\tEvaluation: ", json.dumps(svc.evaluate(), indent=25))
+print("\t\tCross Validation Results:")
+log_reg.cross_validate(x_train, y_train)
+print("\t\tTest Results:")
+svc.evaluate()

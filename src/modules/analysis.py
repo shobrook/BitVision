@@ -90,7 +90,7 @@ def sensitivity(specificity):
 
 def display_scores(scores):
 	"""Displays cross-validation scores, the mean, and standard deviation"""
-	return {#"Scores": list(scores),
-		"Mean": scores.mean(),
-		"Standard Deviation": scores.std()
-	}
+	
+	#print("\t\t\tScores: ", list(scores))
+	print("\t\t\tMean: ", scores.mean())
+	print("\t\t\tStandard Deviation: ", scores.std())
