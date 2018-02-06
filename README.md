@@ -16,8 +16,7 @@ We collect historical OHLCV data from Bitstamp, transactional data from Blockcha
 
 **Blockchain-Related Data**
 
-
-[Closest thing to fundamental analysis. The hypothesis is that...]
+(Talk about how this is the closest thing to fundamental analysis)
 
 | Feature|  Description	|
 | --- | --- |
