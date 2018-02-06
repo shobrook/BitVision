@@ -107,6 +107,7 @@ class Model(object):
 		print("\t\t\tSpecificity: ", analysis.specificity(self.y_pred, self.y_test))
 		print("\t\t\tSensitivity: ", analysis.sensitivity(analysis.specificity(self.y_pred, self.y_test)))
 
-	def get_feature_importances(self):
+	def print_feature_importances(self, data):
 		"""Returns a list of the most important features."""
-		return self.model.feature_importances_
+		for feat, importance in zip(data.drop(["Date", "Trend"], axis=1).columns, self.model.feature_importances_):
+			print("\t\t\t" + feat + ": " + importance)
