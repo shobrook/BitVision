@@ -10,18 +10,14 @@ BitVision
 
 Three machine learning models are trained and evaluated: a logistic regressor, random forest classifier, and support vector classifier. Experimental results suggest a **55-60% prediction accuracy** for the direction of next-day price change.
 
-<br />
-
-![BitVision Pipeline](img/flowchart.png "BitVision Pipeline")
-
-
 ## Features
 
-Daily historical OHLCV data from Bitstamp, transactional data from Blockchain.info, and news headlines from Coindesk are collected and used to derive the following features.
+We collect historical OHLCV data from Bitstamp, transactional data from Blockchain.info, and news headlines from Coindesk, starting from 2013, and derive the following features.
 
 **Blockchain-Related Data**
 
-The selection of these features was inspired by [price prediction research](https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf?_ga=2.213991569.764097240.1515916169-1482452711.1513173539) from Stanford University, which claimed a 98.7% classification accuracy for daily price movements using only Bitcoin network and market data.
+
+[Closest thing to fundamental analysis. The hypothesis is that...]
 
 | Feature|  Description	|
 | --- | --- |
@@ -37,11 +33,11 @@ The selection of these features was inspired by [price prediction research](http
 | Transaction Fees | Total value of all transaction fees paid to miners. |
 | Transactions per Day | Total number of unique Bitcoin transactions per day. |
 
-However, their research methods involved models that were trained and evaluated on imbalanced data, and cross-validation was never performed, so it's likely the results are misleading.
+The selection of these features was inspired by [price prediction research](https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf?_ga=2.213991569.764097240.1515916169-1482452711.1513173539) from Stanford University, which claims a 98.7% classification accuracy for daily price movements using only Bitcoin network and market data. However, their research methods involves models that are trained and evaluated on imbalanced data, and cross-validation is never performed, so it's likely the results are misleading.
 
 **Technical Indicators**
 
-The following indicators were selected to provide insight into price momentum, volatility, volume, potential trends, and potential buy/sell signals.
+Technical indicators typically eliminate noise in price data and may improve an algorithm's ability to learn price patterns, if any exist. These particular indicators are selected to provide insight into price momentum, volatility, volume, potential trends, and potential buy/sell signals.
 
 | Feature|  Description	|
 | --- | --- |
@@ -55,6 +51,33 @@ The following indicators were selected to provide insight into price momentum, v
 | On-Balance Volume | OBV(t) = OBV(t - 1) +/- Volume(t) |
 | Triple Exponential Moving Average | (EMA(EMA(EMA(Close(t)))))/(EMA(EMA(EMA(Close(t - 1))))) |
 
+According to the Random Walk Hypothesis, the future price of a publicly traded asset is not statistically dependent on past prices, and thus technical analysis cannot be leveraged reliably for price prediction. However, many traders still apply technical analysis to their trading strategies, and a relationship may exist between buy/sell signals from technical indicators and executed trades.
+
 **Sentiment of Bitcoin-Related News Headlines**
 
-We manually rated the sentiment of historical news headlines on a scale from -2 to 2 based on the content's perceived effect on public opinion, rather than its potential effect on price. As multiple articles could be published per day, each with different sentiment ratings, a weighted average is calculated for each day. The weights are derived from the number of tweets an article has, an indicator of the article's popularity.
+We manually rate the sentiment of historical news headlines on a scale from -2 to 2 based on the content's perceived effect on public opinion, rather than its potential effect on price. As multiple articles could be published in a day, each with different sentiment ratings, a daily weighted average is calculated. The weights are derived from the number of tweets an article has, an indicator of the article's popularity.
+
+## Method
+
+As the price of Bitcoin is generally increasing over time, we balance our feature set to ensure that the classification accuracy can be benchmarked against a random coin toss. A multitude of feature selection and scaling algorithms are then applied before training the learning models. We determine each model's optimal hyperparameter values using Scikit-learn's GridSearchCV package and a custom scoring function.
+
+<br />
+
+![BitVision Pipeline](img/flowchart.png)
+
+## Results
+
+(See confusion matrices in img/)
+
+## Contributing
+
+To test the system, clone the repo and run: `python3 main.py`. To make a contribution, create a new branch: `$ git checkout -b [name_of_your_new_branch]`.
+
+
+Some potential directions of this research:
+* Understanding which features have the most predictive power using the Granger Causality test
+* Exploring other feature engineering and dimensionality reduction techniques 
+* Testing some potential features:
+	* Since most Bitcoin traders are probably 12 yrs old, there may be a correlation between price change and predictions made by popular Bitcoin forecasting websites
+	* Bitcoin Core's Github activity is another possibility
+* If the prediction accuracy reaches 60%+, we may build an automated trading algorithm
