@@ -8,7 +8,7 @@ BitVision
 **The goal of this project is to predict daily Bitcoin price movements using machine learning.** Unlike other approaches we've seen, our feature set is comprehensive and includes technical indicators, blockchain-related data (hash rate, miner's revenue, etc.), and sentiment ratings of Bitcoin-related news articles.
 
 
-Three machine learning models are trained and evaluated: a logistic regressor, random forest classifier, and support vector classifier. Experimental results suggest a **55-60% prediction accuracy** for the direction of next-day price change.
+Four machine learning models are trained and evaluated: logistic regression, random forest classifier, support vector machine, and gradient boosting machine. Experimental results suggest a **55-60% prediction accuracy** for the direction of next-day price change.
 
 ## Features
 
