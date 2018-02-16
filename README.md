@@ -40,15 +40,15 @@ Technical indicators typically eliminate noise in price data and may improve an 
 
 | Feature|  Description	|
 | --- | --- |
-| Rate of Change Ratio | (Close(t) / Close(t - n)) x 100 |
-| Momentum | Close(t) - Close(t - n) |
-| Average Directional Index | Sum((+DI - (-DI))/(+DI + (-DI)))/n |
-| Williams %R | (High - Close)/(High - Low) x 100 |
-| Relative Strength Index | Avg(PriceUp)/(Avg(PriceUp) + Avg(PriceDown)) x 100 |
-| Moving Average Convergence Divergence | (EMA_1(t) - EMA_2(t)) - EMA_osc(t) |
-| Average True Range | ATR(t) = ((n - 1) x ATR(t - 1) + max(Abs(High - Low), Abs(High - Close(t - 1)), Abs(Low - Close(t - 1))) |
-| On-Balance Volume | OBV(t) = OBV(t - 1) +/- Volume(t) |
-| Triple Exponential Moving Average | (EMA(EMA(EMA(Close(t)))))/(EMA(EMA(EMA(Close(t - 1))))) |
+| Rate of Change Ratio | $\frac{Close(t)}{Close(t - n)} \cdot 100$ |
+| Momentum | $Close(t) - Close(t - n)$ |
+| Average Directional Index | $\frac{\Sigma\frac{DI - (-DI)}{DI + (-DI)}}{n}$ |
+| Williams %R | $\frac{High - Close}{High - Low} \cdot 100$ |
+| Relative Strength Index | $\frac{Avg(PriceUp)}{Avg(PriceUp) + Avg(PriceDown)} \cdot 100$ |
+| Moving Average Convergence Divergence | $(EMA_1(t) - EMA_2(t)) - EMA_osc(t)$ |
+| Average True Range | $ATR(t) = ((n - 1) \cdot ATR(t - 1) + max(Abs(High - Low), Abs(High - Close(t - 1)), Abs(Low - Close(t - 1)))$ |
+| On-Balance Volume | $OBV(t) = OBV(t - 1) \pm Volume(t)$ |
+| Triple Exponential Moving Average | $(EMA(EMA(EMA(Close(t)))))/(EMA(EMA(EMA(Close(t - 1)))))$ |
 
 According to the Random Walk Hypothesis, the future price of a publicly traded asset is not statistically dependent on past prices, and thus technical analysis cannot be leveraged reliably for price prediction. However, many traders still apply technical analysis to their trading strategies, and a relationship may exist between buy/sell signals from technical indicators and executed trades.
 
@@ -75,7 +75,7 @@ To test the system, clone the repo and run: `python3 main.py`. To make a contrib
 
 Some potential directions of this research:
 * Understanding which features have the most predictive power using the Granger Causality test
-* Exploring other feature engineering and dimensionality reduction techniques 
+* Exploring other feature engineering and dimensionality reduction techniques
 * Testing some potential features:
 	* Since most Bitcoin traders are probably 12 yrs old, there may be a correlation between price change and predictions made by popular Bitcoin forecasting websites
 	* Bitcoin Core's Github activity is another possibility
