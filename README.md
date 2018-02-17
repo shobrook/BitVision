@@ -32,7 +32,7 @@ We collect historical OHLCV data from Bitstamp, transactional data from Blockcha
 | Transaction Fees | Total value of all transaction fees paid to miners. |
 | Transactions per Day | Total number of unique Bitcoin transactions per day. |
 
-The selection of these features was inspired by [price prediction research](https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf?_ga=2.213991569.764097240.1515916169-1482452711.1513173539) from Stanford University, which claims a 98.7% classification accuracy for daily price movements using only Bitcoin network and market data. However, their research methods involves models that are trained and evaluated on imbalanced data, and cross-validation is never performed, so it's likely the results are misleading.
+The selection of these features was inspired by [price prediction research](https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf?_ga=2.213991569.764097240.1515916169-1482452711.1513173539) from Stanford University, which claims a 98.7% classification accuracy for the direction of daily price movements using only Bitcoin network and market data. However, their research methods involves models that are trained and evaluated on imbalanced data, and cross-validation is never performed, so it's likely the results are misleading.
 
 **Technical Indicators**
 
@@ -40,15 +40,15 @@ Technical indicators typically eliminate noise in price data and may improve an 
 
 | Feature|  Description	|
 | --- | --- |
-| Rate of Change Ratio | (Close(t) / Close(t - n)) x 100 |
-| Momentum | Close(t) - Close(t - n) |
-| Average Directional Index | Sum((+DI - (-DI))/(+DI + (-DI)))/n |
-| Williams %R | (High - Close)/(High - Low) x 100 |
-| Relative Strength Index | Avg(PriceUp)/(Avg(PriceUp) + Avg(PriceDown)) x 100 |
-| Moving Average Convergence Divergence | (EMA_1(t) - EMA_2(t)) - EMA_osc(t) |
-| Average True Range | ATR(t) = ((n - 1) x ATR(t - 1) + max(Abs(High - Low), Abs(High - Close(t - 1)), Abs(Low - Close(t - 1))) |
-| On-Balance Volume | OBV(t) = OBV(t - 1) +/- Volume(t) |
-| Triple Exponential Moving Average | (EMA(EMA(EMA(Close(t)))))/(EMA(EMA(EMA(Close(t - 1))))) |
+| Rate of Change Ratio | $\frac{Close(t)}{Close(t - n)} \cdot 100$ |
+| Momentum | $Close(t) - Close(t - n)$ |
+| Average Directional Index | $\frac{\Sigma\frac{DI - (-DI)}{DI + (-DI)}}{n}$ |
+| Williams %R | $\frac{High - Close}{High - Low} \cdot 100$ |
+| Relative Strength Index | $\frac{Avg(PriceUp)}{Avg(PriceUp) + Avg(PriceDown)} \cdot 100$ |
+| Moving Average Convergence Divergence | $(EMA_1(t) - EMA_2(t)) - EMA_osc(t)$ |
+| Average True Range | $ATR(t) = ((n - 1) \cdot ATR(t - 1) + max(Abs(High - Low), Abs(High - Close(t - 1)), Abs(Low - Close(t - 1)))$ |
+| On-Balance Volume | $OBV(t) = OBV(t - 1) \pm Volume(t)$ |
+| Triple Exponential Moving Average | $(EMA(EMA(EMA(Close(t)))))/(EMA(EMA(EMA(Close(t - 1)))))$ |
 
 According to the Random Walk Hypothesis, the future price of a publicly traded asset is not statistically dependent on past prices, and thus technical analysis cannot be leveraged reliably for price prediction. However, many traders still apply technical analysis to their trading strategies, and a relationship may exist between buy/sell signals from technical indicators and executed trades.
 
@@ -68,15 +68,23 @@ As the price of Bitcoin is generally increasing over time, we balance our featur
 
 (See confusion matrices in img/)
 
-## Contributing
+## How to Run
 
-To test the system, clone the repo and run: `python3 main.py`. To make a contribution, create a new branch: `$ git checkout -b [name_of_your_new_branch]`.
+1. Clone the repo
+2. Run: `python3 main.py`
+
+## How to Contribute
+
+1. Clone the repo
+2. Create a new branch: `$ git checkout https://github.com/shobrook/BitVision -b [name_for_new_branch]`.
+3. Make changes and test
+5. Pull Request with comprehensive description of changes
 
 
 Some potential directions of this research:
 * Understanding which features have the most predictive power using the Granger Causality test
-* Exploring other feature engineering and dimensionality reduction techniques 
+* Exploring other feature engineering and dimensionality reduction techniques
 * Testing some potential features:
-	* Since most Bitcoin traders are probably 12 yrs old, there may be a correlation between price change and predictions made by popular Bitcoin forecasting websites
+	* Since most Bitcoin traders are probably 13 yrs old, there may be a correlation between price change and predictions made by popular Bitcoin forecasting websites
 	* Bitcoin Core's Github activity is another possibility
 * If the prediction accuracy reaches 60%+, we may build an automated trading algorithm
