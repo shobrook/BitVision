@@ -69,11 +69,32 @@ def calculate_indicators(ohlcv):
 
 	return ohlcv
 
-"""
-def calculate_sentiment(dataset):
-	# TODO: Check for duplicate headlines
-	# TODO: Consolidate scores for each headline into one score per date, using # of tweets to calculate a weighted average
-"""
+def calculate_sentiment(headlines):
+	sentiment_scores = {}
+
+	numer, denom = 0, 0
+	for index, row in headlines.iterrows():
+		currDate = row["Date"]
+		if currDate in sentiment_scores: pass
+		else:
+			numer = currRow["Sentiment"] * currRow["Tweets"]
+			denom = currRow["Tweets"]
+			for index, nextRow in headlines.iloc[index:].iterrows():
+				if nextRow["Date"] == currDate:
+					numer += nextRow["Sentiment"] * nextRow["Tweets"]
+					denom += nextRow["Tweets"]
+				else: break
+			sentiment_scores[currDate] = numer / denom
+			numer, denom = 0, 0
+
+	date_range = pd.date_range(headlines.iloc[0]["Date"], headlines.iloc[-1]["Date"])
+	sentiment_scores_df = pd.Series(sentiment_scores)
+	sentiment_scores_df.index = pd.DatetimeIndex(sentiment_scores_df.index)
+	sentiment_scores_df = sentiment_scores_df.reindex(date_range, fill_value=0)
+
+	sentiment_scores_df.columns = ["Date", "Sentiment"]
+
+	return sentiment_scores_df
 
 def merge_datasets(set_a, set_b):
 	"""Merges set A and set B into a single dataset, organized by date."""
