@@ -14,7 +14,6 @@ import analysis
 import training
 import pandas as pd
 import preprocessing as ppc
-#import sentiment
 
 
 ### Data Bus ###
@@ -24,8 +23,6 @@ print("Fetching data")
 
 price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
-#coindesk_headlines, bitcoin_news_headlines = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/")
-#coindesk_headlines = 
 
 
 ### Preprocessing ###
@@ -50,10 +47,11 @@ x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
 )
 """
 
+
 ### Analysis ###
 
 
-#print("Analyzing features...")
+#print("Analyzing features")
 
 #print(data.describe())
 #analysis.plot_corr_matrix(data)
@@ -75,9 +73,15 @@ log_reg.test(x_test, y_test)
 rand_forest = training.Model(estimator="RandomForest", x_train=x_train, y_train=y_train)
 rand_forest.test(x_test, y_test)
 
-# Support Vector Classifier
+"""
+# Support Vector Machine
 svc = training.Model(estimator="SVC", x_train=x_train, y_train=y_train)
 svc.test(x_test, y_test)
+"""
+
+# Gradient Boosting Machine
+gbc = training.Model(estimator="GBC", x_train=x_train, y_train=y_train)
+gbc.test(x_test, y_test)
 
 
 ### Evaluation ###
@@ -100,7 +104,9 @@ print("\t\tCross Validation Results:")
 rand_forest.cross_validate(x_train, y_train)
 print("\t\tTest Results:")
 rand_forest.evaluate()
+#rand_forest.print_feature_importances(data)
 
+"""
 # Support Vector Classifier
 print("\tSupport Vector Classifier")
 svc.plot_cnf_matrix()
@@ -108,3 +114,12 @@ print("\t\tCross Validation Results:")
 log_reg.cross_validate(x_train, y_train)
 print("\t\tTest Results:")
 svc.evaluate()
+"""
+
+# Gradient Boosting
+print("\tGradient Boosting Classifier")
+gbc.plot_cnf_matrix()
+print("\t\tCross Validation Results:")
+gbc.cross_validate(x_train, y_train)
+print("\t\tTest Results:")
+gbc.evaluate()
