@@ -187,7 +187,7 @@ def get_popularity(headlines):
 		for index, row in headlines.iterrows():
 			try:
 				driver.get(row["URL"])
-				time.sleep(1)
+				time.sleep(2)
 
 				twitter_containers = driver.find_elements_by_xpath("//li[@class='twitter']")
 				count = twitter_containers[0].find_elements_by_xpath("//span[@class='count']")
@@ -200,7 +200,7 @@ def get_popularity(headlines):
 				else:
 					counts.append(int(count[0].text))
 			except:
-				counts.append(None)
+				counts.append(1) # Should it be None?
 
 		headlines["Tweets"] = (pd.Series(counts)).values
 
