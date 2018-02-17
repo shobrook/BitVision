@@ -73,13 +73,13 @@ def calculate_sentiment(headlines):
 	sentiment_scores = {}
 
 	numer, denom = 0, 0
-	for index, row in headlines.iterrows():
-		currDate = row["Date"]
+	for index, currRow in headlines.iterrows():
+		currDate = currRow["Date"]
 		if currDate in sentiment_scores: pass
 		else:
 			numer = currRow["Sentiment"] * currRow["Tweets"]
 			denom = currRow["Tweets"]
-			for index, nextRow in headlines.iloc[index:].iterrows():
+			for index, nextRow in headlines.iloc[index + 1:].iterrows():
 				if nextRow["Date"] == currDate:
 					numer += nextRow["Sentiment"] * nextRow["Tweets"]
 					denom += nextRow["Tweets"]
