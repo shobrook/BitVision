@@ -16,6 +16,7 @@ import os
 import time
 import sys
 import importlib
+from selenium import webdriver
 
 importlib.reload(sys)
 
@@ -178,10 +179,32 @@ def scrape_headlines(end_date):
 		#process.start()
 	return 0
 
-"""
 def get_popularity(headlines):
-	# Scrapes # of tweets for each headline link
-"""
+	if "Tweets" not in headlines.columns:
+		counts = []
+		driver = webdriver.Chrome()
+
+		for index, row in headlines.iterrows():
+			try:
+				driver.get(row["URL"])
+				time.sleep(1)
+
+				twitter_containers = driver.find_elements_by_xpath("//li[@class='twitter']")
+				count = twitter_containers[0].find_elements_by_xpath("//span[@class='count']")
+
+				print(row["URL"])
+				print(count[0].text)
+
+				if count[0].text == "":
+					counts.append(0)
+				else:
+					counts.append(int(count[0].text))
+			except:
+				counts.append(None)
+
+		headlines["Tweets"] = (pd.Series(counts)).values
+
+	return headlines
 
 
 ### Fetching and Caching ###
