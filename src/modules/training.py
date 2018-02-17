@@ -1,9 +1,3 @@
-"""
-TODO:
-	- Randomize the balanced train/test splitting (try applying scikit-learn's test/train splitter)
-	- Create a custom GridSearchCV scoring function
-"""
-
 import analysis
 import pandas as pd
 from sklearn.svm import SVC
@@ -14,6 +8,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score, make_scorer
 
 class Model(object):
@@ -21,6 +16,7 @@ class Model(object):
 		if estimator == "LogisticRegression": self.model = self.fit_log_reg(x_train, y_train)
 		elif estimator == "RandomForest": self.model = self.fit_rand_forest(x_train, y_train)
 		elif estimator == "SVC": self.model = self.fit_svc(x_train, y_train)
+		elif estimator == "GBC": self.model = self.fit_grad_boost(x_train, y_train)
 		else: print("\tError: Invalid model type")
 
 	def fit_log_reg(self, x_train, y_train):
@@ -56,8 +52,8 @@ class Model(object):
 		self.scaler = StandardScaler()
 		self.scaler.fit(x_train)
 
-		score_function = make_scorer(score_func=accuracy_score, greater_is_better=True)
-		grid = {"n_estimators": [10, 100, 150, 200, 250, 300, 400, 500, 525, 550, 575, 1000]}
+		#score_function = make_scorer(score_func=accuracy_score, greater_is_better=True)
+		#grid = {"n_estimators": [10, 100, 150, 200, 250, 300, 400, 500, 525, 550, 575, 1000]}
 
 		rand_forest = RandomForestClassifier(n_estimators=1000, max_features=None)
 		#optimized_rand_forest = GridSearchCV(estimator=rand_forest, param_grid=grid, scoring=score_function, n_jobs=4)
@@ -82,6 +78,18 @@ class Model(object):
 		svc.fit(self.scaler.transform(x_train), y_train)
 
 		return svc
+
+	def fit_grad_boost(self, x_train, y_train):
+		print("\tFitting a gradient boosting classifier")
+
+		self.scaler = StandardScaler()
+		self.scaler.fit(x_train)
+
+		gdc = GradientBoostingClassifier(n_estimators=1000)
+
+		gdc.fit(self.scaler.transform(x_train), y_train)
+
+		return gdc
 
 	def test(self, x_test, y_test):
 		"""Tests the model on the test set."""
