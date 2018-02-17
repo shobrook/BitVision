@@ -23,6 +23,7 @@ print("Fetching data")
 
 price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
+#coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
 
 
 ### Preprocessing ###
