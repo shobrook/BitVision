@@ -32,7 +32,7 @@ We collect historical OHLCV data from Bitstamp, transactional data from Blockcha
 | Transaction Fees | Total value of all transaction fees paid to miners. |
 | Transactions per Day | Total number of unique Bitcoin transactions per day. |
 
-The selection of these features was inspired by [price prediction research](https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf?_ga=2.213991569.764097240.1515916169-1482452711.1513173539) from Stanford University, which claims a 98.7% classification accuracy for daily price movements using only Bitcoin network and market data. However, their research methods involves models that are trained and evaluated on imbalanced data, and cross-validation is never performed, so it's likely the results are misleading.
+The selection of these features was inspired by [price prediction research](https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf?_ga=2.213991569.764097240.1515916169-1482452711.1513173539) from Stanford University, which claims a 98.7% classification accuracy for the direction of daily price movements using only Bitcoin network and market data. However, their research methods involves models that are trained and evaluated on imbalanced data, and cross-validation is never performed, so it's likely the results are misleading.
 
 **Technical Indicators**
 
@@ -68,15 +68,23 @@ As the price of Bitcoin is generally increasing over time, we balance our featur
 
 (See confusion matrices in img/)
 
-## Contributing
+## How to Run
 
-To test the system, clone the repo and run: `python3 main.py`. To make a contribution, create a new branch: `$ git checkout -b [name_of_your_new_branch]`.
+1. Clone the repo
+2. Run: `python3 main.py`
+
+## How to Contribute
+
+1. Clone the repo
+2. Create a new branch: `$ git checkout https://github.com/shobrook/BitVision -b [name_for_new_branch]`.
+3. Make changes and test
+5. Pull Request with comprehensive description of changes
 
 
 Some potential directions of this research:
 * Understanding which features have the most predictive power using the Granger Causality test
 * Exploring other feature engineering and dimensionality reduction techniques
 * Testing some potential features:
-	* Since most Bitcoin traders are probably 12 yrs old, there may be a correlation between price change and predictions made by popular Bitcoin forecasting websites
+	* Since most Bitcoin traders are probably 13 yrs old, there may be a correlation between price change and predictions made by popular Bitcoin forecasting websites
 	* Bitcoin Core's Github activity is another possibility
 * If the prediction accuracy reaches 60%+, we may build an automated trading algorithm
