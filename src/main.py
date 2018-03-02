@@ -1,4 +1,4 @@
-### Setup ###
+# Setup #
 
 
 import sys
@@ -16,55 +16,56 @@ import pandas as pd
 import preprocessing as ppc
 
 
-### Data Bus ###
+# Data Bus #
 
 
 print("Fetching data")
 
 price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
-#coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
+# coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
 
 
-### Preprocessing ###
+# Preprocessing #
 
 
 print("Preprocessing")
 
 data = (price_data.pipe(ppc.calculate_indicators)
-	.pipe(ppc.merge_datasets, set_b=blockchain_data)
-	.pipe(ppc.fix_null_vals)
-	.pipe(ppc.calculate_labels)
-)
+        .pipe(ppc.merge_datasets, set_b=blockchain_data)
+        .pipe(ppc.fix_null_vals)
+        .pipe(ppc.binarize_labels)
+        )
 
 """
 x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
 	.pipe(ppc.merge_datasets, set_b=blockchain_data, set_c=(coindesk_headlines.pipe(scraper.get_popularity)
 		.pipe(ppc.calculate_sentiment)))
 	.pipe(ppc.fix_null_vals)
-	.pipe(ppc.calculate_labels)
+	.pipe(ppc.binarize_labels)
 	.pipe(ppc.fix_outliers)
 	.pipe(ppc.unbalanced_split, test_size=.2)
 )
 """
 
 
-### Analysis ###
+# Analysis #
 
 
-#print("Analyzing features")
+# print("Analyzing features")
 
-#print(data.describe())
-#analysis.plot_corr_matrix(data)
+# print(data.describe())
+# analysis.plot_corr_matrix(data)
 
 
-### Training and Testing ###
+# Training and Testing #
 
 
 print("Fitting models")
 
 # Generate training and testing data
-x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.unbalanced_split, test_size=.2))
+x_train, x_test, y_train, y_test = (
+    data.pipe(ppc.fix_outliers).pipe(ppc.unbalanced_split, test_size=.2))
 
 # Logistic Regression
 log_reg = training.Model(estimator="LogisticRegression", x_train=x_train, y_train=y_train)
@@ -85,7 +86,7 @@ gbc = training.Model(estimator="GBC", x_train=x_train, y_train=y_train)
 gbc.test(x_test, y_test)
 
 
-### Evaluation ###
+# Evaluation #
 
 
 print("Evaluating")
@@ -105,7 +106,7 @@ print("\t\tCross Validation Results:")
 rand_forest.cross_validate(x_train, y_train)
 print("\t\tTest Results:")
 rand_forest.evaluate()
-#rand_forest.print_feature_importances(data)
+# rand_forest.print_feature_importances(data)
 
 """
 # Support Vector Classifier
