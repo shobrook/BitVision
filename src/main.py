@@ -64,8 +64,8 @@ x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
 print("Fitting models")
 
 # Generate training and testing data
-x_train, x_test, y_train, y_test = (
-    data.pipe(ppc.fix_outliers).pipe(ppc.unbalanced_split, test_size=.2))
+# x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.unbalanced_split, test_size=.2))
+x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.balanced_split, test_size=.2))
 
 # Logistic Regression
 log_reg = training.Model(estimator="LogisticRegression", x_train=x_train, y_train=y_train)
