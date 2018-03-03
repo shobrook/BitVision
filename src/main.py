@@ -33,8 +33,9 @@ print("Preprocessing")
 
 data = (price_data.pipe(ppc.calculate_indicators)
         .pipe(ppc.merge_datasets, set_b=blockchain_data)
-        .pipe(ppc.fix_null_vals)
         .pipe(ppc.binarize_labels)
+        .pipe(ppc.wavelet_transform)
+        .pipe(ppc.fix_null_vals)
         )
 
 """
