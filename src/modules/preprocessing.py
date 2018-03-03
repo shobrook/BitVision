@@ -157,24 +157,37 @@ def fix_outliers(dataset):
 
     return dataset
 
-
 def balanced_split(dataset, test_size):
-    """Randomly splits dataset into balanced training and test sets."""
-    print("\tSplitting data into *balanced* training and test sets")
+	"""Randomly splits dataset into balanced training and test sets."""
+	print("\tSplitting data into *balanced* training and test sets")
 
-    groups = {str(label): group for label, group in dataset.groupby("Trend")}
+	# Use sklearn.train_test_split to split original dataset into x_train, y_train, x_test, y_test numpy arrays
 
-    min_length = min(len(groups["1.0"]), len(groups["-1.0"]))
-    groups["1.0"], groups["-1.0"] = groups["1.0"][:min_length], groups["-1.0"][:min_length]
+	x_train, x_test, y_train, y_test = train_test_split(dataset.drop(["Date", "Trend"], axis=1).values,
+	                                                    dataset["Trend"].values,
+	                                                    test_size=test_size,
+	                                                    random_state=25)
 
-    train_set = pd.concat([groups["1.0"][0:int((1-test_size)*min_length)],
-                           groups["-1.0"][0:int((1-test_size)*min_length)]], axis=0)
-    test_set = pd.concat([groups["1.0"][int((1-test_size)*min_length):],
-                          groups["-1.0"][int((1-test_size)*min_length):]], axis=0)
+	# Combine x_train and y_train (numpy arrays) into a single dataframe, with column labels
+	train = pd.DataFrame(data=x_train, columns=dataset.columns[1:-1])
+	train["Trend"] = pd.Series(y_train)
 
-    return (train_set.drop(["Date", "Trend"], axis=1).values, test_set.drop(["Date", "Trend"], axis=1).values,
-            train_set["Trend"].values, test_set["Trend"].values)
+	# Do the same for x_test and y__test
+	test = pd.DataFrame(data=x_test, columns=dataset.columns[1:-1])
+	test["Trend"] = pd.Series(y_test)
 
+	# Apply random undersampling to both data frames
+	train_downsampled = random_undersampling(train)
+	test_downsampled = random_undersampling(test)
+
+	# return tuple of numpy arrays (4)   (x_train, y_train["Trend"], x_test, y_test["Trend"])
+
+	train_trend = train_downsampled["Trend"].values
+	test_trend = test_downsampled["Trend"].values
+	train_trimmed = train_downsampled.drop(["Trend"], axis=1).values
+	test_trimmed = test_downsampled.drop(["Trend"], axis=1).values
+
+    return train_trimmed, test_trimmed, train_trend, test_trend
 
 def unbalanced_split(dataset, test_size):
     """Randomly splits dataset into unbalanced training and test sets."""
