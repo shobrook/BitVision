@@ -40,9 +40,6 @@ def fetch_blockchain_data():
     UNIQUE_ADDR = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/NADDU.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
     TOTAL_BTC = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/TOTBC.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
     TXN_FEES = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=",")
-    AVG_EXCH_RATE = pd.read_csv("https://apiv2.bitcoinaverage.com/indices/global/history/BTCUSD?period=daily&?format=json", sep=",")
-
-    pprint(AVG_EXCH_RATE)
 
 
     # Assigns column names
