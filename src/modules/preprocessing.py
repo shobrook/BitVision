@@ -61,55 +61,43 @@ def calculate_indicators(ohlcv):
 	ema12 = ((Indicator(temp_ohlcv, "MA", 12, 1)).getHistorical(lag=1))[::-1]
 
 	# Append indicators to the input datasets
-	min_length = min(len(mom1), len(mom3), len(adx14), len(adx20), len(willr), len(
-		rsi6), len(rsi12), len(macd), len(macd_signal), len(macd_hist), len(ema6), len(ema12))
+	min_length = min(len(mom1), len(mom3), len(adx14), len(adx20), len(willr), len(rsi6), len(rsi12), len(macd), len(macd_signal), len(macd_hist), len(ema6), len(ema12))
 	ohlcv = ohlcv[:min_length].drop(["Open", "High", "Low"], axis=1)
 
-	ohlcv["MOM (1)"], ohlcv["MOM (3)"], ohlcv["ADX (14)"] = (pd.Series(mom1[:min_length])
-	                                                         ).values, (pd.Series(mom3[:min_length])).values, (
-		                                                        pd.Series(adx14[:min_length])).values
-	ohlcv["ADX (20)"], ohlcv["WILLR"], ohlcv["RSI (6)"] = (pd.Series(adx20[:min_length])
-	                                                       ).values, (pd.Series(willr[:min_length])).values, (
-		                                                      pd.Series(rsi6[:min_length])).values
-	ohlcv["RSI (12)"], ohlcv["MACD"], ohlcv["MACD (Signal)"] = (pd.Series(rsi12[:min_length])
-	                                                            ).values, (pd.Series(macd[:min_length])).values, (
-		                                                           pd.Series(macd_signal[:min_length])).values
-	ohlcv["MACD (Historical)"], ohlcv["EMA (6)"], ohlcv["EMA (12)"] = (pd.Series(macd_hist[:min_length])
-	                                                                   ).values, (
-		                                                                  pd.Series(ema6[:min_length])).values, (
-		                                                                  pd.Series(ema12[:min_length])).values
+	ohlcv["MOM (1)"], ohlcv["MOM (3)"], ohlcv["ADX (14)"] = (pd.Series(mom1[:min_length])).values, (pd.Series(mom3[:min_length])).values, (pd.Series(adx14[:min_length])).values
+	ohlcv["ADX (20)"], ohlcv["WILLR"], ohlcv["RSI (6)"] = (pd.Series(adx20[:min_length])).values, (pd.Series(willr[:min_length])).values, (pd.Series(rsi6[:min_length])).values
+	ohlcv["RSI (12)"], ohlcv["MACD"], ohlcv["MACD (Signal)"] = (pd.Series(rsi12[:min_length])).values, (pd.Series(macd[:min_length])).values, (pd.Series(macd_signal[:min_length])).values
+	ohlcv["MACD (Historical)"], ohlcv["EMA (6)"], ohlcv["EMA (12)"] = (pd.Series(macd_hist[:min_length])).values, (pd.Series(ema6[:min_length])).values, (pd.Series(ema12[:min_length])).values
 
 	return ohlcv
 
 
 def calculate_sentiment(headlines):
-	sentiment_scores = {}
+    sentiment_scores = {}
 
-	numer, denom = 0, 0
-	for index, currRow in headlines.iterrows():
-		currDate = currRow["Date"]
-		if currDate in sentiment_scores:
-			pass
-		else:
-			numer = currRow["Sentiment"] * currRow["Tweets"]
-			denom = currRow["Tweets"]
-			for index, nextRow in headlines.iloc[index + 1:].iterrows():
-				if nextRow["Date"] == currDate:
-					numer += nextRow["Sentiment"] * nextRow["Tweets"]
-					denom += nextRow["Tweets"]
-				else:
-					break
-			sentiment_scores[currDate] = numer / denom
-			numer, denom = 0, 0
+    numer, denom = 0.0, 0.0
+    for index, currRow in headlines.iterrows():
+        print(currRow)
+        currDate = currRow["Date"]
+        if currDate in sentiment_scores:
+            print("currDate in sentiment_scores")
+            pass
+        else:
+            numer = currRow["Sentiment"] * currRow["Tweets"]
+            denom = currRow["Tweets"]
+            for index, nextRow in headlines.iloc[index + 1:].iterrows():
+                if nextRow["Date"] == currDate:
+                    numer += (nextRow["Sentiment"] * nextRow["Tweets"])
+                    denom += nextRow["Tweets"]
+                else:
+                    break
 
-	date_range = pd.date_range(headlines.iloc[0]["Date"], headlines.iloc[-1]["Date"])
-	sentiment_scores_df = pd.Series(sentiment_scores)
-	sentiment_scores_df.index = pd.DatetimeIndex(sentiment_scores_df.index)
-	sentiment_scores_df = sentiment_scores_df.reindex(date_range, fill_value=0)
+            sentiment_scores[currDate] = numer / denom
+            numer, denom = 0.0, 0.0
 
-	sentiment_scores_df.columns = ["Date", "Sentiment"]
+    sentiment_scores_df = pd.DataFrame(list(sentiment_scores.items()), columns=["Date", "Sentiment"])
 
-	return sentiment_scores_df
+    return sentiment_scores_df
 
 
 def merge_datasets(set_a, set_b):
