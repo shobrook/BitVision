@@ -1,4 +1,3 @@
-import pywt
 import numpy as np
 import pandas as pd
 import dateutil.parser as dp
@@ -18,8 +17,7 @@ def calculate_indicators(ohlcv):
 	temp_ohlcv = ohlcv.copy()
 
 	# Converts ISO 8601 timestamps to UNIX
-	unix_times = [int((dp.parse(temp_ohlcv.iloc[index]["Date"])).strftime("%s"))
-	              for index in range(temp_ohlcv.shape[0])]
+	unix_times = [int((dp.parse(temp_ohlcv.iloc[index]["Date"])).strftime("%s")) for index in range(temp_ohlcv.shape[0])]
 	temp_ohlcv["Date"] = (pd.Series(unix_times)).values
 
 	# Converts column headers to lowercase and sorts rows in chronological order
@@ -217,37 +215,7 @@ def balanced_split(dataset, test_size):
 	train_trimmed = train_downsampled.drop(["Trend"], axis=1).values
 	test_trimmed = test_downsampled.drop(["Trend"], axis=1).values
 
-  return train_trimmed, test_trimmed, train_trend, test_trend
-
-def discrete_haar_function(series):
-    transformed = [0.0] * len(series)
-    length = len(series) >> 1
-    while True:
-        for i in range(0, length):
-            summation = series[i * 2] + series[i * 2 + 1]
-            difference = series[i * 2] - series[i * 2 + 1]
-            transformed[i] = summation
-            transformed[length + i] = difference
-        if length == 1:
-            return transformed
-
-        series = transformed[:length << 1]
-        length >>= 1
-
-def wavelet_transform(dataset):
-    transformed = dataset[["Date", "Trend"]].copy() # Also copy "Sentiment" once we have it
-
-    for header in dataset.drop(["Date", "Trend"], axis=1).columns:
-        (ca, cd) = pywt.dwt(dataset[header].tolist(), "haar")
-
-        cat = pywt.threshold(ca, np.std(ca)/2, mode="soft")
-        cdt = pywt.threshold(cd, np.std(cd)/2, mode="soft")
-
-        transformed[header] = pd.Series(pywt.idwt(cat, cdt, "haar"))
-
-    print(transformed)
-
-    return transformed
+	return train_trimmed, test_trimmed, train_trend, test_trend
 
 def unbalanced_split(dataset, test_size):
 	"""Randomly splits dataset into unbalanced training and test sets."""
