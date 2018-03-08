@@ -23,7 +23,7 @@ print("Fetching data")
 
 price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
-# coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
+#coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
 
 
 # Preprocessing #
@@ -34,7 +34,6 @@ print("Preprocessing")
 data = (price_data.pipe(ppc.calculate_indicators)
         .pipe(ppc.merge_datasets, set_b=blockchain_data)
         .pipe(ppc.binarize_labels)
-        .pipe(ppc.wavelet_transform)
         .pipe(ppc.fix_null_vals)
         )
 
