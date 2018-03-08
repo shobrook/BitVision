@@ -18,8 +18,7 @@ def calculate_indicators(ohlcv):
 	temp_ohlcv = ohlcv.copy()
 
 	# Converts ISO 8601 timestamps to UNIX
-	unix_times = [int((dp.parse(temp_ohlcv.iloc[index]["Date"])).strftime("%s"))
-	              for index in range(temp_ohlcv.shape[0])]
+	unix_times = [int((dp.parse(temp_ohlcv.iloc[index]["Date"])).strftime("%s")) for index in range(temp_ohlcv.shape[0])]
 	temp_ohlcv["Date"] = (pd.Series(unix_times)).values
 
 	# Converts column headers to lowercase and sorts rows in chronological order
