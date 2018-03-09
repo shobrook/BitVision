@@ -35,6 +35,7 @@ data = (price_data.pipe(ppc.calculate_indicators)
         .pipe(ppc.merge_datasets, set_b=blockchain_data)
         .pipe(ppc.binarize_labels)
         .pipe(ppc.fix_null_vals)
+        .pipe(ppc.power_transform)
         )
 
 """
