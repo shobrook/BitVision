@@ -1,4 +1,6 @@
 import numpy as np
+from numpy import log, sqrt
+from scipy.stats import boxcox
 import pandas as pd
 import dateutil.parser as dp
 from realtime_talib import Indicator
@@ -214,3 +216,10 @@ def unbalanced_split(dataset, test_size):
 	                          random_state=25)
 	# pprint(output)
 	return output
+
+def power_transform(dataset):
+	for header in dataset.drop(["Date", "Trend"], axis=1).columns:
+		if not (dataset[header] < 0).any() and not (dataset[header] == 0).any():
+			dataset[header] = boxcox(dataset[header])[0]
+
+	return dataset
