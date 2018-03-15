@@ -1,19 +1,22 @@
-# Setup #
+# Globals #
 
 
 import sys
 
 sys.path.insert(0, "modules")
 
+# Project modules
+from training import Model
+import preprocessing as ppc
+import analysis
+import scraper
+
+# System modules
 import os.path
 import json
 import csv
 import time
-import scraper
-import analysis
-import training
 import pandas as pd
-import preprocessing as ppc
 
 
 # Data Bus #
@@ -53,10 +56,10 @@ x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
 # Analysis #
 
 
-# print("Analyzing features")
+print("Analyzing features")
 
-# print(data.describe())
-# analysis.plot_corr_matrix(data)
+#print(data.describe())
+analysis.plot_corr_matrix(data) # Demonstrate that there is little interdependence between features
 
 
 # Training and Testing #
@@ -65,26 +68,12 @@ x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
 print("Fitting models")
 
 # Generate training and testing data
-# x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.unbalanced_split, test_size=.2))
 x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.balanced_split, test_size=.2))
 
-# Logistic Regression
-log_reg = training.Model(estimator="LogisticRegression", x_train=x_train, y_train=y_train)
-log_reg.test(x_test, y_test)
-
-# Random Forest
-rand_forest = training.Model(estimator="RandomForest", x_train=x_train, y_train=y_train)
-rand_forest.test(x_test, y_test)
-
-"""
-# Support Vector Machine
-svc = training.Model(estimator="SVC", x_train=x_train, y_train=y_train)
-svc.test(x_test, y_test)
-"""
-
-# Gradient Boosting Machine
-gbc = training.Model(estimator="GBC", x_train=x_train, y_train=y_train)
-gbc.test(x_test, y_test)
+# Fit models
+log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
+rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
+grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
 
 
 # Evaluation #
@@ -95,34 +84,24 @@ print("Evaluating")
 # Logistic Regression
 print("\tLogistic Regression Estimator")
 log_reg.plot_cnf_matrix()
-print("\t\tCross Validation Results:")
-log_reg.cross_validate(x_train, y_train)
 print("\t\tTest Results:")
 log_reg.evaluate()
+print("\t\tCross Validation Results:")
+log_reg.cross_validate()
 
 # Random Forest
 print("\tRandom Forest Classifier")
 rand_forest.plot_cnf_matrix()
-print("\t\tCross Validation Results:")
-rand_forest.cross_validate(x_train, y_train)
 print("\t\tTest Results:")
 rand_forest.evaluate()
-# rand_forest.print_feature_importances(data)
-
-"""
-# Support Vector Classifier
-print("\tSupport Vector Classifier")
-svc.plot_cnf_matrix()
 print("\t\tCross Validation Results:")
-log_reg.cross_validate(x_train, y_train)
-print("\t\tTest Results:")
-svc.evaluate()
-"""
+rand_forest.cross_validate()
+#rand_forest.print_feature_importances(data)
 
 # Gradient Boosting
 print("\tGradient Boosting Classifier")
-gbc.plot_cnf_matrix()
-print("\t\tCross Validation Results:")
-gbc.cross_validate(x_train, y_train)
+grad_boost.plot_cnf_matrix()
 print("\t\tTest Results:")
-gbc.evaluate()
+grad_boost.evaluate()
+print("\t\tCross Validation Results:")
+grad_boost.cross_validate()
