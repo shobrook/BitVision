@@ -82,7 +82,6 @@ def calculate_sentiment(headlines):
         print(currRow)
         currDate = currRow["Date"]
         if currDate in sentiment_scores:
-            print("currDate in sentiment_scores")
             pass
         else:
             numer = currRow["Sentiment"] * currRow["Tweets"]
@@ -198,12 +197,12 @@ def balanced_split(dataset, test_size):
 	train_downsampled = random_undersampling(train)
 	test_downsampled = random_undersampling(test)
 
-	# return tuple of numpy arrays (4)   (x_train, y_train["Trend"], x_test, y_test["Trend"])
-
 	train_trend = train_downsampled["Trend"].values
 	test_trend = test_downsampled["Trend"].values
 	train_trimmed = train_downsampled.drop(["Trend"], axis=1).values
 	test_trimmed = test_downsampled.drop(["Trend"], axis=1).values
+
+	# TODO: Set a random seed so results can be reproduced
 
 	return train_trimmed, test_trimmed, train_trend, test_trend
 
@@ -214,10 +213,14 @@ def unbalanced_split(dataset, test_size):
 	dataset = dataset.drop("Date", axis=1)
 	output = train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size,
 	                          random_state=25)
-	# pprint(output)
+
+	# TODO: Set a random seed so results can be reproduced
+
 	return output
 
 def power_transform(dataset):
+	print("\tApplying a box-cox transform to selected features")
+
 	for header in dataset.drop(["Date", "Trend"], axis=1).columns:
 		if not (dataset[header] < 0).any() and not (dataset[header] == 0).any():
 			dataset[header] = boxcox(dataset[header])[0]
