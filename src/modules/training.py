@@ -2,10 +2,8 @@ import analysis
 import pandas as pd
 from sklearn.svm import SVC
 import matplotlib.pyplot as plt
-# from sklearn import preprocessing
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
+from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
@@ -13,104 +11,138 @@ from sklearn.metrics import accuracy_score, make_scorer
 
 
 class Model(object):
-    def __init__(self, estimator, x_train, y_train):
+    # Private Methods #
+
+    def __init__(self, estimator, train_set, test_set, grid_search=False, select_features=False):
+        self.x_train, self.y_train = train_set
+        self.x_test, self.y_test = test_set
+
+        self.scaler = StandardScaler()
+        self.scaler.fit(self.x_train)
+
+        self.grid_search, self.select_features = grid_search, select_features
+
         if estimator == "LogisticRegression":
-            self.model = self.fit_log_reg(x_train, y_train)
+            self.model = self.__fit_log_reg()
         elif estimator == "RandomForest":
-            self.model = self.fit_rand_forest(x_train, y_train)
-        elif estimator == "SVC":
-            self.model = self.fit_svc(x_train, y_train)
-        elif estimator == "GBC":
-            self.model = self.fit_grad_boost(x_train, y_train)
+            self.model = self.__fit_rand_forest()
+        elif estimator == "GradientBoosting":
+            self.model = self.__fit_grad_boost()
         else:
             print("\tError: Invalid model type")
 
-    def fit_log_reg(self, x_train, y_train):
-        """Trains a Logistic Regression estimator and performs a grid search
-           to find optimal hyperparameter values."""
-        print("\tFitting a logistic regression estimator")
+        self.y_pred = self.model.predict(self.scaler.transform(self.x_test))
 
-        self.scaler = StandardScaler()
-        self.scaler.fit(x_train)
+    def __fit_log_reg(self):
+        print("\tFitting a logistic regression algorithm")
 
-        score_function = make_scorer(score_func=accuracy_score, greater_is_better=True)
-        grid = {"penalty": ["l1", "l2"],
-                "tol": [.00001, .0001, .001, .01, .1],
-                "C": [.01, .1, 1.0, 10, 100, 1000],
-                "max_iter": [100, 150, 175, 200, 300, 500]
-                }
+        if self.grid_search:
+            print("\t\tFinding optimal hyperparameter values")
 
-        log_reg = LogisticRegression()
-        # optimized_log_reg = GridSearchCV(estimator=log_reg, param_grid=grid, scoring=score_function, n_jobs=4)
-        # optimized_log_reg.fit(self.scaler.transform(x_train), y_train)
+            grid = {"penalty": ["l1", "l2"],
+                    "tol": [.00001, .0001, .001, .01, .1],
+                    "C": [.01, .1, 1.0, 10, 100, 1000],
+                    "max_iter": [100, 150, 175, 200, 300, 500]
+                    }
+            models = []
+            for p in grid["penalty"]:
+                for t in grid["tol"]:
+                    for c in grid["C"]:
+                        for i in grid["max_iter"]:
+                            log_reg = LogisticRegression(penalty=p, tol=t, C=c, max_iter=i)
+                            log_reg.fit(self.scaler.transform(self.x_train), self.y_train)
 
-        # return optimized_log_reg.best_estimator_
+                            y_pred = log_reg.predict(self.scaler.transform(self.x_test))
 
-        log_reg.fit(self.scaler.transform(x_train), y_train)
+                            models.append({"model": log_reg, "accuracy": analysis.accuracy(y_pred, self.y_test), "hyperparameters": {"penalty": p, "tol": t, "C": c, "max_iter": i}})
 
-        return log_reg
+            best_model = max(models, key=lambda model: model["accuracy"])
 
-    def fit_rand_forest(self, x_train, y_train):
-        """Trains a Random Forest classifier and performs a grid search to find
-           optimal hyperparameter values."""
-        print("\tFitting a random forest classifier")
+            hyperparam_vals = best_model["hyperparameters"]
+            print("\t\t\tPenalization norm: " + hyperparam_vals["penalty"])
+            print("\t\t\tTolerance: " + str(hyperparam_vals["tol"]))
+            print("\t\t\tRegularization: " + str(hyperparam_vals["C"]))
+            print("\t\t\tMaximum iterations: " + str(hyperparam_vals["max_iter"]))
 
-        self.scaler = StandardScaler()
-        self.scaler.fit(x_train)
+            return best_model["model"]
+        else:
+            log_reg = LogisticRegression()
+            log_reg.fit(self.scalar.transform(self.x_train), self.y_train)
 
-        # score_function = make_scorer(score_func=accuracy_score, greater_is_better=True)
-        # grid = {"n_estimators": [10, 100, 150, 200, 250, 300, 400, 500, 525, 550, 575, 1000]}
+            return log_reg
 
-        rand_forest = RandomForestClassifier(n_estimators=1000, max_features=None)
-        # optimized_rand_forest = GridSearchCV(estimator=rand_forest, param_grid=grid, scoring=score_function, n_jobs=4)
-        # optimized_rand_forest.fit(self.scaler.transform(x_train), y_train)
+    def __fit_rand_forest(self):
+        print("\tFitting a random forest algorithm")
 
-        # return optimized_rand_forest.best_estimator_
+        if self.grid_search:
+            print("\t\tFinding optimal hyperparameter values")
 
-        rand_forest.fit(self.scaler.transform(x_train), y_train)
+            grid = {"n_estimators": [250, 500, 750, 1000]}
+            models = []
+            for n in grid["n_estimators"]:
+                            rand_forest = RandomForestClassifier(n_estimators=n)
+                            rand_forest.fit(self.scaler.transform(self.x_train), self.y_train)
 
-        return rand_forest
+                            y_pred = rand_forest.predict(self.scaler.transform(self.x_test))
 
-    def fit_svc(self, x_train, y_train):
-        """Trains a Support Vector Classifier and performs a grid search to find
-           optimal hyperparameter values."""
-        print("\tFitting a support vector classifier")
+                            models.append({"model": rand_forest, "accuracy": analysis.accuracy(y_pred, self.y_test), "hyperparameters": {"n_estimators": n}})
 
-        self.scaler = StandardScaler()
-        self.scaler.fit(x_train)
+            best_model = max(models, key=lambda model: model["accuracy"])
 
-        svc = SVC(kernel="rbf")
+            print("\t\t\tNumber of estimators: " + str(best_model["hyperparameters"]["n_estimators"]))
 
-        svc.fit(self.scaler.transform(x_train), y_train)
+            return best_model["model"]
+        else:
+            rand_forest = RandomForestClassifier(n_estimators=500)
+            rand_forest.fit(self.scalar.transform(self.x_train), self.y_train)
 
-        return svc
+            return rand_forest
 
-    def fit_grad_boost(self, x_train, y_train):
-        print("\tFitting a gradient boosting classifier")
+    def __fit_grad_boost(self):
+        print("\tFitting a gradient boosting machine")
 
-        self.scaler = StandardScaler()
-        self.scaler.fit(x_train)
+        if self.grid_search:
+            print("\t\tFinding optimal hyperparameter values")
 
-        gdc = GradientBoostingClassifier(n_estimators=1000)
+            grid = {"n_estimators": [250, 500, 750, 1000],
+                    "learning_rate": [1, .1, .05, .01],
+                    "max_depth": [3, 8, 12, 15],
+                    }
+            models = []
+            for n in grid["n_estimators"]:
+                for lr in grid["learning_rate"]:
+                    for d in grid["max_depth"]:
+                            grad_boost = GradientBoostingClassifier(n_estimators=n, learning_rate=lr, max_depth=d)
+                            grad_boost.fit(self.scaler.transform(self.x_train), self.y_train)
 
-        gdc.fit(self.scaler.transform(x_train), y_train)
+                            y_pred = grad_boost.predict(self.scaler.transform(self.x_test))
 
-        return gdc
+                            models.append({"model": grad_boost, "accuracy": analysis.accuracy(y_pred, self.y_test), "hyperparameters": {"n_estimators": n, "learning_rate": lr, "max_depth": d}})
 
-    def test(self, x_test, y_test):
-        """Tests the model on the test set."""
-        print("\t\tTesting")
+            best_model = max(models, key=lambda model: model["accuracy"])
 
-        self.y_test, self.y_pred = y_test, self.model.predict(self.scaler.transform(x_test))
+            hyperparam_vals = best_model["hyperparameters"]
+            print("\t\t\tNumber of estimators: " + str(hyperparam_vals["n_estimators"]))
+            print("\t\t\tLearning rate: " + str(hyperparam_vals["learning_rate"]))
+            print("\t\t\tMax depth: " + str(hyperparam_vals["max_depth"]))
+
+            return best_model["model"]
+        else:
+            grad_boost = GradientBoostingClassifier(n_estimators=1000, max_features=None)
+            grad_boost.fit(self.scalar.transform(self.x_train), self.y_train)
+
+            return grad_boost
+
+    # Public Methods #
 
     def plot_cnf_matrix(self):
         """Plots a confusion matrix to evaluate the test results."""
         plt.figure()
         analysis.plot_cnf_matrix(self.y_pred, self.y_test)
 
-    def cross_validate(self, x_train, y_train):
+    def cross_validate(self):
         """Computes and displays K-Fold cross-validation with 5 iterations."""
-        return analysis.display_scores(cross_val_score(self.model, x_train, y_train, scoring="accuracy", cv=5))
+        analysis.display_scores(cross_val_score(self.model, self.x_train, self.y_train, scoring="accuracy", cv=5))
 
     def evaluate(self):
         """Calculates the model's classification accuracy, sensitivity, precision,
