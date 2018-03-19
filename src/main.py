@@ -1,19 +1,20 @@
 # Globals #
 
-# Project modules
 
 import sys
-import os.path
-import pandas as pd
 
-# System modules
+sys.path.insert(0, "modules")
 
+# Project modules
 from training import Model
-import preprocessing as ppc
+import preprocessing as pp
 import analysis
 import scraper
 
-sys.path.insert(0, "modules")
+# System modules
+import os.path
+import pandas as pd
+
 
 # Data Bus #
 
@@ -30,23 +31,17 @@ coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scor
 
 print("Preprocessing")
 
-data = (price_data.pipe(ppc.calculate_indicators)
-        .pipe(ppc.merge_datasets, set_b=blockchain_data)
-        .pipe(ppc.binarize_labels)
-        .pipe(ppc.fix_null_vals)
-        .pipe(ppc.power_transform)
+x_train, x_test, y_train, y_test = (
+        price_data.pipe(pp.calculate_indicators)
+        .pipe(pp.merge_datasets, set_b=blockchain_data)
+        .pipe(pp.binarize_labels)
+        .pipe(pp.fix_null_vals)
+        .pipe(pp.fix_outliers)
+        .pipe(pp.add_lag_variables, lag=3)
+        .pipe(pp.power_transform)
+        .pipe(pp.balanced_split, test_size=.2)
         )
 
-"""
-x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
-	.pipe(ppc.merge_datasets, set_b=blockchain_data, set_c=(coindesk_headlines.pipe(scraper.get_popularity)
-		.pipe(ppc.calculate_sentiment)))
-	.pipe(ppc.fix_null_vals)
-	.pipe(ppc.binarize_labels)
-	.pipe(ppc.fix_outliers)
-	.pipe(ppc.unbalanced_split, test_size=.2)
-)
-"""
 
 # Analysis #
 
@@ -54,20 +49,19 @@ x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
 print("Analyzing features")
 
 # print(data.describe())
-analysis.plot_corr_matrix(data)  # Demonstrate that there is little interdependence between features
+#analysis.plot_corr_matrix(data)
+
 
 # Training and Testing #
 
 
 print("Fitting models")
 
-# Generate training and testing data
-x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.balanced_split, test_size=.2))
-
 # Fit models
-log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
-rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
-grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
+log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=True)
+rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=True)
+grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=True)
+
 
 # Evaluation #
 
