@@ -1,3 +1,6 @@
+# Globals #
+
+
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,8 +9,20 @@ from sklearn.metrics import accuracy_score, precision_score, roc_curve
 from sklearn.metrics import confusion_matrix
 import os.path
 
-counter = 0
-parent_dir_path = os.path.dirname(os.getcwd())
+COUNTER = 0
+PARENT_DIR = os.path.dirname(os.getcwd())
+
+
+# Helpers #
+
+
+def increment_counter():
+	global COUNTER
+	COUNTER = COUNTER + 1
+
+
+# Main #
+
 
 def plot_corr_matrix(dataset):
 	"""Plots a Pearson correlation matrix between features."""
@@ -25,11 +40,8 @@ def plot_corr_matrix(dataset):
 	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0,
 	            square=True, linewidths=.5, cbar_kws={"shrink": .5})
 
-	plt.savefig(parent_dir_path + "/img/correlation_matrix.png", bbox_inches='tight')
+	plt.savefig(PARENT_DIR + "/img/correlation_matrix.png", bbox_inches='tight')
 
-def increment_counter():
-	global counter
-	counter = counter + 1
 
 def plot_cnf_matrix(y_pred, y_test):
 	"""Plots a confusion matrix."""
@@ -59,24 +71,27 @@ def plot_cnf_matrix(y_pred, y_test):
 	filename = ""
 
 	#Save the image in the current directory
-	if counter == 0:
+	if COUNTER == 0:
 		filename = "/img/log_reg_confusion_matrix.png"
-	elif counter == 1:
+	elif COUNTER == 1:
 		filename = "/img/rand_forest_confusion_matrix.png"
 	else:
 		filename = "/img/svc_confusion_matrix.png"
 
-	plt.savefig(parent_dir_path + filename, bbox_inches='tight')
+	plt.savefig(PARENT_DIR + filename, bbox_inches='tight')
 	increment_counter()
+
 
 def accuracy(y_test, y_pred):
 	"""Returns classification accuracy. Measures correct classification"""
 	return accuracy_score(y_test, y_pred)
 
+
 def precision(y_test, y_pred):
 	"""Returns positive prediction value. How good is the classifier at identifying
 	uptrends"""
 	return precision_score(y_test, y_pred)
+
 
 def specificity(y_test, y_pred):
 	"""Returns the True Negative Rate."""
@@ -84,13 +99,15 @@ def specificity(y_test, y_pred):
 
 	return float(matrix[0][1]) / float(matrix[1][1])
 
+
 def sensitivity(specificity):
 	"""Returns the True Positive Rate."""
 	return 1 - specificity
 
+
 def display_scores(scores):
 	"""Displays cross-validation scores, the mean, and standard deviation"""
-	
+
 	#print("\t\t\tScores: ", list(scores))
 	print("\t\t\tMean: ", scores.mean())
 	print("\t\t\tStandard Deviation: ", scores.std())
