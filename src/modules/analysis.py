@@ -24,6 +24,7 @@ def increment_counter():
 # Main #
 
 
+
 def plot_corr_matrix(dataset):
 	"""Plots a Pearson correlation matrix between features."""
 	print("\tGenerating correlation matrix")
@@ -37,8 +38,7 @@ def plot_corr_matrix(dataset):
 	fig, ax = plt.subplots(figsize=(7, 7))
 	cmap = sns.diverging_palette(220, 10, as_cmap=True)
 
-	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0,
-	            square=True, linewidths=.5, cbar_kws={"shrink": .5})
+	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0, square=True, linewidths=.5, cbar_kws={"shrink": .5})
 
 	plt.savefig(PARENT_DIR + "/img/correlation_matrix.png", bbox_inches='tight')
 
@@ -61,8 +61,7 @@ def plot_cnf_matrix(y_pred, y_test):
 
 	thresh = matrix.max() / 2.0
 	for i, j in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
-		plt.text(j, i, format(matrix[i, j], "d"), horizontalalignment="center",
-			color="white" if matrix[i, j] > thresh else "black")
+		plt.text(j, i, format(matrix[i, j], "d"), horizontalalignment="center", color="white" if matrix[i, j] > thresh else "black")
 
 	plt.tight_layout()
 	plt.ylabel("True Label")

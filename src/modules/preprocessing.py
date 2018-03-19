@@ -2,11 +2,13 @@
 
 
 import numpy as np
-from numpy import log, sqrt
-from scipy.stats import boxcox
 import pandas as pd
 import dateutil.parser as dp
+from itertools import islice
+from scipy.stats import boxcox
+from scipy.integrate import simps
 from realtime_talib import Indicator
+from scipy.optimize import curve_fit
 from sklearn.model_selection import train_test_split
 from sklearn.utils import resample
 from pprint import pprint
@@ -134,30 +136,31 @@ def calculate_indicators(ohlcv):
 
 
 def calculate_sentiment(headlines):
-    sentiment_scores = {}
 
-    numer, denom = 0.0, 0.0
-    for index, currRow in headlines.iterrows():
-        print(currRow)
-        currDate = currRow["Date"]
-        if currDate in sentiment_scores:
-            pass
-        else:
-            numer = currRow["Sentiment"] * currRow["Tweets"]
-            denom = currRow["Tweets"]
-            for index, nextRow in headlines.iloc[index + 1:].iterrows():
-                if nextRow["Date"] == currDate:
-                    numer += (nextRow["Sentiment"] * nextRow["Tweets"])
-                    denom += nextRow["Tweets"]
-                else:
-                    break
+	sentiment_scores = {}
 
-            sentiment_scores[currDate] = numer / denom
-            numer, denom = 0.0, 0.0
+	numer, denom = 0.0, 0.0
+	for index, currRow in headlines.iterrows():
+		print(currRow)
+		currDate = currRow["Date"]
+		if currDate in sentiment_scores:
+			pass
+		else:
+			numer = currRow["Sentiment"] * currRow["Tweets"]
+			denom = currRow["Tweets"]
+			for index, nextRow in headlines.iloc[index + 1:].iterrows():
+				if nextRow["Date"] == currDate:
+					numer += (nextRow["Sentiment"] * nextRow["Tweets"])
+					denom += nextRow["Tweets"]
+				else:
+					break
 
-    sentiment_scores_df = pd.DataFrame(list(sentiment_scores.items()), columns=["Date", "Sentiment"])
+			sentiment_scores[currDate] = numer / denom
+			numer, denom = 0.0, 0.0
 
-    return sentiment_scores_df
+	sentiment_scores_df = pd.DataFrame(list(sentiment_scores.items()), columns=["Date", "Sentiment"])
+
+	return sentiment_scores_df
 
 
 def merge_datasets(set_a, set_b):
@@ -179,7 +182,7 @@ def fix_null_vals(dataset):
 	"""Implements the Last Observation Carried Forward (LOCF) method to fill missing values."""
 	print("\tFixing null values")
 
-	if dataset.isnull().any().any() == False:
+	if not dataset.isnull().any().any():
 		return dataset
 	else:
 		return dataset.fillna(method="ffill")
@@ -236,6 +239,7 @@ def power_transform(dataset):
 	return dataset
 
 
+
 def balanced_split(dataset, test_size):
 	"""Randomly splits dataset into balanced training and test sets."""
 	print("\tSplitting data into *balanced* training and test sets")
@@ -243,9 +247,9 @@ def balanced_split(dataset, test_size):
 	# Use sklearn.train_test_split to split original dataset into x_train, y_train, x_test, y_test numpy arrays
 
 	x_train, x_test, y_train, y_test = train_test_split(dataset.drop(["Date", "Trend"], axis=1).values,
-	                                                    dataset["Trend"].values,
-	                                                    test_size=test_size,
-	                                                    random_state=25)
+														dataset["Trend"].values,
+														test_size=test_size,
+														random_state=25)
 
 	# Combine x_train and y_train (numpy arrays) into a single dataframe, with column labels
 	train = pd.DataFrame(data=x_train, columns=dataset.columns[1:-1])
@@ -274,9 +278,72 @@ def unbalanced_split(dataset, test_size):
 	print("\tSplitting data into *unbalanced* training and test sets")
 
 	dataset = dataset.drop("Date", axis=1)
-	output = train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size,
-	                          random_state=25)
+	output = train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=25)
 
 	# TODO: Set a random seed so results can be reproduced
 
 	return output
+
+
+def sliding_window(seq, n=2):
+	"""Returns a sliding window (of width n) over data from the iterable. https://stackoverflow.com/a/6822773/8740440"""
+	"s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ..."
+	it = iter(seq)
+	result = tuple(islice(it, n))
+	if len(result) == n:
+		yield result
+	for elem in it:
+		result = result[1:] + (elem,)
+		yield result
+
+
+def sliding_window_integral(avg_daily_sentiment, interval):
+	"""Takes a list of average daily sentiment scores and returns a list of definite integral estimations calculated
+	with Simpson's method. Each integral interval is determined by the `interval` variable. Shows accumulated sentiment."""
+
+	# Split into sliding window list of lists
+	sentiment_windows = sliding_window(avg_daily_sentiment, interval)
+
+	integral_simpson_est = []
+
+	# https://stackoverflow.com/a/13323861/8740440
+
+	for x in sentiment_windows:
+		# Estimate area using composite Simpson's rule. dx indicates the spacing of the data on the x-axis.
+		integral_simpson_est.append(simps(x, dx=1))
+
+	return integral_simpson_est
+
+
+def func(x, a, b, c):
+	"""https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html"""
+	return a * np.exp(-b * x) + c
+
+
+def best_fit_curve(xdata):
+	"""Takes list of sentiment scores as input and returns a function of best fit.
+	https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html"""
+
+	# Fit for the parameters a, b, c of the function func
+	popt, pcov = curve_fit(func, xdata, ydata)
+
+	# Constrain the optimization to the region of 0 <= a <= 3, 0 <= b <= 1 and 0 <= c <= 0.5:
+	popt, pcov = curve_fit(func, xdata, ydata, bounds=(0, [3., 1., 0.5]))
+
+
+def sliding_window_avg_derivative(avg_daily_sentiment, interval):
+	"""Takes list of average daily sentiment scores and returns a list of average derivatives."""
+
+	# Split into sliding window list of lists
+	sentiment_windows = sliding_window(avg_daily_sentiment, interval)
+
+	# Fit a function to each of the lists in the list.
+	best_fit_funcs = []
+	for window in sentiment_windows:
+		best_fit_funcs.append(best_fit_curve(window))
+
+	# Take derivative at each day in the interval and average them.
+	# -> Transform each function into a list of days-in-interval-many derivatives.
+	# -> Then take one average for each list in sentiment_windows.
+
+	# Return list of avg_derivatives
