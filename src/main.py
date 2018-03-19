@@ -1,17 +1,18 @@
 # Globals #
 
-import sys
-
-sys.path.insert(0, "modules")
-
 # Project modules
+
+import sys
+import os.path
+
+# System modules
+
 from training import Model
 import preprocessing as ppc
 import analysis
 import scraper
 
-# System modules
-import os.path
+sys.path.insert(0, "modules")
 
 # Data Bus #
 
@@ -46,7 +47,6 @@ x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
 )
 """
 
-
 # Analysis #
 
 
@@ -54,7 +54,6 @@ print("Analyzing features")
 
 # print(data.describe())
 analysis.plot_corr_matrix(data)  # Demonstrate that there is little interdependence between features
-
 
 # Training and Testing #
 
@@ -68,7 +67,6 @@ x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.balance
 log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
 rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
 grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
-
 
 # Evaluation #
 
