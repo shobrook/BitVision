@@ -1,3 +1,6 @@
+# Globals #
+
+
 import analysis
 import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
@@ -6,17 +9,18 @@ from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import StandardScaler
 
 
-class Model(object):
-    # Private Methods #
+# Main #
 
-    def __init__(self, estimator, train_set, test_set, grid_search=False, select_features=False):
+
+class Model(object):
+    def __init__(self, estimator, train_set, test_set, optimize=False, select_features=False):
         self.x_train, self.y_train = train_set
         self.x_test, self.y_test = test_set
 
         self.scaler = StandardScaler()
         self.scaler.fit(self.x_train)
 
-        self.grid_search, self.select_features = grid_search, select_features
+        self.optimize, self.select_features = optimize, select_features
 
         if estimator == "LogisticRegression":
             self.model = self.__fit_log_reg()
@@ -29,10 +33,14 @@ class Model(object):
 
         self.y_pred = self.model.predict(self.scaler.transform(self.x_test))
 
+
+    # Private Methods #
+
+
     def __fit_log_reg(self):
         print("\tFitting a logistic regression algorithm")
 
-        if self.grid_search:
+        if self.optimize:
             print("\t\tFinding optimal hyperparameter values")
 
             grid = {"penalty": ["l1", "l2"],
@@ -58,19 +66,20 @@ class Model(object):
             print("\t\t\tPenalization norm: " + hyperparam_vals["penalty"])
             print("\t\t\tTolerance: " + str(hyperparam_vals["tol"]))
             print("\t\t\tRegularization: " + str(hyperparam_vals["C"]))
-            print("\t\t\tMaximum iterations: " + str(hyperparam_vals["max_iter"]))
+            print("\t\t\tMax iterations: " + str(hyperparam_vals["max_iter"]))
 
             return best_model["model"]
         else:
             log_reg = LogisticRegression()
-            log_reg.fit(self.scalar.transform(self.x_train), self.y_train)
+            log_reg.fit(self.scaler.transform(self.x_train), self.y_train)
 
             return log_reg
+
 
     def __fit_rand_forest(self):
         print("\tFitting a random forest algorithm")
 
-        if self.grid_search:
+        if self.optimize:
             print("\t\tFinding optimal hyperparameter values")
 
             grid = {"n_estimators": [250, 500, 750, 1000]}
@@ -90,14 +99,15 @@ class Model(object):
             return best_model["model"]
         else:
             rand_forest = RandomForestClassifier(n_estimators=500)
-            rand_forest.fit(self.scalar.transform(self.x_train), self.y_train)
+            rand_forest.fit(self.scaler.transform(self.x_train), self.y_train)
 
             return rand_forest
+
 
     def __fit_grad_boost(self):
         print("\tFitting a gradient boosting machine")
 
-        if self.grid_search:
+        if self.optimize:
             print("\t\tFinding optimal hyperparameter values")
 
             grid = {"n_estimators": [250, 500, 750, 1000],
@@ -125,20 +135,24 @@ class Model(object):
             return best_model["model"]
         else:
             grad_boost = GradientBoostingClassifier(n_estimators=1000, max_features=None)
-            grad_boost.fit(self.scalar.transform(self.x_train), self.y_train)
+            grad_boost.fit(self.scaler.transform(self.x_train), self.y_train)
 
             return grad_boost
 
+
     # Public Methods #
+
 
     def plot_cnf_matrix(self):
         """Plots a confusion matrix to evaluate the test results."""
         plt.figure()
         analysis.plot_cnf_matrix(self.y_pred, self.y_test)
 
+
     def cross_validate(self):
         """Computes and displays K-Fold cross-validation with 5 iterations."""
         analysis.display_scores(cross_val_score(self.model, self.x_train, self.y_train, scoring="accuracy", cv=5))
+
 
     def evaluate(self):
         """Calculates the model's classification accuracy, sensitivity, precision,
@@ -147,8 +161,8 @@ class Model(object):
         print("\t\t\tAccuracy: ", analysis.accuracy(self.y_pred, self.y_test))
         print("\t\t\tPrecision: ", analysis.precision(self.y_pred, self.y_test))
         print("\t\t\tSpecificity: ", analysis.specificity(self.y_pred, self.y_test))
-        print("\t\t\tSensitivity: ", analysis.sensitivity(
-            analysis.specificity(self.y_pred, self.y_test)))
+        print("\t\t\tSensitivity: ", analysis.sensitivity(analysis.specificity(self.y_pred, self.y_test)))
+
 
     def print_feature_importances(self, data):
         """Returns a list of the most important features."""

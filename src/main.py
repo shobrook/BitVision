@@ -38,8 +38,11 @@ data = (price_data.pipe(ppc.calculate_indicators)
         .pipe(ppc.merge_datasets, set_b=blockchain_data)
         .pipe(ppc.binarize_labels)
         .pipe(ppc.fix_null_vals)
+        .pipe(ppc.fix_outliers)
+        .pipe(ppc.add_lag_variables, lag=3)
         .pipe(ppc.power_transform)
         )
+x_train, x_test, y_train, y_test = ppc.balanced_split(data, test_size=.2)
 
 """
 x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
@@ -67,13 +70,10 @@ analysis.plot_corr_matrix(data) # Demonstrate that there is little interdependen
 
 print("Fitting models")
 
-# Generate training and testing data
-x_train, x_test, y_train, y_test = (data.pipe(ppc.fix_outliers).pipe(ppc.balanced_split, test_size=.2))
-
 # Fit models
-log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
-rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
-grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), grid_search=True)
+log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=False)
+rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=False)
+grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=False)
 
 
 # Evaluation #

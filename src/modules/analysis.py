@@ -1,3 +1,6 @@
+# Globals #
+
+
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,8 +9,20 @@ from sklearn.metrics import accuracy_score, precision_score, roc_curve
 from sklearn.metrics import confusion_matrix
 import os.path
 
-counter = 0
-parent_dir_path = os.path.dirname(os.getcwd())
+COUNTER = 0
+PARENT_DIR = os.path.dirname(os.getcwd())
+
+
+# Helpers #
+
+
+def increment_counter():
+	global COUNTER
+	COUNTER = COUNTER + 1
+
+
+# Main #
+
 
 
 def plot_corr_matrix(dataset):
@@ -25,12 +40,7 @@ def plot_corr_matrix(dataset):
 
 	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0, square=True, linewidths=.5, cbar_kws={"shrink": .5})
 
-	plt.savefig(parent_dir_path + "/img/correlation_matrix.png", bbox_inches='tight')
-
-
-def increment_counter():
-	global counter
-	counter = counter + 1
+	plt.savefig(PARENT_DIR + "/img/correlation_matrix.png", bbox_inches='tight')
 
 
 def plot_cnf_matrix(y_pred, y_test):
@@ -59,15 +69,15 @@ def plot_cnf_matrix(y_pred, y_test):
 
 	filename = ""
 
-	# Save image in current directory
-	if counter == 0:
+	#Save the image in the current directory
+	if COUNTER == 0:
 		filename = "/img/log_reg_confusion_matrix.png"
-	elif counter == 1:
+	elif COUNTER == 1:
 		filename = "/img/rand_forest_confusion_matrix.png"
 	else:
 		filename = "/img/svc_confusion_matrix.png"
 
-	plt.savefig(parent_dir_path + filename, bbox_inches='tight')
+	plt.savefig(PARENT_DIR + filename, bbox_inches='tight')
 	increment_counter()
 
 
@@ -97,6 +107,6 @@ def sensitivity(specificity):
 def display_scores(scores):
 	"""Displays cross-validation scores, the mean, and standard deviation"""
 
-	# print("\t\t\tScores: ", list(scores))
+	#print("\t\t\tScores: ", list(scores))
 	print("\t\t\tMean: ", scores.mean())
 	print("\t\t\tStandard Deviation: ", scores.std())

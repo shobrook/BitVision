@@ -200,34 +200,7 @@ def scrape_headlines(end_date):
     return 0
 
 
-def get_popularity(headlines):
-    # TODO: Randomize user-agents OR figure out how to handle popups
-    if "Tweets" not in headlines.columns:
-        counts = []
-        driver = webdriver.Chrome()
-
-        for index, row in headlines.iterrows():
-            try:
-                driver.get(row["URL"])
-                time.sleep(3)
-
-                twitter_containers = driver.find_elements_by_xpath("//li[@class='twitter']")
-                count = twitter_containers[0].find_elements_by_xpath("//span[@class='count']")
-
-                if count[0].text == "":
-                    counts.append(1)
-                else:
-                    counts.append(int(count[0].text))
-            except:
-                counts.append(1)  # QUESTION: Should it be None?
-
-        headlines["Tweets"] = (pd.Series(counts)).values
-        print(counts)
-
-    return headlines
-
-
-### Fetching and Caching ###
+# Fetching and Caching #
 
 
 def fetch_data(path):
