@@ -254,12 +254,12 @@ def sliding_window_integral(avg_daily_sentiment, interval):
 	integral_simpson_est = []
 
 	# https://stackoverflow.com/a/13323861/8740440
-
 	for x in sentiment_windows:
 		# Estimate area using composite Simpson's rule. dx indicates the spacing of the data on the x-axis.
 		integral_simpson_est.append(simps(x, dx=1))
 
-	return integral_simpson_est
+	dead_values = list([None] * interval)
+	return dead_values.append(integral_simpson_est)
 
 
 def func(x, a, b, c):
