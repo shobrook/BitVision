@@ -1,6 +1,5 @@
 # Globals #
 
-
 import sys
 
 sys.path.insert(0, "modules")
@@ -13,11 +12,6 @@ import scraper
 
 # System modules
 import os.path
-import json
-import csv
-import time
-import pandas as pd
-
 
 # Data Bus #
 
@@ -26,7 +20,7 @@ print("Fetching data")
 
 price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
-#coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
+# coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
 
 
 # Preprocessing #
@@ -58,8 +52,8 @@ x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
 
 print("Analyzing features")
 
-#print(data.describe())
-analysis.plot_corr_matrix(data) # Demonstrate that there is little interdependence between features
+# print(data.describe())
+analysis.plot_corr_matrix(data)  # Demonstrate that there is little interdependence between features
 
 
 # Training and Testing #
@@ -96,7 +90,7 @@ print("\t\tTest Results:")
 rand_forest.evaluate()
 print("\t\tCross Validation Results:")
 rand_forest.cross_validate()
-#rand_forest.print_feature_importances(data)
+# rand_forest.print_feature_importances(data)
 
 # Gradient Boosting
 print("\tGradient Boosting Classifier")

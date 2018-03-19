@@ -141,8 +141,7 @@ class Model(object):
         analysis.display_scores(cross_val_score(self.model, self.x_train, self.y_train, scoring="accuracy", cv=5))
 
     def evaluate(self):
-        """Calculates the model's classification accuracy, sensitivity, precision,
-           and specificity."""
+        """Calculates the model's classification accuracy, sensitivity, precision, and specificity."""
 
         print("\t\t\tAccuracy: ", analysis.accuracy(self.y_pred, self.y_test))
         print("\t\t\tPrecision: ", analysis.precision(self.y_pred, self.y_test))
