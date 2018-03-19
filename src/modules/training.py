@@ -1,13 +1,9 @@
 import analysis
-import pandas as pd
-from sklearn.svm import SVC
 import matplotlib.pyplot as plt
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.metrics import accuracy_score, make_scorer
 
 
 class Model(object):
