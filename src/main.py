@@ -40,7 +40,6 @@ x_train, x_test, y_train, y_test = (
         .pipe(pp.add_lag_variables, lag=3)
         .pipe(pp.power_transform)
         .pipe(pp.balanced_split, test_size=.2)
-        )
 
 
 # Analysis #
@@ -48,7 +47,7 @@ x_train, x_test, y_train, y_test = (
 
 print("Analyzing features")
 
-# print(data.describe())
+#print(data.describe())
 #analysis.plot_corr_matrix(data)
 
 
