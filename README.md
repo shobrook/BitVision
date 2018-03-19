@@ -70,15 +70,14 @@ As the price of Bitcoin is generally increasing over time, we balance our featur
 
 ## How to Run
 
-1. Clone the repo
+1. Clone repo
 2. Run: `python3 main.py`
 
 ## How to Contribute
 
-1. Clone the repo
-2. Create a new branch: `$ git checkout https://github.com/shobrook/BitVision -b [name_for_new_branch]`.
-3. Make changes and test
-5. Pull Request with comprehensive description of changes
+1. Clone repo and make a new branch: `$ git checkout https://github.com/shobrook/BitVision -b [name_for_new_branch]`.
+2. Make changes and test
+3. Pull Request with comprehensive description of changes
 
 
 Some potential directions of this research:

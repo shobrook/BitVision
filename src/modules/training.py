@@ -155,8 +155,7 @@ class Model(object):
 
 
     def evaluate(self):
-        """Calculates the model's classification accuracy, sensitivity, precision,
-           and specificity."""
+        """Calculates the model's classification accuracy, sensitivity, precision, and specificity."""
 
         print("\t\t\tAccuracy: ", analysis.accuracy(self.y_pred, self.y_test))
         print("\t\t\tPrecision: ", analysis.precision(self.y_pred, self.y_test))
