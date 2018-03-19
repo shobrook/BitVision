@@ -1,3 +1,6 @@
+# Globals #
+
+
 import numpy as np
 from numpy import log, sqrt
 from scipy.stats import boxcox
@@ -7,6 +10,62 @@ from realtime_talib import Indicator
 from sklearn.model_selection import train_test_split
 from sklearn.utils import resample
 from pprint import pprint
+from selenium import webdriver
+
+
+# Helpers #
+
+
+def random_undersampling(dataset):
+	"""Randomly deleting rows that contain the majority class until the number in the majority class is equal with the number in the minority class."""
+
+	minority_set = dataset[dataset.Trend == -1.0]
+	majority_set = dataset[dataset.Trend == 1.0]
+
+	# print(dataset.Trend.value_counts())
+
+	# If minority set larger than majority set, swap
+	if len(minority_set) > len(majority_set):
+		minority_set, majority_set = majority_set, minority_set
+
+	# Downsample majority class
+	majority_downsampled = resample(majority_set,
+	                                replace=False,                  # sample without replacement
+	                                n_samples=len(minority_set),    # to match minority class
+	                                random_state=123)               # reproducible results
+
+	# Combine minority class with downsampled majority class
+	return pd.concat([majority_downsampled, minority_set])
+
+
+def get_popularity(headlines):
+    # TODO: Randomize user-agents OR figure out how to handle popups
+    if "Tweets" not in headlines.columns:
+        counts = []
+        driver = webdriver.Chrome()
+
+        for index, row in headlines.iterrows():
+            try:
+                driver.get(row["URL"])
+                time.sleep(3)
+
+                twitter_containers = driver.find_elements_by_xpath("//li[@class='twitter']")
+                count = twitter_containers[0].find_elements_by_xpath("//span[@class='count']")
+
+                if count[0].text == "":
+                    counts.append(1)
+                else:
+                    counts.append(int(count[0].text))
+            except:
+                counts.append(1)  # QUESTION: Should it be None?
+
+        headlines["Tweets"] = (pd.Series(counts)).values
+        print(counts)
+
+    return headlines
+
+
+# Main #
 
 
 def calculate_indicators(ohlcv):
@@ -152,27 +211,30 @@ def fix_outliers(dataset):
 	return dataset
 
 
-def random_undersampling(dataset):
-	"""Randomly deleting rows that contain the majority class until the number in the majority class is equal
-	with the number in the minority class."""
+def add_lag_variables(dataset, lag=3):
+	print("\tAdding lag variables")
 
-	minority_set = dataset[dataset.Trend == -1.0]
-	majority_set = dataset[dataset.Trend == 1.0]
+	new_df_dict = {}
+	for col_header in dataset.drop(["Date", "Trend"], axis=1):
+		new_df_dict[col_header] = dataset[col_header]
+		for lag in range(1, lag + 1):
+			new_df_dict["%s_lag%d" % (col_header, lag)] = dataset[col_header].shift(lag)
 
-	# print(dataset.Trend.value_counts())
+	new_df = pd.DataFrame(new_df_dict, index=dataset.index)
+	new_df["Date"], new_df["Trend"] = dataset["Date"], dataset["Trend"]
 
-	# If minority set larger than majority set, swap
-	if len(minority_set) > len(majority_set):
-		minority_set, majority_set = majority_set, minority_set
+	return new_df.dropna()
 
-	# Downsample majority class
-	majority_downsampled = resample(majority_set,
-	                                replace=False,                  # sample without replacement
-	                                n_samples=len(minority_set),    # to match minority class
-	                                random_state=123)               # reproducible results
 
-	# Combine minority class with downsampled majority class
-	return pd.concat([majority_downsampled, minority_set])
+def power_transform(dataset):
+	print("\tApplying a box-cox transform to selected features")
+
+	for header in dataset.drop(["Date", "Trend"], axis=1).columns:
+		if not (dataset[header] < 0).any() and not (dataset[header] == 0).any():
+			dataset[header] = boxcox(dataset[header])[0]
+
+	return dataset
+
 
 def balanced_split(dataset, test_size):
 	"""Randomly splits dataset into balanced training and test sets."""
@@ -206,6 +268,7 @@ def balanced_split(dataset, test_size):
 
 	return train_trimmed, test_trimmed, train_trend, test_trend
 
+
 def unbalanced_split(dataset, test_size):
 	"""Randomly splits dataset into unbalanced training and test sets."""
 	print("\tSplitting data into *unbalanced* training and test sets")
@@ -217,12 +280,3 @@ def unbalanced_split(dataset, test_size):
 	# TODO: Set a random seed so results can be reproduced
 
 	return output
-
-def power_transform(dataset):
-	print("\tApplying a box-cox transform to selected features")
-
-	for header in dataset.drop(["Date", "Trend"], axis=1).columns:
-		if not (dataset[header] < 0).any() and not (dataset[header] == 0).any():
-			dataset[header] = boxcox(dataset[header])[0]
-
-	return dataset
