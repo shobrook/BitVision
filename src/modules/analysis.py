@@ -9,6 +9,7 @@ import os.path
 counter = 0
 parent_dir_path = os.path.dirname(os.getcwd())
 
+
 def plot_corr_matrix(dataset):
 	"""Plots a Pearson correlation matrix between features."""
 	print("\tGenerating correlation matrix")
@@ -22,14 +23,15 @@ def plot_corr_matrix(dataset):
 	fig, ax = plt.subplots(figsize=(7, 7))
 	cmap = sns.diverging_palette(220, 10, as_cmap=True)
 
-	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0,
-	            square=True, linewidths=.5, cbar_kws={"shrink": .5})
+	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0, square=True, linewidths=.5, cbar_kws={"shrink": .5})
 
 	plt.savefig(parent_dir_path + "/img/correlation_matrix.png", bbox_inches='tight')
+
 
 def increment_counter():
 	global counter
 	counter = counter + 1
+
 
 def plot_cnf_matrix(y_pred, y_test):
 	"""Plots a confusion matrix."""
@@ -49,8 +51,7 @@ def plot_cnf_matrix(y_pred, y_test):
 
 	thresh = matrix.max() / 2.0
 	for i, j in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
-		plt.text(j, i, format(matrix[i, j], "d"), horizontalalignment="center",
-			color="white" if matrix[i, j] > thresh else "black")
+		plt.text(j, i, format(matrix[i, j], "d"), horizontalalignment="center", color="white" if matrix[i, j] > thresh else "black")
 
 	plt.tight_layout()
 	plt.ylabel("True Label")
@@ -58,7 +59,7 @@ def plot_cnf_matrix(y_pred, y_test):
 
 	filename = ""
 
-	#Save the image in the current directory
+	# Save image in current directory
 	if counter == 0:
 		filename = "/img/log_reg_confusion_matrix.png"
 	elif counter == 1:
@@ -69,14 +70,17 @@ def plot_cnf_matrix(y_pred, y_test):
 	plt.savefig(parent_dir_path + filename, bbox_inches='tight')
 	increment_counter()
 
+
 def accuracy(y_test, y_pred):
 	"""Returns classification accuracy. Measures correct classification"""
 	return accuracy_score(y_test, y_pred)
+
 
 def precision(y_test, y_pred):
 	"""Returns positive prediction value. How good is the classifier at identifying
 	uptrends"""
 	return precision_score(y_test, y_pred)
+
 
 def specificity(y_test, y_pred):
 	"""Returns the True Negative Rate."""
@@ -84,13 +88,15 @@ def specificity(y_test, y_pred):
 
 	return float(matrix[0][1]) / float(matrix[1][1])
 
+
 def sensitivity(specificity):
 	"""Returns the True Positive Rate."""
 	return 1 - specificity
 
+
 def display_scores(scores):
 	"""Displays cross-validation scores, the mean, and standard deviation"""
-	
-	#print("\t\t\tScores: ", list(scores))
+
+	# print("\t\t\tScores: ", list(scores))
 	print("\t\t\tMean: ", scores.mean())
 	print("\t\t\tStandard Deviation: ", scores.std())
