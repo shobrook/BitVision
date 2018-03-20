@@ -45,6 +45,7 @@ def integrate(avg_daily_sentiment, interval):
 
 	dead_values = list([None] * interval)
 	dead_values.extend(integral_simpson_est)
+	dead_values.reverse()
 	return dead_values
 
 
