@@ -17,9 +17,41 @@ from selenium import webdriver
 
 # Helpers #
 
+def sliding_window(seq, n=2):
+	"""Returns a sliding window (of width n) over data from the iterable. https://stackoverflow.com/a/6822773/8740440"""
+	"s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ..."
+	it = iter(seq)
+	result = tuple(islice(it, n))
+	if len(result) == n:
+		yield result
+	for elem in it:
+		result = result[1:] + (elem,)
+		yield result
+
+
+def integrate(avg_daily_sentiment, interval):
+	"""Takes a list of average daily sentiment scores and returns a list of definite integral estimations calculated
+	with Simpson's method. Each integral interval is determined by the `interval` variable. Shows accumulated sentiment."""
+
+	# Split into sliding window list of lists
+	sentiment_windows = sliding_window(avg_daily_sentiment, interval)
+
+	integral_simpson_est = []
+
+	# https://stackoverflow.com/a/13323861/8740440
+	for x in sentiment_windows:
+		# Estimate area using composite Simpson's rule. dx indicates the spacing of the data on the x-axis.
+		integral_simpson_est.append(simps(x, dx=1))
+
+	dead_values = list([None] * interval)
+	dead_values.extend(integral_simpson_est)
+	dead_values.reverse()
+	return dead_values
+
 
 def random_undersampling(dataset):
-	"""Randomly deleting rows that contain the majority class until the number in the majority class is equal with the number in the minority class."""
+	"""Randomly deleting rows that contain the majority class until the number in the majority class is equal with
+	the number in the minority class."""
 
 	minority_set = dataset[dataset.Trend == -1.0]
 	majority_set = dataset[dataset.Trend == 1.0]
@@ -32,39 +64,39 @@ def random_undersampling(dataset):
 
 	# Downsample majority class
 	majority_downsampled = resample(majority_set,
-	                                replace=False,                  # sample without replacement
-	                                n_samples=len(minority_set),    # to match minority class
-	                                random_state=123)               # reproducible results
+	                                replace=False,  # sample without replacement
+	                                n_samples=len(minority_set),  # to match minority class
+	                                random_state=123)  # reproducible results
 
 	# Combine minority class with downsampled majority class
 	return pd.concat([majority_downsampled, minority_set])
 
 
 def get_popularity(headlines):
-    # TODO: Randomize user-agents OR figure out how to handle popups
-    if "Tweets" not in headlines.columns:
-        counts = []
-        driver = webdriver.Chrome()
+	# TODO: Randomize user-agents OR figure out how to handle popups
+	if "Tweets" not in headlines.columns:
+		counts = []
+		driver = webdriver.Chrome()
 
-        for index, row in headlines.iterrows():
-            try:
-                driver.get(row["URL"])
-                time.sleep(3)
+		for index, row in headlines.iterrows():
+			try:
+				driver.get(row["URL"])
+				time.sleep(3)
 
-                twitter_containers = driver.find_elements_by_xpath("//li[@class='twitter']")
-                count = twitter_containers[0].find_elements_by_xpath("//span[@class='count']")
+				twitter_containers = driver.find_elements_by_xpath("//li[@class='twitter']")
+				count = twitter_containers[0].find_elements_by_xpath("//span[@class='count']")
 
-                if count[0].text == "":
-                    counts.append(1)
-                else:
-                    counts.append(int(count[0].text))
-            except:
-                counts.append(1)  # QUESTION: Should it be None?
+				if count[0].text == "":
+					counts.append(1)
+				else:
+					counts.append(int(count[0].text))
+			except:
+				counts.append(1)  # QUESTION: Should it be None?
 
-        headlines["Tweets"] = (pd.Series(counts)).values
-        print(counts)
+		headlines["Tweets"] = (pd.Series(counts)).values
+		print(counts)
 
-    return headlines
+	return headlines
 
 
 # Main #
@@ -124,19 +156,23 @@ def calculate_indicators(ohlcv):
 	ema12 = ((Indicator(temp_ohlcv, "MA", 12, 1)).getHistorical(lag=1))[::-1]
 
 	# Append indicators to the input datasets
-	min_length = min(len(mom1), len(mom3), len(adx14), len(adx20), len(willr), len(rsi6), len(rsi12), len(macd), len(macd_signal), len(macd_hist), len(ema6), len(ema12))
+	min_length = min(len(mom1), len(mom3), len(adx14), len(adx20), len(willr), len(rsi6), len(rsi12), len(macd),
+	                 len(macd_signal), len(macd_hist), len(ema6), len(ema12))
 	ohlcv = ohlcv[:min_length].drop(["Open", "High", "Low"], axis=1)
 
-	ohlcv["MOM (1)"], ohlcv["MOM (3)"], ohlcv["ADX (14)"] = (pd.Series(mom1[:min_length])).values, (pd.Series(mom3[:min_length])).values, (pd.Series(adx14[:min_length])).values
-	ohlcv["ADX (20)"], ohlcv["WILLR"], ohlcv["RSI (6)"] = (pd.Series(adx20[:min_length])).values, (pd.Series(willr[:min_length])).values, (pd.Series(rsi6[:min_length])).values
-	ohlcv["RSI (12)"], ohlcv["MACD"], ohlcv["MACD (Signal)"] = (pd.Series(rsi12[:min_length])).values, (pd.Series(macd[:min_length])).values, (pd.Series(macd_signal[:min_length])).values
-	ohlcv["MACD (Historical)"], ohlcv["EMA (6)"], ohlcv["EMA (12)"] = (pd.Series(macd_hist[:min_length])).values, (pd.Series(ema6[:min_length])).values, (pd.Series(ema12[:min_length])).values
+	ohlcv["MOM (1)"], ohlcv["MOM (3)"], ohlcv["ADX (14)"] = (pd.Series(mom1[:min_length])).values, (
+		pd.Series(mom3[:min_length])).values, (pd.Series(adx14[:min_length])).values
+	ohlcv["ADX (20)"], ohlcv["WILLR"], ohlcv["RSI (6)"] = (pd.Series(adx20[:min_length])).values, (
+		pd.Series(willr[:min_length])).values, (pd.Series(rsi6[:min_length])).values
+	ohlcv["RSI (12)"], ohlcv["MACD"], ohlcv["MACD (Signal)"] = (pd.Series(rsi12[:min_length])).values, (
+		pd.Series(macd[:min_length])).values, (pd.Series(macd_signal[:min_length])).values
+	ohlcv["MACD (Historical)"], ohlcv["EMA (6)"], ohlcv["EMA (12)"] = (pd.Series(macd_hist[:min_length])).values, (
+		pd.Series(ema6[:min_length])).values, (pd.Series(ema12[:min_length])).values
 
 	return ohlcv
 
 
 def calculate_sentiment(headlines):
-
 	sentiment_scores = {}
 
 	numer, denom = 0.0, 0.0
@@ -170,7 +206,7 @@ def merge_datasets(set_a, set_b):
 		merged = set_a
 		for attr in set_b:
 			merged = pd.merge(merged, attr, on="Date")
-			# for attr in set_c: merged = pd.merge(merged, attr, on="Date")
+		# for attr in set_c: merged = pd.merge(merged, attr, on="Date")
 	else:
 		print("\tMerging datasets")
 		merged = pd.merge(set_a, set_b, on="Date")
@@ -239,7 +275,6 @@ def power_transform(dataset):
 	return dataset
 
 
-
 def balanced_split(dataset, test_size):
 	"""Randomly splits dataset into balanced training and test sets."""
 	print("\tSplitting data into *balanced* training and test sets")
@@ -247,9 +282,9 @@ def balanced_split(dataset, test_size):
 	# Use sklearn.train_test_split to split original dataset into x_train, y_train, x_test, y_test numpy arrays
 
 	x_train, x_test, y_train, y_test = train_test_split(dataset.drop(["Date", "Trend"], axis=1).values,
-														dataset["Trend"].values,
-														test_size=test_size,
-														random_state=25)
+	                                                    dataset["Trend"].values,
+	                                                    test_size=test_size,
+	                                                    random_state=25)
 
 	# Combine x_train and y_train (numpy arrays) into a single dataframe, with column labels
 	train = pd.DataFrame(data=x_train, columns=dataset.columns[1:-1])
@@ -285,34 +320,9 @@ def unbalanced_split(dataset, test_size):
 	return output
 
 
-def sliding_window(seq, n=2):
-	"""Returns a sliding window (of width n) over data from the iterable. https://stackoverflow.com/a/6822773/8740440"""
-	"s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ..."
-	it = iter(seq)
-	result = tuple(islice(it, n))
-	if len(result) == n:
-		yield result
-	for elem in it:
-		result = result[1:] + (elem,)
-		yield result
-
-
-def sliding_window_integral(avg_daily_sentiment, interval):
-	"""Takes a list of average daily sentiment scores and returns a list of definite integral estimations calculated
-	with Simpson's method. Each integral interval is determined by the `interval` variable. Shows accumulated sentiment."""
-
-	# Split into sliding window list of lists
-	sentiment_windows = sliding_window(avg_daily_sentiment, interval)
-
-	integral_simpson_est = []
-
-	# https://stackoverflow.com/a/13323861/8740440
-	for x in sentiment_windows:
-		# Estimate area using composite Simpson's rule. dx indicates the spacing of the data on the x-axis.
-		integral_simpson_est.append(simps(x, dx=1))
-
-	dead_values = list([None] * interval)
-	return dead_values.append(integral_simpson_est)
+def integral_transform(dataset, interval):
+	integral = integrate(list(dataset["Sentiment"]), interval)
+	dataset["Sentiment_integrals"] = pd.Series(integral)
 
 
 def func(x, a, b, c):
@@ -331,7 +341,7 @@ def best_fit_curve(xdata):
 	popt, pcov = curve_fit(func, xdata, ydata, bounds=(0, [3., 1., 0.5]))
 
 
-def sliding_window_avg_derivative(avg_daily_sentiment, interval):
+def derivative(avg_daily_sentiment, interval):
 	"""Takes list of average daily sentiment scores and returns a list of average derivatives."""
 
 	# Split into sliding window list of lists

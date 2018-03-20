@@ -1,6 +1,5 @@
 # Globals #
 
-
 import sys
 
 sys.path.insert(0, "modules")
@@ -15,7 +14,6 @@ import scraper
 import os.path
 import pandas as pd
 
-
 # Data Bus #
 
 
@@ -25,30 +23,30 @@ price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
 coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
 
-
 # Preprocessing #
 
 
 print("Preprocessing")
+print(coindesk_headlines)
+pp.integral_transform(coindesk_headlines, 5)
+print(coindesk_headlines)
 
-x_train, x_test, y_train, y_test = (
-        price_data.pipe(pp.calculate_indicators)
-        .pipe(pp.merge_datasets, set_b=blockchain_data)
-        .pipe(pp.binarize_labels)
-        .pipe(pp.fix_null_vals)
-        .pipe(pp.fix_outliers)
-        .pipe(pp.add_lag_variables, lag=3)
-        .pipe(pp.power_transform)
-        .pipe(pp.balanced_split, test_size=.2)
-
+x_train, x_test, y_train, y_test = (price_data.pipe(pp.calculate_indicators)
+                                    .pipe(pp.merge_datasets, set_b=blockchain_data)
+                                    .pipe(pp.binarize_labels)
+                                    .pipe(pp.fix_null_vals)
+                                    .pipe(pp.fix_outliers)
+                                    .pipe(pp.add_lag_variables, lag=3)
+                                    .pipe(pp.power_transform)
+                                    .pipe(pp.balanced_split, test_size=.2))
 
 # Analysis #
 
 
 print("Analyzing features")
 
-#print(data.describe())
-#analysis.plot_corr_matrix(data)
+# print(data.describe())
+# analysis.plot_corr_matrix(data)
 
 
 # Training and Testing #
@@ -60,7 +58,6 @@ print("Fitting models")
 log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=True)
 rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=True)
 grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=True)
-
 
 # Evaluation #
 
