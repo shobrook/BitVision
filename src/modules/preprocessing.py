@@ -350,7 +350,7 @@ def derivative(avg_daily_sentiment, interval):
 	# Fit a function to each of the lists in the list.
 	best_fit_funcs = []
 	for window in sentiment_windows:
-		best_fit_funcs.append(best_fit_curve(window))
+		best_fit_funcs.extend(best_fit_curve(window))
 
 	# Take derivative at each day in the interval and average them.
 	# -> Transform each function into a list of days-in-interval-many derivatives.
