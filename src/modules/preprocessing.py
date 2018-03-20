@@ -8,7 +8,6 @@ from itertools import islice
 from scipy.stats import boxcox
 from scipy.integrate import simps
 from realtime_talib import Indicator
-from scipy.optimize import curve_fit
 from sklearn.model_selection import train_test_split
 from sklearn.utils import resample
 from pprint import pprint
@@ -324,36 +323,3 @@ def integral_transform(dataset, interval):
 	integral = integrate(list(dataset["Sentiment"]), interval)
 	dataset["Sentiment_integrals"] = pd.Series(integral)
 
-
-def func(x, a, b, c):
-	"""https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html"""
-	return a * np.exp(-b * x) + c
-
-
-def best_fit_curve(xdata):
-	"""Takes list of sentiment scores as input and returns a function of best fit.
-	https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html"""
-
-	# Fit for the parameters a, b, c of the function func
-	popt, pcov = curve_fit(func, xdata, ydata)
-
-	# Constrain the optimization to the region of 0 <= a <= 3, 0 <= b <= 1 and 0 <= c <= 0.5:
-	popt, pcov = curve_fit(func, xdata, ydata, bounds=(0, [3., 1., 0.5]))
-
-
-def derivative(avg_daily_sentiment, interval):
-	"""Takes list of average daily sentiment scores and returns a list of average derivatives."""
-
-	# Split into sliding window list of lists
-	sentiment_windows = sliding_window(avg_daily_sentiment, interval)
-
-	# Fit a function to each of the lists in the list.
-	best_fit_funcs = []
-	for window in sentiment_windows:
-		best_fit_funcs.extend(best_fit_curve(window))
-
-	# Take derivative at each day in the interval and average them.
-	# -> Transform each function into a list of days-in-interval-many derivatives.
-	# -> Then take one average for each list in sentiment_windows.
-
-	# Return list of avg_derivatives
