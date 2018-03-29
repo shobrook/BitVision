@@ -160,7 +160,7 @@ class Model(object):
         print("\t\t\tAccuracy: ", analysis.accuracy(self.y_pred, self.y_test))
         print("\t\t\tPrecision: ", analysis.precision(self.y_pred, self.y_test))
         print("\t\t\tSpecificity: ", analysis.specificity(self.y_pred, self.y_test))
-        print("\t\t\tSensitivity: ", analysis.sensitivity(analysis.specificity(self.y_pred, self.y_test)))
+        print("\t\t\tSensitivity: ", analysis.sensitivity(self.y_pred, self.y_test))
 
 
     def print_feature_importances(self, data):

@@ -9,6 +9,8 @@ from sklearn.metrics import accuracy_score, precision_score, roc_curve
 from sklearn.metrics import confusion_matrix
 import os.path
 
+global COUNTER
+
 COUNTER = 0
 PARENT_DIR = os.path.dirname(os.getcwd())
 
@@ -22,7 +24,6 @@ def increment_counter():
 
 
 # Main #
-
 
 
 def plot_corr_matrix(dataset):
@@ -95,13 +96,13 @@ def precision(y_test, y_pred):
 def specificity(y_test, y_pred):
 	"""Returns the True Negative Rate."""
 	matrix = confusion_matrix(y_test, y_pred)
+	return matrix[1][1] / (matrix[1][1] + matrix[1][0])
 
-	return float(matrix[0][1]) / float(matrix[1][1])
 
-
-def sensitivity(specificity):
+def sensitivity(y_test, y_pred):
 	"""Returns the True Positive Rate."""
-	return 1 - specificity
+	matrix = confusion_matrix(y_test, y_pred)
+	return matrix[0][0] / (matrix[0][0] + matrix[0][1])
 
 
 def display_scores(scores):
