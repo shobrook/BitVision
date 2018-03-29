@@ -1,12 +1,16 @@
 # Globals #
 
 
+import os
 import analysis
 import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import StandardScaler
+from sklearn.externals import joblib
+
+PARENT_DIR = os.path.dirname(os.getcwd())
 
 
 # Main #
@@ -24,10 +28,13 @@ class Model(object):
 
         if estimator == "LogisticRegression":
             self.model = self.__fit_log_reg()
+            joblib.dump(self.model, PARENT_DIR + "/models/LogisticRegression.pkl")
         elif estimator == "RandomForest":
             self.model = self.__fit_rand_forest()
+            joblib.dump(self.model, PARENT_DIR + "/models/RandomForest.pkl")
         elif estimator == "GradientBoosting":
             self.model = self.__fit_grad_boost()
+            joblib.dump(self.model, PARENT_DIR + "/models/GradientBoosting.pkl")
         else:
             print("\tError: Invalid model type")
 
