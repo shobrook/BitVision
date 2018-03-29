@@ -1,5 +1,6 @@
 # Globals #
 
+
 import sys
 
 sys.path.insert(0, "modules")
@@ -14,9 +15,8 @@ import scraper
 import os.path
 import pandas as pd
 
-OPTIMIZE, SELECT_FEATURES = False, False
 if sys.argv[1] == "-o" and sys.argv[3] == "-fs":
-    OPTIMIZE, SELECT_FEATURES = sys.argv[2] == True, sys.argv[4] == True
+    OPTIMIZE, SELECT_FEATURES = sys.argv[2] == "True", sys.argv[4] == "True"
 else:
     print("Invalid arguments.")
     sys.exit()
