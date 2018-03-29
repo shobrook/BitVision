@@ -14,12 +14,15 @@ from sklearn.utils import resample
 from pprint import pprint
 from selenium import webdriver
 
+RANDOM_STATE = 42
+
 
 # Helpers #
 
 
 def random_undersampling(dataset):
-	"""Randomly deleting rows that contain the majority class until the number in the majority class is equal with the number in the minority class."""
+	"""Randomly deleting rows that contain the majority class until the number
+	in the majority class is equal with the number in the minority class."""
 
 	minority_set = dataset[dataset.Trend == -1.0]
 	majority_set = dataset[dataset.Trend == 1.0]
@@ -88,17 +91,17 @@ def calculate_indicators(ohlcv):
 	temp_ohlcv = temp_ohlcv.iloc[::-1]
 
 	# Rate of Change Ratio
-	# roc3 = ((Indicator(temp_ohlcv, "ROCR", 3)).getHistorical(lag=1))[::-1]
-	# roc6 = ((Indicator(temp_ohlcv, "ROCR", 6)).getHistorical(lag=1))[::-1]
+	#rocr3 = ((Indicator(temp_ohlcv, "ROCR", 3)).getHistorical(lag=1))[::-1]
+	#rocr6 = ((Indicator(temp_ohlcv, "ROCR", 6)).getHistorical(lag=1))[::-1]
 
 	# Average True Range
-	# atr = ((Indicator(temp_ohlcv, "ATR", 14)).getHistorical(lag=1))[::-1]
+	#atr = ((Indicator(temp_ohlcv, "ATR", 14)).getHistorical(lag=1))[::-1]
 
 	# On-Balance Volume
-	# obv = ((Indicator(temp_ohlcv, "OBV", 6)).getHistorical(lag=1))[::-1]
+	#obv = ((Indicator(temp_ohlcv, "OBV")).getHistorical(lag=1))[::-1]
 
 	# Triple Exponential Moving Average
-	# trix = ((Indicator(temp_ohlcv, "TRIX", 30)).getHistorical(lag=1))[::-1]
+	#trix = ((Indicator(temp_ohlcv, "TRIX", 20)).getHistorical(lag=1))[::-1]
 
 	# Momentum
 	mom1 = ((Indicator(temp_ohlcv, "MOM", 1)).getHistorical(lag=1))[::-1]
@@ -124,13 +127,15 @@ def calculate_indicators(ohlcv):
 	ema12 = ((Indicator(temp_ohlcv, "MA", 12, 1)).getHistorical(lag=1))[::-1]
 
 	# Append indicators to the input datasets
-	min_length = min(len(mom1), len(mom3), len(adx14), len(adx20), len(willr), len(rsi6), len(rsi12), len(macd), len(macd_signal), len(macd_hist), len(ema6), len(ema12))
+	min_length = min(len(mom1), len(mom3), len(adx14), len(adx20), len(willr), len(rsi6), len(rsi12), len(macd), len(macd_signal), len(macd_hist), len(ema6), len(ema12)) # len(rocr3), len(rocr6), len(atr), len(obv), len(trix)
 	ohlcv = ohlcv[:min_length].drop(["Open", "High", "Low"], axis=1)
 
 	ohlcv["MOM (1)"], ohlcv["MOM (3)"], ohlcv["ADX (14)"] = (pd.Series(mom1[:min_length])).values, (pd.Series(mom3[:min_length])).values, (pd.Series(adx14[:min_length])).values
 	ohlcv["ADX (20)"], ohlcv["WILLR"], ohlcv["RSI (6)"] = (pd.Series(adx20[:min_length])).values, (pd.Series(willr[:min_length])).values, (pd.Series(rsi6[:min_length])).values
 	ohlcv["RSI (12)"], ohlcv["MACD"], ohlcv["MACD (Signal)"] = (pd.Series(rsi12[:min_length])).values, (pd.Series(macd[:min_length])).values, (pd.Series(macd_signal[:min_length])).values
 	ohlcv["MACD (Historical)"], ohlcv["EMA (6)"], ohlcv["EMA (12)"] = (pd.Series(macd_hist[:min_length])).values, (pd.Series(ema6[:min_length])).values, (pd.Series(ema12[:min_length])).values
+	#ohlcv["ROCR (3)"], ohlcv["ROCR (6)"], ohlcv["ATR (14)"] = (pd.Series(rocr3[:min_length])).values, (pd.Series(rocr6[:min_length])).values, (pd.Series(atr[:min_length])).values
+	#ohlcv["OBV"], ohlcv["TRIX (20)"] = (pd.Series(obv[:min_length])).values, (pd.Series(trix[:min_length])).values
 
 	return ohlcv
 
@@ -165,6 +170,8 @@ def calculate_sentiment(headlines):
 
 def merge_datasets(set_a, set_b):
 	"""Merges set A and set B into a single dataset, organized by date."""
+
+	# TODO: Change set_b parameter to a list of dataframes to merge
 
 	if type(set_b) == list:
 		merged = set_a
@@ -221,7 +228,7 @@ def add_lag_variables(dataset, lag=3):
 	for col_header in dataset.drop(["Date", "Trend"], axis=1):
 		new_df_dict[col_header] = dataset[col_header]
 		for lag in range(1, lag + 1):
-			new_df_dict["%s_lag%d" % (col_header, lag)] = dataset[col_header].shift(lag)
+			new_df_dict["%s_lag%d" % (col_header, lag)] = dataset[col_header].shift(-lag)
 
 	new_df = pd.DataFrame(new_df_dict, index=dataset.index)
 	new_df["Date"], new_df["Trend"] = dataset["Date"], dataset["Trend"]
@@ -249,7 +256,7 @@ def balanced_split(dataset, test_size):
 	x_train, x_test, y_train, y_test = train_test_split(dataset.drop(["Date", "Trend"], axis=1).values,
 														dataset["Trend"].values,
 														test_size=test_size,
-														random_state=25)
+														random_state=RANDOM_STATE)
 
 	# Combine x_train and y_train (numpy arrays) into a single dataframe, with column labels
 	train = pd.DataFrame(data=x_train, columns=dataset.columns[1:-1])
@@ -278,7 +285,7 @@ def unbalanced_split(dataset, test_size):
 	print("\tSplitting data into *unbalanced* training and test sets")
 
 	dataset = dataset.drop("Date", axis=1)
-	output = train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=25)
+	output = train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=RANDOM_STATE)
 
 	# TODO: Set a random seed so results can be reproduced
 
