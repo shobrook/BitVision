@@ -100,6 +100,44 @@ def get_popularity(headlines):
 	return headlines
 
 
+def balanced_split(dataset, test_size):
+	"""Randomly splits dataset into balanced training and test sets."""
+	print("\tSplitting data into *balanced* training and test sets")
+
+	# Use sklearn.train_test_split to split original dataset into x_train, y_train, x_test, y_test numpy arrays
+
+	x_train, x_test, y_train, y_test = train_test_split(dataset.drop(["Date", "Trend"], axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=RANDOM_STATE)
+
+	# Combine x_train and y_train (numpy arrays) into a single dataframe, with column labels
+	train = pd.DataFrame(data=x_train, columns=dataset.columns[1:-1])
+	train["Trend"] = pd.Series(y_train)
+
+	# Do the same for x_test and y__test
+	test = pd.DataFrame(data=x_test, columns=dataset.columns[1:-1])
+	test["Trend"] = pd.Series(y_test)
+
+	# Apply random undersampling to both data frames
+	train_downsampled = random_undersampling(train)
+	test_downsampled = random_undersampling(test)
+
+	train_trend = train_downsampled["Trend"].values
+	test_trend = test_downsampled["Trend"].values
+	train_trimmed = train_downsampled.drop(["Trend"], axis=1).values
+	test_trimmed = test_downsampled.drop(["Trend"], axis=1).values
+
+	return train_trimmed, test_trimmed, train_trend, test_trend
+
+
+def unbalanced_split(dataset, test_size):
+	"""Randomly splits dataset into unbalanced training and test sets."""
+	print("\tSplitting data into *unbalanced* training and test sets")
+
+	dataset = dataset.drop("Date", axis=1)
+	output = train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=RANDOM_STATE)
+
+	return output
+
+
 # Main #
 
 
@@ -197,19 +235,12 @@ def calculate_sentiment(headlines):
 	return sentiment_scores_df
 
 
-def merge_datasets(set_a, set_b):
-	"""Merges set A and set B into a single dataset, organized by date."""
+def merge_datasets(origin, other_sets):
+	print("\tMerging datasets")
 
-	# TODO: Change set_b parameter to a list of dataframes to merge
-
-	if type(set_b) == list:
-		merged = set_a
-		for attr in set_b:
-			merged = pd.merge(merged, attr, on="Date")
-		# for attr in set_c: merged = pd.merge(merged, attr, on="Date")
-	else:
-		print("\tMerging datasets")
-		merged = pd.merge(set_a, set_b, on="Date")
+	merged = origin
+	for set in other_sets:
+		merged = pd.merge(merged, set, on="Date")
 
 	return merged
 
@@ -226,7 +257,7 @@ def fix_null_vals(dataset):
 
 def binarize_labels(dataset):
 	"""Transforms daily price data into binary values indicating price change."""
-	print("\tCalculating price movements")
+	print("\tBinarizing price movements")
 
 	trends = [None]
 	for index in range(dataset.shape[0] - 1):
@@ -239,13 +270,6 @@ def binarize_labels(dataset):
 
 	dataset["Trend"] = (pd.Series(trends)).values
 	dataset = dataset.drop(dataset.index[0])
-
-	return dataset
-
-
-def fix_outliers(dataset):
-	"""Fixes (either normalizes or removes) outliers."""
-	print("\tFixing outliers")
 
 	return dataset
 
@@ -275,44 +299,17 @@ def power_transform(dataset):
 	return dataset
 
 
-def balanced_split(dataset, test_size):
-	"""Randomly splits dataset into balanced training and test sets."""
-	print("\tSplitting data into *balanced* training and test sets")
-
-	# Use sklearn.train_test_split to split original dataset into x_train, y_train, x_test, y_test numpy arrays
-
-	x_train, x_test, y_train, y_test = train_test_split(dataset.drop(["Date", "Trend"], axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=RANDOM_STATE)
-
-	# Combine x_train and y_train (numpy arrays) into a single dataframe, with column labels
-	train = pd.DataFrame(data=x_train, columns=dataset.columns[1:-1])
-	train["Trend"] = pd.Series(y_train)
-
-	# Do the same for x_test and y__test
-	test = pd.DataFrame(data=x_test, columns=dataset.columns[1:-1])
-	test["Trend"] = pd.Series(y_test)
-
-	# Apply random undersampling to both data frames
-	train_downsampled = random_undersampling(train)
-	test_downsampled = random_undersampling(test)
-
-	train_trend = train_downsampled["Trend"].values
-	test_trend = test_downsampled["Trend"].values
-	train_trimmed = train_downsampled.drop(["Trend"], axis=1).values
-	test_trimmed = test_downsampled.drop(["Trend"], axis=1).values
-
-	return train_trimmed, test_trimmed, train_trend, test_trend
-
-
-def unbalanced_split(dataset, test_size):
-	"""Randomly splits dataset into unbalanced training and test sets."""
-	print("\tSplitting data into *unbalanced* training and test sets")
-
-	dataset = dataset.drop("Date", axis=1)
-	output = train_test_split(dataset.drop("Trend", axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=RANDOM_STATE)
-
-	return output
+def split(dataset, test_size, balanced=True):
+	if balanced:
+		return balanced_split(dataset, test_size)
+	else:
+		return unbalanced_split(dataset, test_size)
 
 
 def integral_transform(dataset, interval):
 	integral = integrate(list(dataset["Sentiment"]), interval)
 	dataset["Sentiment_integrals"] = pd.Series(integral)
+
+
+def rate_of_change_transform(dataset):
+	return dataset
