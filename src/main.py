@@ -7,7 +7,7 @@ sys.path.insert(0, "modules")
 
 # Project modules
 from training import Model
-import preprocessing as ppc
+import preprocessing as pp
 import analysis
 import scraper
 
@@ -17,6 +17,13 @@ import json
 import csv
 import time
 import pandas as pd
+
+OPTIMIZE, SELECT_FEATURES = False, False
+if sys.argv[1] == "-o" and sys.argv[3] == "-fs":
+    OPTIMIZE, SELECT_FEATURES = sys.argv[2] == True, sys.argv[4] == True
+else:
+    print("Invalid arguments.")
+    sys.exit()
 
 
 # Data Bus #
@@ -34,35 +41,25 @@ blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/block
 
 print("Preprocessing")
 
-data = (price_data.pipe(ppc.calculate_indicators)
-        .pipe(ppc.merge_datasets, set_b=blockchain_data)
-        .pipe(ppc.binarize_labels)
-        .pipe(ppc.fix_null_vals)
-        .pipe(ppc.fix_outliers)
-        .pipe(ppc.add_lag_variables, lag=3)
-        .pipe(ppc.power_transform)
+x_train, x_test, y_train, y_test = (
+        price_data.pipe(pp.calculate_indicators)
+        .pipe(pp.merge_datasets, set_b=blockchain_data)
+        .pipe(pp.binarize_labels)
+        .pipe(pp.fix_null_vals)
+        .pipe(pp.fix_outliers)
+        .pipe(pp.add_lag_variables, lag=3)
+        .pipe(pp.power_transform)
+        .pipe(pp.balanced_split, test_size=.2)
         )
-x_train, x_test, y_train, y_test = ppc.balanced_split(data, test_size=.2)
-
-"""
-x_train, x_test, y_train, y_test = (price_data.pipe(ppc.calculate_indicators)
-	.pipe(ppc.merge_datasets, set_b=blockchain_data, set_c=(coindesk_headlines.pipe(scraper.get_popularity)
-		.pipe(ppc.calculate_sentiment)))
-	.pipe(ppc.fix_null_vals)
-	.pipe(ppc.binarize_labels)
-	.pipe(ppc.fix_outliers)
-	.pipe(ppc.unbalanced_split, test_size=.2)
-)
-"""
 
 
 # Analysis #
 
 
-print("Analyzing features")
+#print("Analyzing features")
 
 #print(data.describe())
-analysis.plot_corr_matrix(data) # Demonstrate that there is little interdependence between features
+#analysis.plot_corr_matrix(data)
 
 
 # Training and Testing #
@@ -71,9 +68,9 @@ analysis.plot_corr_matrix(data) # Demonstrate that there is little interdependen
 print("Fitting models")
 
 # Fit models
-log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=False)
-rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=False)
-grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=False)
+log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=OPTIMIZE, select_features=SELECT_FEATURES)
+rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=OPTIMIZE, select_features=SELECT_FEATURES)
+grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=OPTIMIZE, select_features=SELECT_FEATURES)
 
 
 # Evaluation #
