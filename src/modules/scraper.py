@@ -265,4 +265,4 @@ def fetch_data(path):
         else:
             print("\tPulling headline data from cache")
 
-            return (pd.read_csv(coindesk_path, sep=","), pd.read_csv(btc_news_path, sep=","))
+            return pd.read_csv(coindesk_path, sep=","), pd.read_csv(btc_news_path, sep=",")

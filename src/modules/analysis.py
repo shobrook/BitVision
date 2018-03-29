@@ -36,7 +36,7 @@ def plot_corr_matrix(dataset):
 	mask = np.zeros_like(matrix, dtype=np.bool)
 	mask[np.triu_indices_from(mask)] = True
 
-	fig, ax = plt.subplots(figsize=(7, 7))
+	plt.subplots(figsize=(7, 7))
 	cmap = sns.diverging_palette(220, 10, as_cmap=True)
 
 	sns.heatmap(matrix, mask=mask, cmap=cmap, vmax=.3, center=0, square=True, linewidths=.5, cbar_kws={"shrink": .5})
