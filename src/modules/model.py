@@ -17,22 +17,22 @@ PARENT_DIR = os.path.dirname(os.getcwd())
 
 
 class Model(object):
-    def __init__(self, estimator, train_set, test_set, optimize=False, select_features=False):
+    def __init__(self, estimator, train_set, test_set, optimize=False):
         self.x_train, self.y_train = train_set
         self.x_test, self.y_test = test_set
 
         self.scaler = StandardScaler()
         self.scaler.fit(self.x_train)
 
-        self.optimize, self.select_features = optimize, select_features
+        self.optimize, self.estimator = optimize, estimator
 
-        if estimator == "LogisticRegression":
+        if self.estimator == "LogisticRegression":
             self.model = self.__fit_log_reg()
             joblib.dump(self.model, PARENT_DIR + "/models/LogisticRegression.pkl")
-        elif estimator == "RandomForest":
+        elif self.estimator == "RandomForest":
             self.model = self.__fit_rand_forest()
             joblib.dump(self.model, PARENT_DIR + "/models/RandomForest.pkl")
-        elif estimator == "GradientBoosting":
+        elif self.estimator == "GradientBoosting":
             self.model = self.__fit_grad_boost()
             joblib.dump(self.model, PARENT_DIR + "/models/GradientBoosting.pkl")
         else:
@@ -147,6 +147,26 @@ class Model(object):
             return grad_boost
 
 
+    def __holdout_test(self):
+        """Calculates the model's classification accuracy, sensitivity, precision, and specificity."""
+        print("\t\tHoldout Validation Results:")
+
+        print("\t\t\tAccuracy: ", analysis.accuracy(self.y_pred, self.y_test))
+        print("\t\t\tPrecision: ", analysis.precision(self.y_pred, self.y_test))
+        print("\t\t\tSpecificity: ", analysis.specificity(self.y_pred, self.y_test))
+        print("\t\t\tSensitivity: ", analysis.sensitivity(self.y_pred, self.y_test))
+
+
+    def __rolling_window_test(self, data):
+        print("\t\tRolling Window Validation Results:")
+
+        # k instances are used to train the model and the model is tested on the next m instances
+        # Then, the window is slid forward some amount x and the next k instances are used for training
+        # and the evaluation is done on the subsequent m instances.
+
+        # QUESTION: What about overflow? Should the window end where it started? Is the average of all the performances taken?
+
+
     # Public Methods #
 
 
@@ -156,18 +176,13 @@ class Model(object):
         analysis.plot_cnf_matrix(self.y_pred, self.y_test)
 
 
-    def cross_validate(self):
-        """Computes and displays K-Fold cross-validation with 5 iterations."""
-        analysis.display_scores(cross_val_score(self.model, self.x_train, self.y_train, scoring="accuracy", cv=5))
-
-
-    def evaluate(self):
-        """Calculates the model's classification accuracy, sensitivity, precision, and specificity."""
-
-        print("\t\t\tAccuracy: ", analysis.accuracy(self.y_pred, self.y_test))
-        print("\t\t\tPrecision: ", analysis.precision(self.y_pred, self.y_test))
-        print("\t\t\tSpecificity: ", analysis.specificity(self.y_pred, self.y_test))
-        print("\t\t\tSensitivity: ", analysis.sensitivity(self.y_pred, self.y_test))
+    def cross_validate(self, method, data=None):
+        if method == "holdout":
+            self.__holdout_test()
+        elif method == "RollingWindow":
+            self.__rolling_window_test(data)
+        else:
+            print("\t\tError: Invalid cross-validation method")
 
 
     def print_feature_importances(self, data):

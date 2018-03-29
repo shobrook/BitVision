@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, "modules")
 
 # Project modules
-from training import Model
+from model import Model
 import preprocessing as pp
 import analysis
 import scraper
@@ -29,26 +29,25 @@ print("Fetching data")
 
 price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
 blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
-coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
+#coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/test_scores.csv", sep=",")
 
 # Preprocessing #
 
 
 print("Preprocessing")
 
-x_train, x_test, y_train, y_test = (
-        price_data.pipe(pp.calculate_indicators)
-        .pipe(pp.merge_datasets, set_b=blockchain_data)
+data = (price_data.pipe(pp.calculate_indicators)
+        .pipe(pp.merge_datasets, other_sets=[blockchain_data]) # [blockchain_data, coindesk_headlines]
         .pipe(pp.binarize_labels)
         .pipe(pp.fix_null_vals)
-        .pipe(pp.fix_outliers)
         .pipe(pp.add_lag_variables, lag=3)
         .pipe(pp.power_transform)
-        .pipe(pp.balanced_split, test_size=.2)
+        .pipe(pp.select_features, method="RecursiveFE", skip=SELECT_FEATURES)
         )
+x_train, x_test, y_train, y_test = pp.split(data, test_size=.2, balanced=True)
 
 
-# Analysis #
+# Exploratory Analysis #
 
 
 #print("Analyzing features")
@@ -57,14 +56,29 @@ x_train, x_test, y_train, y_test = (
 #analysis.plot_corr_matrix(data)
 
 
-# Training and Testing #
+# Fitting Models #
 
 
 print("Fitting models")
 
-log_reg = Model(estimator="LogisticRegression", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=OPTIMIZE, select_features=SELECT_FEATURES)
-rand_forest = Model(estimator="RandomForest", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=OPTIMIZE, select_features=SELECT_FEATURES)
-grad_boost = Model(estimator="GradientBoosting", train_set=(x_train, y_train), test_set=(x_test, y_test), optimize=OPTIMIZE, select_features=SELECT_FEATURES)
+log_reg = Model(
+    estimator="LogisticRegression",
+    train_set=(x_train, y_train),
+    test_set=(x_test, y_test),
+    optimize=OPTIMIZE
+    )
+rand_forest = Model(
+    estimator="RandomForest",
+    train_set=(x_train, y_train),
+    test_set=(x_test, y_test),
+    optimize=OPTIMIZE
+    )
+grad_boost = Model(
+    estimator="GradientBoosting",
+    train_set=(x_train, y_train),
+    test_set=(x_test, y_test),
+    optimize=OPTIMIZE
+    )
 
 
 # Evaluation #
@@ -75,24 +89,17 @@ print("Evaluating")
 # Logistic Regression
 print("\tLogistic Regression Estimator")
 log_reg.plot_cnf_matrix()
-print("\t\tTest Results:")
-log_reg.evaluate()
-print("\t\tCross Validation Results:")
-log_reg.cross_validate()
+log_reg.cross_validate(method="holdout")
+log_reg.cross_validate(method="RollingWindow", data=data)
 
 # Random Forest
 print("\tRandom Forest Classifier")
 rand_forest.plot_cnf_matrix()
-print("\t\tTest Results:")
-rand_forest.evaluate()
-print("\t\tCross Validation Results:")
-rand_forest.cross_validate()
-# rand_forest.print_feature_importances(data)
+rand_forest.cross_validate(method="holdout")
+rand_forest.cross_validate(method="RollingWindow", data=data)
 
 # Gradient Boosting
 print("\tGradient Boosting Classifier")
 grad_boost.plot_cnf_matrix()
-print("\t\tTest Results:")
-grad_boost.evaluate()
-print("\t\tCross Validation Results:")
-grad_boost.cross_validate()
+grad_boost.cross_validate(method="holdout")
+grad_boost.cross_validate(method="RollingWindow", data=data)
