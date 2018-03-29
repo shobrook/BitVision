@@ -313,3 +313,7 @@ def integral_transform(dataset, interval):
 
 def rate_of_change_transform(dataset):
 	return dataset
+
+
+def select_features(dataset, method, skip=True):
+	return dataset
