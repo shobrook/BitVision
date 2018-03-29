@@ -3,6 +3,7 @@
 
 import os
 import analysis
+import preprocessing as pp
 import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -26,17 +27,7 @@ class Model(object):
 
         self.optimize, self.estimator = optimize, estimator
 
-        if self.estimator == "LogisticRegression":
-            self.model = self.__fit_log_reg()
-            joblib.dump(self.model, PARENT_DIR + "/models/LogisticRegression.pkl")
-        elif self.estimator == "RandomForest":
-            self.model = self.__fit_rand_forest()
-            joblib.dump(self.model, PARENT_DIR + "/models/RandomForest.pkl")
-        elif self.estimator == "GradientBoosting":
-            self.model = self.__fit_grad_boost()
-            joblib.dump(self.model, PARENT_DIR + "/models/GradientBoosting.pkl")
-        else:
-            print("\tError: Invalid model type")
+        self.__fit_model()
 
         self.y_pred = self.model.predict(self.scaler.transform(self.x_test))
 
@@ -147,6 +138,20 @@ class Model(object):
             return grad_boost
 
 
+    def __fit_model(self):
+        if self.estimator == "LogisticRegression":
+            self.model = self.__fit_log_reg()
+            joblib.dump(self.model, PARENT_DIR + "/models/LogisticRegression.pkl")
+        elif self.estimator == "RandomForest":
+            self.model = self.__fit_rand_forest()
+            joblib.dump(self.model, PARENT_DIR + "/models/RandomForest.pkl")
+        elif self.estimator == "GradientBoosting":
+            self.model = self.__fit_grad_boost()
+            joblib.dump(self.model, PARENT_DIR + "/models/GradientBoosting.pkl")
+        else:
+            print("\tError: Invalid model type")
+
+
     def __holdout_test(self):
         """Calculates the model's classification accuracy, sensitivity, precision, and specificity."""
         print("\t\tHoldout Validation Results:")
@@ -157,14 +162,34 @@ class Model(object):
         print("\t\t\tSensitivity: ", analysis.sensitivity(self.y_pred, self.y_test))
 
 
-    def __rolling_window_test(self, data):
+    def __rolling_window_test(self, data, window_size, test_size, step=1):
         print("\t\tRolling Window Validation Results:")
 
-        # k instances are used to train the model and the model is tested on the next m instances
-        # Then, the window is slid forward some amount x and the next k instances are used for training
-        # and the evaluation is done on the subsequent m instances.
+        # TODO: Hide the STDOUT of pp.split() and __fit_model()
 
-        # QUESTION: What about overflow? Should the window end where it started? Is the average of all the performances taken?
+        windows = [data.loc[idx * step:(idx * step) + round(window_size * len(data))] for idx in range(int((len(data) - round(window_size * len(data))) / step))]
+        decoupled_windows = [pp.split(window, test_size=test_size, balanced=False) for window in windows] # TODO: Do a nonrandom split
+
+        results = {"accuracy": [], "precision": [], "specificity": [], "sensitivity": []}
+        for feature_set in decoupled_windows:
+            self.x_train, self.x_test, self.y_train, self.y_test = feature_set
+
+            self.scaler = StandardScaler()
+            self.scaler.fit(self.x_train)
+
+            self.__fit_model()
+
+            self.y_pred = self.model.predict(self.scaler.transform(self.x_test))
+
+            results["accuracy"].append(analysis.accuracy(self.y_pred, self.y_test))
+            results["precision"].append(analysis.precision(self.y_pred, self.y_test))
+            results["specificity"].append(analysis.specificity(self.y_pred, self.y_test))
+            results["sensitivity"].append(analysis.sensitivity(self.y_pred, self.y_test))
+
+        print("\t\t\tAccuracy: ", str(sum(results["accuracy"]) / float(len(results["accuracy"]))))
+        print("\t\t\tPrecision: ", str(sum(results["precision"]) / float(len(results["precision"]))))
+        print("\t\t\tSpecificity: ", str(sum(results["specificity"]) / float(len(results["specificity"]))))
+        print("\t\t\tSensitivity: ", str(sum(results["sensitivity"]) / float(len(results["sensitivity"]))))
 
 
     # Public Methods #
@@ -176,11 +201,11 @@ class Model(object):
         analysis.plot_cnf_matrix(self.y_pred, self.y_test)
 
 
-    def cross_validate(self, method, data=None):
+    def cross_validate(self, method, data=None, window_size=.9, test_size=.1, step=1):
         if method == "holdout":
             self.__holdout_test()
         elif method == "RollingWindow":
-            self.__rolling_window_test(data)
+            self.__rolling_window_test(data, window_size, test_size, step)
         else:
             print("\t\tError: Invalid cross-validation method")
 
