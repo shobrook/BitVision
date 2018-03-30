@@ -10,6 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
+from sklearn.feature_selection import RFE
 
 PARENT_DIR = os.path.dirname(os.getcwd())
 
@@ -18,7 +19,7 @@ PARENT_DIR = os.path.dirname(os.getcwd())
 
 
 class Model(object):
-    def __init__(self, estimator, train_set, test_set, optimize=False):
+    def __init__(self, estimator, train_set, test_set, select_features=None, optimize=False):
         self.x_train, self.y_train = train_set
         self.x_test, self.y_test = test_set
 
@@ -165,10 +166,10 @@ class Model(object):
     def __rolling_window_test(self, data, window_size, test_size, step=1):
         print("\t\tRolling Window Validation Results:")
 
-        # TODO: Hide the STDOUT of pp.split() and __fit_model()
+        # TODO: Hide the STDOUT of pp.split() and __fit_model(), and prevent __fit_model() from saving a .pkl on each run
 
         windows = [data.loc[idx * step:(idx * step) + round(window_size * len(data))] for idx in range(int((len(data) - round(window_size * len(data))) / step))]
-        decoupled_windows = [pp.split(window, test_size=test_size, balanced=False) for window in windows] # TODO: Do a nonrandom split
+        decoupled_windows = [pp.split(window, test_size=test_size, balanced=False) for window in windows] # TODO: Do a nonrandom split to respect the temporal order of observations
 
         results = {"accuracy": [], "precision": [], "specificity": [], "sensitivity": []}
         for feature_set in decoupled_windows:
@@ -202,7 +203,7 @@ class Model(object):
 
 
     def cross_validate(self, method, data=None, window_size=.9, test_size=.1, step=1):
-        if method == "holdout":
+        if method == "Holdout":
             self.__holdout_test()
         elif method == "RollingWindow":
             self.__rolling_window_test(data, window_size, test_size, step)
@@ -210,7 +211,8 @@ class Model(object):
             print("\t\tError: Invalid cross-validation method")
 
 
+    """
     def print_feature_importances(self, data):
-        """Returns a list of the most important features."""
         for feat, importance in zip(data.drop(["Date", "Trend"], axis=1).columns, self.model.feature_importances_):
             print("\t\t\t" + feat + ": " + importance)
+    """
