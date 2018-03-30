@@ -16,7 +16,7 @@ import os.path
 import pandas as pd
 
 if sys.argv[1] == "-o" and sys.argv[3] == "-fs":
-    OPTIMIZE, SELECT_FEATURES = sys.argv[2] == "True", sys.argv[4] == "True"
+    OPTIMIZE, SELECT_FEATURES = sys.argv[2] == "True", sys.argv[4]
 else:
     print("Invalid arguments.")
     sys.exit()
@@ -43,7 +43,6 @@ data = (
     .pipe(pp.fix_null_vals)
     .pipe(pp.add_lag_variables, lag=3)
     .pipe(pp.power_transform)
-    .pipe(pp.select_features, method="RecursiveFE", skip=SELECT_FEATURES)
     )
 x_train, x_test, y_train, y_test = pp.split(data, test_size=.2, balanced=True)
 
@@ -66,18 +65,21 @@ log_reg = Model(
     estimator="LogisticRegression",
     train_set=(x_train, y_train),
     test_set=(x_test, y_test),
+    select_features=SELECT_FEATURES,
     optimize=OPTIMIZE
     )
 rand_forest = Model(
     estimator="RandomForest",
     train_set=(x_train, y_train),
     test_set=(x_test, y_test),
+    select_features=SELECT_FEATURES,
     optimize=OPTIMIZE
     )
 grad_boost = Model(
     estimator="GradientBoosting",
     train_set=(x_train, y_train),
     test_set=(x_test, y_test),
+    select_features=SELECT_FEATURES,
     optimize=OPTIMIZE
     )
 
@@ -90,7 +92,7 @@ print("Evaluating")
 # Logistic Regression
 print("\tLogistic Regression Estimator")
 log_reg.plot_cnf_matrix()
-log_reg.cross_validate(method="holdout")
+log_reg.cross_validate(method="Holdout")
 log_reg.cross_validate(
     method="RollingWindow",
     data=data,
