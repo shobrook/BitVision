@@ -300,6 +300,7 @@ def power_transform(dataset):
 
 
 def split(dataset, test_size, balanced=True):
+	# TODO: Splits can't be random, they need to respect the temporal order of each observation
 	if balanced:
 		return balanced_split(dataset, test_size)
 	else:
@@ -309,11 +310,3 @@ def split(dataset, test_size, balanced=True):
 def integral_transform(dataset, interval):
 	integral = integrate(list(dataset["Sentiment"]), interval)
 	dataset["Sentiment_integrals"] = pd.Series(integral)
-
-
-def rate_of_change_transform(dataset):
-	return dataset
-
-
-def select_features(dataset, method, skip=True):
-	return dataset
