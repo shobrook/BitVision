@@ -1,7 +1,6 @@
 BitVision
 ======
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
-[![Coverage Status](https://coveralls.io/repos/github/shobrook/BitVision/badge.svg?branch=master)](https://coveralls.io/github/shobrook/BitVision?branch=master)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/shobrook/BitVision/blob/master/LICENSE)
 [![Scikit-Learn](https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg)](http://scikit-learn.org/stable/)
 
 ![An Engineer's Syllogism](img/engineer_syllogism.png)
