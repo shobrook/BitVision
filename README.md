@@ -5,10 +5,10 @@ BitVision
 [![Scikit-Learn](https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg)](http://scikit-learn.org/stable/)
 
 
-**The goal of this project is to predict daily Bitcoin price movements using machine learning.** Unlike other approaches we've seen, our feature set is comprehensive and includes technical indicators, blockchain-related data (hash rate, miner's revenue, etc.), and sentiment ratings of Bitcoin-related news articles.
+**This study presents a novel system for predicting daily Bitcoin price movements using machine learning.** Unlike other approaches, the feature set combines technical indicators, network data (hash rate, miner’s revenue, etc.), and sentiment ratings of Bitcoin-related news headlines.
 
 
-Four machine learning models are trained and evaluated: logistic regression, random forest classifier, support vector machine, and gradient boosting machine. Experimental results suggest a **55-60% prediction accuracy** for the direction of next-day price change.
+Four supervised learning algorithms are implemented: a gradient boosting machine (GBM), random forest classifier, and long short-term memory network (LSTM). Experimental results suggest a **classification accuracy exceeding 60%** for the direction of next-day price change, with the LSTM consistently outperforming other models.
 
 ## Features
 
@@ -16,7 +16,7 @@ We collect historical OHLCV data from Bitstamp, transactional data from Blockcha
 
 **Blockchain-Related Data**
 
-(Talk about how this is the closest thing to fundamental analysis)
+Unlike many other publicly traded assets, all Bitcoin-related fundamental data, such as block size and the average transaction cost, is available online. This 
 
 | Feature|  Description	|
 | --- | --- |
@@ -32,11 +32,9 @@ We collect historical OHLCV data from Bitstamp, transactional data from Blockcha
 | Transaction Fees | Total value of all transaction fees paid to miners. |
 | Transactions per Day | Total number of unique Bitcoin transactions per day. |
 
-The selection of these features was inspired by [price prediction research](https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf?_ga=2.213991569.764097240.1515916169-1482452711.1513173539) from Stanford University, which claims a 98.7% classification accuracy for the direction of daily price movements using only Bitcoin network and market data. However, their research methods involves models that are trained and evaluated on imbalanced data, and cross-validation is never performed, so it's likely the results are misleading.
-
 **Technical Indicators**
 
-Technical indicators typically eliminate noise in price data and may improve an algorithm's ability to learn price patterns, if any exist. These particular indicators are selected to provide insight into price momentum, volatility, volume, potential trends, and potential buy/sell signals.
+Technical indicators help reduce noise in price data and may improve an algorithm's ability to learn any existing price patterns. These particular indicators were selected to provide insight into price momentum, volatility, potential trends, and potential buy/sell signals.
 
 | Feature|  Description	|
 | --- | --- |
@@ -50,13 +48,31 @@ Technical indicators typically eliminate noise in price data and may improve an 
 | On-Balance Volume | $OBV(t) = OBV(t - 1) \pm Volume(t)$ |
 | Triple Exponential Moving Average | $(EMA(EMA(EMA(Close(t)))))/(EMA(EMA(EMA(Close(t - 1)))))$ |
 
-According to the Random Walk Hypothesis, the future price of a publicly traded asset is not statistically dependent on past prices, and thus technical analysis cannot be leveraged reliably for price prediction. However, many traders still apply technical analysis to their trading strategies, and a relationship may exist between buy/sell signals from technical indicators and executed trades.
+According to the Random Walk Hypothesis, which states that the future price of a publicly traded asset is not statistically dependent on past prices, it's impossible to reliably leverage technical analysis to beat the market. But this feature set is still considered because, regardless of its effectiveness, many traders utilize technical analysis in their trading strategies, and there may exist a relationship between buy/sell signals from technical indicators and executed trades.
 
 **Sentiment of Bitcoin-Related News Headlines**
 
-We manually rate the sentiment of historical news headlines on a scale from -2 to 2 based on the content's perceived effect on public opinion, rather than its potential effect on price. As multiple articles could be published in a day, each with different sentiment ratings, a daily weighted average is calculated. The weights are derived from the number of tweets an article has, an indicator of the article's popularity.
+Bitcoin price is (anecdotally) highly speculative. So we manually rated the sentiment of historical news headlines on a scale from -2 to 2 based on the content's perceived effect on public opinion, rather than its potential effect on price. As multiple articles could be published in a day, each with different sentiment ratings, a daily weighted average is calculated. The weights are derived from the number of tweets an article has, an indicator of the article's reach.
+
+## Target
+
+
 
 ## Method
+
+A number of data preprocessing techniques are applied to the feature set before passing it through a feature selection algorithm and training the models.
+
+* Lag variables
+
+A number of data preprocessing techniques are applied to the feature set before recursively eliminating the least predictive features and training the
+
+A number of data preprocessing techniques are applied to the feature set, including the addition of lag variables, before recursively eliminating the least predictive features.
+
+The Box-Cos transform is a configurable data transform method that supports a suite of transforms, and it can be configured to evaluate a suite of transforms automatically and select a best fit. The resulting series may be more linear and the resulting distribution more Guassian or Uniform, depending on the underlying process that generated it.
+
+Box-Cox transform. Normalization. Null value treatment (interpolation?). Outlier treatment(?). Balancing. Lag variables.
+
+Use the feature correlation matrix to demonstrate that there is little interdependency between features.
 
 As the price of Bitcoin is generally increasing over time, we balance our feature set to ensure that the classification accuracy can be benchmarked against a random coin toss. A multitude of feature selection and scaling algorithms are then applied before training the learning models. We determine each model's optimal hyperparameter values using Scikit-learn's GridSearchCV package and a custom scoring function.
 
