@@ -4,6 +4,7 @@ BitVision
 [![Coverage Status](https://coveralls.io/repos/github/shobrook/BitVision/badge.svg?branch=master)](https://coveralls.io/github/shobrook/BitVision?branch=master)
 [![Scikit-Learn](https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg)](http://scikit-learn.org/stable/)
 
+![An Engineer's Syllogism](img/engineer_syllogism.png)
 
 **This study presents a novel system for predicting daily Bitcoin price movements using machine learning.** Unlike other approaches, the feature set combines technical indicators, network data (hash rate, miner’s revenue, etc.), and sentiment ratings of Bitcoin-related news headlines.
 
@@ -86,7 +87,7 @@ As the price of Bitcoin is generally increasing over time, the training set is b
 
 ## How to Run
 
-Clone the repo, then navigate to the src/ directory and run `python main.py`.
+Clone the repo, then navigate to the `src/` directory and run `python main.py`.
 
 ## Future Work
 
