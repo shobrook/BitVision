@@ -69,7 +69,7 @@ class Model(object):
 
             return best_model["model"]
         else:
-            log_reg = LogisticRegression()
+            log_reg = LogisticRegression(penalty="l2", tol=.01, C=10, max_iter=100)
             log_reg.fit(self.scaler.transform(self.x_train), self.y_train)
 
             return log_reg
@@ -133,7 +133,7 @@ class Model(object):
 
             return best_model["model"]
         else:
-            grad_boost = GradientBoostingClassifier(n_estimators=1000, max_features=None)
+            grad_boost = GradientBoostingClassifier(n_estimators=1000, learning_rate=.01, max_depth=8)
             grad_boost.fit(self.scaler.transform(self.x_train), self.y_train)
 
             return grad_boost
