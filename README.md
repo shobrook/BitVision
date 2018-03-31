@@ -80,6 +80,8 @@ As the price of Bitcoin is generally increasing over time, the training set is b
 
 (Explain the different cross-validation methods that were used, then display a table showing the results).
 
+<br />
+
 ![Confusion Matrices](img/confusion_matrices.png)
 
 ## How to Run
