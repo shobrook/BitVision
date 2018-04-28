@@ -1,22 +1,22 @@
 BitVision
 ======
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
-[![Coverage Status](https://coveralls.io/repos/github/shobrook/BitVision/badge.svg?branch=master)](https://coveralls.io/github/shobrook/BitVision?branch=master)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/shobrook/BitVision/blob/master/LICENSE)
 [![Scikit-Learn](https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg)](http://scikit-learn.org/stable/)
 
+![An Engineer's Syllogism](img/engineer_syllogism.png)
 
-**The goal of this project is to predict daily Bitcoin price movements using machine learning.** Unlike other approaches we've seen, our feature set is comprehensive and includes technical indicators, blockchain-related data (hash rate, miner's revenue, etc.), and sentiment ratings of Bitcoin-related news articles.
+**This study presents a novel system for predicting daily Bitcoin price movements using machine learning.** Unlike other approaches, the feature set combines technical indicators, network data (hash rate, miner’s revenue, etc.), and sentiment ratings of Bitcoin-related news headlines.
 
 
-Four machine learning models are trained and evaluated: logistic regression, random forest classifier, support vector machine, and gradient boosting machine. Experimental results suggest a **55-60% prediction accuracy** for the direction of next-day price change.
+Three supervised learning algorithms are implemented: a gradient boosting machine (GBM), random forest classifier, and long short-term memory network (LSTM). Experimental results suggest a **classification accuracy exceeding 60%** for the direction of next-day price change, with the LSTM consistently outperforming other models.
 
 ## Features
 
-We collect historical OHLCV data from Bitstamp, transactional data from Blockchain.info, and news headlines from Coindesk, starting from 2013, and derive the following features.
+Historical OHLCV data is collected from Bitstamp, transactional data from Blockchain.info, and news headlines from Coindesk, starting from 2013, to derive the following features.
 
 **Blockchain-Related Data**
 
-(Talk about how this is the closest thing to fundamental analysis)
+Unlike many other publicly traded assets, all Bitcoin-related fundamental data is available online, which provides an opportunity explore the predictive potential of network attributes.
 
 | Feature|  Description	|
 | --- | --- |
@@ -32,11 +32,9 @@ We collect historical OHLCV data from Bitstamp, transactional data from Blockcha
 | Transaction Fees | Total value of all transaction fees paid to miners. |
 | Transactions per Day | Total number of unique Bitcoin transactions per day. |
 
-The selection of these features was inspired by [price prediction research](https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf?_ga=2.213991569.764097240.1515916169-1482452711.1513173539) from Stanford University, which claims a 98.7% classification accuracy for the direction of daily price movements using only Bitcoin network and market data. However, their research methods involves models that are trained and evaluated on imbalanced data, and cross-validation is never performed, so it's likely the results are misleading.
-
 **Technical Indicators**
 
-Technical indicators typically eliminate noise in price data and may improve an algorithm's ability to learn price patterns, if any exist. These particular indicators are selected to provide insight into price momentum, volatility, volume, potential trends, and potential buy/sell signals.
+Technical indicators help reduce noise in price data and may improve an algorithm's ability to learn any existing price patterns. These particular indicators were selected to provide insight into price momentum, volatility, potential trends, and potential buy/sell signals.
 
 | Feature|  Description	|
 | --- | --- |
@@ -50,15 +48,29 @@ Technical indicators typically eliminate noise in price data and may improve an 
 | On-Balance Volume | $OBV(t) = OBV(t - 1) \pm Volume(t)$ |
 | Triple Exponential Moving Average | $(EMA(EMA(EMA(Close(t)))))/(EMA(EMA(EMA(Close(t - 1)))))$ |
 
-According to the Random Walk Hypothesis, the future price of a publicly traded asset is not statistically dependent on past prices, and thus technical analysis cannot be leveraged reliably for price prediction. However, many traders still apply technical analysis to their trading strategies, and a relationship may exist between buy/sell signals from technical indicators and executed trades.
+According to the Random Walk Hypothesis, which states that the future price of a publicly traded asset is not statistically dependent on past prices, it's impossible to reliably leverage technical analysis to beat the market. But this feature set is still considered because many traders utilize technical analysis in their trading strategies, and there may exist a relationship between buy/sell signals from technical indicators and executed trades, regardless of their actual effectiveness.
 
 **Sentiment of Bitcoin-Related News Headlines**
 
-We manually rate the sentiment of historical news headlines on a scale from -2 to 2 based on the content's perceived effect on public opinion, rather than its potential effect on price. As multiple articles could be published in a day, each with different sentiment ratings, a daily weighted average is calculated. The weights are derived from the number of tweets an article has, an indicator of the article's popularity.
+The sentiment of historical news headlines was manually rated and averaged by a group of mechanical turks on a scale from -2 to 2 based on the content's perceived effect on public opinion, rather than its perceived effect on price. As multiple articles could be published in a day, each with potentially different sentiment ratings, a daily weighted average is calculated. The weights are derived from the number of tweets an article has, an indicator of the article's reach. And, to get an idea of accumulated sentiment, another feature is extracted by applying an integral transform to the weighted sentiment ratings.
+
+## Target
+
+The target variable is the direction (sign) of next-day price change, making this a binary classification task. Trying to forecast the actual price is usually a waste of time.
 
 ## Method
 
-As the price of Bitcoin is generally increasing over time, we balance our feature set to ensure that the classification accuracy can be benchmarked against a random coin toss. A multitude of feature selection and scaling algorithms are then applied before training the learning models. We determine each model's optimal hyperparameter values using Scikit-learn's GridSearchCV package and a custom scoring function.
+The following data cleaning and preprocessing techniques are applied to the feature set:
+* The Last Observation Carried Forward (LOCF) method is used to fill missing values in the dataset
+* Lag variables (spanning back three days) are created for each feature to provide information about trends
+* A Box-Cox transform, which automatically evaluates a suite of power transforms and selects the best fit for a given feature, is applied in an attempt to reveal the underlying signal in each time series
+* Lastly, features are scaled to more or less look like a Gaussian distribution with zero mean and unit variance
+
+(Addition of dimensionality reduction and feature elimination algorithms coming soon)
+
+As the price of Bitcoin is generally increasing over time, the training set is balanced (using the random undersampling method) to ensure that the algorithm doesn't learn a bias towards positive predictions, and so that the classification accuracy can be benchmarked against a random coin toss.
+
+(Elaborate more on why each model was selected). The Gradient Boosting Machine and Random Forest Classifier were both selected due to their robustness to overfitting, and the LSTM to learn long-term trends. (Explain how hyperparameters were optimized for the first two models, and how the loss function was tweaked for the LSTM).
 
 <br />
 
@@ -66,24 +78,23 @@ As the price of Bitcoin is generally increasing over time, we balance our featur
 
 ## Results
 
-(See confusion matrices in img/)
+(Explain the different cross-validation methods that were used, then display a table showing the results).
+
+<br />
+
+![Confusion Matrices](img/confusion_matrices.png)
 
 ## How to Run
 
-1. Clone repo
-2. Run: `python3 main.py`
+Clone the repo, then navigate to the `src/` directory and run `python main.py`.
 
-## How to Contribute
-
-1. Clone repo and make a new branch: `$ git checkout https://github.com/shobrook/BitVision -b [name_for_new_branch]`.
-2. Make changes and test
-3. Pull Request with comprehensive description of changes
-
+## Future Work
 
 Some potential directions of this research:
-* Understanding which features have the most predictive power using the Granger Causality test
-* Exploring other feature engineering and dimensionality reduction techniques
+* Understanding which features have the most predictive power by performing the Granger Causality test
+* Exploring other feature engineering techniques
+* Understanding interdependencies and relationships between features via exploratory data analysis
 * Testing some potential features:
-	* Since most Bitcoin traders are probably 13 yrs old, there may be a correlation between price change and predictions made by popular Bitcoin forecasting websites
-	* Bitcoin Core's Github activity is another possibility
-* If the prediction accuracy reaches 60%+, we may build an automated trading algorithm
+	* There may be a correlation between price change and predictions made by popular Bitcoin forecasting websites, since it's possible that a non-trivial number of traders use those predictions to inform trades
+	* Bitcoin Core's Github activity could serve as another "fundamental" feature
+* This project's machine learning pipeline will eventually be turned into an automated trading algorithm with a CLI that anyone can use
