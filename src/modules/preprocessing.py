@@ -159,51 +159,51 @@ def calculate_indicators(ohlcv):
 	temp_ohlcv = temp_ohlcv.iloc[::-1]
 
 	# Rate of Change Ratio
-	#rocr3 = ((Indicator(temp_ohlcv, "ROCR", 3)).getHistorical(lag=1))[::-1]
-	#rocr6 = ((Indicator(temp_ohlcv, "ROCR", 6)).getHistorical(lag=1))[::-1]
+	rocr3 = ((Indicator(temp_ohlcv, "ROCR", 3)).getHistorical())[::-1]
+	rocr6 = ((Indicator(temp_ohlcv, "ROCR", 6)).getHistorical())[::-1]
 
 	# Average True Range
-	#atr = ((Indicator(temp_ohlcv, "ATR", 14)).getHistorical(lag=1))[::-1]
+	atr = ((Indicator(temp_ohlcv, "ATR", 14)).getHistorical())[::-1]
 
 	# On-Balance Volume
-	#obv = ((Indicator(temp_ohlcv, "OBV")).getHistorical(lag=1))[::-1]
+	obv = ((Indicator(temp_ohlcv, "OBV")).getHistorical())[::-1]
 
 	# Triple Exponential Moving Average
-	#trix = ((Indicator(temp_ohlcv, "TRIX", 20)).getHistorical(lag=1))[::-1]
+	trix = ((Indicator(temp_ohlcv, "TRIX", 20)).getHistorical())[::-1]
 
 	# Momentum
-	mom1 = ((Indicator(temp_ohlcv, "MOM", 1)).getHistorical(lag=1))[::-1]
-	mom3 = ((Indicator(temp_ohlcv, "MOM", 3)).getHistorical(lag=1))[::-1]
+	mom1 = ((Indicator(temp_ohlcv, "MOM", 1)).getHistorical())[::-1]
+	mom3 = ((Indicator(temp_ohlcv, "MOM", 3)).getHistorical())[::-1]
 
 	# Average Directional Index
-	adx14 = ((Indicator(temp_ohlcv, "ADX", 14)).getHistorical(lag=1))[::-1]
-	adx20 = ((Indicator(temp_ohlcv, "ADX", 20)).getHistorical(lag=1))[::-1]
+	adx14 = ((Indicator(temp_ohlcv, "ADX", 14)).getHistorical())[::-1]
+	adx20 = ((Indicator(temp_ohlcv, "ADX", 20)).getHistorical())[::-1]
 
 	# Williams %R
-	willr = ((Indicator(temp_ohlcv, "WILLR", 14)).getHistorical(lag=1))[::-1]
+	willr = ((Indicator(temp_ohlcv, "WILLR", 14)).getHistorical())[::-1]
 
 	# Relative Strength Index
-	rsi6 = ((Indicator(temp_ohlcv, "RSI", 6)).getHistorical(lag=1))[::-1]
-	rsi12 = ((Indicator(temp_ohlcv, "RSI", 12)).getHistorical(lag=1))[::-1]
+	rsi6 = ((Indicator(temp_ohlcv, "RSI", 6)).getHistorical())[::-1]
+	rsi12 = ((Indicator(temp_ohlcv, "RSI", 12)).getHistorical())[::-1]
 
 	# Moving Average Convergence Divergence
-	macd, macd_signal, macd_hist = (Indicator(temp_ohlcv, "MACD", 12, 26, 9)).getHistorical(lag=1)
+	macd, macd_signal, macd_hist = (Indicator(temp_ohlcv, "MACD", 12, 26, 9)).getHistorical()
 	macd, macd_signal, macd_hist = macd[::-1], macd_signal[::-1], macd_hist[::-1]
 
 	# Exponential Moving Average
-	ema6 = ((Indicator(temp_ohlcv, "MA", 6, 1)).getHistorical(lag=1))[::-1]
-	ema12 = ((Indicator(temp_ohlcv, "MA", 12, 1)).getHistorical(lag=1))[::-1]
+	ema6 = ((Indicator(temp_ohlcv, "MA", 6, 1)).getHistorical())[::-1]
+	ema12 = ((Indicator(temp_ohlcv, "MA", 12, 1)).getHistorical())[::-1]
 
 	# Append indicators to the input datasets
-	min_length = min(len(mom1), len(mom3), len(adx14), len(adx20), len(willr), len(rsi6), len(rsi12), len(macd), len(macd_signal), len(macd_hist), len(ema6), len(ema12)) # len(rocr3), len(rocr6), len(atr), len(obv), len(trix)
+	min_length = min(len(mom1), len(mom3), len(adx14), len(adx20), len(willr), len(rsi6), len(rsi12), len(macd), len(macd_signal), len(macd_hist), len(ema6), len(ema12), len(rocr3), len(rocr6), len(atr), len(obv), len(trix))
 	ohlcv = ohlcv[:min_length].drop(["Open", "High", "Low"], axis=1)
 
 	ohlcv["MOM (1)"], ohlcv["MOM (3)"], ohlcv["ADX (14)"] = (pd.Series(mom1[:min_length])).values, (pd.Series(mom3[:min_length])).values, (pd.Series(adx14[:min_length])).values
 	ohlcv["ADX (20)"], ohlcv["WILLR"], ohlcv["RSI (6)"] = (pd.Series(adx20[:min_length])).values, (pd.Series(willr[:min_length])).values, (pd.Series(rsi6[:min_length])).values
 	ohlcv["RSI (12)"], ohlcv["MACD"], ohlcv["MACD (Signal)"] = (pd.Series(rsi12[:min_length])).values, (pd.Series(macd[:min_length])).values, (pd.Series(macd_signal[:min_length])).values
 	ohlcv["MACD (Historical)"], ohlcv["EMA (6)"], ohlcv["EMA (12)"] = (pd.Series(macd_hist[:min_length])).values, (pd.Series(ema6[:min_length])).values, (pd.Series(ema12[:min_length])).values
-	#ohlcv["ROCR (3)"], ohlcv["ROCR (6)"], ohlcv["ATR (14)"] = (pd.Series(rocr3[:min_length])).values, (pd.Series(rocr6[:min_length])).values, (pd.Series(atr[:min_length])).values
-	#ohlcv["OBV"], ohlcv["TRIX (20)"] = (pd.Series(obv[:min_length])).values, (pd.Series(trix[:min_length])).values
+	ohlcv["ROCR (3)"], ohlcv["ROCR (6)"], ohlcv["ATR (14)"] = (pd.Series(rocr3[:min_length])).values, (pd.Series(rocr6[:min_length])).values, (pd.Series(atr[:min_length])).values
+	ohlcv["OBV"], ohlcv["TRIX (20)"] = (pd.Series(obv[:min_length])).values, (pd.Series(trix[:min_length])).values
 
 	return ohlcv
 

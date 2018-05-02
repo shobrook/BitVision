@@ -76,7 +76,7 @@ def plot_cnf_matrix(y_pred, y_test):
 	elif COUNTER == 1:
 		filename = "/img/rand_forest_confusion_matrix.png"
 	else:
-		filename = "/img/svc_confusion_matrix.png"
+		filename = "/img/gbm_confusion_matrix.png"
 
 	plt.savefig(PARENT_DIR + filename, bbox_inches='tight')
 	increment_counter()

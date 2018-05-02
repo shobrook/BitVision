@@ -15,10 +15,14 @@ import scraper
 import os.path
 import pandas as pd
 
-if sys.argv[1] == "-o" and sys.argv[3] == "-fs":
-    OPTIMIZE, SELECT_FEATURES = sys.argv[2] == "True", sys.argv[4]
-else:
-    print("Invalid arguments.")
+try:
+    if sys.argv[1] == "-o":
+        OPTIMIZE = sys.argv[2] == "True"
+    else:
+        print("Invalid arguments.")
+        sys.exit()
+except IndexError:
+    print("Missing arguments.")
     sys.exit()
 
 
@@ -50,10 +54,10 @@ x_train, x_test, y_train, y_test = pp.split(data, test_size=.2, balanced=True)
 # Exploratory Analysis #
 
 
-#print("Analyzing features")
+print("Analyzing features")
 
 #print(data.describe())
-#analysis.plot_corr_matrix(data)
+analysis.plot_corr_matrix(data)
 
 
 # Fitting Models #
@@ -65,21 +69,21 @@ log_reg = Model(
     estimator="LogisticRegression",
     train_set=(x_train, y_train),
     test_set=(x_test, y_test),
-    select_features=SELECT_FEATURES,
+    select_features="RecursiveFE",
     optimize=OPTIMIZE
     )
 rand_forest = Model(
     estimator="RandomForest",
     train_set=(x_train, y_train),
     test_set=(x_test, y_test),
-    select_features=SELECT_FEATURES,
+    select_features="RecursiveFE",
     optimize=OPTIMIZE
     )
 grad_boost = Model(
     estimator="GradientBoosting",
     train_set=(x_train, y_train),
     test_set=(x_test, y_test),
-    select_features=SELECT_FEATURES,
+    select_features="RecursiveFE",
     optimize=OPTIMIZE
     )
 
