@@ -1,3 +1,4 @@
+# alichtman
 # CSV Data Entry CLI
 
 import pandas as pd
@@ -5,12 +6,14 @@ import os.path
 import sys
 from colorama import Fore, Style
 
-# NOTES: 1. Keep file closed while working with it.
-# 		 2. Press `q` when you're done to exit
+#  0. Change relative path below to appropriate path
+#  1. Keep file closed while working with it.
+#  2. IMPORTANT: Press `q` when you're done to save your work to the file.
 
 
 def new_entry(index):
 
+	print(Fore.Blue + Style.BRIGHT + "How does this headline impact the public sentiment of Bitcoin?" + Style.RESET_ALL)
 	print(Fore.GREEN + Style.BRIGHT + "LINE:" + str(index) + Style.RESET_ALL)
 	print(Fore.YELLOW + Style.BRIGHT + headlines["Headline"][index] + Style.RESET_ALL)
 
