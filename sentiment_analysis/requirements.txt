@@ -1,0 +1,13 @@
+cycler==0.10.0
+kiwisolver==1.0.1
+matplotlib==2.2.2
+nltk==3.3
+numpy==1.14.3
+pandas==0.22.0
+pyparsing==2.2.0
+python-dateutil==2.7.3
+pytz==2018.4
+scikit-learn==0.19.1
+six==1.11.0
+sklearn==0.0
+textblob==0.15.1
