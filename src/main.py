@@ -13,7 +13,7 @@ import preprocessing as pp
 import analysis
 import scraper
 
-# TODO: argparse
+# Command line argument
 
 try:
     if sys.argv[1] == "-o":

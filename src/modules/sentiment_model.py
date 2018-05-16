@@ -16,7 +16,6 @@ PARENT_DIR = os.path.dirname(os.getcwd())
 
 class SentimentModel(Model):
 	def __init__(self, estimator, train_set, test_set, select_features=None, optimize=False):
-		super().__init__(estimator, train_set, test_set, select_features, optimize)
 		self.x_train, self.y_train = train_set
 		self.x_test, self.y_test = test_set
 
