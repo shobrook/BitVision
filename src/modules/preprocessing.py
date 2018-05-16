@@ -1,9 +1,12 @@
 # Globals #
 
-
+import re
 import numpy as np
 import pandas as pd
 import dateutil.parser as dp
+from nltk import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem.porter import *
 from itertools import islice
 from scipy.stats import boxcox
 from scipy.integrate import simps
@@ -16,10 +19,155 @@ from selenium import webdriver
 RANDOM_STATE = 42
 
 
+# Sentiment Preprocessing
+
+def remove_special_chars(headline_list):
+	"""
+	Returns list of headlines with all non-alphabetical characters removed.
+	"""
+	rm_spec_chars = [re.sub('[^ A-Za-z]+', "", headline) for headline in headline_list]
+	return rm_spec_chars
+
+
+def tokenize(headline_list):
+	"""
+	Takes list of headlines as input and returns a list of lists of tokens.
+	"""
+	tokenized = []
+	for headline in headline_list:
+		tokens = word_tokenize(headline)
+		tokenized.append(tokens)
+
+	# print("tokenize")
+	# pprint(tokenized)
+	return tokenized
+
+
+def remove_stop_words(tokenized_headline_list):
+	"""
+	Takes list of lists of tokens as input and removes all stop words.
+	"""
+	filtered_tokens = []
+	for token_list in tokenized_headline_list:
+		filtered_tokens.append([token for token in token_list if token not in set(stopwords.words('english'))])
+	# print("stop words")
+	# pprint(filtered_tokens)
+	return filtered_tokens
+
+
+def stem(token_list_of_lists):
+	"""
+	Takes list of lists of tokens as input and stems every token.
+	Returns a list of lists of stems.
+	"""
+	stemmer = PorterStemmer()
+	stemmed = []
+	for token_list in token_list_of_lists:
+		# print(token_list)
+		stemmed.append([stemmer.stem(token) for token in token_list])
+	# print("stem")
+	# pprint(stemmed)
+	return stemmed
+
+
+def make_bag_of_words(df, stemmed):
+	"""
+	Create bag of words model.
+	"""
+	print("\tCreating Bag of Words Model...")
+
+	very_pos = set()
+	slightly_pos = set()
+	neutral = set()
+	slightly_neg = set()
+	very_neg = set()
+
+	# Create sets that hold words in headlines categorized as "slightly_neg" or "slightly_pos" or etc
+
+	for stems, sentiment in zip(stemmed, df["Sentiment"].tolist()):
+		if sentiment == -2:
+			very_neg.update(stems)
+		elif sentiment == -1:
+			slightly_neg.update(stems)
+		elif sentiment == 0:
+			neutral.update(stems)
+		elif sentiment == 1:
+			slightly_pos.update(stems)
+		elif sentiment == 2:
+			very_pos.update(stems)
+
+	# Count number of words in each headline in each of the sets and encode it as a list of counts for each headline.
+
+	bag_count = []
+	for x in stemmed:
+		x = set(x)
+		bag_count.append(list((len(x & very_neg), len(x & slightly_neg), len(x & neutral), len(x & slightly_pos), len(x & very_pos))))
+
+	df["sentiment_class_count"] = bag_count
+	return df
+
+
+def sentiment_preprocessing(df):
+	"""
+	Takes a dataframe, removes special characters, tokenizes
+	the headlines, removes stop-tokens, and stems the remaining tokens.
+	"""
+
+	specials_removed = remove_special_chars(df["Headline"].tolist())
+	tokenized = tokenize(specials_removed)
+	tokenized_filtered = remove_stop_words(tokenized)
+	stemmed = stem(tokenized_filtered)
+
+	return df, stemmed
+
+
+def headlines_balanced_split(dataset, test_size):
+	"""
+	Randomly splits dataset into balanced training and test sets.
+	"""
+	print("\nSplitting headlines into *balanced* training and test sets...")
+	# pprint(list(dataset.values))
+	# pprint(dataset)
+
+	# Use sklearn.train_test_split to split all features into x_train and x_test,
+	# 		and all expected values into y_train and y_test numpy arrays
+	x_train, x_test, y_train, y_test = train_test_split(dataset.drop(["Sentiment", "Headline"], axis=1).values,
+	                                                    dataset["Sentiment"].values, test_size=test_size,
+	                                                    random_state=RANDOM_STATE)
+
+	x_train = [x[0] for x in x_train]
+	x_test = [x[0] for x in x_test]
+
+	# Combine x_train and y_train (numpy arrays) into a single dataframe, with column labels
+	train = pd.DataFrame(data=x_train, columns=["very_neg", "slightly_neg", "neutral", "slightly_pos", "very_pos"])
+	train["Sentiment"] = pd.Series(y_train)
+
+	# Do the same for x_test and y_test
+	test = pd.DataFrame(data=x_test, columns=["very_neg", "slightly_neg", "neutral", "slightly_pos", "very_pos"])
+	test["Sentiment"] = pd.Series(y_test)
+
+	train_prediction = train["Sentiment"].values
+	test_prediction = test["Sentiment"].values
+	train_trimmed = train.drop(["Sentiment"], axis=1).values
+	test_trimmed = test.drop(["Sentiment"], axis=1).values
+
+	return train_trimmed, test_trimmed, train_prediction, test_prediction
+
+
+def split(dataset, test_size, balanced=True):
+	if balanced:
+		return headlines_balanced_split(dataset, test_size)
+	else:
+		# TODO: write imbalanced split function
+		return None
+
+
 # Helpers #
 
 def sliding_window(seq, n=2):
-	"""Returns a sliding window (of width n) over data from the iterable. https://stackoverflow.com/a/6822773/8740440"""
+	"""
+	Returns a sliding window (of width n) over data from the iterable. https://stackoverflow.com/a/6822773/8740440
+	"""
 	"s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ..."
 	it = iter(seq)
 	result = tuple(islice(it, n))
@@ -31,8 +179,10 @@ def sliding_window(seq, n=2):
 
 
 def integrate(avg_daily_sentiment, interval):
-	"""Takes a list of average daily sentiment scores and returns a list of definite integral estimations calculated
-	with Simpson's method. Each integral interval is determined by the `interval` variable. Shows accumulated sentiment."""
+	"""
+	Takes a list of average daily sentiment scores and returns a list of definite integral estimations calculated
+	with Simpson's method. Each integral interval is determined by the `interval` variable. Shows accumulated sentiment.
+	"""
 
 	# Split into sliding window list of lists
 	sentiment_windows = sliding_window(avg_daily_sentiment, interval)
@@ -51,8 +201,10 @@ def integrate(avg_daily_sentiment, interval):
 
 
 def random_undersampling(dataset):
-	"""Randomly deleting rows that contain the majority class until the number
-	in the majority class is equal with the number in the minority class."""
+	"""
+	Randomly deleting rows that contain the majority class until the number
+	in the majority class is equal with the number in the minority class.
+	"""
 
 	minority_set = dataset[dataset.Trend == -1.0]
 	majority_set = dataset[dataset.Trend == 1.0]
@@ -101,7 +253,9 @@ def get_popularity(headlines):
 
 
 def balanced_split(dataset, test_size):
-	"""Randomly splits dataset into balanced training and test sets."""
+	"""
+	Randomly splits dataset into balanced training and test sets.
+	"""
 	print("\tSplitting data into *balanced* training and test sets")
 
 	# Use sklearn.train_test_split to split original dataset into x_train, y_train, x_test, y_test numpy arrays
@@ -129,7 +283,9 @@ def balanced_split(dataset, test_size):
 
 
 def unbalanced_split(dataset, test_size):
-	"""Randomly splits dataset into unbalanced training and test sets."""
+	"""
+	Randomly splits dataset into unbalanced training and test sets.
+	"""
 	print("\tSplitting data into *unbalanced* training and test sets")
 
 	dataset = dataset.drop("Date", axis=1)
@@ -142,7 +298,9 @@ def unbalanced_split(dataset, test_size):
 
 
 def calculate_indicators(ohlcv):
-	"""Extracts technical indicators from OHLCV data."""
+	"""
+	Extracts technical indicators from OHLCV data.
+	"""
 	print("\tCalculating technical indicators")
 
 	ohlcv = ohlcv.drop(["Volume (BTC)", "Weighted Price"], axis=1)
