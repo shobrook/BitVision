@@ -8,7 +8,7 @@ from pprint import pprint
 sys.path.insert(0, "modules")
 # Project modules
 from model import Model
-from sentimentmodel import SentimentModel
+from sentiment_model import SentimentModel
 import preprocessing as pp
 import analysis
 import scraper
@@ -22,8 +22,8 @@ try:
         print("Invalid arguments.")
         sys.exit()
 except IndexError:
-    print("Missing arguments.")
-    sys.exit()
+    print("No arguments.")
+    pass
 
 
 # Data Bus #
@@ -34,7 +34,7 @@ def main():
 
     price_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/price_data.csv")
     blockchain_data = scraper.fetch_data(os.path.dirname(os.getcwd()) + "/data/blockchain_data.csv")
-    coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/scored_headlines.csv", usecols=["Headline", "Sentiment"], sep=",")
+    coindesk_headlines = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/scored_headlines_sentiment.csv", usecols=["Headline", "Sentiment"], sep=",")
 
     # Preprocessing #
 
@@ -46,9 +46,9 @@ def main():
     coindesk_headlines, stemmed = pp.sentiment_preprocessing(coindesk_headlines)
 
     # Create bag of words model.
-    coindesk_headlines = pp.bag_of_words(coindesk_headlines, stemmed)
+    coindesk_headlines = pp.make_bag_of_words(coindesk_headlines, stemmed)
 
-    x_train, x_test, y_train, y_test = pp.headlines_balanced_split(feature_df, test_size=.2)
+    x_train, x_test, y_train, y_test = pp.headlines_balanced_split(coindesk_headlines, test_size=.2)
 
     print("\nFitting sentiment models...\n")
 

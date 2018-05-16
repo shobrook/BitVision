@@ -70,7 +70,7 @@ def stem(token_list_of_lists):
 	return stemmed
 
 
-def bag_of_words_model(df, stemmed):
+def make_bag_of_words(df, stemmed):
 	"""
 	Create bag of words model.
 	"""
