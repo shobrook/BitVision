@@ -70,7 +70,7 @@ def stem(token_list_of_lists):
 	return stemmed
 
 
-def bag_of_words_model(processing, df):
+def bag_of_words_model(df, stemmed):
 	"""
 	Create bag of words model.
 	"""
@@ -84,7 +84,7 @@ def bag_of_words_model(processing, df):
 
 	# Create sets that hold words in headlines categorized as "slightly_neg" or "slightly_pos" or etc
 
-	for stems, sentiment in zip(processing, df["Sentiment"].tolist()):
+	for stems, sentiment in zip(stemmed, df["Sentiment"].tolist()):
 		if sentiment == -2:
 			very_neg.update(stems)
 		elif sentiment == -1:
@@ -99,7 +99,7 @@ def bag_of_words_model(processing, df):
 	# Count number of words in each headline in each of the sets and encode it as a list of counts for each headline.
 
 	bag_count = []
-	for x in processing:
+	for x in stemmed:
 		x = set(x)
 		bag_count.append(list((len(x & very_neg), len(x & slightly_neg), len(x & neutral), len(x & slightly_pos), len(x & very_pos))))
 
@@ -107,7 +107,7 @@ def bag_of_words_model(processing, df):
 	return df
 
 
-def preprocessing(df):
+def sentiment_preprocessing(df):
 	"""
 	Takes a dataframe, removes special characters, tokenizes
 	the headlines, removes stop-tokens, and stems the remaining tokens.
@@ -118,7 +118,7 @@ def preprocessing(df):
 	tokenized_filtered = remove_stop_words(tokenized)
 	stemmed = stem(tokenized_filtered)
 
-	return df, tokenized_filtered, stemmed
+	return df, stemmed
 
 
 def headlines_balanced_split(dataset, test_size):

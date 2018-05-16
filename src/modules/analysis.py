@@ -52,7 +52,9 @@ def sentiment_data_description(df):
 
 
 def plot_corr_matrix(dataset):
-	"""Plots a Pearson correlation matrix between features."""
+	"""
+	Plots a Pearson correlation matrix between features.
+	"""
 	print("\tGenerating correlation matrix")
 
 	sns.set(style="white")
@@ -70,7 +72,9 @@ def plot_corr_matrix(dataset):
 
 
 def plot_cnf_matrix(y_pred, y_test):
-	"""Plots a confusion matrix."""
+	"""
+	Plots a confusion matrix.
+	"""
 	print("\t\tGenerating confusion matrix")
 
 	matrix = confusion_matrix(y_test, y_pred)
@@ -152,7 +156,9 @@ def f1(y_test, y_pred):
 
 
 def display_scores(scores):
-	"""Displays cross-validation scores, the mean, and standard deviation"""
+	"""
+	Displays cross-validation scores, the mean, and standard deviation
+	"""
 
 	# print("\t\t\tScores: ", list(scores))
 	print("\t\t\tMean: ", scores.mean())
