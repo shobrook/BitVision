@@ -154,12 +154,6 @@ def headlines_balanced_split(dataset, test_size):
 	return train_trimmed, test_trimmed, train_prediction, test_prediction
 
 
-def merge_headline_dataset(origin, other_set):
-	print("\tMerging datasets...")
-
-	return pd.concat([origin, other_set], axis=1)
-
-
 def split(dataset, test_size, balanced=True):
 	if balanced:
 		return headlines_balanced_split(dataset, test_size)
