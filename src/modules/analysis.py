@@ -21,6 +21,32 @@ def increment_counter():
 	global COUNTER
 	COUNTER = COUNTER + 1
 
+# Data descriptor
+
+def sentiment_data_description(df):
+	"""
+	Print description of headline dataset.
+	"""
+	print("\n----------------------------------\
+	      \nHEADLINE SENTIMENT DATA STATISTICS\
+	      \n----------------------------------\n")
+	sentiment = df["Sentiment"].tolist()
+
+	very_neg = len([x for x in sentiment if x == -2])
+	slight_neg = len([x for x in sentiment if x == -1])
+	neutral = len([x for x in sentiment if x == 0])
+	slight_pos = len([x for x in sentiment if x == 1])
+	very_pos = len([x for x in sentiment if x == 2])
+	total = len(sentiment)
+
+	print("\tVERY NEG:  ", very_neg, "({}%)".format(round(very_neg / total * 100, 2)))
+	print("\tSLIGHT NEG:", slight_neg, "({}%)".format(round(slight_neg / total * 100, 2)))
+	print("\tNEUTRAL:   ", neutral, "({}%)".format(round(neutral / total * 100, 2)))
+	print("\tSLIGHT POS:", slight_pos, "({}%)".format(round(slight_pos / total * 100, 2)))
+	print("\tVERY POS:  ", very_pos, "({}%)".format(round(very_pos / total * 100, 2)))
+
+	return None
+
 
 # Main #
 
