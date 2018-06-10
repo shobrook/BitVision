@@ -68,16 +68,16 @@ def login():
     # TODO: Add a helper message with GDAX instructions and a security disclaimer
 
     while True:
-        sys.stdout.write("Enter your GDAX API key: ")
+        print("Enter your GDAX API key: ")
         api_key = input()
 
-        sys.stdout.write("Enter your secret: ")
+        print("Enter your secret: ")
         secret = input()
 
-        sys.stdout.write("Enter your passphrase: ")
+        print("Enter your passphrase: ")
         passphrase = input()
 
-        sys.stdout.write("\nAuthenticating...")
+        print("\nAuthenticating...")
         gdax_client = gdax.AuthenticatedClient(api_key, secret, passphrase)
 
         if True: # TODO: Check if authentication was successful
@@ -88,7 +88,7 @@ def login():
 
             return gdax_client
         else:
-            sys.stdout.write("\nInvalid credentials. Please try again.\n")
+            print("\nInvalid credentials. Please try again.\n")
 
 
 def fit_model():
