@@ -103,4 +103,19 @@ def Dataset(name):
 
 
 def Vector(name):
-    pass
+    if name == "EXCHANGE_RATE"
+        pass
+    elif name == "CURRENT_PRICE"
+        pass
+    elif name == "TECHNICAL_INDICATORS"
+        pass
+    elif name == "BLOCKCHAIN_FEATURES"
+        pass
+    elif name == "COINDESK_HEADLINES"
+        pass
+    elif name == "TWEETS"
+        pass
+
+
+
+
