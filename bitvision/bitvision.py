@@ -20,6 +20,42 @@ CONFIG.read("config.ini")
 # HELPERS
 #########
 
+# BitVision Command Line Trading Platform
+# Aaron Lichtman and Jon Shobrook
+
+import os
+import sys
+import urwid
+
+# Place Your Own Trade is not shown until Trading Deactivated.
+choices = ["Activate/Deactivate Automated Trading", "Deposit/Withdraw Money", "Place Your Own Trade"]
+
+
+def menu(title, choices):
+    """
+    Make a menu with choices displayed.
+    """
+    body = [urwid.Text(title), urwid.Divider()]
+    for c in choices:
+        button = urwid.Button(c)
+        urwid.connect_signal(button, 'click', item_chosen, c)
+        body.append(urwid.AttrMap(button, None, focus_map='reversed'))
+    return urwid.ListBox(urwid.SimpleFocusListWalker(body))
+
+
+def item_chosen(button, choice):
+    response = urwid.Text([u'You chose ', choice, u'\n'])
+    done = urwid.Button(u'Ok')
+    urwid.connect_signal(done, 'click', exit_program)
+    main.original_widget = urwid.Filler(urwid.Pile([response,
+        urwid.AttrMap(done, None, focus_map='reversed')]))
+
+
+def exit_program(button):
+    raise urwid.ExitMainLoop()
+
+
+
 
 def login():
     """
@@ -141,6 +177,12 @@ class App(object):
 
 
 def main():
+    # main = urwid.Padding(menu(u'Options', choices), left=2, right=2)
+    # top = urwid.Overlay(main, urwid.SolidFill(u'\N{LIGHT SHADE}'),
+    #     align='left', width=('relative', 0),
+    #     valign='top', height=('relative', 0),
+    #     min_width=31, min_height=7)
+    # urwid.MainLoop(top, palette=[('reversed', 'standout', '')]).run()
     if bool(config["STATUS"]["LOGGED_IN"]): # User has already logged in
         pass
     else: # User just installed
