@@ -32,27 +32,27 @@ def login():
     # TODO: Add a helper message with GDAX instructions and a security disclaimer
 
     while True:
-        sys.stdout.write("Enter your GDAX API key: ")
+        print("Enter your GDAX API key: ")
         api_key = input()
 
-        sys.stdout.write("Enter your secret: ")
+        print("Enter your secret: ")
         secret = input()
 
-        sys.stdout.write("Enter your passphrase: ")
+        print("Enter your passphrase: ")
         passphrase = input()
 
-        sys.stdout.write("\nAuthenticating...")
+        print("\nAuthenticating...")
         gdax_client = gdax.AuthenticatedClient(api_key, secret, passphrase)
 
         if True: # TODO: Check if authentication was successful
-            config["STATUS"]["LOGGED_IN"] = True
+            config["STATE"]["LOGGED_IN"] = True
             config["CREDENTIALS"]["API_KEY"] = api_key
             config["CREDENTIALS"]["SECRET"] = secret
             config["CREDENTIALS"]["PASSPHRASE"] = passphrase
 
             return gdax_client
         else:
-            sys.stdout.write("\nInvalid credentials. Please try again.\n")
+            print("\nInvalid credentials. Please try again.\n")
 
 
 def fit_model():
@@ -75,63 +75,65 @@ def fit_model():
             .pipe(Transformer("TAG_POS"))
             .pipe(Transformer("VECTORIZE"))
         ])
-        .pipe(Transformer("BINARIZE_LABELS"))
         .pipe(Transformer("FIX_NULL_VALS"))
         .pipe(Transformer("ADD_LAG_VARS"))
         .pipe(Transformer("POWER_TRANSFORM"))
+        .pipe(Transformer("BINARIZE_LABELS"))
+        .pipe(Transformer("SELECT_FEATURES"))
     )
 
-    # TODO: Cache processed_data locally as a CSV
+    processed_data.drop("Trend", axis=1).to_csv("cache/features.csv", sep=',', index=False)
+    processed_data = processed_data.drop(df.index[0])
 
-    return Model(processed_data)
+    return Model(processed_data, hyperparameterize=False)
 
 
 class App(object):
-    def __init__(self, gdax_client, model):
-        self.gdax_client, self.model = gdax_client, model
+    def __init__(self, gdax_client):
+        self.gdax_client = gdax_client
         self.palette = []
         self.menu = urwid.Text([
             u'\n',
-            ("menu", u" ENTER "), ("light gray", u" View answers "),
-            ("menu", u" B "), ("light gray", u" Open browser "),
+            ("menu", u" SPACE "), ("light gray", u" Toggle automated trading "),
+            ("menu", u" P "), ("light gray", u" Place a trade "),
+            ("menu", u" D "), ("light gray", u" Deposit money "),
+            ("menu", u" W "), ("light gray", u" Withdraw money "),
             ("menu", u" Q "), ("light gray", u" Quit")
         ])
 
-        # TODO: Get data with the Vector method
+        self.model = fit_model()
 
-        self.tech_indicators = self.__draw_box("technical_indicators")
-        self.fund_indicators = self.__draw_box("fundamental_indicators")
+        self.tech_indicators = self.__draw_box(Fetch("TECHNICAL_INDICATORS"))
+        self.network_attributes = self.__draw_box(Fetch("NETWORK_ATTRIBUTES"))
+        #self.twitter_stats = self.__draw_box(Fetch("TWITTER_STATS"))
+        self.coindesk_stats = self.__draw_box(Fetch("COINDESK_STATS"))
+        self.price_data = self.__draw_box(Fetch("PRICE_DATA"))
+        self.performance_stats = self.__draw_box(Fetch("PERFORMANCE_STATS"))
 
         self.main_loop = urwid.MainLoop(layout, self.palette, unhandled_input=self._handle_input)
         self.original_widget = self.main_loop.widget
 
         self.main_loop.run()
 
-    def __draw_box(self, type, content):
-        if (type == "technical_indicators"): # name, value, associated buy/sell signal
+    def __draw_box(self, content):
+        if content["name"] == "TECHNICAL_INDICATORS":
             return
-        elif (type == "fundamental_indicators"): # name, value
+        if content["name"] == "NETWORK_ATTRIBUTES":
             return
-        elif (type == "twitter_sentiment"): # sentiment score (aggregate), tweet volume
+        elif content["name"] == "TWITTER_STATS":
             return
-        elif (type == "coindesk_headlines"): # headlines, sentiment scores
+        elif content["name"] == "COINDESK_STATS":
             return
-        elif (type == "performance_statistics"): # total amt. of capital, returns (%), net profit ($), sharpe ratio, total buys, buy accuracy (%), total sells, sell accuracy (%), total trades
+        elif content["name"] == "PRICE_DATA":
             return
-        elif (type == "price_data"): # exchange rate / candlestick data
+        elif content["name"] == "PERFORMANCE_STATS": # total amt. of capital, returns (%), net profit ($), sharpe ratio, total buys, buy accuracy (%), total sells, sell accuracy (%), total trades
             return
-        elif (type == "scheduled_trade"): # countdown, type (buy/sell/hold), size ($)
+        elif content["name"] == "SCHEDULED_TRADE": # countdown, type (buy/sell/hold), size ($)
             return
 
     # TODO: Add a refresh function
 
     def __handle_input(self, input):
-        # Needed functionality:
-        #   Cancel/edit a scheduled trade
-        #   Place your own trade
-        #   Deposit or withdraw money from your GDAX account
-        #   Export a graph of the returns given by the ML strategy vs. a buy-and-hold strategy
-
         return
 
 
@@ -141,10 +143,8 @@ class App(object):
 
 
 def main():
-    if bool(config["STATUS"]["LOGGED_IN"]): # User has already logged in
+    if bool(config["STATE"]["LOGGED_IN"]): # User has already logged in
         pass
     else: # User just installed
         gdax_client = login()
-        model = fit_model()
-
-        App(gdax_client, model)
+        App(gdax_client)
