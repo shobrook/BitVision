@@ -7,17 +7,16 @@ import re
 import numpy as np
 import pandas as pd
 import dateutil.parser as dp
-from nltk import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem.porter import *
+#from nltk import word_tokenize
+#from nltk.corpus import stopwords
+#from nltk.stem.porter import *
 from itertools import islice
 from scipy.stats import boxcox
-from scipy.integrate import simps
+#from scipy.integrate import simps
 from realtime_talib import Indicator
-from sklearn.model_selection import train_test_split
-from sklearn.utils import resample
-from pprint import pprint
-from selenium import webdriver
+#from sklearn.model_selection import train_test_split
+#from sklearn.utils import resample
+#from selenium import webdriver
 
 RANDOM_STATE = 42
 
@@ -113,6 +112,34 @@ def merge_datasets(origin_df, other_sets):
     return merged
 
 
+def fix_null_vals(df):
+    if not df.isnull().any().any():
+		return df
+	else:
+		return df.fillna(method="ffill")
+
+
+def add_lag_vars(df, lag=3):
+    new_df_dict = {}
+	for col_header in df.drop("Date", axis=1):
+		new_df_dict[col_header] = df[col_header]
+		for lag in range(1, lag + 1):
+			new_df_dict["%s_lag%d" % (col_header, lag)] = df[col_header].shift(-lag)
+
+	new_df = pd.DataFrame(new_df_dict, index=df.index)
+	new_df["Date"] = df["Date"]
+
+	return new_df.dropna()
+
+
+def power_transform(df):
+    for header in df.drop("Date", axis=1).columns:
+		if not any(df[header] < 0) and not any(df[header] == 0):
+			df[header] = boxcox(df[header])[0]
+
+	return df
+
+
 def binarize_labels(df):
     trends = [None]
 	for idx in range(df.shape[0] - 1):
@@ -124,42 +151,21 @@ def binarize_labels(df):
 			trends.append(1)
 
 	df["Trend"] = pd.Series(trends).values
-	df = df.drop(df.index[0])
+	#df = df.drop(df.index[0])
 
 	return df
 
 
-def fix_null_vals(df):
-    if not df.isnull().any().any():
-		return df
-	else:
-		return df.fillna(method="ffill")
-
-
-def add_lag_vars(df, lag=3):
-    new_df_dict = {}
-	for col_header in df.drop(["Date", "Trend"], axis=1):
-		new_df_dict[col_header] = df[col_header]
-		for lag in range(1, lag + 1):
-			new_df_dict["%s_lag%d" % (col_header, lag)] = df[col_header].shift(-lag)
-
-	new_df = pd.DataFrame(new_df_dict, index=df.index)
-	new_df["Date"], new_df["Trend"] = df["Date"], df["Trend"]
-
-	return new_df.dropna()
-
-
-def power_transform(df):
-    for header in df.drop(["Date", "Trend"], axis=1).columns:
-		if not any(df[header] < 0) and not any(df[header] == 0):
-			df[header] = boxcox(df[header])[0]
-
+def recursive_feature_elim(df):
 	return df
 
 
 ####################
 # TEXT PREPROCESSORS
 ####################
+
+
+# TODO: All yours, @alichtman
 
 
 ######
@@ -180,5 +186,5 @@ def Transformer(name):
         return add_lag_vars
     elif name == "POWER_TRANSFORM":
         return power_transform
-
-    # TODO: Add text processing functions
+	elif name == "SELECT_FEATURES":
+		return recursive_feature_elim
