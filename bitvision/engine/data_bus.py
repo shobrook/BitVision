@@ -5,8 +5,9 @@
 
 import os
 import time
-import moment
+# import moment
 import pandas as pd
+import requests
 from transformers import Transformer
 
 
@@ -47,8 +48,7 @@ def results_config(current_page):
         "date_ordered": True,
         "base_url": "https://coindesk.com",
         "results_per_page": 10,
-        "date_XPATH": "./p[@class='timeauthor']/time"}, # XPATH for article date, will look for datetime object
-    }
+        "date_XPATH": "./p[@class='timeauthor']/time"} # XPATH for article date, will look for datetime object
 
 
 def parse_html(url):
@@ -217,15 +217,15 @@ def Dataset(name):
 
 
 def Vector(name):
-    if name == "EXCHANGE_RATE"
+    if name == "EXCHANGE_RATE":
         pass
-    elif name == "CURRENT_PRICE"
+    elif name == "CURRENT_PRICE":
         pass
-    elif name == "TECHNICAL_INDICATORS"
+    elif name == "TECHNICAL_INDICATORS":
         pass
-    elif name == "BLOCKCHAIN_FEATURES"
+    elif name == "BLOCKCHAIN_FEATURES":
         pass
-    elif name == "COINDESK_HEADLINES"
+    elif name == "COINDESK_HEADLINES":
         pass
-    elif name == "TWEETS"
+    elif name == "TWEETS":
         pass

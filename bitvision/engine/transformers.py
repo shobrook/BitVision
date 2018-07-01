@@ -5,15 +5,15 @@
 
 import re
 import numpy as np
+from itertools import islice
 import pandas as pd
 import dateutil.parser as dp
+from scipy.stats import boxcox
+from realtime_talib import Indicator
 #from nltk import word_tokenize
 #from nltk.corpus import stopwords
 #from nltk.stem.porter import *
-from itertools import islice
-from scipy.stats import boxcox
 #from scipy.integrate import simps
-from realtime_talib import Indicator
 #from sklearn.model_selection import train_test_split
 #from sklearn.utils import resample
 #from selenium import webdriver
@@ -66,7 +66,7 @@ def calculate_indicators(ohlcv_df):
 	willr = Indicator(temp_ohlcv_df, "WILLR", 14).getHistorical()[::-1]
 
 	# Relative Strength Index
-	rsi6 = Indicator(temp_ohlcv_df, "RSI", 6)).getHistorical())[::-1]
+	rsi6 = Indicator(temp_ohlcv_df, "RSI", 6).getHistorical()[::-1]
 	rsi12 = Indicator(temp_ohlcv_df, "RSI", 12).getHistorical()[::-1]
 
 	# Moving Average Convergence Divergence
@@ -84,43 +84,43 @@ def calculate_indicators(ohlcv_df):
 	ohlcv_df = ohlcv_df[:min_length].drop(["Open", "High", "Low"], axis=1)
 
 	ohlcv_df["MOM (1)"] = pd.Series(mom1[:min_length]).values
-    ohlcv_df["MOM (3)"] = pd.Series(mom3[:min_length]).values
-    ohlcv_df["ADX (14)"] = pd.Series(adx14[:min_length]).values
+	ohlcv_df["MOM (3)"] = pd.Series(mom3[:min_length]).values
+	ohlcv_df["ADX (14)"] = pd.Series(adx14[:min_length]).values
 	ohlcv_df["ADX (20)"] = pd.Series(adx20[:min_length]).values
-    ohlcv_df["WILLR"] = pd.Series(willr[:min_length]).values
-    ohlcv_df["RSI (6)"] = pd.Series(rsi6[:min_length]).values
+	ohlcv_df["WILLR"] = pd.Series(willr[:min_length]).values
+	ohlcv_df["RSI (6)"] = pd.Series(rsi6[:min_length]).values
 	ohlcv_df["RSI (12)"] = pd.Series(rsi12[:min_length]).values
-    ohlcv_df["MACD"] = pd.Series(macd[:min_length]).values
-    ohlcv_df["MACD (Signal)"] = pd.Series(macd_signal[:min_length]).values
+	ohlcv_df["MACD"] = pd.Series(macd[:min_length]).values
+	ohlcv_df["MACD (Signal)"] = pd.Series(macd_signal[:min_length]).values
 	ohlcv_df["MACD (Historical)"] = pd.Series(macd_hist[:min_length]).values
-    ohlcv_df["EMA (6)"] = pd.Series(ema6[:min_length]).values
-    ohlcv_df["EMA (12)"] = pd.Series(ema12[:min_length]).values
+	ohlcv_df["EMA (6)"] = pd.Series(ema6[:min_length]).values
+	ohlcv_df["EMA (12)"] = pd.Series(ema12[:min_length]).values
 	ohlcv_df["ROCR (3)"] = pd.Series(rocr3[:min_length]).values
-    ohlcv_df["ROCR (6)"] = pd.Series(rocr6[:min_length]).values
-    ohlcv_df["ATR (14)"] = pd.Series(atr[:min_length]).values
+	ohlcv_df["ROCR (6)"] = pd.Series(rocr6[:min_length]).values
+	ohlcv_df["ATR (14)"] = pd.Series(atr[:min_length]).values
 	ohlcv_df["OBV"] = pd.Series(obv[:min_length]).values
-    ohlcv_df["TRIX (20)"] = pd.Series(trix[:min_length]).values
+	ohlcv_df["TRIX (20)"] = pd.Series(trix[:min_length]).values
 
 	return ohlcv_df
 
 
 def merge_datasets(origin_df, other_sets):
-    merged = origin_df
-    for set in other_sets:
-        merged = pd.merge(merged, set, on="Date")
+	merged = origin_df
+	for set in other_sets:
+	    merged = pd.merge(merged, set, on="Date")
 
-    return merged
+	return merged
 
 
 def fix_null_vals(df):
-    if not df.isnull().any().any():
+	if not df.isnull().any().any():
 		return df
 	else:
 		return df.fillna(method="ffill")
 
 
 def add_lag_vars(df, lag=3):
-    new_df_dict = {}
+	new_df_dict = {}
 	for col_header in df.drop("Date", axis=1):
 		new_df_dict[col_header] = df[col_header]
 		for lag in range(1, lag + 1):
@@ -133,7 +133,7 @@ def add_lag_vars(df, lag=3):
 
 
 def power_transform(df):
-    for header in df.drop("Date", axis=1).columns:
+	for header in df.drop("Date", axis=1).columns:
 		if not any(df[header] < 0) and not any(df[header] == 0):
 			df[header] = boxcox(df[header])[0]
 
@@ -141,7 +141,7 @@ def power_transform(df):
 
 
 def binarize_labels(df):
-    trends = [None]
+	trends = [None]
 	for idx in range(df.shape[0] - 1):
 		diff = df.iloc[idx]["Close"] - df.iloc[idx + 1]["Close"]
 
@@ -174,17 +174,17 @@ def recursive_feature_elim(df):
 
 
 def Transformer(name):
-    if name == "CALCULATE_INDICATORS":
-        return calculate_indicators
-    elif name == "MERGE_DATASETS":
-        return merge_datasets
-    elif name == "BINARIZE_LABELS":
-        return binarize_labels
-    elif name == "FIX_NULL_VALS":
-        return fix_null_vals
-    elif name == "ADD_LAG_VARS":
-        return add_lag_vars
-    elif name == "POWER_TRANSFORM":
-        return power_transform
+	if name == "CALCULATE_INDICATORS":
+		return calculate_indicators
+	elif name == "MERGE_DATASETS":
+		return merge_datasets
+	elif name == "BINARIZE_LABELS":
+		return binarize_labels
+	elif name == "FIX_NULL_VALS":
+		return fix_null_vals
+	elif name == "ADD_LAG_VARS":
+		return add_lag_vars
+	elif name == "POWER_TRANSFORM":
+		return power_transform
 	elif name == "SELECT_FEATURES":
 		return recursive_feature_elim
