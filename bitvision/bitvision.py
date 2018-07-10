@@ -8,9 +8,10 @@ import configparser
 import gdax
 import urwid
 
-from engine.data_bus import Dataset, Vector
-from engine.transformers import Transformer
-from engine.model import Model
+sys.path.insert(0, "engine")
+from data_bus import Dataset, Fetch
+from transformers import Transformer
+from model import Model
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read("config.ini")
@@ -19,48 +20,42 @@ CONFIG.read("config.ini")
 # HELPERS
 #########
 
-# BitVision Command Line Trading Platform
+# BitVision CLI Trading Platform
 # Aaron Lichtman and Jon Shobrook
 
-import os
-import sys
 import urwid
 
-# Place Your Own Trade is not shown until Trading Deactivated.
-choices = ["Activate/Deactivate Automated Trading", "Deposit/Withdraw Money", "Place Your Own Trade"]
 
-
-def menu(title, choices):
+def cached_credential_login(config):
 	"""
-    Make a menu with choices displayed.
-    """
-	body = [urwid.Text(title), urwid.Divider()]
-	for c in choices:
-		button = urwid.Button(c)
-		urwid.connect_signal(button, 'click', item_chosen, c)
-		body.append(urwid.AttrMap(button, None, focus_map='reversed'))
-	return urwid.ListBox(urwid.SimpleFocusListWalker(body))
-
-
-def item_chosen(button, choice):
-	response = urwid.Text([u'You chose ', choice, u'\n'])
-	done = urwid.Button(u'Ok')
-	urwid.connect_signal(done, 'click', exit_program)
-	main.original_widget = urwid.Filler(urwid.Pile([response,
-	                                                urwid.AttrMap(done, None, focus_map='reversed')]))
-
-
-def exit_program(button):
-	raise urwid.ExitMainLoop()
-
-
-def login():
+	Tries to log user in to GDAX with a cached API key, secret, and passphrase.
+	Defaults to prompting user for login on failure.
+	@return: authenticated GDAX Client object
 	"""
-    Prompts the user for their GDAX API key, secret, and passphrase before
-    logging into the trading system.
+	try:
+		print("\nChecking for cached credentials...")
+		api_key = config["CREDENTIALS"]["KEY"]
+		secret = config["CREDENTIALS"]["SECRET"]
+		passphrase = config["CREDENTIALS"]["PASSPHRASE"]
 
-    @return: authenticated GDAX Client object
-    """
+		if "default-value" in api_key or secret or passphrase:
+			prompt_for_login_creds()
+		else:
+			print("\nAuthenticating with cached credentials...")
+			gdax_client = gdax.AuthenticatedClient(api_key, secret, passphrase)
+			return gdax_client
+	except Exception as e:
+		print(e)
+		print("\nPrompting user for credentials...")
+		prompt_for_login_creds()
+
+
+def prompt_for_login_creds():
+	"""
+	Prompts the user for their GDAX API key, secret, and passphrase before
+	logging into the trading system.
+	@return: authenticated GDAX Client object
+	"""
 
 	# TODO: Add a helper message with GDAX instructions and a security disclaimer
 
@@ -90,10 +85,10 @@ def login():
 
 def fit_model():
 	"""
-    Pipeline for training the machine learning model.
+	Pipeline for training the machine learning model.
 
-    @return: a Model object fitted on price, blockchain, and headline data
-    """
+	@return: a Model object fitted on price, blockchain, and headline data
+	"""
 
 	price_data = Dataset("PRICE_DATA")
 	blockchain_data = Dataset("BLOCKCHAIN_DATA")
@@ -177,15 +172,19 @@ class App(object):
 
 
 def main():
-	# main = urwid.Padding(menu(u'Options', choices), left=2, right=2)
-	# top = urwid.Overlay(main, urwid.SolidFill(u'\N{LIGHT SHADE}'),
-	#     align='left', width=('relative', 0),
-	#     valign='top', height=('relative', 0),
-	#     min_width=31, min_height=7)
-	# urwid.MainLoop(top, palette=[('reversed', 'standout', '')]).run()
+	config = configparser.ConfigParser()
+	config_path = "config.ini"
+	config.read(config_path)
 
 	if bool(config["STATUS"]["LOGGED_IN"]):  # User has already logged in
-		pass
-	else:  # User just installed
-		gdax_client = login()
+		print("User logged in.")
+		gdax_client = cached_credential_login(config)
 		App(gdax_client)
+	else:  # User just installed
+		print("New user.")
+		gdax_client = prompt_for_login_creds()
+		App(gdax_client)
+
+
+if __name__ == "__main__":
+	main()

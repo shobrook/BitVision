@@ -11,6 +11,10 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from ftfy import ftfy
+
+# This shouldn't have to be here but I can't get it to work without it. idfk
+import sys
+sys.path.insert(0, "engine")
 from transformers import Transformer
 
 
