@@ -8,9 +8,11 @@ import configparser
 import gdax
 import urwid
 
-from data_bus import Dataset, Fetch
-from transformers import Transformer
-from model import Model
+from engine import Dataset, Fetch, Transformer, Model
+
+# from data_bus import Dataset, Fetch
+# from transformers import Transformer
+# from model import Model
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read("config.ini")
