@@ -8,7 +8,6 @@ import configparser
 import gdax
 import urwid
 
-sys.path.insert(0, "engine")
 from data_bus import Dataset, Fetch
 from transformers import Transformer
 from model import Model
@@ -22,8 +21,6 @@ CONFIG.read("config.ini")
 
 # BitVision CLI Trading Platform
 # Aaron Lichtman and Jon Shobrook
-
-import urwid
 
 
 def cached_credential_login(config):
@@ -172,13 +169,10 @@ class App(object):
 
 
 def main():
-	config = configparser.ConfigParser()
-	config_path = "config.ini"
-	config.read(config_path)
 
-	if bool(config["STATUS"]["LOGGED_IN"]):  # User has already logged in
+	if bool(CONFIG["STATE"]["LOGGED_IN"]):  # User has already logged in
 		print("User logged in.")
-		gdax_client = cached_credential_login(config)
+		gdax_client = cached_credential_login(CONFIG)
 		App(gdax_client)
 	else:  # User just installed
 		print("New user.")
