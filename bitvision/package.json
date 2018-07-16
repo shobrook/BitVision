@@ -1,0 +1,31 @@
+{
+  "name": "bitvision",
+  "version": "1.0.0",
+  "description": "A bitcoin trading CLI powered by machine learning to predict price movements.",
+  "main": "bitvision.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shobrook/BitVision.git"
+  },
+  "keywords": [
+    "bitcoin",
+    "trading",
+    "cli"
+  ],
+  "author": "Jon Shobrook and Aaron Lichtman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shobrook/BitVision/issues"
+  },
+  "homepage": "https://github.com/shobrook/BitVision#readme",
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.8.5",
+    "chalk": "^2.4.1",
+    "figlet": "^1.2.0",
+    "inquirer": "^6.0.0"
+  }
+}

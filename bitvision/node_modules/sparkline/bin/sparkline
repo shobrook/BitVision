@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var sparkline = require('../lib/sparkline.js'),
+    nopt = require('nopt'),
+    here = require('here').here,
+    options = nopt({help: Boolean}, {h: '--help'}, process.argv, 2),
+    makeSparklines = function(str) {
+      var numberStrings = str.replace(/\n/g, '').replace(/,/g, ' '),
+          numbers = numberStrings.split(/\s+/).map(function(s) { return Number(s); });
+      console.log(sparkline(numbers));
+    };
+
+if (options.help) {
+  console.log(here(/*
+    USAGE:
+      sparkline [-h] VALUE,...
+
+    EXAMPLES:
+      sparkline 1 5 22 13 53
+      ▁▁▃▂█
+      sparkline 0,30,55,80,33,150
+      ▁▂▃▄▂█
+      echo 9 13 5 17 1 | sparkline
+      ▄▆▂█▁
+  */).unindent());
+  return;
+}
+
+if (options.argv.remain.length) {
+  makeSparklines(options.argv.remain.join(' '));
+} else if (!process.stdin.isTTY) {
+  var arg = '';
+  process.stdin.on('data', function(chunk) { arg += chunk.toString(); });
+  process.stdin.on('end', function() { makeSparklines(arg); });
+  process.stdin.resume();
+}
