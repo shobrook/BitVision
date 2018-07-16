@@ -10,33 +10,33 @@ let screen = blessed.screen()
 
 var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
 
-var transactionsLine = grid.set(0, 0, 6, 6, contrib.line,
-          { showNthLabel: 5
-          , maxY: 100
-          , label: 'Total Transactions'
-          , showLegend: true
-, legend: {width: 10}})
-
-var technicalTable =  grid.set(4, 9, 4, 3, contrib.table,
+var headlineTable = grid.set(0, 0, 4, 4, contrib.table,
   { keys: true
-  , fg: 'green'
-  , label: 'Technical Indicators'
-  , columnSpacing: 1
-, columnWidth: [24, 10, 10]})
+    , fg: 'green'
+    , label: 'Headlines'
+    , columnSpacing: 1
+    , columnWidth: [24, 10, 10]})
 
-var networkTable =  grid.set(4, 9, 4, 3, contrib.table,
+var technicalTable = grid.set(4, 0, 4, 4, contrib.table,
   { keys: true
-  , fg: 'green'
-  , label: 'Network Indicators'
-  , columnSpacing: 1
-, columnWidth: [24, 10, 10]})
+    , fg: 'green'
+    , label: 'Technical Indicators'
+    , columnSpacing: 1
+    , columnWidth: [24, 10, 10]})
 
-var headlineTable =  grid.set(4, 9, 4, 3, contrib.table,
+var networkTable = grid.set(8, 0, 4, 4, contrib.table,
   { keys: true
-  , fg: 'green'
-  , label: 'Headlines'
-  , columnSpacing: 1
-, columnWidth: [24, 10, 10]})
+    , fg: 'green'
+    , label: 'Network Indicators'
+    , columnSpacing: 1
+    , columnWidth: [24, 10, 10]})
+
+var transactionsLine = grid.set(0, 4, 6, 6, contrib.line,
+  { showNthLabel: 5
+    , maxY: 100
+    , label: 'Total Transactions'
+    , showLegend: true
+    , legend: {width: 10}})
 
 
 //set line charts dummy data
