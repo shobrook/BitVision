@@ -2,13 +2,17 @@
 # GLOBALS
 #########
 
-
+import csv
+import html
 import os
+import random
 import time
 import moment
 import pandas as pd
-from transformers import Transformer
-
+import requests
+from bs4 import BeautifulSoup
+from ftfy import ftfy
+from .transformers import Transformer
 
 #########
 # HELPERS
@@ -47,8 +51,7 @@ def results_config(current_page):
         "date_ordered": True,
         "base_url": "https://coindesk.com",
         "results_per_page": 10,
-        "date_XPATH": "./p[@class='timeauthor']/time"}, # XPATH for article date, will look for datetime object
-    }
+        "date_XPATH": "./p[@class='timeauthor']/time"},  # XPATH for article date, will look for datetime object
 
 
 def parse_html(url):
@@ -220,27 +223,27 @@ def Fetch(name):
     if name == "FEATURE_VECTOR":
         pass
     elif name == "TECHNICAL_INDICATORS":
-        #{"name": "TECHNICAL_INDICATORS", "value": {
+        # {"name": "TECHNICAL_INDICATORS", "value": {
         #    "TECH1": {"value": 0, "signal": "BUY"},
         #    "TECH2": {"value": 1, "signal": "SELL"},
         #    ...
-        #}}
+        # }}
 
         pass
     elif name == "NETWORK_ATTRIBUTES":
-        #{"name": "NETWORK_ATTRIBUTES", "value": {
+        # {"name": "NETWORK_ATTRIBUTES", "value": {
         #    "ATTR1": 0,
         #    "ATTR2": 0,
         #    ...
-        #}}
+        # }}
 
         pass
     elif name == "TWITTER_STATS":
-        #{"name": "TWITTER_STATS", "value": {
+        # {"name": "TWITTER_STATS", "value": {
         #    "AVG_SENTIMENT": 0,
         #    "TWEET_VOLUME": 0,
         #    "TOPICS": ["...", ...]
-        #}}
+        # }}
 
         pass
     elif name == "COINDESK_STATS":
@@ -262,10 +265,10 @@ def Fetch(name):
             "value": {headline[0]: 0 for headline in all_headlines}
         }
     elif name == "PRICE_DATA":
-        #{"name": "PRICE_DATA", "value": {
+        # {"name": "PRICE_DATA", "value": {
         #    "EXCHANGE_RATE": 0,
         #    "PERCENTAGE_GROWTH": 0
-        #}}
+        # }}
 
         pass
     elif name == "PERFORMANCE_STATS":
