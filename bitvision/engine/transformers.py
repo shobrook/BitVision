@@ -3,8 +3,6 @@
 #########
 
 
-import re
-import numpy as np
 from itertools import islice
 import pandas as pd
 import dateutil.parser as dp
@@ -103,7 +101,6 @@ def calculate_indicators(ohlcv_df):
 
 	return ohlcv_df
 
-
 def merge_datasets(origin_df, other_sets):
 	merged = origin_df
 	for set in other_sets:
@@ -111,13 +108,11 @@ def merge_datasets(origin_df, other_sets):
 
 	return merged
 
-
 def fix_null_vals(df):
 	if not df.isnull().any().any():
 		return df
 	else:
 		return df.fillna(method="ffill")
-
 
 def add_lag_vars(df, lag=3):
 	new_df_dict = {}
@@ -131,14 +126,12 @@ def add_lag_vars(df, lag=3):
 
 	return new_df.dropna()
 
-
 def power_transform(df):
 	for header in df.drop("Date", axis=1).columns:
 		if not any(df[header] < 0) and not any(df[header] == 0):
 			df[header] = boxcox(df[header])[0]
 
 	return df
-
 
 def binarize_labels(df):
 	trends = [None]
@@ -154,7 +147,6 @@ def binarize_labels(df):
 	#df = df.drop(df.index[0])
 
 	return df
-
 
 def recursive_feature_elim(df):
 	return df
