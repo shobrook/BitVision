@@ -35,8 +35,6 @@ function executeShellCommand(command) {
   });
 }
 
-executeShellCommand("echo \"asdfasdf\" && something else")
-
 // CONTROL METHODS
 
 function refreshData() {
@@ -53,14 +51,6 @@ function executeBuyOrder(amount) {
 
 function executeSellOrder(amount) {
   executeShellCommand(`python3 control.py SELL ${amount}`)
-}
-
-function withdrawFromAccount(amount) {
-  executeShellCommand(`python3 control.py WITHDRAW ${amount}`)
-}
-
-function depositInAccount(amount) {
-  executeShellCommand(`python3 control.py DEPOSIT ${amount}`)
 }
 
 // TESTING DATA
@@ -86,65 +76,67 @@ var headlineTable = grid.set(0, 0, 4, 4, contrib.table,
     , fg: 'green'
     , label: 'Headlines'
     , columnSpacing: 1
+    , columnWidth: [24, 10, 10]
+  })
+
+var technicalTable = grid.set(4, 0, 4, 4, contrib.table,
+{ keys: true
+  , fg: 'green'
+  , label: 'Technical Indicators'
+  , columnSpacing: 1
+  , columnWidth: [24, 10, 10]
+})
+
+var networkTable = grid.set(8, 0, 4, 4, contrib.table,
+  { keys: true
+    , fg: 'green'
+    , label: 'Network Indicators'
+    , columnSpacing: 1
     , columnWidth: [24, 10, 10]})
 
-    var technicalTable = grid.set(4, 0, 4, 4, contrib.table,
-      { keys: true
-        , fg: 'green'
-        , label: 'Technical Indicators'
-        , columnSpacing: 1
-        , columnWidth: [24, 10, 10]})
+// Line chart on the right of the tables
+var exchangeRateCurve = grid.set(0, 4, 6, 6, contrib.line, {
+  style: {
+    line: "yellow",
+    text: "green",
+    baseline: "black"
+  },
+  xLabelPadding: 3,
+  xPadding: 5,
+  showLegend: true,
+  wholeNumbersOnly: false,
+  label: "Exchange Rate"
+})
 
-        var networkTable = grid.set(8, 0, 4, 4, contrib.table,
-          { keys: true
-            , fg: 'green'
-            , label: 'Network Indicators'
-            , columnSpacing: 1
-            , columnWidth: [24, 10, 10]})
+function setLineData(mockData, line) {
+  for (var i=0; i<mockData.length; i++) {
+    var last = mockData[i].y[mockData[i].y.length-1]
+    mockData[i].y.shift()
+    var num = Math.max(last + Math.round(Math.random()*10) - 5, 10)
+    mockData[i].y.push(num)
+  }
 
-            // Line chart on the right of the tables
-            var exchangeRateCurve = grid.set(0, 4, 6, 6, contrib.line, {
-              style: {
-                line: "yellow",
-                text: "green",
-                baseline: "black"
-              },
-              xLabelPadding: 3,
-              xPadding: 5,
-              showLegend: true,
-              wholeNumbersOnly: false,
-              label: "Exchange Rate"
-            })
+  line.setData(mockData)
+}
 
-            function setLineData(mockData, line) {
-              for (var i=0; i<mockData.length; i++) {
-                var last = mockData[i].y[mockData[i].y.length-1]
-                mockData[i].y.shift()
-                var num = Math.max(last + Math.round(Math.random()*10) - 5, 10)
-                mockData[i].y.push(num)
-              }
+setLineData([exchangeRateSeries], exchangeRateCurve)
 
-              line.setData(mockData)
-            }
+setInterval(function() {
+  setLineData([exchangeRateSeries], exchangeRateCurve)
+  screen.render()
+}, 500)
 
-            setLineData([exchangeRateSeries], exchangeRateCurve)
+// Quit functionality
+screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+  return process.exit(0);
+});
 
-            setInterval(function() {
-              setLineData([exchangeRateSeries], exchangeRateCurve)
-              screen.render()
-            }, 500)
+// Resizing
+screen.on('resize', function() {
+  technicalTable.emit('attach');
+  networkTable.emit('attach');
+  headlineTable.emit('attach');
+  exchangeRateCurve.emit('attach');
+});
 
-            // Quit functionality
-            screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-              return process.exit(0);
-            });
-
-            // Resizing
-            screen.on('resize', function() {
-              technicalTable.emit('attach');
-              networkTable.emit('attach');
-              headlineTable.emit('attach');
-              exchangeRateCurve.emit('attach');
-            });
-
-            screen.render()
+screen.render()
