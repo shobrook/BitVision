@@ -2,6 +2,7 @@
 # GLOBALS
 #########
 
+
 import csv
 import html
 import os
@@ -13,6 +14,7 @@ import requests
 from bs4 import BeautifulSoup
 from ftfy import ftfy
 from .transformers import Transformer
+
 
 #########
 # HELPERS
@@ -37,7 +39,6 @@ def page_config(tree):
     except:
         return {"title": "N/A", "date": "N/A"}
 
-
 def results_config(current_page):
     """
     Returns a config for Coindesk's search results page.
@@ -52,7 +53,6 @@ def results_config(current_page):
         "base_url": "https://coindesk.com",
         "results_per_page": 10,
         "date_XPATH": "./p[@class='timeauthor']/time"},  # XPATH for article date, will look for datetime object
-
 
 def parse_html(url):
     """
@@ -71,7 +71,6 @@ def parse_html(url):
     })
 
     return html.fromstring(page.content)
-
 
 def collect_articles(urls, end_date, filename):
     """
@@ -100,7 +99,6 @@ def collect_articles(urls, end_date, filename):
 def fetch_price_data():
     return pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/\
                         BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-
 
 def fetch_blockchain_data():
     # Loads datasets from Quandl
@@ -142,7 +140,6 @@ def fetch_blockchain_data():
 
     return Transformer("MERGE_DATASETS")(dfs[0], dfs[1:])
 
-
 def fetch_coindesk_headlines(end_date):
     filename = "coindesk_headlines.csv"
     urls, current_page = [], 1
@@ -180,7 +177,6 @@ def fetch_coindesk_headlines(end_date):
         current_page += 1
         urls = []
 
-
 def fetch_tweets():
     pass
 
@@ -217,59 +213,3 @@ def Dataset(name):
         return fetch_coindesk_headlines()
     elif name == "TWEETS":
         return fetch_tweets()
-
-
-def Fetch(name):
-    if name == "FEATURE_VECTOR":
-        pass
-    elif name == "TECHNICAL_INDICATORS":
-        # {"name": "TECHNICAL_INDICATORS", "value": {
-        #    "TECH1": {"value": 0, "signal": "BUY"},
-        #    "TECH2": {"value": 1, "signal": "SELL"},
-        #    ...
-        # }}
-
-        pass
-    elif name == "NETWORK_ATTRIBUTES":
-        # {"name": "NETWORK_ATTRIBUTES", "value": {
-        #    "ATTR1": 0,
-        #    "ATTR2": 0,
-        #    ...
-        # }}
-
-        pass
-    elif name == "TWITTER_STATS":
-        # {"name": "TWITTER_STATS", "value": {
-        #    "AVG_SENTIMENT": 0,
-        #    "TWEET_VOLUME": 0,
-        #    "TOPICS": ["...", ...]
-        # }}
-
-        pass
-    elif name == "COINDESK_STATS":
-        html = requests.get("https://www.coindesk.com/", headers={
-            "User-Agent": random.choice(USER_AGENTS)
-        })
-        soup = BeautifulSoup(html.text, "html.parser")
-
-        featured_headline_containers = [feature.find_all('a', class_="fade")[0] for feature in soup.find_all("div", class_="article article-featured")]
-
-        featured_headlines = [(headline.text, headline.find_all("time")[0].datetime) for headline in featured_headline_containers]
-        other_headlines = [(headline.find_all("a", class_="fade")[0].title, headline.find_all("time")[0].datetime) for headline in soup.find_all("div", class_="post-info")]
-        all_headlines = list(filter(lambda headline: moment.date(headline[0]).format("YYYY-M-D") == moment.now().locale("US/Pacific").timezone("US/Eastern")))
-
-        # TODO: Replace the 0 with either a sentiment rating or # of tweets
-
-        return {
-            "name": "COINDESK_STATS",
-            "value": {headline[0]: 0 for headline in all_headlines}
-        }
-    elif name == "PRICE_DATA":
-        # {"name": "PRICE_DATA", "value": {
-        #    "EXCHANGE_RATE": 0,
-        #    "PERCENTAGE_GROWTH": 0
-        # }}
-
-        pass
-    elif name == "PERFORMANCE_STATS":
-        pass

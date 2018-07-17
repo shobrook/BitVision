@@ -3,13 +3,9 @@
 #########
 
 
-import os
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
-
-
-# PARENT_DIR = os.path.dirname(os.getcwd())
 
 
 #########
@@ -32,10 +28,11 @@ class Model(object):
 		self.model = RandomForestClassifier(n_estimators=500)
 		self.model.fit(self.scaler.transform(self.x_train), self.y_train)
 
-		joblib.dump(self.model, "../cache/model.pkl")
-
 	def __split(self, df, balanced):
 		pass
 
 	def predict(self, vector):
 		return self.model.predict(self.scaler.transform(vector))
+
+	def serialize(self, file_path):
+		joblib.dump(self.model, file_path)
