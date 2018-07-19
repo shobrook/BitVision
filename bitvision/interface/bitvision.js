@@ -65,6 +65,14 @@ let exchangeRateSeries = {
   })
 }
 
+let headlines = [ [ "10/29 12:39", "Zerocoin's widget promises Bitcoin privacy", "0.39"],
+[ "10/29 2:15", "Bitcoin is bad news for stability", "0.54"],
+[ "10/29 8:15", "WikiLeaks' Assange hypes bitcoin in secret talk", "0.43"],
+[ "10/29 12:15", "Butterfly Labs' Jalapeno aims to spice up bitcoin mining", "0.34"] ]
+
+// TODO: Turn that into a generator
+// TODO: Add Techinical Indicators
+
 // LAYOUT AND WIDGETS
 
 var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
@@ -72,29 +80,36 @@ var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
 // Place tables on the left side of the screen.
 
 var headlineTable = grid.set(0, 0, 4, 4, contrib.table,
-  { keys: true
-    , fg: 'green'
-    , label: 'Headlines'
-    , columnSpacing: 1
-    , columnWidth: [24, 10, 10]
-  })
+                             { keys: true
+                              , fg: 'green'
+                              , label: 'Headlines'
+                              , interactive: true
+                              , columnSpacing: 1
+                              , columnWidth: [12, 35, 15]
+                            })
+
+
+// Allow scrolling
+headlineTable.setData({ headers: ['Date', 'Title', 'Sentiment'],
+                      data: headlines})
 
 var technicalTable = grid.set(4, 0, 4, 4, contrib.table,
-{ keys: true
-  , fg: 'green'
-  , label: 'Technical Indicators'
-  , columnSpacing: 1
-  , columnWidth: [24, 10, 10]
-})
+                              { keys: true
+                                , fg: 'green'
+                                , label: 'Technical Indicators'
+                                , columnSpacing: 1
+                                , columnWidth: [24, 10, 10]
+                              })
 
 var networkTable = grid.set(8, 0, 4, 4, contrib.table,
-  { keys: true
-    , fg: 'green'
-    , label: 'Network Indicators'
-    , columnSpacing: 1
-    , columnWidth: [24, 10, 10]})
+                            { keys: true
+                              , fg: 'green'
+                              , label: 'Network Indicators'
+                              , columnSpacing: 1
+                              , columnWidth: [24, 10, 10]})
 
 // Line chart on the right of the tables
+
 var exchangeRateCurve = grid.set(0, 4, 6, 6, contrib.line, {
   style: {
     line: "yellow",
@@ -107,6 +122,23 @@ var exchangeRateCurve = grid.set(0, 4, 6, 6, contrib.line, {
   wholeNumbersOnly: false,
   label: "Exchange Rate"
 })
+
+// Countdown under chart
+
+var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
+  segmentWidth: 0.06, // how wide are the segments in % so 50% = 0.5,
+  segmentInterval: 0.11, // spacing between the segments in % so 50% = 0.550% = 0.5,
+  strokeWidth: 0.11, // spacing between the segments in % so 50% = 0.5
+  elements: 5, // how many elements in the display. or how many characters can be displayed.
+  display: "23:59", // what should be displayed before first call to setDisplay
+  elementSpacing: 3, // spacing between each element
+  elementPadding: 2, // how far away from the edges to put the elements
+  color: 'white', // color for the segments
+  label: 'Time Until Next Trade'
+})
+
+countdown.setDisplay("23:59")
+
 
 function setLineData(mockData, line) {
   for (var i=0; i<mockData.length; i++) {

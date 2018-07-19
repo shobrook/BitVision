@@ -6,9 +6,11 @@
   "repository": "https://github.com/shobrook/BitVision",
   "author": "Jon Shobrook and Aaron Lichtman",
   "license": "MIT",
+  "scripts": {
+    "preinstall": "npm install ../lib/blessed-contrib"
+  },
   "dependencies": {
     "blessed": "^0.1.81",
-    "blessed-contrib": "^4.8.5",
     "chalk": "^2.4.1",
     "figlet": "^1.2.0",
     "inquirer": "^6.0.0",
