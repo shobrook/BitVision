@@ -3,11 +3,87 @@
 
 let blessed = require('blessed')
 let contrib = require('blessed-contrib')
-let cp = require('child_process');
+let childProcess = require('child_process')
+let Gdax = require('gdax');
 
+let gdaxClient = new Gdax.PublicClient()
 let screen = blessed.screen()
-
 let MAX_HEADLINE_LENTH = 35
+
+// COINBASE ACTION METHODS
+
+function getCredentials() {
+	var creds = JSON.parse("~/.bitvision")
+	return creds
+}
+
+/**
+ * Replaces public Coinbase client with authenticated client so trades
+ * can be placed.
+ *
+ * @param  {dict} credentials dictionary
+ */
+ function authenticateCoinbase() {
+ 	let credentials = getCredentials()
+ 	let key = credentials["key"];
+	let secret = btoa(credentials["secret"]) // Base 64 encoded secret
+	let passphrase = credentials["passphrase"]
+
+	// DO NOT USE
+	// let apiURI = 'https://api.pro.coinbase.com';
+	let sandboxURI = 'https://api-public.sandbox.pro.coinbase.com';
+
+	gdaxClient = new Gdax.AuthenticatedClient(key,
+	                                          secret,
+	                                          passphrase,
+	                                          sandboxURI
+	                                          );
+}
+
+/**
+ * Returns the current BTC price in USD.
+ */
+function getDailyBitcoinPrice() {
+	gdaxClient.getProductTicker('ETH-USD', (error, response, data) => {
+		if (error) {
+			console.log("ERROR")
+		} else {
+			return data["price"]
+		}
+	});
+}
+
+/**
+ * Creates a buy order.
+ *
+ * @param  {Double} price In this format: '100.00'
+ * @param  {Double} size  [description]
+ */
+ function createBuyOrder(price, size, callback) {
+	// Buy 1 BTC @ 100 USD
+	let buyParams = {
+	  	price: `${price}`, // USD
+	  	size: `${size}`, // BTC
+	  	product_id: 'BTC-USD'
+	  };
+	  authedClient.buy(buyParams, callback);
+	}
+
+/**
+ * Creates a sell order.
+ *
+ * @param  {Double} price
+ * @param  {Double} size  [description]
+ */
+ function createSellOrder(price, size, callback) {
+ 	let sellParams = {
+	  	price: `${price}`, // USD
+	  	size: `${size}`, // BTC
+	  	product_id: 'BTC-USD'
+	  };
+	  authedClient.sell(sellParams, callback);
+}
+
 
 // CLI ACTION METHODS
 
@@ -25,7 +101,7 @@ function executeShellCommand(command) {
   let program = args.splice(0, 1)[0];
   console.log(args)
   console.log(program)
-  let cmd = cp.spawn(program, args);
+  let cmd = childProcess.spawn(program, args);
 
   cmd.stdout.on('data', function(data) {
   	console.log('OUTPUT: ' + data);
@@ -44,14 +120,6 @@ function refreshData() {
 
 function retrainModel() {
 	executeShellCommand("python3 retrain_model.py")
-}
-
-function executeBuyOrder(amount) {
-	executeShellCommand(`python3 control.py BUY ${amount}`)
-}
-
-function executeSellOrder(amount) {
-	executeShellCommand(`python3 control.py SELL ${amount}`)
 }
 
 function getRandomInteger(min, max) {

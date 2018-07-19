@@ -11,7 +11,8 @@
     "blessed-contrib": "^4.8.5",
     "chalk": "^2.4.1",
     "figlet": "^1.2.0",
+    "gdax": "^0.8.0",
     "inquirer": "^6.0.0",
-    "js-yaml": "^3.12.0"
+    "js-yaml": "^3.12.0",
   }
 }
