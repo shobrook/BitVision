@@ -137,6 +137,19 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
   label: 'Time Until Next Trade'
 })
 
+// var lcdLineOne = grid.set(0,9,2,3, contrib.lcd,
+//   {
+//     label: "LCD Test",
+//     segmentWidth: 0.06,
+//     segmentInterval: 0.11,
+//     strokeWidth: 0.1,
+//     elements: 5,
+//     display: "32:10",
+//     elementSpacing: 4,
+//     elementPadding: 2
+//   }
+// );
+
 countdown.setDisplay("23:59")
 
 
