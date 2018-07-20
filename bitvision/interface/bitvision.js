@@ -1,20 +1,37 @@
 // GLOBALS
 "use strict"
 
+let fs = require('fs')
 let blessed = require('blessed')
 let contrib = require('blessed-contrib')
 let childProcess = require('child_process')
-let Gdax = require('gdax');
+let Gdax = require('gdax')
 
-let gdaxClient = new Gdax.PublicClient()
+const dotfilePath = '~/.bitvision'
+var gdaxClient = new Gdax.PublicClient()
 let screen = blessed.screen()
 let MAX_HEADLINE_LENTH = 35
+
+/**
+ * Returns true if dotfile exists, false otherwise.
+ *
+ * @return {Boolean} File exists.
+ */
+ function checkForDotFile() {
+ 	fs.stat(dotfilePath, function(err, stat) {
+ 		if (err == null) {
+ 			return true
+ 		} else if (err.code == 'ENOENT') {
+ 			return false
+ 		}
+ 	});
+ }
 
 // COINBASE ACTION METHODS
 
 function getCredentials() {
-	var creds = JSON.parse("~/.bitvision")
-	return creds
+	var config = JSON.parse("~/.bitvision")
+	return config["credentials"]
 }
 
 /**
@@ -23,7 +40,7 @@ function getCredentials() {
  *
  * @param  {dict} credentials dictionary
  */
- function authenticateCoinbase() {
+ function authenticateWithCoinbase() {
  	let credentials = getCredentials()
  	let key = credentials["key"];
 	let secret = btoa(credentials["secret"]) // Base 64 encoded secret
@@ -43,15 +60,15 @@ function getCredentials() {
 /**
  * Returns the current BTC price in USD.
  */
-function getDailyBitcoinPrice() {
-	gdaxClient.getProductTicker('ETH-USD', (error, response, data) => {
-		if (error) {
-			console.log("ERROR")
-		} else {
-			return data["price"]
-		}
-	});
-}
+ function getUpdatedBitcoinPrice() {
+ 	gdaxClient.getProductTicker('ETH-USD', (error, response, data) => {
+ 		if (error) {
+ 			console.log("ERROR")
+ 		} else {
+ 			return data["price"]
+ 		}
+ 	});
+ }
 
 /**
  * Creates a buy order.
@@ -82,7 +99,7 @@ function getDailyBitcoinPrice() {
 	  	product_id: 'BTC-USD'
 	  };
 	  authedClient.sell(sellParams, callback);
-}
+	}
 
 
 // CLI ACTION METHODS
@@ -122,6 +139,8 @@ function retrainModel() {
 	executeShellCommand("python3 retrain_model.py")
 }
 
+// Data generation methods
+
 function getRandomInteger(min, max) {
 	min = Math.ceil(min)
 	max = Math.floor(max)
@@ -143,9 +162,15 @@ function getRandomHeadline() {
 	let possiblities = [ "Zerocoin's widget promises Bitcoin privacy",
 	"Bitcoin is bad news for stability",
 	"WikiLeaks' Assange hypes bitcoin in secret talk",
-	"Butterfly Labs' Jalapeno aims to spice up bitcoin mining" ]
-	return possiblities[Math.floor(Math.random() * 4)]
+	"Butterfly Labs' Jalapeno aims to spice up bitcoin mining",
+	"Are alternative Ecoins 'anti-bitcoins'?",
+	"Canada to tax bitcoin users",
+	"Google Ventures invests in Bitcoin competitor OpenCoin",
+	"Economists wrestle with Bitcoin's 'narrative problem'" ]
+	return possiblities[Math.floor(Math.random() * possiblities.length)]
 }
+
+// Utilities
 
 function trimIfLongerThan(text, len) {
 	if (text.length > len) {
@@ -155,14 +180,20 @@ function trimIfLongerThan(text, len) {
 	}
 }
 
-function zipThreeArrays(a, b, c) {
-	let zipped = []
-	for (var i = 0; i < a.length; i++) {
-		zipped.push([a[i], b[i], c[i]])
-	}
-	return zipped
-}
-
+/**
+ * Takes three arrays and zips them into a list of lists like this:
+ *
+ * [1,2,3]
+ * [a,b,c] -> [ [1,a,!], [2,b,@], [3,c,#] ]
+ * [!,@,#]
+ */
+ function zipThreeArrays(a, b, c) {
+ 	let zipped = []
+ 	for (var i = 0; i < a.length; i++) {
+ 		zipped.push([a[i], b[i], c[i]])
+ 	}
+ 	return zipped
+ }
 
 // Takes dictionary with key -> list pairs and returns a list of lists.
 function unpackData(dict) {
@@ -208,15 +239,15 @@ let networkIndicatorData = {
 	"data": {
 		"Confirmation Time": { value: "42ms", signal: signalEnum.buy },
 		"Block Size": { value: "129MB", signal: signalEnum.sell },
-		"Avg Transaction Cost": { value: "Val+Unit", signal: signalEnum.buy },
-		"Difficulty": { value: "Val+Unit", signal: signalEnum.sell },
-		"Transaction Value": { value: "Val+Unit", signal: signalEnum.buy },
-		"Hash Rate": { value: "Val+Unit", signal: signalEnum.sell },
-		"Transactions per Block": { value: "Val+Unit", signal: signalEnum.sell },
+		"Avg Transaction Cost": { value: "Val", signal: signalEnum.buy },
+		"Difficulty": { value: "Val", signal: signalEnum.sell },
+		"Transaction Value": { value: "Val", signal: signalEnum.buy },
+		"Hash Rate": { value: "Val", signal: signalEnum.sell },
+		"Transactions per Block": { value: "Val", signal: signalEnum.sell },
 		"Unique Addresses": { value: "Val", signal: signalEnum.buy },
-		"Total BTC": { value: "Val+Unit", signal: signalEnum.sell },
-		"Transaction Fees": { value: "Val+Unit", signal: signalEnum.buy },
-		"Transactions per Day": { value: "Val+Unit", signal: signalEnum.sell }
+		"Total BTC": { value: "Val", signal: signalEnum.sell },
+		"Transaction Fees": { value: "Val", signal: signalEnum.buy },
+		"Transactions per Day": { value: "Val", signal: signalEnum.sell }
 	}
 }
 
@@ -241,7 +272,7 @@ let technicalIndicatorData = {
 let technicalIndicators = unpackData(technicalIndicatorData)
 console.log(technicalIndicators)
 
-// LAYOUT AND WIDGETS
+// Placing widgets
 
 var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
 
@@ -259,13 +290,22 @@ var headlineTable = grid.set(0, 0, 4, 4, contrib.table,
 headlineTable.setData({ headers: ['Date', 'Title', 'Sentiment'],
                       data: headlinesZipped})
 
+headlineTable.focus()
+
+headlineTable.on('keypress', function(ch, key) {
+	console.log('DSKLF')
+	if (key.name.toLowerCase() === 'o') {
+		console.log('OPEN UP')
+	}
+})
+
 var technicalTable = grid.set(4, 0, 3.5, 4, contrib.table,
                               { keys: true
                               	, fg: 'green'
                               	, label: 'Technical Indicators'
                               	, interactive: false
                               	, columnSpacing: 1
-                              	, columnWidth: [40, 10, 10]
+                              	, columnWidth: [35, 10, 10]
                               })
 
 technicalTable.setData({ headers: ['Name', 'Value', 'Signal'],
@@ -277,7 +317,7 @@ var networkTable = grid.set(7.2, 0, 4, 4, contrib.table,
                             	, label: 'Network Indicators'
                             	, interactive: false
                             	, columnSpacing: 1
-                            	, columnWidth: [30, 15, 10]})
+                            	, columnWidth: [35, 10, 10]})
 
 networkTable.setData({ headers: ['Name', 'Value', 'Signal'],
                      data: networkIndicators})
@@ -305,11 +345,42 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
 	segmentInterval: 0.10,
 	strokeWidth: 0.1,
 	elements: 4,
-	display: 1439,
+	display: "0000",
 	elementSpacing: 4,
 	elementPadding: 2,
   color: 'white', // color for the segments
   label: 'Minutes Until Next Trade'
+})
+
+let menubar = blessed.listbar({
+	parent: screen,
+	mouse: true,
+	keys: true,
+	bottom: 0,
+	left: 0,
+	height: 1,
+	commands: {
+		"Toggle Trading": {
+			keys: [ 't', 'T' ],
+			callback: () => toggleTrading()
+		},
+		"Refresh Data": {
+			keys: [ 'r', 'R' ],
+			callback: () => refreshData()
+		},
+		"Buy BTC": {
+			keys: [ 'b', "B" ],
+			callback: () => buyBitcoin()
+		},
+		"Sell BTC": {
+			keys: [ 's', "S" ],
+			callback: () => sellBitcoin()
+		},
+		"Exit": {
+			keys: [ 'q', 'Q', 'C-c', 'escape' ],
+			callback: () => process.exit(0)
+		}
+	}
 })
 
 // countdown.setDisplay("23:59")
@@ -333,10 +404,10 @@ setInterval(function() {
 	screen.render()
 }, 500)
 
-// Quit functionality
-screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-	return process.exit(0);
-});
+// // Quit functionality
+// screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+// 	return process.exit(0);
+// });
 
 // Resizing
 screen.on('resize', function() {
