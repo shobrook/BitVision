@@ -9,8 +9,12 @@ let Gdax = require('gdax')
 
 const dotfilePath = '~/.bitvision'
 var gdaxClient = new Gdax.PublicClient()
-let screen = blessed.screen()
+let screen = blessed.screen({
+	smartCSR: true
+})
 let MAX_HEADLINE_LENTH = 35
+
+screen.title = 'Bitvision';
 
 /**
  * Returns true if dotfile exists, false otherwise.
@@ -384,7 +388,6 @@ let menubar = blessed.listbar({
 })
 
 // countdown.setDisplay("23:59")
-
 
 function setLineData(mockData, line) {
 	for (var i=0; i<mockData.length; i++) {
