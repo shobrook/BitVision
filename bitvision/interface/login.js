@@ -11,18 +11,18 @@ function validateInput(value) {
 
 // Coinbase Login Interface
 
-let textboxConstants = {
-	"height": "22%",
-	"width": "80%",
+let styleConstants = {
 	"borderUnfocused": "#f0f0f0",
 	"borderFocused": "green",
 }
 
-let textboxSpacing = {
-	"left": "10%",
-	"apiKey": "20%",
-	"secret": "40%",
-	"passphrase": "65%"
+let spacingConstants = {
+	"height": 3,
+	"width": 26,
+	"left": 2,
+	"apiKey": 4,
+	"secret": 8,
+	"passphrase": 12
 }
 
 let promptConstants = {
@@ -64,8 +64,8 @@ var form = blessed.form({
 	type: "overlay",
 	top: 'center',
 	left: 'center',
-	width: '20%',
-	height: '40%',
+	width: 30,
+	height: 18,
 	bg: 'black',
 	color: 'white',
 });
@@ -74,12 +74,25 @@ let label = blessed.box({
 	parent: form,
 	top: 1,
 	left: 'center',
-	width: 'shrink',
-	height: 'shrink',
+	width: 16,
+	height: 1,
 	content: ' Coinbase Login ',
 	style: {
 		fg: "green",
 		bold: true
+	},
+	tags: true
+});
+
+let hint = blessed.box({
+	parent: form,
+	top: 2,
+	left: 'center',
+	width: 28,
+	height: 1,
+	content: ' (Press tab to start entry) ',
+	style: {
+		fg: "white",
 	},
 	tags: true
 });
@@ -92,21 +105,21 @@ var keyEntryBox = blessed.textbox({
 	tags: true,
 	keys: true,
 	inputOnFocus: true,
-	left: textboxSpacing["left"],
-	top: textboxSpacing["apiKey"],
+	left: spacingConstants["left"],
+	top: spacingConstants["apiKey"],
 	border: {
 		type: "line"
 	},
-	width: textboxConstants["width"],
-	height: textboxConstants["height"],
+	width: spacingConstants["width"],
+	height: spacingConstants["height"],
 	style: {
 		focus: {
 			border: {
-				fg: textboxConstants["borderFocused"],
+				fg: styleConstants["borderFocused"],
 			},
 		},
 		border: {
-			fg: textboxConstants["borderUnfocused"]
+			fg: styleConstants["borderUnfocused"]
 		},
 	}
 })
@@ -117,21 +130,21 @@ var secretEntryBox = blessed.textbox({
 	tags: true,
 	keys: true,
 	inputOnFocus: true,
-	left: textboxSpacing["left"],
-	top: textboxSpacing["secret"],
+	left: spacingConstants["left"],
+	top: spacingConstants["secret"],
 	border: {
 		type: "line"
 	},
-	width: textboxConstants["width"],
-	height: textboxConstants["height"],
+	width: spacingConstants["width"],
+	height: spacingConstants["height"],
 	style: {
 		focus: {
 			border: {
-				fg: textboxConstants["borderFocused"],
+				fg: styleConstants["borderFocused"],
 			},
 		},
 		border: {
-			fg: textboxConstants["borderUnfocused"]
+			fg: styleConstants["borderUnfocused"]
 		},
 	}
 })
@@ -142,21 +155,21 @@ var passphraseEntryBox = blessed.textbox({
 	tags: true,
 	keys: true,
 	inputOnFocus: true,
-	left: textboxSpacing["left"],
-	top: textboxSpacing["passphrase"],
+	left: spacingConstants["left"],
+	top: spacingConstants["passphrase"],
 	border: {
 		type: "line"
 	},
-	width: textboxConstants["width"],
-	height: textboxConstants["height"],
+	width: spacingConstants["width"],
+	height: spacingConstants["height"],
 	style: {
 		focus: {
 			border: {
-				fg: textboxConstants["borderFocused"],
+				fg: styleConstants["borderFocused"],
 			},
 		},
 		border: {
-			fg: textboxConstants["borderUnfocused"]
+			fg: styleConstants["borderUnfocused"]
 		},
 	}
 })
