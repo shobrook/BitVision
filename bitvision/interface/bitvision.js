@@ -407,10 +407,10 @@ setInterval(function() {
 	screen.render()
 }, 500)
 
-// // Quit functionality
-// screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-// 	return process.exit(0);
-// });
+// Quit functionality
+screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+	return process.exit(0);
+});
 
 // Resizing
 screen.on('resize', function() {
