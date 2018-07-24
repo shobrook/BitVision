@@ -9,12 +9,6 @@ function validateInput(value) {
 	return 'You must enter some value here.';
 }
 
-// Add text to body (replacement for console.log)
-const log = (text) => {
-  body.pushLine(text);
-  screen.render();
-}
-
 // Coinbase Login Interface
 
 let textboxConstants = {
@@ -47,6 +41,22 @@ var screen = blessed.screen({
 		color: "red"
 	}
 });
+
+// Add text to body (replacement for console.log)
+const log = (text) => {
+	body.pushLine(text);
+	screen.render();
+}
+
+var body = blessed.box({
+	top: 0,
+	left: 0,
+	height: '100%-1',
+	width: '100%',
+	// keys: true
+})
+
+screen.append(body)
 
 var form = blessed.form({
 	parent: screen,
@@ -231,6 +241,7 @@ var credentials = {
 // Tab Actions
 
 keyEntryBox.on('submit', (text) => {
+	log(text)
 	credentials["apiKey"] = text
 	secretEntryBox.focus()
 });
@@ -246,6 +257,11 @@ passphraseEntryBox.on('submit', (text) => {
 });
 
 login.on('press', function() {
+	console.log("Login Pressed.")
+	credentials["apiKey"] = keyEntryBox.text
+	credentials["secret"] = secretEntryBox.text
+	credentials["passphrase"] = passphraseEntryBox.text
+
 	log(credentials["apiKey"])
 	log(credentials["secret"])
 	log(credentials["passphrase"])
@@ -260,5 +276,6 @@ screen.key(['q', 'C-c', 'escape'], function() {
 	process.exit(0);
 });
 
-keyEntryBox.focus()
+form.focus();
+// keyEntryBox.focus()
 screen.render();
