@@ -1,8 +1,6 @@
 let blessed = require('blessed')
 let contrib = require('blessed-contrib')
 
-// DATA
-
 let helpMenuData = [ [ 'Keybinding',  'Action' ],
 [ '---', '---'],
 [ 'H', 'Open help menu'],
@@ -14,7 +12,7 @@ let helpMenuData = [ [ 'Keybinding',  'Action' ],
 [ 'V', 'Show version and author info'] ]
 
 let strings = {
-	autotrading: '## Autotrading\n\n You can enter account creds and trade BTC. \n Simply do x and y, and don\'t do z.',
+	autotrading: '## Automatic Trading\n\n 1. Enter account credentials \n 2. Press \`T\` to toggle this option.\n 3. Enter the max amount you\'d like to trade.\n 3.5. Watch our algorithm trade BTC for you.\n 4. Profit',
 	authors: '\n\n## Authors\n\n Written by Jon Shobrook and Aaron Lichtman.\n -> https://www.github.com/shobrook\n -> https://www.github.com/alichtman',
 	warning: '\n\n## Warning\n\n Use this software to trade bitcoin at your own risk.\n We are not responsible if our algorithm misbehaves.',
 	source: '\n\n## Source Code\n\n -> https://github.com/shobrook/BitVision'
@@ -27,7 +25,7 @@ var layout = blessed.layout({
 	top: 'center',
 	left: 'center',
 	width: 80,
-	height: 34,
+	height: 36,
 	border: 'line',
 	style: {
 		border: {
@@ -64,7 +62,7 @@ var table = blessed.listtable({
 var textBox = blessed.box({
 	parent: layout,
 	width: 78,
-	height: 22,
+	height: 24,
 	left: 'center',
 	top: 'center',
 	padding: {
