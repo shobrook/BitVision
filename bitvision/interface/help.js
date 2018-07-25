@@ -14,8 +14,10 @@ let helpMenuData = [ [ 'Keybinding',  'Action' ],
 [ 'V', 'Show version and author info'] ]
 
 let strings = {
-	authors: '# Authors\n\n Written by Jon Shobrook and Aaron Lichtman.\n -> https://www.github.com/shobrook\n -> https://www.github.com/alichtman',
-	warning: '# Warning\n\n The use of this software to trade bitcoin is done at your own risk.\n We are not responsible for damages caused if our algoritm misbehaves.'
+	autotrading: '## Autotrading\n\n You can enter account creds and trade BTC. \n Simply do x and y, and don\'t do z.',
+	authors: '\n\n## Authors\n\n Written by Jon Shobrook and Aaron Lichtman.\n -> https://www.github.com/shobrook\n -> https://www.github.com/alichtman',
+	warning: '\n\n## Warning\n\n Use this software to trade bitcoin at your own risk.\n We are not responsible if our algorithm misbehaves.',
+	source: '\n\n## Source Code\n\n -> https://github.com/shobrook/BitVision'
 }
 
 let screen = blessed.screen()
@@ -24,39 +26,25 @@ var layout = blessed.layout({
 	parent: screen,
 	top: 'center',
 	left: 'center',
-	width: '80%',
-	height: '80%',
+	width: 80,
+	height: 34,
 	border: 'line',
-	layout: 'grid',
 	style: {
-		bg: 'red',
 		border: {
 			fg: 'blue'
 		}
 	}
 });
 
-var topleftBox = blessed.box({
-  parent: layout,
-  left: 0,
-  top: 0,
-  width: 50,
-  height: 8,
-  border: 'line',
-  content: strings["authors"]
-});
-
 var table = blessed.listtable({
 	parent: layout,
 	interactive: false,
+	top: 'center',
 	left: 'center',
 	data: helpMenuData,
-	border: {
-		type: "line",
-	},
-	// align: 'center',
+	border: "line",
 	pad: 2,
-	width: 40,
+	width: 60,
 	height: 10,
 	style: {
 		border: {
@@ -73,17 +61,25 @@ var table = blessed.listtable({
 	}
 });
 
-var middleLeftBox = blessed.box({
-  parent: layout,
-  aleft: 0,
-  atop: 30,
-  width: 75,
-  height: 7,
-  border: 'line',
-  content: strings["warning"]
+var textBox = blessed.box({
+	parent: layout,
+	width: 78,
+	height: 22,
+	left: 'center',
+	top: 'center',
+	padding: {
+		left: 2,
+		right: 2,
+	},
+	border: 'line',
+	style: {
+		fg: 'white',
+		border: {
+			fg: 'blue',
+		}
+	},
+	content: strings["autotrading"] + strings["authors"] + strings["warning"] + strings["source"]
 });
-
-
 
 // Quit
 screen.key(['q', 'C-c', 'escape'], function() {
