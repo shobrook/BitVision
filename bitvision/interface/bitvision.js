@@ -1,13 +1,110 @@
 // GLOBALS
 "use strict"
 
+let fs = require('fs')
 let blessed = require('blessed')
 let contrib = require('blessed-contrib')
-let cp = require('child_process');
+let childProcess = require('child_process')
+let Gdax = require('gdax')
 
-let screen = blessed.screen()
-
+const dotfilePath = '~/.bitvision'
+var gdaxClient = new Gdax.PublicClient()
+let screen = blessed.screen({
+	smartCSR: true
+})
 let MAX_HEADLINE_LENTH = 35
+
+screen.title = 'Bitvision';
+
+/**
+ * Returns true if dotfile exists, false otherwise.
+ *
+ * @return {Boolean} File exists.
+ */
+ function checkForDotFile() {
+ 	fs.stat(dotfilePath, function(err, stat) {
+ 		if (err == null) {
+ 			return true
+ 		} else if (err.code == 'ENOENT') {
+ 			return false
+ 		}
+ 	});
+ }
+
+// COINBASE ACTION METHODS
+
+function getCredentials() {
+	var config = JSON.parse("~/.bitvision")
+	return config["credentials"]
+}
+
+/**
+ * Replaces public Coinbase client with authenticated client so trades
+ * can be placed.
+ *
+ * @param  {dict} credentials dictionary
+ */
+ function authenticateWithCoinbase() {
+ 	let credentials = getCredentials()
+ 	let key = credentials["key"];
+	let secret = btoa(credentials["secret"]) // Base 64 encoded secret
+	let passphrase = credentials["passphrase"]
+
+	// DO NOT USE
+	// let apiURI = 'https://api.pro.coinbase.com';
+	let sandboxURI = 'https://api-public.sandbox.pro.coinbase.com';
+
+	gdaxClient = new Gdax.AuthenticatedClient(key,
+	                                          secret,
+	                                          passphrase,
+	                                          sandboxURI
+	                                          );
+}
+
+/**
+ * Returns the current BTC price in USD.
+ */
+ function getUpdatedBitcoinPrice() {
+ 	gdaxClient.getProductTicker('ETH-USD', (error, response, data) => {
+ 		if (error) {
+ 			console.log("ERROR")
+ 		} else {
+ 			return data["price"]
+ 		}
+ 	});
+ }
+
+/**
+ * Creates a buy order.
+ *
+ * @param  {Double} price In this format: '100.00'
+ * @param  {Double} size  [description]
+ */
+ function createBuyOrder(price, size, callback) {
+	// Buy 1 BTC @ 100 USD
+	let buyParams = {
+	  	price: `${price}`, // USD
+	  	size: `${size}`, // BTC
+	  	product_id: 'BTC-USD'
+	  };
+	  authedClient.buy(buyParams, callback);
+	}
+
+/**
+ * Creates a sell order.
+ *
+ * @param  {Double} price
+ * @param  {Double} size  [description]
+ */
+ function createSellOrder(price, size, callback) {
+ 	let sellParams = {
+	  	price: `${price}`, // USD
+	  	size: `${size}`, // BTC
+	  	product_id: 'BTC-USD'
+	  };
+	  authedClient.sell(sellParams, callback);
+	}
+
 
 // CLI ACTION METHODS
 
@@ -25,7 +122,7 @@ function executeShellCommand(command) {
   let program = args.splice(0, 1)[0];
   console.log(args)
   console.log(program)
-  let cmd = cp.spawn(program, args);
+  let cmd = childProcess.spawn(program, args);
 
   cmd.stdout.on('data', function(data) {
   	console.log('OUTPUT: ' + data);
@@ -46,13 +143,7 @@ function retrainModel() {
 	executeShellCommand("python3 retrain_model.py")
 }
 
-function executeBuyOrder(amount) {
-	executeShellCommand(`python3 control.py BUY ${amount}`)
-}
-
-function executeSellOrder(amount) {
-	executeShellCommand(`python3 control.py SELL ${amount}`)
-}
+// Data generation methods
 
 function getRandomInteger(min, max) {
 	min = Math.ceil(min)
@@ -75,9 +166,15 @@ function getRandomHeadline() {
 	let possiblities = [ "Zerocoin's widget promises Bitcoin privacy",
 	"Bitcoin is bad news for stability",
 	"WikiLeaks' Assange hypes bitcoin in secret talk",
-	"Butterfly Labs' Jalapeno aims to spice up bitcoin mining" ]
-	return possiblities[Math.floor(Math.random() * 4)]
+	"Butterfly Labs' Jalapeno aims to spice up bitcoin mining",
+	"Are alternative Ecoins 'anti-bitcoins'?",
+	"Canada to tax bitcoin users",
+	"Google Ventures invests in Bitcoin competitor OpenCoin",
+	"Economists wrestle with Bitcoin's 'narrative problem'" ]
+	return possiblities[Math.floor(Math.random() * possiblities.length)]
 }
+
+// Utilities
 
 function trimIfLongerThan(text, len) {
 	if (text.length > len) {
@@ -87,14 +184,20 @@ function trimIfLongerThan(text, len) {
 	}
 }
 
-function zipThreeArrays(a, b, c) {
-	let zipped = []
-	for (var i = 0; i < a.length; i++) {
-		zipped.push([a[i], b[i], c[i]])
-	}
-	return zipped
-}
-
+/**
+ * Takes three arrays and zips them into a list of lists like this:
+ *
+ * [1,2,3]
+ * [a,b,c] -> [ [1,a,!], [2,b,@], [3,c,#] ]
+ * [!,@,#]
+ */
+ function zipThreeArrays(a, b, c) {
+ 	let zipped = []
+ 	for (var i = 0; i < a.length; i++) {
+ 		zipped.push([a[i], b[i], c[i]])
+ 	}
+ 	return zipped
+ }
 
 // Takes dictionary with key -> list pairs and returns a list of lists.
 function unpackData(dict) {
@@ -140,15 +243,15 @@ let networkIndicatorData = {
 	"data": {
 		"Confirmation Time": { value: "42ms", signal: signalEnum.buy },
 		"Block Size": { value: "129MB", signal: signalEnum.sell },
-		"Avg Transaction Cost": { value: "Val+Unit", signal: signalEnum.buy },
-		"Difficulty": { value: "Val+Unit", signal: signalEnum.sell },
-		"Transaction Value": { value: "Val+Unit", signal: signalEnum.buy },
-		"Hash Rate": { value: "Val+Unit", signal: signalEnum.sell },
-		"Transactions per Block": { value: "Val+Unit", signal: signalEnum.sell },
+		"Avg Transaction Cost": { value: "Val", signal: signalEnum.buy },
+		"Difficulty": { value: "Val", signal: signalEnum.sell },
+		"Transaction Value": { value: "Val", signal: signalEnum.buy },
+		"Hash Rate": { value: "Val", signal: signalEnum.sell },
+		"Transactions per Block": { value: "Val", signal: signalEnum.sell },
 		"Unique Addresses": { value: "Val", signal: signalEnum.buy },
-		"Total BTC": { value: "Val+Unit", signal: signalEnum.sell },
-		"Transaction Fees": { value: "Val+Unit", signal: signalEnum.buy },
-		"Transactions per Day": { value: "Val+Unit", signal: signalEnum.sell }
+		"Total BTC": { value: "Val", signal: signalEnum.sell },
+		"Transaction Fees": { value: "Val", signal: signalEnum.buy },
+		"Transactions per Day": { value: "Val", signal: signalEnum.sell }
 	}
 }
 
@@ -173,7 +276,7 @@ let technicalIndicatorData = {
 let technicalIndicators = unpackData(technicalIndicatorData)
 console.log(technicalIndicators)
 
-// LAYOUT AND WIDGETS
+// Placing widgets
 
 var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
 
@@ -191,13 +294,22 @@ var headlineTable = grid.set(0, 0, 4, 4, contrib.table,
 headlineTable.setData({ headers: ['Date', 'Title', 'Sentiment'],
                       data: headlinesZipped})
 
+headlineTable.focus()
+
+headlineTable.on('keypress', function(ch, key) {
+	console.log('DSKLF')
+	if (key.name.toLowerCase() === 'o') {
+		console.log('OPEN UP')
+	}
+})
+
 var technicalTable = grid.set(4, 0, 3.5, 4, contrib.table,
                               { keys: true
                               	, fg: 'green'
                               	, label: 'Technical Indicators'
                               	, interactive: false
                               	, columnSpacing: 1
-                              	, columnWidth: [40, 10, 10]
+                              	, columnWidth: [35, 10, 10]
                               })
 
 technicalTable.setData({ headers: ['Name', 'Value', 'Signal'],
@@ -209,7 +321,7 @@ var networkTable = grid.set(7.2, 0, 4, 4, contrib.table,
                             	, label: 'Network Indicators'
                             	, interactive: false
                             	, columnSpacing: 1
-                            	, columnWidth: [30, 15, 10]})
+                            	, columnWidth: [35, 10, 10]})
 
 networkTable.setData({ headers: ['Name', 'Value', 'Signal'],
                      data: networkIndicators})
@@ -237,15 +349,45 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
 	segmentInterval: 0.10,
 	strokeWidth: 0.1,
 	elements: 4,
-	display: 1439,
+	display: "0000",
 	elementSpacing: 4,
 	elementPadding: 2,
   color: 'white', // color for the segments
   label: 'Minutes Until Next Trade'
 })
 
-// countdown.setDisplay("23:59")
+let menubar = blessed.listbar({
+	parent: screen,
+	mouse: true,
+	keys: true,
+	bottom: 0,
+	left: 0,
+	height: 1,
+	commands: {
+		"Toggle Trading": {
+			keys: [ 't', 'T' ],
+			callback: () => toggleTrading()
+		},
+		"Refresh Data": {
+			keys: [ 'r', 'R' ],
+			callback: () => refreshData()
+		},
+		"Buy BTC": {
+			keys: [ 'b', "B" ],
+			callback: () => buyBitcoin()
+		},
+		"Sell BTC": {
+			keys: [ 's', "S" ],
+			callback: () => sellBitcoin()
+		},
+		"Exit": {
+			keys: [ 'q', 'Q', 'C-c', 'escape' ],
+			callback: () => process.exit(0)
+		}
+	}
+})
 
+// countdown.setDisplay("23:59")
 
 function setLineData(mockData, line) {
 	for (var i=0; i<mockData.length; i++) {

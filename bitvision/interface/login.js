@@ -1,116 +1,294 @@
-// Bitvision -- login.js
-// Written by Aaron Lichtman <@alichtman>
-// This file contains code for the splash screen and user login.
+let blessed = require('blessed')
 
-let figlet = require('figlet')
-let chalk = require('chalk')
-let inquirer = require('inquirer')
-let fs = require('fs')
-let yaml = require('js-yaml')
-
-const dotfilePath = '~/.bitvision'
-
-// TODO: If the ".bitvision" file doesn't exist, create it and run the login flow.
-// If it does, authenticate and run the CLI.
-
-// TODO: Support Windows.
-
-/**
- * Returns true if dotfile exists, false otherwise.
- *
- * @return {Boolean} File exists.
- */
- function checkForDotFile() {
-  fs.stat(dotfilePath, function(err, stat) {
-    if (err == null) {
-      return true
-    } else if (err.code == 'ENOENT') {
-      return false
-    }
-  });
-}
-
-function readLoginInfo() {
-  try {
-    let config = yaml.safeLoad(fs.readFileSync(dotfilePath, 'utf8'));
-    let indentedJson = JSON.stringify(config, null, 4);
-    console.log(indentedJson);
-
-    let key = config.credentials.key
-    let secret = config.credentials.secret
-    let passphrase = config.credentials.passphrase
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-function printSplashScreen(callback) {
-  figlet.text('Bitvision', {
-    font: 'Univers',
-    horizontalLayout: 'default',
-    verticalLayout: 'default'
-  }, function(err, data) {
-    if (err) {
-      console.log('Something went wrong...');
-      console.dir(err);
-      return;
-    }
-    console.log(chalk.blue.bold(data));
-    console.log(chalk.red.bold("Written by Jon Shobrook"), chalk.blue("(https://github.com/shobrook)"), chalk.red.bold("and Aaron Lichtman"), chalk.blue("(https://github.com/alichtman)"))
-    console.log(chalk.red.bold("Source code:"), chalk.blue("https://github.com/shobrook/BitVision"), "\n")
-    callback()
-  })
-}
-
-// Authentication prompt
+// Global functions
 
 function validateInput(value) {
-  if (value != "") {
-    return true;
-  }
-  return 'You must enter some value here.';
+	if (value != "") {
+		return true;
+	}
+	return 'You must enter some value here.';
 }
 
-function getLoginInfo() {
-  inquirer.prompt([
-  {
-    type: 'input',
-    name: 'key',
-    message: "What's your Coinbase Pro key?",
-    validate: function(value) {
-      return validateInput(value)
-    }
-  },
-  {
-    type: 'input',
-    name: 'secret',
-    message: "What's your Coinbase Pro secret?",
-    validate: function(value) {
-      return validateInput(value)
-    }
-  },
-  {
-    type: 'input',
-    name: 'passphrase',
-    message: "What's your Coinbase Pro passphrase?",
-    validate: function(value) {
-      return validateInput(value)
-    }
-  }
-  ]).then(answers => {
-  // TODO: Store answers["key"], answers["secret"], answers["passphrase"] in "~/.BitVision"
-  console.log(answers)
+// Coinbase Login Interface
+
+let styleConstants = {
+	"borderUnfocused": "#f0f0f0",
+	"borderFocused": "green",
+}
+
+let spacingConstants = {
+	"height": 3,
+	"width": 26,
+	"left": 2,
+	"apiKey": 4,
+	"secret": 8,
+	"passphrase": 12
+}
+
+let promptConstants = {
+	"apiKey": " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
+	"passphrase": " {bold}{blue-fg}Passphrase{/bold}{/blue-fg} ",
+	"secret": " {bold}{blue-fg}Secret{/bold}{/blue-fg} "
+}
+
+// Custom cursor
+var screen = blessed.screen({
+	smartCSR: true,
+	cursor: {
+		artificial: true,
+		shape: 'line',
+		blink: true,
+		color: "red"
+	}
 });
+
+// Add text to body (replacement for console.log)
+const log = (text) => {
+	body.pushLine(text);
+	screen.render();
 }
 
-// TODO: WHY DOES THIS RETURN UNDEFINED AKSDJFALKJDFALKD
-var x = checkForDotFile()
-console.log(x)
+var body = blessed.box({
+	top: 0,
+	left: 0,
+	height: '100%-1',
+	width: '100%',
+	// keys: true
+})
 
-// If config exists, log in and start CLI. Otherwise, show onboarding.
-if (checkForDotFile()) {
-  // TODO
-} else {
-  printSplashScreen(getLoginInfo)
+screen.append(body)
+
+var form = blessed.form({
+	parent: screen,
+	keys: true,
+	type: "overlay",
+	top: 'center',
+	left: 'center',
+	width: 30,
+	height: 18,
+	bg: 'black',
+	color: 'white',
+});
+
+let label = blessed.box({
+	parent: form,
+	top: 1,
+	left: 'center',
+	width: 16,
+	height: 1,
+	content: ' Coinbase Login ',
+	style: {
+		fg: "green",
+		bold: true
+	},
+	tags: true
+});
+
+let hint = blessed.box({
+	parent: form,
+	top: 2,
+	left: 'center',
+	width: 28,
+	height: 1,
+	content: ' (Press tab to start entry) ',
+	style: {
+		fg: "white",
+	},
+	tags: true
+});
+
+// Input Boxes for Key, Passphrase and Secret
+
+var keyEntryBox = blessed.textbox({
+	parent: form,
+	label: promptConstants["apiKey"],
+	tags: true,
+	keys: true,
+	inputOnFocus: true,
+	left: spacingConstants["left"],
+	top: spacingConstants["apiKey"],
+	border: {
+		type: "line"
+	},
+	width: spacingConstants["width"],
+	height: spacingConstants["height"],
+	style: {
+		focus: {
+			border: {
+				fg: styleConstants["borderFocused"],
+			},
+		},
+		border: {
+			fg: styleConstants["borderUnfocused"]
+		},
+	}
+})
+
+var secretEntryBox = blessed.textbox({
+	parent: form,
+	label: promptConstants["secret"],
+	tags: true,
+	keys: true,
+	inputOnFocus: true,
+	left: spacingConstants["left"],
+	top: spacingConstants["secret"],
+	border: {
+		type: "line"
+	},
+	width: spacingConstants["width"],
+	height: spacingConstants["height"],
+	style: {
+		focus: {
+			border: {
+				fg: styleConstants["borderFocused"],
+			},
+		},
+		border: {
+			fg: styleConstants["borderUnfocused"]
+		},
+	}
+})
+
+var passphraseEntryBox = blessed.textbox({
+	parent: form,
+	label: promptConstants["passphrase"],
+	tags: true,
+	keys: true,
+	inputOnFocus: true,
+	left: spacingConstants["left"],
+	top: spacingConstants["passphrase"],
+	border: {
+		type: "line"
+	},
+	width: spacingConstants["width"],
+	height: spacingConstants["height"],
+	style: {
+		focus: {
+			border: {
+				fg: styleConstants["borderFocused"],
+			},
+		},
+		border: {
+			fg: styleConstants["borderUnfocused"]
+		},
+	}
+})
+
+// Buttons
+
+var login = blessed.button({
+	parent: form,
+	mouse: true,
+	keys: true,
+	shrink: true,
+	right: 2,
+	bottom: 1,
+	padding: {
+		left: 2,
+		right: 2,
+	},
+	shrink: true,
+	name: 'login',
+	content: 'login',
+	style: {
+		bg: 'blue',
+		focus: {
+			bg: 'green',
+			fg: 'black'
+		},
+		hover: {
+			bg: 'green',
+			fg: 'black'
+		}
+	}
+});
+
+var cancel = blessed.button({
+	parent: form,
+	mouse: true,
+	keys: true,
+	shrink: true,
+	left: 2,
+	bottom: 1,
+	padding: {
+		left: 2,
+		right: 2
+	},
+	name: 'cancel',
+	content: 'cancel',
+	style: {
+		bg: 'blue',
+		focus: {
+			bg: 'red',
+			fg: 'black'
+		},
+		hover: {
+			bg: 'red',
+			fg: 'black'
+		}
+	}
+});
+
+// Set up credentials
+
+var credentials = {
+	"apiKey": "DEFAULT",
+	"secret": "DEFAULT",
+	"passphrase": "DEFAULT"
 }
 
+// TODO: Click Focus Actions
+
+// keyEntryBox.on('click', function(data) {
+// 	keyEntryBox.focus()
+// });
+
+// secretEntryBox.on('click', function(data) {
+// 	secretEntryBox.focus()
+// });
+
+// passphraseEntryBox.on('click', function(data) {
+// 	passphraseEntryBox.focus()
+// });
+
+// Tab Actions
+
+keyEntryBox.on('submit', (text) => {
+	log(text)
+	credentials["apiKey"] = text
+	secretEntryBox.focus()
+});
+
+secretEntryBox.on('submit', (text) => {
+	credentials["secret"] = text
+	passphraseEntryBox.focus()
+});
+
+passphraseEntryBox.on('submit', (text) => {
+	credentials["passphrase"] = text
+	login.focus()
+});
+
+login.on('press', function() {
+	console.log("Login Pressed.")
+	credentials["apiKey"] = keyEntryBox.text
+	credentials["secret"] = secretEntryBox.text
+	credentials["passphrase"] = passphraseEntryBox.text
+
+	log(credentials["apiKey"])
+	log(credentials["secret"])
+	log(credentials["passphrase"])
+});
+
+cancel.on('press', function() {
+	process.exit(0);
+});
+
+// Quit
+screen.key(['q', 'C-c', 'escape'], function() {
+	process.exit(0);
+});
+
+form.focus();
+// keyEntryBox.focus()
+screen.render();
