@@ -18,6 +18,7 @@ let help = require('./help')
 // CONSTANTS
 // ----------
 
+let VERSION = "v0.1a"
 let MAX_HEADLINE_LENTH = 35;
 var helpOpenCloseCount = 0;
 // TODO: Figure out how to write to home directory.
@@ -79,8 +80,8 @@ function readDotfile(callback) {
 function getConfig(callback) {
   console.log("GETTING CONFIG")
   readDotfile((data) => {
-		let cfg = JSON.parse(data)
-		callback(cfg)
+    let cfg = JSON.parse(data)
+    callback(cfg)
   })
 }
 
@@ -116,10 +117,10 @@ function createDotfileIfNeeded() {
 
 function saveCredentials(newCreds) {
   console.log("SAVING CREDENTIALS")
-  getConfig( (cfg) => {
-		cfg.credentials = newCreds
-	  writeDotfile(cfg)
-	})
+  getConfig((cfg) => {
+    cfg.credentials = newCreds
+    writeDotfile(cfg)
+  })
 }
 
 /**
@@ -154,18 +155,27 @@ function displayLoginScreen() {
 // ----------------------
 
 function displayHelpScreen() {
-	helpOpenCloseCount++;
-	help.createHelpScreen(screen)
+  helpOpenCloseCount++;
+  help.createHelpScreen(screen, VERSION)
 }
 
 function destroyHelpScreen() {
-	helpOpenCloseCount++;
-	helpMenuLayout.destroy();
+  helpOpenCloseCount++;
+  helpMenuLayout.destroy();
 }
 
-// -------------------
+// ------------------------------
+// HEADLINE INTERACTION FUNCTIONS
+// ------------------------------
+
+// TODO: Figure out how to do this.
+function openArticle() {
+  log("OPEN ARTICLE")
+}
+
+// ------------------
 // COINBASE FUNCTIONS
-// -------------------
+// ------------------
 
 /**
  * Replaces public Coinbase client with authenticated client so trades can be placed.
@@ -231,34 +241,15 @@ function createSellOrder(price, size, callback) {
   authedClient.sell(sellParams, callback);
 };
 
-// CLI ACTION METHODS
+// ------------------
+// UTILITY FUNCTIONS
+// ------------------
 
-function focusOnHeadlines() {
-  headlineTable.focus()
-}
 
-/**
- * Execute shell command.
- **/
-function executeShellCommand(command) {
-  console.log(command)
-  let args = command.split(" ")
-  // Remove first element
-  let program = args.splice(0, 1)[0];
-  console.log(args)
-  console.log(program)
-  let cmd = childProcess.spawn(program, args);
 
-  cmd.stdout.on("data", function(data) {
-    console.log("OUTPUT: " + data);
-  });
-
-  cmd.on("close", function(code, signal) {
-    console.log("command finished...");
-  });
-}
-
+// ----------------------
 // PYTHON CONTROL METHODS
+// ----------------------
 
 function refreshData() {
   executeShellCommand("python3 refresh_data.py")
@@ -268,7 +259,9 @@ function retrainModel() {
   executeShellCommand("python3 retrain_model.py")
 }
 
-// Data generation methods
+// --------------------
+// TEST DATA GENERATION
+// --------------------
 
 function getRandomInteger(min, max) {
   min = Math.ceil(min)
@@ -301,6 +294,27 @@ function getRandomHeadline() {
 }
 
 // Utilities
+
+/**
+ * Execute shell command.
+ **/
+function executeShellCommand(command) {
+  console.log(command)
+  let args = command.split(" ")
+  // Remove first element
+  let program = args.splice(0, 1)[0];
+  console.log(args)
+  console.log(program)
+  let cmd = childProcess.spawn(program, args);
+
+  cmd.stdout.on("data", function(data) {
+    console.log("OUTPUT: " + data);
+  });
+
+  cmd.on("close", function(code, signal) {
+    console.log("command finished...");
+  });
+}
 
 function trimIfLongerThan(text, len) {
   if (text.length > len) {
@@ -453,7 +467,7 @@ var grid = new contrib.grid({
 
 // Place tables on the left side of the screen.
 
-var headlineTable = grid.set(0, 0, 4, 4, contrib.table, {
+var headlineTable = grid.set(0, 0, 3.5, 4, contrib.table, {
   keys: true,
   fg: "green",
   label: "Headlines",
@@ -462,7 +476,7 @@ var headlineTable = grid.set(0, 0, 4, 4, contrib.table, {
   columnWidth: [7, 38, 10]
 })
 
-var technicalTable = grid.set(4, 0, 3.5, 4, contrib.table, {
+var technicalTable = grid.set(3.5, 0, 3.5, 4, contrib.table, {
   keys: true,
   fg: "green",
   label: "Technical Indicators",
@@ -471,8 +485,9 @@ var technicalTable = grid.set(4, 0, 3.5, 4, contrib.table, {
   columnWidth: [35, 10, 10]
 });
 
-var networkTable = grid.set(7.2, 0, 4, 4, contrib.table, {
+var networkTable = grid.set(7, 0, 4, 4, contrib.table, {
   keys: true,
+  interactive: true,
   fg: "green",
   label: "Network Indicators",
   interactive: false,
@@ -510,7 +525,7 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
 })
 
 var logs = grid.set(6, 7, 5, 4, blessed.box, {
-  label: "Activity Log",
+  label: "DEBUGGING LOG",
   top: 0,
   left: 0,
   height: "100%-1",
@@ -568,7 +583,19 @@ let menubar = blessed.listbar({
         // sellBitcoin()
       }
     },
-    "Help": {
+    "Focus on Headlines": {
+      keys: ["f", "F"],
+      callback: () => {
+        headlineTable.focus()
+      }
+    },
+    "Open": {
+      keys: ["o", "O"],
+      callback: () => {
+        openArticle()
+      }
+    },
+    "Toggle Help": {
       keys: ["h", "H"],
       callback: () => {
         if (helpOpenCloseCount % 2 == 0) {
@@ -599,7 +626,9 @@ screen.on("resize", function() {
 
 });
 
+// ------------
 // TESTING DATA
+// ------------
 
 let headlineDates = [...Array(16).keys()].map((key) => {
   return getRandomDate()
@@ -619,31 +648,19 @@ let headlinesZipped = zipThreeArrays(headlineDates, headlinesTrimmed, headlineSe
 let networkIndicators = unpackData(networkIndicatorData)
 let technicalIndicators = unpackData(technicalIndicatorData)
 
-let exchangeRateSeries = {
-  title: "Exchange Rate",
-  x: [...Array(24).keys()].map((key) => {
-    return String(key) + ":00"
-  }),
-  y: [...Array(24).keys()].map((key) => {
-    return key * getRandomInteger(1000, 1200)
-  })
-}
-
-// Set up widget data and focus
-
 headlineTable.setData({
   headers: ["Date", "Title", "Sentiment"],
   data: headlinesZipped
 })
 
-headlineTable.focus()
-
-headlineTable.on("keypress", function(ch, key) {
-  console.log("DEBUG ME")
-  if (key.name.toLowerCase() === "o") {
-    console.log("OPEN UP")
-  }
-})
+// headlineTable.on("select", function() {
+//   log("DEBUG ME")
+// })
+//
+// // If box is focused, handle `enter`/`return` and give us some more content.
+// headlineTable.key('o', function(ch, key) {
+//   log("HSA");
+// });
 
 technicalTable.setData({
   headers: ["Name", "Value", "Signal"],
@@ -655,6 +672,16 @@ networkTable.setData({
   data: networkIndicators
 })
 
+let exchangeRateSeries = {
+  title: "Exchange Rate",
+  x: [...Array(24).keys()].map((key) => {
+    return String(key) + ":00"
+  }),
+  y: [...Array(24).keys()].map((key) => {
+    return key * getRandomInteger(1000, 1200)
+  })
+}
+
 setLineData([exchangeRateSeries], exchangeRateCurve)
 
 setInterval(function() {
@@ -664,5 +691,6 @@ setInterval(function() {
 
 // START DOING THINGS
 createDotfileIfNeeded()
+headlineTable.focus()
 
 screen.render()

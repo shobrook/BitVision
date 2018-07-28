@@ -27,7 +27,7 @@ module.exports = {
    * Creates a help screen.
    * @param  {[type]} screen Parent screen
    */
-  createHelpScreen: function(screen, callback) {
+  createHelpScreen: function(screen, version, callback) {
     helpMenuLayout = blessed.layout({
       parent: screen,
       top: "center",
@@ -70,7 +70,7 @@ module.exports = {
     var exitTextBox = blessed.box({
       parent: helpMenuLayout,
       width: 25,
-      height: 3,
+      height: 5,
       left: "right",
       top: "center",
       padding: {
@@ -84,7 +84,7 @@ module.exports = {
           fg: "red",
         }
       },
-      content: "Press h to close."
+      content: `Press h to close.\n\nVersion: ${version}`
     });
 
     var largeTextBox = blessed.box({
