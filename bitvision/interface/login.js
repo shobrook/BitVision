@@ -71,6 +71,8 @@ function createPromptBox(form, key) {
   });
 };
 
+var loginForm = null;
+
 module.exports = {
   /**
    * Creates a login screen. Returns dict of creds, or null if no creds entered.
@@ -88,6 +90,14 @@ module.exports = {
       height: 18,
       bg: "#27474e",
       color: "white",
+      commands: {
+        "Quit": {
+          keys: ["q", "Q"],
+          callback: () => {
+            destroyLoginScreen()
+          }
+        },
+      }
     });
 
     let label = blessed.box({
@@ -207,10 +217,17 @@ module.exports = {
 
     cancel.on("press", function() {
       loginForm.destroy();
-      callback(null)
+    });
+
+    screen.key(["q", "Q"], function(ch, key) {
+      loginForm.destroy()
     });
 
     loginForm.focus();
     screen.render();
+  },
+
+  destroyLoginScreen: function() {
+    loginForm.destroy();
   }
 }

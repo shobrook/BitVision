@@ -42,7 +42,7 @@ var screen = blessed.screen({
 });
 
 // Quit
-screen.key(["escape", "q", "Q", "C-c"], function(ch, key) {
+screen.key(["escape", "C-c"], function(ch, key) {
   return process.exit(0);
 });
 
@@ -170,12 +170,31 @@ function destroyHelpScreen() {
 
 // TODO: Figure out how to do this.
 function openArticle() {
-  log("OPEN ARTICLE")
+  log("OPEN ARTICLE");
 }
 
 // ------------------
 // COINBASE FUNCTIONS
 // ------------------
+
+function toggleTrading() {
+  log("Toggle Trading")
+  getConfig( (cfg) => {
+    // If autotrade was enabled, disable it and reset counter.
+    if (cfg.autotrade.enabled) {
+      cfg.autotrade.enabled = false;
+      cfg.autotrade["next-trade-timestamp-UTC"] = 0;
+      cfg.autotrade["next-trade-amount"] = 0;
+      cfg.autotrade["next-trade-side"] = "";
+    } else {
+      // If autotrade was disabled, enable, set next timestamp for 24 hr from now.
+      cfg.autotrade.enabled = true;
+      cfg.autotrade["next-trade-timestamp-UTC"] = 0;
+      cfg.autotrade["next-trade-amount"] = 0;
+      cfg.autotrade["next-trade-side"] = "";
+    }
+  })
+}
 
 /**
  * Replaces public Coinbase client with authenticated client so trades can be placed.
@@ -543,8 +562,7 @@ let menubar = blessed.listbar({
     "Toggle Trading": {
       keys: ["t", "T"],
       callback: () => {
-        log("Toggle Trading")
-        // toggleTrading()
+        toggleTrading()
       }
     },
     "Refresh Data": {
@@ -609,7 +627,7 @@ let menubar = blessed.listbar({
       }
     },
     "Exit": {
-      keys: ["q", "Q", "C-c", "escape"],
+      keys: ["C-c", "escape"],
       callback: () => process.exit(0)
     }
   }
@@ -623,7 +641,6 @@ screen.on("resize", function() {
   exchangeRateCurve.emit("attach");
   countdown.emit("attach");
   menubar.emit("attach");
-
 });
 
 // ------------
