@@ -1,20 +1,20 @@
 // GLOBALS
 "use strict"
 
-let fs = require('fs')
-let blessed = require('blessed')
-let contrib = require('blessed-contrib')
-let childProcess = require('child_process')
-let Gdax = require('gdax')
+let fs = require("fs");
+let blessed = require("blessed");
+let contrib = require("blessed-contrib");
+let childProcess = require("child_process");
+let Gdax = require("gdax");
 
-const dotfilePath = '~/.bitvision'
+const dotfilePath = "~/.bitvision"
 var gdaxClient = new Gdax.PublicClient()
 let screen = blessed.screen({
 	smartCSR: true
 })
 let MAX_HEADLINE_LENTH = 35
 
-screen.title = 'Bitvision';
+screen.title = "Bitvision";
 
 /**
  * Returns true if dotfile exists, false otherwise.
@@ -25,7 +25,7 @@ screen.title = 'Bitvision';
  	fs.stat(dotfilePath, function(err, stat) {
  		if (err == null) {
  			return true
- 		} else if (err.code == 'ENOENT') {
+ 		} else if (err.code == "ENOENT") {
  			return false
  		}
  	});
@@ -51,8 +51,8 @@ function getCredentials() {
 	let passphrase = credentials["passphrase"]
 
 	// DO NOT USE
-	// let apiURI = 'https://api.pro.coinbase.com';
-	let sandboxURI = 'https://api-public.sandbox.pro.coinbase.com';
+	// let apiURI = "https://api.pro.coinbase.com";
+	let sandboxURI = "https://api-public.sandbox.pro.coinbase.com";
 
 	gdaxClient = new Gdax.AuthenticatedClient(key,
 	                                          secret,
@@ -65,7 +65,7 @@ function getCredentials() {
  * Returns the current BTC price in USD.
  */
  function getUpdatedBitcoinPrice() {
- 	gdaxClient.getProductTicker('ETH-USD', (error, response, data) => {
+ 	gdaxClient.getProductTicker("ETH-USD", (error, response, data) => {
  		if (error) {
  			console.log("ERROR")
  		} else {
@@ -85,7 +85,7 @@ function getCredentials() {
 	let buyParams = {
 	  	price: `${price}`, // USD
 	  	size: `${size}`, // BTC
-	  	product_id: 'BTC-USD'
+	  	product_id: "BTC-USD"
 	  };
 	  authedClient.buy(buyParams, callback);
 	}
@@ -100,7 +100,7 @@ function getCredentials() {
  	let sellParams = {
 	  	price: `${price}`, // USD
 	  	size: `${size}`, // BTC
-	  	product_id: 'BTC-USD'
+	  	product_id: "BTC-USD"
 	  };
 	  authedClient.sell(sellParams, callback);
 	}
@@ -124,12 +124,12 @@ function executeShellCommand(command) {
   console.log(program)
   let cmd = childProcess.spawn(program, args);
 
-  cmd.stdout.on('data', function(data) {
-  	console.log('OUTPUT: ' + data);
+  cmd.stdout.on("data", function(data) {
+  	console.log("OUTPUT: " + data);
   });
 
-  cmd.on('close', function(code, signal) {
-  	console.log('command finished...');
+  cmd.on("close", function(code, signal) {
+  	console.log("command finished...");
   });
 }
 
@@ -284,46 +284,46 @@ var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
 
 var headlineTable = grid.set(0, 0, 4, 4, contrib.table,
                              { keys: true
-                             	, fg: 'green'
-                             	, label: 'Headlines'
+                             	, fg: "green"
+                             	, label: "Headlines"
                              	, interactive: true
                              	, columnSpacing: 1
                              	, columnWidth: [7, 38, 10]
                              })
 
-headlineTable.setData({ headers: ['Date', 'Title', 'Sentiment'],
+headlineTable.setData({ headers: ["Date", "Title", "Sentiment"],
                       data: headlinesZipped})
 
 headlineTable.focus()
 
-headlineTable.on('keypress', function(ch, key) {
-	console.log('DSKLF')
+headlineTable.on("keypress", function(ch, key) {
+	console.log("DSKLF")
 	if (key.name.toLowerCase() === 'o') {
-		console.log('OPEN UP')
+		console.log("OPEN UP")
 	}
 })
 
 var technicalTable = grid.set(4, 0, 3.5, 4, contrib.table,
                               { keys: true
-                              	, fg: 'green'
-                              	, label: 'Technical Indicators'
+                              	, fg: "green"
+                              	, label: "Technical Indicators"
                               	, interactive: false
                               	, columnSpacing: 1
                               	, columnWidth: [35, 10, 10]
                               })
 
-technicalTable.setData({ headers: ['Name', 'Value', 'Signal'],
+technicalTable.setData({ headers: ["Name", "Value", "Signal"],
                        data: technicalIndicators})
 
 var networkTable = grid.set(7.2, 0, 4, 4, contrib.table,
                             { keys: true
-                            	, fg: 'green'
-                            	, label: 'Network Indicators'
+                            	, fg: "green"
+                            	, label: "Network Indicators"
                             	, interactive: false
                             	, columnSpacing: 1
                             	, columnWidth: [35, 10, 10]})
 
-networkTable.setData({ headers: ['Name', 'Value', 'Signal'],
+networkTable.setData({ headers: ["Name", "Value", "Signal"],
                      data: networkIndicators})
 
 
@@ -352,8 +352,8 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
 	display: "0000",
 	elementSpacing: 4,
 	elementPadding: 2,
-  color: 'white', // color for the segments
-  label: 'Minutes Until Next Trade'
+  color: "white", // color for the segments
+  label: "Minutes Until Next Trade"
 })
 
 let menubar = blessed.listbar({

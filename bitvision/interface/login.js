@@ -1,4 +1,4 @@
-let blessed = require('blessed')
+let blessed = require("blessed");
 
 // Global functions
 
@@ -6,7 +6,7 @@ function validateInput(value) {
 	if (value != "") {
 		return true;
 	}
-	return 'You must enter some value here.';
+	return "You must enter some value here.";
 }
 
 // Coinbase Login Interface
@@ -36,11 +36,19 @@ var screen = blessed.screen({
 	smartCSR: true,
 	cursor: {
 		artificial: true,
-		shape: 'line',
+		shape: "line",
 		blink: true,
 		color: "red"
 	}
 });
+
+var body = blessed.box({
+	top: 0,
+	left: 0,
+	height: "100%-1",
+	width: "100%",
+	// keys: true
+})
 
 // Add text to body (replacement for console.log)
 const log = (text) => {
@@ -48,35 +56,27 @@ const log = (text) => {
 	screen.render();
 }
 
-var body = blessed.box({
-	top: 0,
-	left: 0,
-	height: '100%-1',
-	width: '100%',
-	// keys: true
-})
-
 screen.append(body)
 
 var form = blessed.form({
 	parent: screen,
 	keys: true,
 	type: "overlay",
-	top: 'center',
-	left: 'center',
+	top: "center",
+	left: "center",
 	width: 30,
 	height: 18,
-	bg: 'black',
-	color: 'white',
+	bg: "black",
+	color: "white",
 });
 
 let label = blessed.box({
 	parent: form,
 	top: 1,
-	left: 'center',
+	left: "center",
 	width: 16,
 	height: 1,
-	content: ' Coinbase Login ',
+	content: " Coinbase Login ",
 	style: {
 		fg: "green",
 		bold: true
@@ -87,10 +87,10 @@ let label = blessed.box({
 let hint = blessed.box({
 	parent: form,
 	top: 2,
-	left: 'center',
+	left: "center",
 	width: 28,
 	height: 1,
-	content: ' (Press tab to start entry) ',
+	content: " (Press tab to start entry) ",
 	style: {
 		fg: "white",
 	},
@@ -187,18 +187,17 @@ var login = blessed.button({
 		left: 2,
 		right: 2,
 	},
-	shrink: true,
-	name: 'login',
-	content: 'login',
+	name: "login",
+	content: "login",
 	style: {
-		bg: 'blue',
+		bg: "blue",
 		focus: {
-			bg: 'green',
-			fg: 'black'
+			bg: "green",
+			fg: "black"
 		},
 		hover: {
-			bg: 'green',
-			fg: 'black'
+			bg: "green",
+			fg: "black"
 		}
 	}
 });
@@ -214,17 +213,17 @@ var cancel = blessed.button({
 		left: 2,
 		right: 2
 	},
-	name: 'cancel',
-	content: 'cancel',
+	name: "cancel",
+	content: "cancel",
 	style: {
-		bg: 'blue',
+		bg: "blue",
 		focus: {
-			bg: 'red',
-			fg: 'black'
+			bg: "red",
+			fg: "black"
 		},
 		hover: {
-			bg: 'red',
-			fg: 'black'
+			bg: "red",
+			fg: "black"
 		}
 	}
 });
@@ -239,53 +238,53 @@ var credentials = {
 
 // TODO: Click Focus Actions
 
-// keyEntryBox.on('click', function(data) {
+// keyEntryBox.on("click", function(data) {
 // 	keyEntryBox.focus()
 // });
 
-// secretEntryBox.on('click', function(data) {
+// secretEntryBox.on("click", function(data) {
 // 	secretEntryBox.focus()
 // });
 
-// passphraseEntryBox.on('click', function(data) {
+// passphraseEntryBox.on("click", function(data) {
 // 	passphraseEntryBox.focus()
 // });
 
 // Tab Actions
 
-keyEntryBox.on('submit', (text) => {
-	log(text)
-	credentials["apiKey"] = text
-	secretEntryBox.focus()
+keyEntryBox.on("submit", (text) => {
+	log(text);
+	credentials["apiKey"] = text;
+	secretEntryBox.focus();
 });
 
-secretEntryBox.on('submit', (text) => {
-	credentials["secret"] = text
-	passphraseEntryBox.focus()
+secretEntryBox.on("submit", (text) => {
+	credentials["secret"] = text;
+	passphraseEntryBox.focus();
 });
 
-passphraseEntryBox.on('submit', (text) => {
-	credentials["passphrase"] = text
-	login.focus()
+passphraseEntryBox.on("submit", (text) => {
+	credentials["passphrase"] = text;
+	login.focus();
 });
 
-login.on('press', function() {
-	console.log("Login Pressed.")
-	credentials["apiKey"] = keyEntryBox.text
-	credentials["secret"] = secretEntryBox.text
-	credentials["passphrase"] = passphraseEntryBox.text
+login.on("press", function() {
+	log("Login Pressed.");
+	credentials["apiKey"] = keyEntryBox.text;
+	credentials["secret"] = secretEntryBox.text;
+	credentials["passphrase"] = passphraseEntryBox.text;
 
-	log(credentials["apiKey"])
-	log(credentials["secret"])
-	log(credentials["passphrase"])
+	log(credentials["apiKey"]);
+	log(credentials["secret"]);
+	log(credentials["passphrase"]);
 });
 
-cancel.on('press', function() {
+cancel.on("press", function() {
 	process.exit(0);
 });
 
 // Quit
-screen.key(['q', 'C-c', 'escape'], function() {
+screen.key(["q", "C-c", "escape"], function() {
 	process.exit(0);
 });
 
