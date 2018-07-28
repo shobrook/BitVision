@@ -33,13 +33,13 @@ var enteredCreds = {
 function validateEnteredLoginCreds() {
   for (var key in enteredCreds) {
     if (enteredCreds.hasOwnProperty(key)) {
-      if (enteredCreds[key] == "") {
+      if (enteredCreds[key] === "") {
         return false;
       }
     }
   }
   return true;
-};
+}
 
 /**
  * Takes key for loginStrings dict and returns the respective prompt box.
@@ -220,7 +220,7 @@ module.exports = {
     });
 
     screen.key(["q", "Q"], function(ch, key) {
-      loginForm.destroy()
+      loginForm.destroy();
     });
 
     loginForm.focus();

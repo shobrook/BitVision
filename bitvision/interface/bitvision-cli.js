@@ -5,14 +5,14 @@ let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let Gdax = require("gdax");
-let writeJsonFile = require('write-json-file');
+let writeJsonFile = require("write-json-file");
 
 // ----------
 // MODULES
 // ----------
 
-let login = require('./login')
-let help = require('./help')
+let login = require("./login");
+let help = require("./help");
 
 // ----------
 // CONSTANTS
@@ -66,11 +66,11 @@ function writeDotfile(config) {
  * Read dotfile and do something with the data
  */
 function readDotfile(callback) {
-  fs.readFile(dotfilePath, 'utf8', function(err, data) {
+  fs.readFile(dotfilePath, "utf8", function(err, data) {
     if (err) {
       console.log(err);
     }
-    callback(data)
+    callback(data);
   });
 }
 
@@ -78,10 +78,10 @@ function readDotfile(callback) {
  * Gets config file in dictionary form.
  */
 function getConfig(callback) {
-  console.log("GETTING CONFIG")
+  console.log("GETTING CONFIG");
   readDotfile((data) => {
-    let cfg = JSON.parse(data)
-    callback(cfg)
+    let cfg = JSON.parse(data);
+    callback(cfg);
   })
 }
 
@@ -89,13 +89,13 @@ function getConfig(callback) {
  * Creates dotfile with default values if it doesn't exist.
  */
 function createDotfileIfNeeded() {
-  log("CHECKING FOR DOTFILE")
+  log("CHECKING FOR DOTFILE");
   fs.stat(dotfilePath, function(err, stat) {
     if (err == null) {
-      log("Exists")
+      log("Exists");
       return
     } else if (err.code == "ENOENT") {
-      console.log("No dotfile found. Creating DEFAULT.")
+      console.log("No dotfile found. Creating DEFAULT.");
       // Create file
       let emptyConfig = {
         "credentials": {
@@ -110,16 +110,16 @@ function createDotfileIfNeeded() {
           "next-trade-side": "",
         },
       }
-      writeDotfile(emptyConfig)
+      writeDotfile(emptyConfig);
     }
   });
 }
 
 function saveCredentials(newCreds) {
-  console.log("SAVING CREDENTIALS")
+  console.log("SAVING CREDENTIALS");
   getConfig((cfg) => {
-    cfg.credentials = newCreds
-    writeDotfile(cfg)
+    cfg.credentials = newCreds;
+    writeDotfile(cfg);
   })
 }
 
@@ -138,14 +138,14 @@ function clearCredentials() {
 // ----------------------
 
 function displayLoginScreen() {
-  console.log("DISPLAY LOGIN SCREEN")
+  console.log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, (creds) => {
-    console.log("callback")
+    console.log("callback");
     if (creds != null) {
-      console.log("New creds, saving.")
-      saveCredentials(creds)
+      console.log("New creds, saving.");
+      saveCredentials(creds);
     } else {
-      console.log("No creds, abort.")
+      console.log("No creds, abort.");
     }
   });
 }
@@ -156,7 +156,7 @@ function displayLoginScreen() {
 
 function displayHelpScreen() {
   helpOpenCloseCount++;
-  help.createHelpScreen(screen, VERSION)
+  help.createHelpScreen(screen, VERSION);
 }
 
 function destroyHelpScreen() {
@@ -177,9 +177,10 @@ function openArticle() {
 // COINBASE FUNCTIONS
 // ------------------
 
+// TODO: FINISH THINKING ABOUT THIS
 function toggleTrading() {
-  log("Toggle Trading")
-  getConfig( (cfg) => {
+  log("Toggle Trading");
+  getConfig((cfg) => {
     // If autotrade was enabled, disable it and reset counter.
     if (cfg.autotrade.enabled) {
       cfg.autotrade.enabled = false;
@@ -201,10 +202,10 @@ function toggleTrading() {
  */
 function authenticateWithCoinbase() {
   console.log("AUTHENTICATE WITH COINBASE")
-  let credentials = getConfig().credentials
+  let credentials = getConfig().credentials;
   let key = credentials.key;
-  let secret = btoa(credentials.secret) // base64 encoded secret
-  let passphrase = credentials.passphrase
+  let secret = btoa(credentials.secret); // base64 encoded secret
+  let passphrase = credentials.passphrase;
 
   // DO NOT USE
   // let apiURI = "https://api.pro.coinbase.com";
@@ -224,9 +225,9 @@ function authenticateWithCoinbase() {
 function getUpdatedBitcoinPrice() {
   gdaxClient.getProductTicker("ETH-USD", (error, response, data) => {
     if (error) {
-      console.log("ERROR")
+      console.log("ERROR");
     } else {
-      return data["price"]
+      return data["price"];
     }
   });
 }

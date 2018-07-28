@@ -20,7 +20,7 @@ let helpStrings = {
   source: "\n\n## Source Code\n\n -> https://github.com/shobrook/BitVision"
 };
 
-helpMenuLayout = null;
+var helpMenuLayout = null;
 
 module.exports = {
   /**
@@ -107,4 +107,4 @@ module.exports = {
       content: helpStrings["autotrading"] + helpStrings["authors"] + helpStrings["warning"] + helpStrings["source"]
     });
   }
-}
+};
