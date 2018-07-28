@@ -56,7 +56,7 @@ const log = (text) => {
 	screen.render();
 }
 
-screen.append(body)
+screen.append(body);
 
 var form = blessed.form({
 	parent: screen,

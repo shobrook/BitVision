@@ -7,14 +7,27 @@ let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let Gdax = require("gdax");
 
-const dotfilePath = "~/.bitvision"
-var gdaxClient = new Gdax.PublicClient()
-let screen = blessed.screen({
-	smartCSR: true
-})
-let MAX_HEADLINE_LENTH = 35
+let MAX_HEADLINE_LENTH = 35;
+var helpOpenCloseCount = 0;
+const dotfilePath = "~/.bitvision";
+var gdaxClient = new Gdax.PublicClient();
 
-screen.title = "Bitvision";
+let strings = {
+	autotrading: "## Automatic Trading\n\n 1. Enter account credentials \n 2. Press \`T\` to toggle this option.\n 3. Enter the max amount you\"d like to trade.\n 3.5. Watch our algorithm trade BTC for you.\n 4. Profit",
+	authors: "\n\n## Authors\n\n Written by Jon Shobrook and Aaron Lichtman.\n -> https://www.github.com/shobrook\n -> https://www.github.com/alichtman",
+	warning: "\n\n## Warning\n\n Use this software to trade bitcoin at your own risk.\n We are not responsible if our algorithm misbehaves.",
+	source: "\n\n## Source Code\n\n -> https://github.com/shobrook/BitVision"
+};
+
+let screen = blessed.screen({
+	smartCSR: true,
+	title: "Bitvision"
+})
+
+const log = (text) => {
+	logs.pushLine(text);
+	screen.render();
+}
 
 /**
  * Returns true if dotfile exists, false otherwise.
@@ -77,7 +90,7 @@ function getCredentials() {
 /**
  * Creates a buy order.
  *
- * @param  {Double} price In this format: '100.00'
+ * @param  {Double} price In this format: "100.00"
  * @param  {Double} size  [description]
  */
  function createBuyOrder(price, size, callback) {
@@ -110,6 +123,109 @@ function getCredentials() {
 
 function focusOnHeadlines() {
 	headlineTable.focus()
+}
+
+// Help menu
+
+var helpMenuLayout = null
+
+function displayHelpScreen() {
+
+	helpOpenCloseCount++;
+
+	let helpMenuData = [ [ "Keybinding",  "Action" ],
+	[ "---", "---"],
+	[ "H", "Open help menu"],
+	[ "I", "Focus on headlines"],
+	[ "K", "Logout"],
+	[ "L", "Login"],
+	[ "O", "Open, changes depending on focus."],
+	[ "T", "Toggle automatic trading"],
+	[ "V", "Show version and author info"] ];
+
+	helpMenuLayout = blessed.layout({
+		parent: screen,
+		top: "center",
+		left: "center",
+		width: 80,
+		height: 36,
+		border: "line",
+		style: {
+			border: {
+				fg: "blue"
+			}
+		}
+	});
+
+	var table = blessed.listtable({
+		parent: helpMenuLayout,
+		interactive: false,
+		top: "center",
+		left: "center",
+		data: helpMenuData,
+		border: "line",
+		pad: 2,
+		width: 53,
+		height: 10,
+		style: {
+			border: {
+				fg: "bright-blue"
+			},
+			header: {
+				fg: "bright-green",
+				bold: true,
+				underline: true,
+			},
+			cell: {
+				fg: "yellow",
+			}
+		}
+	});
+
+	var smallBox = blessed.box({
+		parent: helpMenuLayout,
+		width: 25,
+		height: 3,
+		left: "right",
+		top: "center",
+		padding: {
+			left: 2,
+			right: 2,
+		},
+		border: "line",
+		style: {
+			fg: "white",
+			border: {
+				fg: "red",
+			}
+		},
+		content: "Press h to close."
+	});
+
+	var helpText = blessed.box({
+		parent: helpMenuLayout,
+		width: 78,
+		height: 24,
+		left: "center",
+		top: "center",
+		padding: {
+			left: 2,
+			right: 2,
+		},
+		border: "line",
+		style: {
+			fg: "bright-green",
+			border: {
+				fg: "bright-blue",
+			}
+		},
+		content: strings["autotrading"] + strings["authors"] + strings["warning"] + strings["source"]
+	});
+}
+
+function destroyHelpScreen() {
+	helpOpenCloseCount++;
+	helpMenuLayout.destroy()
 }
 
 /**
@@ -298,7 +414,7 @@ headlineTable.focus()
 
 headlineTable.on("keypress", function(ch, key) {
 	console.log("DSKLF")
-	if (key.name.toLowerCase() === 'o') {
+	if (key.name.toLowerCase() === "o") {
 		console.log("OPEN UP")
 	}
 })
@@ -352,8 +468,16 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
 	display: "0000",
 	elementSpacing: 4,
 	elementPadding: 2,
-  color: "white", // color for the segments
-  label: "Minutes Until Next Trade"
+	color: "white", // color for the segments
+	label: "Minutes Until Next Trade"
+})
+
+var logs = grid.set(6, 7, 5, 4, blessed.box, {
+	label: "Activity Log",
+	top: 0,
+	left: 0,
+	height: "100%-1",
+	width: "100%",
 })
 
 let menubar = blessed.listbar({
@@ -365,23 +489,48 @@ let menubar = blessed.listbar({
 	height: 1,
 	commands: {
 		"Toggle Trading": {
-			keys: [ 't', 'T' ],
-			callback: () => toggleTrading()
+			keys: [ "t", "T" ],
+			callback: () => {
+				log("Toggle Trading")
+				// toggleTrading()
+			}
 		},
 		"Refresh Data": {
-			keys: [ 'r', 'R' ],
-			callback: () => refreshData()
+			keys: [ "r", "R" ],
+			callback: () => {
+				log("Refresh Data")
+				// refreshData()
+			}
 		},
 		"Buy BTC": {
-			keys: [ 'b', "B" ],
-			callback: () => buyBitcoin()
+			keys: [ "b", "B" ],
+			callback: () => {
+				log("Buy BTC")
+				// buyBitcoin()
+			}
 		},
 		"Sell BTC": {
-			keys: [ 's', "S" ],
-			callback: () => sellBitcoin()
+			keys: [ "s", "S" ],
+			callback: () => {
+				log("Sell BTC")
+				// sellBitcoin()
+			}
+		},
+		"Help": {
+			keys: [ "h", "H" ],
+			callback: () => {
+				if (helpOpenCloseCount % 2 == 0) {
+					log("Help Menu Opened")
+					displayHelpScreen()
+				} else {
+					log("Help Menu Closed")
+					destroyHelpScreen()
+				}
+
+			}
 		},
 		"Exit": {
-			keys: [ 'q', 'Q', 'C-c', 'escape' ],
+			keys: [ "q", "Q", "C-c", "escape" ],
 			callback: () => process.exit(0)
 		}
 	}
@@ -408,16 +557,16 @@ setInterval(function() {
 }, 500)
 
 // Quit functionality
-screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+screen.key(["escape", "q", "C-c"], function(ch, key) {
 	return process.exit(0);
 });
 
 // Resizing
-screen.on('resize', function() {
-	technicalTable.emit('attach');
-	networkTable.emit('attach');
-	headlineTable.emit('attach');
-	exchangeRateCurve.emit('attach');
+screen.on("resize", function() {
+	technicalTable.emit("attach");
+	networkTable.emit("attach");
+	headlineTable.emit("attach");
+	exchangeRateCurve.emit("attach");
 });
 
 screen.render()
