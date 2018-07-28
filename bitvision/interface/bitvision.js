@@ -9,7 +9,9 @@ let Gdax = require("gdax");
 
 let MAX_HEADLINE_LENTH = 35;
 var helpOpenCloseCount = 0;
-const dotfilePath = "~/.bitvision";
+// TODO: Figure out how to write to home directory.
+// const dotfilePath = "~/.bitvision";
+const dotfilePath = ".bitvision";
 var gdaxClient = new Gdax.PublicClient();
 
 let strings = {
@@ -24,44 +26,86 @@ let screen = blessed.screen({
 	title: "Bitvision"
 })
 
+// Quit functionality
+screen.key(["escape", "q", "C-c"], function(ch, key) {
+	return process.exit(0);
+});
+
 const log = (text) => {
 	logs.pushLine(text);
 	screen.render();
 }
 
+// DOTFILE RELATED FUNCTIONS
+
 /**
- * Returns true if dotfile exists, false otherwise.
- *
- * @return {Boolean} File exists.
+ * Creates dotfile with default values if it doesn't exist.
  */
- function checkForDotFile() {
+ function createDotfileIfNeeded() {
+ 	log("Checking for dotfile")
  	fs.stat(dotfilePath, function(err, stat) {
+ 		// console.log(err)
  		if (err == null) {
- 			return true
+ 			return
  		} else if (err.code == "ENOENT") {
- 			return false
+ 			console.log("No dotfile found. Creating.")
+ 			// Create file
+ 			let fileContent = {
+ 				"credentials" : {
+ 					"key" : "",
+ 					"secret" : "",
+ 					"passphrase" : ""
+ 				},
+ 				"autotrade" : {
+ 					"enabled" : false,
+ 					"next-trade-timestamp-UTC" : 0,
+ 					"next-trade-amount" : 0,
+ 					"next-trade-side" : "",
+ 				},
+ 			}
+
+ 			let json = JSON.stringify(fileContent)
+ 			console.log(json)
+ 			console.log(dotfilePath)
+ 			fs.writeFile(dotfilePath, json, (err) => {
+ 				if (err) throw err;
+ 				console.log('The file has been saved!');
+ 			});
  		}
  	});
  }
 
-// COINBASE ACTION METHODS
-
-function getCredentials() {
-	var config = JSON.parse("~/.bitvision")
-	return config["credentials"]
-}
+/**
+ * Gets credentials from config file.
+ *
+ * @return {Dict} Credentials.
+ */
+ function getCredentials() {
+ 	var config = JSON.parse(dotfilePath)
+ 	return config.credentials
+ }
 
 /**
- * Replaces public Coinbase client with authenticated client so trades
- * can be placed.
- *
- * @param  {dict} credentials dictionary
+ * Clear credentials by removing the dotfile.
+ */
+ function clearCredentials() {
+ 	fs.unlink(dotfilePath, (err) => {
+ 		if (err) throw err;
+ 		console.log(`${dotfilePath} was deleted.`);
+ 	});
+ }
+
+
+// COINBASE FUNCTIONS
+
+/**
+ * Replaces public Coinbase client with authenticated client so trades can be placed.
  */
  function authenticateWithCoinbase() {
  	let credentials = getCredentials()
- 	let key = credentials["key"];
-	let secret = btoa(credentials["secret"]) // Base 64 encoded secret
-	let passphrase = credentials["passphrase"]
+ 	let key = credentials.key;
+	let secret = btoa(credentials.secret) // base64 encoded secret
+	let passphrase = credentials.passphrase
 
 	// DO NOT USE
 	// let apiURI = "https://api.pro.coinbase.com";
@@ -70,12 +114,14 @@ function getCredentials() {
 	gdaxClient = new Gdax.AuthenticatedClient(key,
 	                                          secret,
 	                                          passphrase,
-	                                          sandboxURI
-	                                          );
+	                                          sandboxURI);
 }
+
 
 /**
  * Returns the current BTC price in USD.
+ *
+ * @return {Double} Current bitcoin price
  */
  function getUpdatedBitcoinPrice() {
  	gdaxClient.getProductTicker("ETH-USD", (error, response, data) => {
@@ -89,35 +135,36 @@ function getCredentials() {
 
 /**
  * Creates a buy order.
- *
  * @param  {Double} price In this format: "100.00"
  * @param  {Double} size  [description]
  */
  function createBuyOrder(price, size, callback) {
 	// Buy 1 BTC @ 100 USD
 	let buyParams = {
-	  	price: `${price}`, // USD
-	  	size: `${size}`, // BTC
-	  	product_id: "BTC-USD"
-	  };
-	  authedClient.buy(buyParams, callback);
-	}
+		price: `${price}`, // USD
+		size: `${size}`, // BTC
+		product_id: "BTC-USD"
+	};
+	authedClient.buy(buyParams, callback);
+}
 
 /**
  * Creates a sell order.
- *
  * @param  {Double} price
  * @param  {Double} size  [description]
  */
  function createSellOrder(price, size, callback) {
  	let sellParams = {
-	  	price: `${price}`, // USD
-	  	size: `${size}`, // BTC
-	  	product_id: "BTC-USD"
-	  };
-	  authedClient.sell(sellParams, callback);
-	}
+  	price: `${price}`, // USD
+  	size: `${size}`, // BTC
+  	product_id: "BTC-USD"
+  };
+  authedClient.sell(sellParams, callback);
+};
 
+function displayLoginScreen() {
+
+}
 
 // CLI ACTION METHODS
 
@@ -129,104 +176,107 @@ function focusOnHeadlines() {
 
 var helpMenuLayout = null
 
-function displayHelpScreen() {
+/**
+ * Display help screen as overlay.
+ */
+ function displayHelpScreen() {
 
-	helpOpenCloseCount++;
+ 	helpOpenCloseCount++;
 
-	let helpMenuData = [ [ "Keybinding",  "Action" ],
-	[ "---", "---"],
-	[ "H", "Open help menu"],
-	[ "I", "Focus on headlines"],
-	[ "K", "Logout"],
-	[ "L", "Login"],
-	[ "O", "Open, changes depending on focus."],
-	[ "T", "Toggle automatic trading"],
-	[ "V", "Show version and author info"] ];
+ 	let helpMenuData = [ [ "Keybinding",  "Action" ],
+ 	[ "---", "---"],
+ 	[ "H", "Open help menu"],
+ 	[ "I", "Focus on headlines"],
+ 	[ "C", "Clear Credentials"],
+ 	[ "L", "Login"],
+ 	[ "O", "Open, changes depending on focus."],
+ 	[ "T", "Toggle automatic trading"],
+ 	[ "V", "Show version and author info"] ];
 
-	helpMenuLayout = blessed.layout({
-		parent: screen,
-		top: "center",
-		left: "center",
-		width: 80,
-		height: 36,
-		border: "line",
-		style: {
-			border: {
-				fg: "blue"
-			}
-		}
-	});
+ 	helpMenuLayout = blessed.layout({
+ 		parent: screen,
+ 		top: "center",
+ 		left: "center",
+ 		width: 80,
+ 		height: 36,
+ 		border: "line",
+ 		style: {
+ 			border: {
+ 				fg: "blue"
+ 			}
+ 		}
+ 	});
 
-	var table = blessed.listtable({
-		parent: helpMenuLayout,
-		interactive: false,
-		top: "center",
-		left: "center",
-		data: helpMenuData,
-		border: "line",
-		pad: 2,
-		width: 53,
-		height: 10,
-		style: {
-			border: {
-				fg: "bright-blue"
-			},
-			header: {
-				fg: "bright-green",
-				bold: true,
-				underline: true,
-			},
-			cell: {
-				fg: "yellow",
-			}
-		}
-	});
+ 	var keybindingsTable = blessed.listtable({
+ 		parent: helpMenuLayout,
+ 		interactive: false,
+ 		top: "center",
+ 		left: "center",
+ 		data: helpMenuData,
+ 		border: "line",
+ 		pad: 2,
+ 		width: 53,
+ 		height: 10,
+ 		style: {
+ 			border: {
+ 				fg: "bright-blue"
+ 			},
+ 			header: {
+ 				fg: "bright-green",
+ 				bold: true,
+ 				underline: true,
+ 			},
+ 			cell: {
+ 				fg: "yellow",
+ 			}
+ 		}
+ 	});
 
-	var smallBox = blessed.box({
-		parent: helpMenuLayout,
-		width: 25,
-		height: 3,
-		left: "right",
-		top: "center",
-		padding: {
-			left: 2,
-			right: 2,
-		},
-		border: "line",
-		style: {
-			fg: "white",
-			border: {
-				fg: "red",
-			}
-		},
-		content: "Press h to close."
-	});
+ 	var exitTextBox = blessed.box({
+ 		parent: helpMenuLayout,
+ 		width: 25,
+ 		height: 3,
+ 		left: "right",
+ 		top: "center",
+ 		padding: {
+ 			left: 2,
+ 			right: 2,
+ 		},
+ 		border: "line",
+ 		style: {
+ 			fg: "white",
+ 			border: {
+ 				fg: "red",
+ 			}
+ 		},
+ 		content: "Press h to close."
+ 	});
 
-	var helpText = blessed.box({
-		parent: helpMenuLayout,
-		width: 78,
-		height: 24,
-		left: "center",
-		top: "center",
-		padding: {
-			left: 2,
-			right: 2,
-		},
-		border: "line",
-		style: {
-			fg: "bright-green",
-			border: {
-				fg: "bright-blue",
-			}
-		},
-		content: strings["autotrading"] + strings["authors"] + strings["warning"] + strings["source"]
-	});
-}
+ 	var largeTextBox = blessed.box({
+ 		parent: helpMenuLayout,
+ 		width: 78,
+ 		height: 24,
+ 		left: "center",
+ 		top: "center",
+ 		padding: {
+ 			left: 2,
+ 			right: 2,
+ 		},
+ 		border: "line",
+ 		style: {
+ 			fg: "bright-green",
+ 			border: {
+ 				fg: "bright-blue",
+ 			}
+ 		},
+ 		content: strings["autotrading"] + strings["authors"] + strings["warning"] + strings["source"]
+ 	});
+ }
 
-function destroyHelpScreen() {
-	helpOpenCloseCount++;
-	helpMenuLayout.destroy()
-}
+ function destroyHelpScreen() {
+ 	helpOpenCloseCount++;
+ 	helpMenuLayout.destroy()
+ }
 
 /**
 * Execute shell command.
@@ -300,6 +350,17 @@ function trimIfLongerThan(text, len) {
 	}
 }
 
+function setLineData(mockData, line) {
+	for (var i=0; i<mockData.length; i++) {
+		var last = mockData[i].y[mockData[i].y.length-1]
+		mockData[i].y.shift()
+		var num = Math.max(last + Math.round(Math.random()*10) - 5, 10)
+		mockData[i].y.push(num)
+	}
+
+	line.setData(mockData)
+}
+
 /**
  * Takes three arrays and zips them into a list of lists like this:
  *
@@ -325,33 +386,6 @@ function unpackData(dict) {
 	return listOfIndicatorData
 }
 
-// TESTING DATA
-
-let headlineDates = [...Array(16).keys()].map((key) => {
-	return getRandomDate()
-})
-
-let headlines = [...Array(16).keys()].map((key) => {
-	return getRandomHeadline()
-})
-
-let headlineSentiment = [...Array(16).keys()].map((key) => {
-	return getRandomSentiment()
-})
-
-let headlinesTrimmed = headlines.map(str => trimIfLongerThan(str, MAX_HEADLINE_LENTH));
-let headlinesZipped = zipThreeArrays(headlineDates, headlinesTrimmed, headlineSentiment)
-
-let exchangeRateSeries = {
-	title: "Exchange Rate",
-	x: [...Array(24).keys()].map((key) => {
-		return String(key) + ":00"
-	}),
-	y: [...Array(24).keys()].map((key) => {
-		return key * getRandomInteger(1000, 1200)
-	})
-}
-
 var signalEnum = Object.freeze ({ buy: "BUY", sell: "SELL" });
 
 let networkIndicatorData = {
@@ -371,9 +405,6 @@ let networkIndicatorData = {
 	}
 }
 
-let networkIndicators = unpackData(networkIndicatorData)
-console.log(networkIndicators)
-
 let technicalIndicatorData = {
 	"name": "TECHNICAL_INDICATORS",
 	"data": {
@@ -388,9 +419,6 @@ let technicalIndicatorData = {
 		"Triple Exponential Moving Avg": { value: "Val", signal: signalEnum.sell }
 	}
 }
-
-let technicalIndicators = unpackData(technicalIndicatorData)
-console.log(technicalIndicators)
 
 // Placing widgets
 
@@ -407,18 +435,6 @@ var headlineTable = grid.set(0, 0, 4, 4, contrib.table,
                              	, columnWidth: [7, 38, 10]
                              })
 
-headlineTable.setData({ headers: ["Date", "Title", "Sentiment"],
-                      data: headlinesZipped})
-
-headlineTable.focus()
-
-headlineTable.on("keypress", function(ch, key) {
-	console.log("DSKLF")
-	if (key.name.toLowerCase() === "o") {
-		console.log("OPEN UP")
-	}
-})
-
 var technicalTable = grid.set(4, 0, 3.5, 4, contrib.table,
                               { keys: true
                               	, fg: "green"
@@ -428,9 +444,6 @@ var technicalTable = grid.set(4, 0, 3.5, 4, contrib.table,
                               	, columnWidth: [35, 10, 10]
                               })
 
-technicalTable.setData({ headers: ["Name", "Value", "Signal"],
-                       data: technicalIndicators})
-
 var networkTable = grid.set(7.2, 0, 4, 4, contrib.table,
                             { keys: true
                             	, fg: "green"
@@ -438,10 +451,6 @@ var networkTable = grid.set(7.2, 0, 4, 4, contrib.table,
                             	, interactive: false
                             	, columnSpacing: 1
                             	, columnWidth: [35, 10, 10]})
-
-networkTable.setData({ headers: ["Name", "Value", "Signal"],
-                     data: networkIndicators})
-
 
 // Line chart on the right of the tables
 
@@ -502,6 +511,20 @@ let menubar = blessed.listbar({
 				// refreshData()
 			}
 		},
+		"Coinbase Login": {
+			keys: [ "l", "L" ],
+			callback: () => {
+				log("Login")
+				// login()
+			}
+		},
+		"Clear Credentials": {
+			keys: [ "c", "C" ],
+			callback: () => {
+				log("Clear Credentials")
+				clearCredentials()
+			}
+		},
 		"Buy BTC": {
 			keys: [ "b", "B" ],
 			callback: () => {
@@ -536,18 +559,66 @@ let menubar = blessed.listbar({
 	}
 })
 
-// countdown.setDisplay("23:59")
+// Resizing
+screen.on("resize", function() {
+	technicalTable.emit("attach");
+	networkTable.emit("attach");
+	headlineTable.emit("attach");
+	exchangeRateCurve.emit("attach");
+	countdown.emit("attach");
+	menubar.emit("attach");
 
-function setLineData(mockData, line) {
-	for (var i=0; i<mockData.length; i++) {
-		var last = mockData[i].y[mockData[i].y.length-1]
-		mockData[i].y.shift()
-		var num = Math.max(last + Math.round(Math.random()*10) - 5, 10)
-		mockData[i].y.push(num)
-	}
+});
 
-	line.setData(mockData)
+// TESTING DATA
+
+let headlineDates = [...Array(16).keys()].map((key) => {
+	return getRandomDate()
+})
+
+let headlines = [...Array(16).keys()].map((key) => {
+	return getRandomHeadline()
+})
+
+let headlineSentiment = [...Array(16).keys()].map((key) => {
+	return getRandomSentiment()
+})
+
+let headlinesTrimmed = headlines.map(str => trimIfLongerThan(str, MAX_HEADLINE_LENTH));
+let headlinesZipped = zipThreeArrays(headlineDates, headlinesTrimmed, headlineSentiment)
+
+let networkIndicators = unpackData(networkIndicatorData)
+let technicalIndicators = unpackData(technicalIndicatorData)
+
+let exchangeRateSeries = {
+	title: "Exchange Rate",
+	x: [...Array(24).keys()].map((key) => {
+		return String(key) + ":00"
+	}),
+	y: [...Array(24).keys()].map((key) => {
+		return key * getRandomInteger(1000, 1200)
+	})
 }
+
+// Set up widget data and focus
+
+headlineTable.setData({ headers: ["Date", "Title", "Sentiment"],
+                      data: headlinesZipped})
+
+headlineTable.focus()
+
+headlineTable.on("keypress", function(ch, key) {
+	console.log("DEBUG ME")
+	if (key.name.toLowerCase() === "o") {
+		console.log("OPEN UP")
+	}
+})
+
+technicalTable.setData({ headers: ["Name", "Value", "Signal"],
+                       data: technicalIndicators})
+
+networkTable.setData({ headers: ["Name", "Value", "Signal"],
+                     data: networkIndicators})
 
 setLineData([exchangeRateSeries], exchangeRateCurve)
 
@@ -556,17 +627,7 @@ setInterval(function() {
 	screen.render()
 }, 500)
 
-// Quit functionality
-screen.key(["escape", "q", "C-c"], function(ch, key) {
-	return process.exit(0);
-});
-
-// Resizing
-screen.on("resize", function() {
-	technicalTable.emit("attach");
-	networkTable.emit("attach");
-	headlineTable.emit("attach");
-	exchangeRateCurve.emit("attach");
-});
+// START DOING THINGS
+createDotfileIfNeeded()
 
 screen.render()
