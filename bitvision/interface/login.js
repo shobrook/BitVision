@@ -1,18 +1,5 @@
 let blessed = require("blessed");
 
-// Global functions
-
-var enteredCreds = {
-	"apiKey": "DEFAULT",
-	"secret": "DEFAULT",
-	"passphrase": "DEFAULT"
-}
-
-let loginStyleConstants = {
-	"borderUnfocused": "#f0f0f0",
-	"borderFocused": "green",
-}
-
 let loginSpacingConstants = {
 	"height": 3,
 	"width": 26,
@@ -22,10 +9,18 @@ let loginSpacingConstants = {
 	"passphrase": 12
 }
 
-let strings = {
+let loginStrings = {
 	"apiKey": " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
 	"passphrase": " {bold}{blue-fg}Passphrase{/bold}{/blue-fg} ",
 	"secret": " {bold}{blue-fg}Secret{/bold}{/blue-fg} "
+}
+
+// Global functions
+
+var enteredCreds = {
+	"apiKey": "DEFAULT",
+	"secret": "DEFAULT",
+	"passphrase": "DEFAULT"
 }
 
 /**
@@ -44,12 +39,12 @@ function validateEnteredLoginCreds() {
 }
 
 /**
-* Takes key for strings dict and returns the respective prompt box.
+* Takes key for loginStrings dict and returns the respective prompt box.
 */
 function createPromptBox(key) {
 	return blessed.textbox({
 		parent: form,
-		label: strings[key],
+		label: loginStrings[key],
 		tags: true,
 		keys: true,
 		inputOnFocus: true,
@@ -63,11 +58,11 @@ function createPromptBox(key) {
 		style: {
 			focus: {
 				border: {
-					fg: loginStyleConstants["borderFocused"],
+					fg: "green",
 				},
 			},
 			border: {
-				fg: loginStyleConstants["borderUnfocused"]
+				fg: "#f0f0f0"
 			},
 		}
 	})
