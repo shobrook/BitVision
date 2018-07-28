@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 echo "Installing python dependencies..."
 
 pip3 install pandas
