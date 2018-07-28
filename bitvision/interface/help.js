@@ -11,7 +11,7 @@ let helpMenuData = [ [ "Keybinding",  "Action" ],
 [ "T", "Toggle automatic trading"],
 [ "V", "Show version and author info"] ];
 
-let strings = {
+let helpStrings = {
 	autotrading: "## Automatic Trading\n\n 1. Enter account credentials \n 2. Press \`T\` to toggle this option.\n 3. Enter the max amount you\"d like to trade.\n 3.5. Watch our algorithm trade BTC for you.\n 4. Profit",
 	authors: "\n\n## Authors\n\n Written by Jon Shobrook and Aaron Lichtman.\n -> https://www.github.com/shobrook\n -> https://www.github.com/alichtman",
 	warning: "\n\n## Warning\n\n Use this software to trade bitcoin at your own risk.\n We are not responsible if our algorithm misbehaves.",
@@ -20,7 +20,7 @@ let strings = {
 
 let screen = blessed.screen()
 
-var layout = blessed.layout({
+helpMenuLayout = blessed.layout({
 	parent: screen,
 	top: "center",
 	left: "center",
@@ -34,33 +34,53 @@ var layout = blessed.layout({
 	}
 });
 
-var table = blessed.listtable({
-	parent: layout,
+var keybindingsTable = blessed.listtable({
+	parent: helpMenuLayout,
 	interactive: false,
 	top: "center",
 	left: "center",
 	data: helpMenuData,
 	border: "line",
 	pad: 2,
-	width: 60,
+	width: 53,
 	height: 10,
 	style: {
 		border: {
-			fg: "blue"
+			fg: "bright-blue"
 		},
 		header: {
-			fg: "red",
+			fg: "bright-green",
 			bold: true,
 			underline: true,
 		},
 		cell: {
-			fg: "green",
+			fg: "yellow",
 		}
 	}
 });
 
-var textBox = blessed.box({
-	parent: layout,
+var exitTextBox = blessed.box({
+	parent: helpMenuLayout,
+	width: 25,
+	height: 3,
+	left: "right",
+	top: "center",
+	padding: {
+		left: 2,
+		right: 2,
+	},
+	border: "line",
+	style: {
+		fg: "white",
+		border: {
+			fg: "red",
+		}
+	},
+	content: "Press h to close."
+});
+
+var largeTextBox = blessed.box({
+	parent: helpMenuLayout,
 	width: 78,
 	height: 24,
 	left: "center",
@@ -71,12 +91,12 @@ var textBox = blessed.box({
 	},
 	border: "line",
 	style: {
-		fg: "white",
+		fg: "bright-green",
 		border: {
-			fg: "blue",
+			fg: "bright-blue",
 		}
 	},
-	content: strings["autotrading"] + strings["authors"] + strings["warning"] + strings["source"]
+	content: helpStrings["autotrading"] + helpStrings["authors"] + helpStrings["warning"] + helpStrings["source"]
 });
 
 // Quit

@@ -1,11 +1,14 @@
 // GLOBALS
-"use strict"
-
+"use strict";
 let fs = require("fs");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let Gdax = require("gdax");
+let writeJsonFile = require('write-json-file');
+
+// Modules
+let login = require('./login')
 
 // CONSTANTS
 
@@ -13,15 +16,8 @@ let MAX_HEADLINE_LENTH = 35;
 var helpOpenCloseCount = 0;
 // TODO: Figure out how to write to home directory.
 // const dotfilePath = "~/.bitvision";
-const dotfilePath = ".bitvision";
+const dotfilePath = ".bitvision.json";
 var gdaxClient = new Gdax.PublicClient();
-
-let helpStrings = {
-  autotrading: "## Automatic Trading\n\n 1. Enter account credentials \n 2. Press \`T\` to toggle this option.\n 3. Enter the max amount you\"d like to trade.\n 3.5. Watch our algorithm trade BTC for you.\n 4. Profit",
-  authors: "\n\n## Authors\n\n Written by Jon Shobrook and Aaron Lichtman.\n -> https://www.github.com/shobrook\n -> https://www.github.com/alichtman",
-  warning: "\n\n## Warning\n\n Use this software to trade bitcoin at your own risk.\n We are not responsible if our algorithm misbehaves.",
-  source: "\n\n## Source Code\n\n -> https://github.com/shobrook/BitVision"
-};
 
 // Bless up
 
@@ -36,8 +32,8 @@ var screen = blessed.screen({
   }
 });
 
-// Quit functionality
-screen.key(["escape", "q", "C-c"], function(ch, key) {
+// Quit
+screen.key(["escape", "q", "Q", "C-c"], function(ch, key) {
   return process.exit(0);
 });
 
@@ -48,19 +44,49 @@ const log = (text) => {
 
 // DOTFILE RELATED FUNCTIONS
 
+function writeDotfile(config) {
+  console.log("WRITING DOTFILE")
+  writeJsonFile(dotfilePath, config).then(() => {
+    console.log('File Saved');
+  });
+}
+
+/**
+ * Read dotfile and do something with the data
+ */
+function readDotfile(callback) {
+  fs.readFile(dotfilePath, 'utf8', function(err, data) {
+    if (err) {
+      console.log(err);
+    }
+    callback(data)
+  });
+}
+
+/**
+ * Gets config file in dictionary form.
+ */
+function getConfig(callback) {
+  console.log("GETTING CONFIG")
+  readDotfile((data) => {
+		let cfg = JSON.parse(data)
+		callback(cfg)
+  })
+}
+
 /**
  * Creates dotfile with default values if it doesn't exist.
  */
 function createDotfileIfNeeded() {
-  log("Checking for dotfile")
+  log("CHECKING FOR DOTFILE")
   fs.stat(dotfilePath, function(err, stat) {
-    // console.log(err)
     if (err == null) {
+      log("Exists")
       return
     } else if (err.code == "ENOENT") {
-      console.log("No dotfile found. Creating.")
+      console.log("No dotfile found. Creating DEFAULT.")
       // Create file
-      let fileContent = {
+      let emptyConfig = {
         "credentials": {
           "key": "",
           "secret": "",
@@ -73,26 +99,17 @@ function createDotfileIfNeeded() {
           "next-trade-side": "",
         },
       }
-
-      let json = JSON.stringify(fileContent)
-      console.log(json)
-      console.log(dotfilePath)
-      fs.writeFile(dotfilePath, json, (err) => {
-        if (err) throw err;
-        console.log('The file has been saved!');
-      });
+      writeDotfile(emptyConfig)
     }
   });
 }
 
-/**
- * Gets credentials from config file.
- *
- * @return {Dict} Credentials.
- */
-function getCredentials() {
-  var config = JSON.parse(dotfilePath)
-  return config.credentials
+function saveCredentials(newCreds) {
+  console.log("SAVING CREDENTIALS")
+  getConfig( (cfg) => {
+		cfg.credentials = newCreds
+	  writeDotfile(cfg)
+	})
 }
 
 /**
@@ -108,7 +125,16 @@ function clearCredentials() {
 // LOGIN SCREEN FUNCTIONS
 
 function displayLoginScreen() {
-
+  console.log("DISPLAY LOGIN SCREEN")
+  login.createLoginScreen(screen, (creds) => {
+    console.log("callback")
+    if (creds != null) {
+      console.log("New creds, saving.")
+      saveCredentials(creds)
+    } else {
+      console.log("No creds, abort.")
+    }
+  });
 }
 
 // COINBASE FUNCTIONS
@@ -117,7 +143,8 @@ function displayLoginScreen() {
  * Replaces public Coinbase client with authenticated client so trades can be placed.
  */
 function authenticateWithCoinbase() {
-  let credentials = getCredentials()
+  console.log("AUTHENTICATE WITH COINBASE")
+  let credentials = getConfig().credentials
   let key = credentials.key;
   let secret = btoa(credentials.secret) // base64 encoded secret
   let passphrase = credentials.passphrase
@@ -187,108 +214,109 @@ function focusOnHeadlines() {
 var helpMenuLayout = null
 
 /**
+ * TODO: REFACTOR OUT.
  * Display help screen as overlay.
  */
-function displayHelpScreen() {
-
-  helpOpenCloseCount++;
-
-  let helpMenuData = [
-    ["Keybinding", "Action"],
-    ["---", "---"],
-    ["H", "Open help menu"],
-    ["I", "Focus on headlines"],
-    ["C", "Clear Credentials"],
-    ["L", "Login"],
-    ["O", "Open, changes depending on focus."],
-    ["T", "Toggle automatic trading"],
-    ["V", "Show version and author info"]
-  ];
-
-  helpMenuLayout = blessed.layout({
-    parent: screen,
-    top: "center",
-    left: "center",
-    width: 80,
-    height: 36,
-    border: "line",
-    style: {
-      border: {
-        fg: "blue"
-      }
-    }
-  });
-
-  var keybindingsTable = blessed.listtable({
-    parent: helpMenuLayout,
-    interactive: false,
-    top: "center",
-    left: "center",
-    data: helpMenuData,
-    border: "line",
-    pad: 2,
-    width: 53,
-    height: 10,
-    style: {
-      border: {
-        fg: "bright-blue"
-      },
-      header: {
-        fg: "bright-green",
-        bold: true,
-        underline: true,
-      },
-      cell: {
-        fg: "yellow",
-      }
-    }
-  });
-
-  var exitTextBox = blessed.box({
-    parent: helpMenuLayout,
-    width: 25,
-    height: 3,
-    left: "right",
-    top: "center",
-    padding: {
-      left: 2,
-      right: 2,
-    },
-    border: "line",
-    style: {
-      fg: "white",
-      border: {
-        fg: "red",
-      }
-    },
-    content: "Press h to close."
-  });
-
-  var largeTextBox = blessed.box({
-    parent: helpMenuLayout,
-    width: 78,
-    height: 24,
-    left: "center",
-    top: "center",
-    padding: {
-      left: 2,
-      right: 2,
-    },
-    border: "line",
-    style: {
-      fg: "bright-green",
-      border: {
-        fg: "bright-blue",
-      }
-    },
-    content: helpStrings["autotrading"] + helpStrings["authors"] + helpStrings["warning"] + helpStrings["source"]
-  });
-}
-
-function destroyHelpScreen() {
-  helpOpenCloseCount++;
-  helpMenuLayout.destroy()
-}
+// function displayHelpScreen() {
+//
+//   helpOpenCloseCount++;
+//
+//   let helpMenuData = [
+//     ["Keybinding", "Action"],
+//     ["---", "---"],
+//     ["H", "Open help menu"],
+//     ["I", "Focus on headlines"],
+//     ["C", "Clear Credentials"],
+//     ["L", "Login"],
+//     ["O", "Open, changes depending on focus."],
+//     ["T", "Toggle automatic trading"],
+//     ["V", "Show version and author info"]
+//   ];
+//
+//   helpMenuLayout = blessed.layout({
+//     parent: screen,
+//     top: "center",
+//     left: "center",
+//     width: 80,
+//     height: 36,
+//     border: "line",
+//     style: {
+//       border: {
+//         fg: "blue"
+//       }
+//     }
+//   });
+//
+//   var keybindingsTable = blessed.listtable({
+//     parent: helpMenuLayout,
+//     interactive: false,
+//     top: "center",
+//     left: "center",
+//     data: helpMenuData,
+//     border: "line",
+//     pad: 2,
+//     width: 53,
+//     height: 10,
+//     style: {
+//       border: {
+//         fg: "bright-blue"
+//       },
+//       header: {
+//         fg: "bright-green",
+//         bold: true,
+//         underline: true,
+//       },
+//       cell: {
+//         fg: "yellow",
+//       }
+//     }
+//   });
+//
+//   var exitTextBox = blessed.box({
+//     parent: helpMenuLayout,
+//     width: 25,
+//     height: 3,
+//     left: "right",
+//     top: "center",
+//     padding: {
+//       left: 2,
+//       right: 2,
+//     },
+//     border: "line",
+//     style: {
+//       fg: "white",
+//       border: {
+//         fg: "red",
+//       }
+//     },
+//     content: "Press h to close."
+//   });
+//
+//   var largeTextBox = blessed.box({
+//     parent: helpMenuLayout,
+//     width: 78,
+//     height: 24,
+//     left: "center",
+//     top: "center",
+//     padding: {
+//       left: 2,
+//       right: 2,
+//     },
+//     border: "line",
+//     style: {
+//       fg: "bright-green",
+//       border: {
+//         fg: "bright-blue",
+//       }
+//     },
+//     content: helpStrings["autotrading"] + helpStrings["authors"] + helpStrings["warning"] + helpStrings["source"]
+//   });
+// }
+//
+// function destroyHelpScreen() {
+//   helpOpenCloseCount++;
+//   helpMenuLayout.destroy()
+// }
 
 /**
  * Execute shell command.
@@ -596,6 +624,7 @@ let menubar = blessed.listbar({
       keys: ["l", "L"],
       callback: () => {
         log("Login")
+        displayLoginScreen()
         // login()
       }
     },

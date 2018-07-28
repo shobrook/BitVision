@@ -14,5 +14,6 @@
     "gdax": "^0.8.0",
     "inquirer": "^6.0.0",
     "js-yaml": "^3.12.0",
+    "write-json-file": "^2.3.0"
   }
 }
