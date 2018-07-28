@@ -7,10 +7,16 @@ let childProcess = require("child_process");
 let Gdax = require("gdax");
 let writeJsonFile = require('write-json-file');
 
-// Modules
-let login = require('./login')
+// ----------
+// MODULES
+// ----------
 
+let login = require('./login')
+let help = require('./help')
+
+// ----------
 // CONSTANTS
+// ----------
 
 let MAX_HEADLINE_LENTH = 35;
 var helpOpenCloseCount = 0;
@@ -19,7 +25,9 @@ var helpOpenCloseCount = 0;
 const dotfilePath = ".bitvision.json";
 var gdaxClient = new Gdax.PublicClient();
 
+// ---------
 // Bless up
+// ---------
 
 var screen = blessed.screen({
   smartCSR: true,
@@ -42,7 +50,9 @@ const log = (text) => {
   screen.render();
 }
 
+// -------------------------
 // DOTFILE RELATED FUNCTIONS
+// -------------------------
 
 function writeDotfile(config) {
   console.log("WRITING DOTFILE")
@@ -122,7 +132,9 @@ function clearCredentials() {
   });
 }
 
+// ----------------------
 // LOGIN SCREEN FUNCTIONS
+// ----------------------
 
 function displayLoginScreen() {
   console.log("DISPLAY LOGIN SCREEN")
@@ -137,7 +149,23 @@ function displayLoginScreen() {
   });
 }
 
+// ----------------------
+// HELP SCREEN FUNCTIONS
+// ----------------------
+
+function displayHelpScreen() {
+	helpOpenCloseCount++;
+	help.createHelpScreen(screen)
+}
+
+function destroyHelpScreen() {
+	helpOpenCloseCount++;
+	helpMenuLayout.destroy();
+}
+
+// -------------------
 // COINBASE FUNCTIONS
+// -------------------
 
 /**
  * Replaces public Coinbase client with authenticated client so trades can be placed.
@@ -208,115 +236,6 @@ function createSellOrder(price, size, callback) {
 function focusOnHeadlines() {
   headlineTable.focus()
 }
-
-// HELP MENU FUNCTIONS
-
-var helpMenuLayout = null
-
-/**
- * TODO: REFACTOR OUT.
- * Display help screen as overlay.
- */
-// function displayHelpScreen() {
-//
-//   helpOpenCloseCount++;
-//
-//   let helpMenuData = [
-//     ["Keybinding", "Action"],
-//     ["---", "---"],
-//     ["H", "Open help menu"],
-//     ["I", "Focus on headlines"],
-//     ["C", "Clear Credentials"],
-//     ["L", "Login"],
-//     ["O", "Open, changes depending on focus."],
-//     ["T", "Toggle automatic trading"],
-//     ["V", "Show version and author info"]
-//   ];
-//
-//   helpMenuLayout = blessed.layout({
-//     parent: screen,
-//     top: "center",
-//     left: "center",
-//     width: 80,
-//     height: 36,
-//     border: "line",
-//     style: {
-//       border: {
-//         fg: "blue"
-//       }
-//     }
-//   });
-//
-//   var keybindingsTable = blessed.listtable({
-//     parent: helpMenuLayout,
-//     interactive: false,
-//     top: "center",
-//     left: "center",
-//     data: helpMenuData,
-//     border: "line",
-//     pad: 2,
-//     width: 53,
-//     height: 10,
-//     style: {
-//       border: {
-//         fg: "bright-blue"
-//       },
-//       header: {
-//         fg: "bright-green",
-//         bold: true,
-//         underline: true,
-//       },
-//       cell: {
-//         fg: "yellow",
-//       }
-//     }
-//   });
-//
-//   var exitTextBox = blessed.box({
-//     parent: helpMenuLayout,
-//     width: 25,
-//     height: 3,
-//     left: "right",
-//     top: "center",
-//     padding: {
-//       left: 2,
-//       right: 2,
-//     },
-//     border: "line",
-//     style: {
-//       fg: "white",
-//       border: {
-//         fg: "red",
-//       }
-//     },
-//     content: "Press h to close."
-//   });
-//
-//   var largeTextBox = blessed.box({
-//     parent: helpMenuLayout,
-//     width: 78,
-//     height: 24,
-//     left: "center",
-//     top: "center",
-//     padding: {
-//       left: 2,
-//       right: 2,
-//     },
-//     border: "line",
-//     style: {
-//       fg: "bright-green",
-//       border: {
-//         fg: "bright-blue",
-//       }
-//     },
-//     content: helpStrings["autotrading"] + helpStrings["authors"] + helpStrings["warning"] + helpStrings["source"]
-//   });
-// }
-//
-// function destroyHelpScreen() {
-//   helpOpenCloseCount++;
-//   helpMenuLayout.destroy()
-// }
 
 /**
  * Execute shell command.
