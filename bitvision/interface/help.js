@@ -39,7 +39,7 @@ module.exports = {
         border: {
           fg: "blue"
         }
-      }
+      },
     });
 
     var keybindingsTable = blessed.listtable({
@@ -84,7 +84,7 @@ module.exports = {
           fg: "red",
         }
       },
-      content: `Press h to close.\n\nVersion: ${version}`
+      content: `Press Q to close.\n\nVersion: ${version}`
     });
 
     var largeTextBox = blessed.box({
@@ -105,6 +105,12 @@ module.exports = {
         }
       },
       content: helpStrings["autotrading"] + helpStrings["authors"] + helpStrings["warning"] + helpStrings["source"]
+    });
+
+    screen.key(["q", "Q"], function(ch, key) {
+      console.log("destroy")
+      helpMenuLayout.destroy();
+      screen.render()
     });
   }
 };

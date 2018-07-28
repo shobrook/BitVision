@@ -90,14 +90,6 @@ module.exports = {
       height: 18,
       bg: "#27474e",
       color: "white",
-      commands: {
-        "Quit": {
-          keys: ["q", "Q"],
-          callback: () => {
-            destroyLoginScreen()
-          }
-        },
-      }
     });
 
     let label = blessed.box({
@@ -225,9 +217,5 @@ module.exports = {
 
     loginForm.focus();
     screen.render();
-  },
-
-  destroyLoginScreen: function() {
-    loginForm.destroy();
   }
 }

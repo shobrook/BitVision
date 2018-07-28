@@ -155,13 +155,7 @@ function displayLoginScreen() {
 // ----------------------
 
 function displayHelpScreen() {
-  helpOpenCloseCount++;
   help.createHelpScreen(screen, VERSION);
-}
-
-function destroyHelpScreen() {
-  helpOpenCloseCount++;
-  helpMenuLayout.destroy();
 }
 
 // ------------------------------
@@ -614,17 +608,11 @@ let menubar = blessed.listbar({
         openArticle()
       }
     },
-    "Toggle Help": {
+    "Show Help": {
       keys: ["h", "H"],
       callback: () => {
-        if (helpOpenCloseCount % 2 == 0) {
-          log("Help Menu Opened")
-          displayHelpScreen()
-        } else {
-          log("Help Menu Closed")
-          destroyHelpScreen()
-        }
-
+        log("Help Menu Opened")
+        displayHelpScreen()
       }
     },
     "Exit": {
