@@ -175,19 +175,22 @@ function openArticle() {
 function toggleTrading() {
   log("Toggle Trading");
   getConfig((cfg) => {
-    // If autotrade was enabled, disable it and reset counter.
+    // If autotrade was enabled, disable it and reset all properties to default.
     if (cfg.autotrade.enabled) {
       cfg.autotrade.enabled = false;
       cfg.autotrade["next-trade-timestamp-UTC"] = 0;
       cfg.autotrade["next-trade-amount"] = 0;
       cfg.autotrade["next-trade-side"] = "";
     } else {
-      // If autotrade was disabled, enable, set next timestamp for 24 hr from now.
+      // If autotrade was disabled, enable and set next trade timestamp for +24 hr from now.
       cfg.autotrade.enabled = true;
-      cfg.autotrade["next-trade-timestamp-UTC"] = 0;
+      cfg.autotrade["next-trade-timestamp-UTC"] = 0; // TODO:
       cfg.autotrade["next-trade-amount"] = 0;
       cfg.autotrade["next-trade-side"] = "";
     }
+
+    // Store updated configuration
+    writeDotfile(cfg)
   })
 }
 
@@ -255,12 +258,6 @@ function createSellOrder(price, size, callback) {
   authedClient.sell(sellParams, callback);
 };
 
-// ------------------
-// UTILITY FUNCTIONS
-// ------------------
-
-
-
 // ----------------------
 // PYTHON CONTROL METHODS
 // ----------------------
@@ -307,7 +304,9 @@ function getRandomHeadline() {
   return possiblities[Math.floor(Math.random() * possiblities.length)]
 }
 
-// Utilities
+// ------------------
+// UTILITY FUNCTIONS
+// ------------------
 
 /**
  * Execute shell command.
