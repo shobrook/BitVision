@@ -56,9 +56,9 @@ const log = (text) => {
 // -------------------------
 
 function writeDotfile(config) {
-  console.log("WRITING DOTFILE")
+  log("WRITING DOTFILE")
   writeJsonFile(dotfilePath, config).then(() => {
-    console.log('File Saved');
+    log('File Saved');
   });
 }
 
@@ -78,11 +78,27 @@ function readDotfile(callback) {
  * Gets config file in dictionary form.
  */
 function getConfig(callback) {
-  console.log("GETTING CONFIG");
+  log("GETTING CONFIG");
   readDotfile((data) => {
     let cfg = JSON.parse(data);
     callback(cfg);
   })
+}
+
+/**
+ * Checks for credentials in the config file.
+ *
+ * @return {Bool} Returns true if all creds exist, false otherwise.
+ */
+function checkForCredentials() {
+  getConfig( (cfg) => {
+    let creds = cfg.credentials;
+    if (creds.key == "" || creds.secret !== "" || passphrase !== "") {
+      return false;
+    } else {
+      return true;
+    }
+  });
 }
 
 /**
@@ -95,7 +111,7 @@ function createDotfileIfNeeded() {
       log("Exists");
       return
     } else if (err.code == "ENOENT") {
-      console.log("No dotfile found. Creating DEFAULT.");
+      log("No dotfile found. Creating DEFAULT.");
       // Create file
       let emptyConfig = {
         "credentials": {
@@ -116,7 +132,7 @@ function createDotfileIfNeeded() {
 }
 
 function saveCredentials(newCreds) {
-  console.log("SAVING CREDENTIALS");
+  log("SAVING CREDENTIALS");
   getConfig((cfg) => {
     cfg.credentials = newCreds;
     writeDotfile(cfg);
@@ -129,7 +145,7 @@ function saveCredentials(newCreds) {
 function clearCredentials() {
   fs.unlink(dotfilePath, (err) => {
     if (err) throw err;
-    console.log(`${dotfilePath} was deleted.`);
+    log(`${dotfilePath} was deleted.`);
   });
 }
 
@@ -137,15 +153,19 @@ function clearCredentials() {
 // LOGIN SCREEN FUNCTIONS
 // ----------------------
 
+/**
+ * Display login screen, allowing user to replace credentials.
+ */
 function displayLoginScreen() {
-  console.log("DISPLAY LOGIN SCREEN");
+  log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, (creds) => {
-    console.log("callback");
+    // console.log("callback");
     if (creds != null) {
-      console.log("New creds, saving.");
+      log("New creds, saving.");
       saveCredentials(creds);
+      log("Login success.")
     } else {
-      console.log("No creds, abort.");
+      log("No creds, abort.");
     }
   });
 }

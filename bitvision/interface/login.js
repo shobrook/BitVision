@@ -185,22 +185,26 @@ module.exports = {
     })
 
     login.on("press", function() {
-      console.log("Login Pressed.");
+      // console.log("Login Pressed.");
       enteredCreds.apiKey = keyEntryBox.content;
       enteredCreds.secret = secretEntryBox.content;
       enteredCreds.passphrase = passphraseEntryBox.content;
 
-      console.log(enteredCreds.apiKey);
-      console.log(enteredCreds.secret);
-      console.log(enteredCreds.passphrase);
+      // console.log(enteredCreds.apiKey);
+      // console.log(enteredCreds.secret);
+      // console.log(enteredCreds.passphrase);
 
       if (validateEnteredLoginCreds()) {
         callback(enteredCreds)
+        loginForm.destroy()
       } else {
-        console.log("Invalid input.");
-        keyEntryBox.content = "";
-        secretEntryBox.content = "";
-        passphraseEntryBox.content = "";
+        // console.log("Invalid input.");
+        // keyEntryBox.content = "";
+        // secretEntryBox.content = "";
+        // passphraseEntryBox.content = "";
+        keyEntryBox.setValue("");
+        secretEntryBox.setValue("");
+        passphraseEntryBox.setValue("");
         keyEntryBox.style.border.fg = "red";
         secretEntryBox.style.border.fg = "red";
         passphraseEntryBox.style.border.fg = "red";

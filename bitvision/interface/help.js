@@ -4,13 +4,13 @@ let contrib = require("blessed-contrib");
 let helpMenuData = [
   ["Keybinding", "Action"],
   ["---", "---"],
-  ["H", "Open help menu"],
-  ["I", "Focus on headlines"],
-  ["K", "Logout"],
+  // ["A", "Show account information."],
   ["L", "Login"],
-  ["O", "Open, changes depending on focus."],
+  ["H", "Show help menu"],
+  ["F", "Focus on headlines"],
+  ["C", "Clear Credentials"],
+  ["O", "Open article."],
   ["T", "Toggle automatic trading"],
-  ["V", "Show version and author info"]
 ];
 
 let helpStrings = {
@@ -108,7 +108,7 @@ module.exports = {
     });
 
     screen.key(["q", "Q"], function(ch, key) {
-      console.log("destroy")
+      // console.log("destroy")
       helpMenuLayout.destroy();
       screen.render()
     });
