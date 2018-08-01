@@ -199,9 +199,6 @@ module.exports = {
         loginForm.destroy()
       } else {
         // console.log("Invalid input.");
-        // keyEntryBox.content = "";
-        // secretEntryBox.content = "";
-        // passphraseEntryBox.content = "";
         keyEntryBox.setValue("");
         secretEntryBox.setValue("");
         passphraseEntryBox.setValue("");
