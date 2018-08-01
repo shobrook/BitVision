@@ -1,5 +1,9 @@
 var blessed = require("blessed");
 
+let transactionStrings = {
+  "text" : "{bold}How much do you want to trade?{/bold}\n Please enter a {bold}${/bold} followed by a {bold}number{/bold}."
+}
+
 // FUNCTIONS
 
 /**
@@ -32,14 +36,15 @@ var prompt = blessed.prompt({
   keys: true,
 });
 
-prompt.input('{bold}How much do you want to trade?{/bold}\n Please enter a {bold}${/bold} followed by a {bold}number{/bold}.', '', function(err, value) {
+prompt.input(transactionStrings.text, '', function(err, value) {
   if (isInputValid(value)) {
     console.log("VALID")
     // callback(value)
     screen.destroy();
   } else {
-    // TODO: What do I do if the user enters the wrong thing? This doesn't work like the form did...
-    // console.log('INVALID')
+    console.log('INVALID')
+    // TODO: How do we re-pop this infinitely if the user enters the wrong thing?
+    // The form allowed me to reset the text box but this is different.
   }
 });
 
