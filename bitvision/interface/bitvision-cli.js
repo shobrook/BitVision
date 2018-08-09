@@ -216,7 +216,9 @@ function toggleTrading() {
 }
 
 function showTransactionAmountPopup() {
-  transaction.createTransactionAmountPopup(screen, null);
+  transaction.createTransactionAmountPopup(screen, function(amount) {
+    log(`Max transaction: ${amount} BTC`)
+  });
 }
 
 /**

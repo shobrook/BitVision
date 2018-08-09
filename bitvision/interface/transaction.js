@@ -48,10 +48,8 @@ module.exports = {
           prompt.destroy();
         });
       } else {
-        // TODO: Do something with the trade amount (held in value var)
-
-        // i'm sorry too.
-        console.log('oh, fuck yeah baby. just like that. keep givin\' me those valid inputs.');
+        // Do something with the trade amount.
+        callback(value)
         prompt.destroy();
       }
     });
