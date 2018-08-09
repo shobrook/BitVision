@@ -1,55 +1,65 @@
 var blessed = require("blessed");
 
 let transactionStrings = {
-  "text" : "{bold}How much do you want to trade?{/bold}\n Please enter a {bold}${/bold} followed by a {bold}number{/bold}."
+  "text" : "{bold}How much BTC do you want to trade?{/bold}\n Please enter a {bold}number{/bold}."
 }
 
 // FUNCTIONS
 
 /**
- * Checks for a currency sign, followed by a number.
+ * Checks if n is a valid, tradable BTC amount.
+ * Must be numeric and positive.
  *
  * @return {Bool} True if valid, or false otherwise.
  */
-function isInputValid(input) {
-  return input.length != 0 && input.match(/\$[0-9]+\b/g)
+ function isValidInput(n) {
+  if (n === "") {
+    return false;
+  }
+
+  let num = parseFloat(n)
+  return !isNaN(num) && isFinite(num) && num > 0;
 }
 
-// LAYOUT
+module.exports = {
 
-var screen = blessed.screen({
-  tput: true,
-  smartCSR: true,
-  autoPadding: true,
-  warnings: true
-});
+  createTransactionAmountPopup:function(screen, callback) {
+    var prompt = blessed.prompt({
+      parent: screen,
+      border: 'line',
+      height: 9,
+      width: 45,
+      top: 'center',
+      left: 'center',
+      label: ' {blue-fg}Autotrading{/blue-fg} ',
+      tags: true,
+      keys: true,
+      style: {
+        border: {
+          fg: "light-green"
+        }
+      }
+    });
 
-var prompt = blessed.prompt({
-  parent: screen,
-  border: 'line',
-  height: 9,
-  width: 45,
-  top: 'center',
-  left: 'center',
-  label: ' {blue-fg}Autotrading{/blue-fg} ',
-  tags: true,
-  keys: true,
-});
+    prompt.input(transactionStrings.text, '', function(err, value) {
+      if (! isValidInput(value)) {
+        // console.log("INVALID INPUT");
+        prompt.setInput(transactionStrings.text, "Invalid input. Press Enter to exit.", () => {
+          prompt.destroy();
+        });
+      } else {
+        // TODO: Do something with the trade amount (held in value var)
 
-prompt.input(transactionStrings.text, '', function(err, value) {
-  if (isInputValid(value)) {
-    console.log("VALID")
-    // callback(value)
-    screen.destroy();
-  } else {
-    console.log('INVALID')
-    // TODO: How do we re-pop this infinitely if the user enters the wrong thing?
-    // The form allowed me to reset the text box but this is different.
+        // i'm sorry too.
+        console.log('oh, fuck yeah baby. just like that. keep givin\' me those valid inputs.');
+        prompt.destroy();
+      }
+    });
+
+    screen.key(["q", "C-c"], () => {
+      screen.destroy();
+    });
+
+    screen.render();
   }
-});
-
-screen.key(["q", "C-c"], () => {
-  screen.destroy();
-});
-
-screen.render();
+}

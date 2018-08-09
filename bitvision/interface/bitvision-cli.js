@@ -13,6 +13,7 @@ let writeJsonFile = require("write-json-file");
 
 let login = require("./login");
 let help = require("./help");
+let transaction = require("./transaction")
 
 // ----------
 // CONSTANTS
@@ -212,6 +213,10 @@ function toggleTrading() {
     // Store updated configuration
     writeDotfile(cfg)
   })
+}
+
+function showTransactionAmountPopup() {
+  transaction.createTransactionAmountPopup(screen, null);
 }
 
 /**
@@ -503,6 +508,11 @@ var grid = new contrib.grid({
 var headlineTable = grid.set(0, 0, 3.5, 4, contrib.table, {
   keys: true,
   fg: "green",
+  style: {
+    border: {
+      fg: "light-red"
+    }
+  },
   label: "Headlines",
   interactive: true,
   columnSpacing: 1,
@@ -512,16 +522,26 @@ var headlineTable = grid.set(0, 0, 3.5, 4, contrib.table, {
 var technicalTable = grid.set(3.5, 0, 3.5, 4, contrib.table, {
   keys: true,
   fg: "green",
+  style: {
+    border: {
+      fg: "light-red"
+    }
+  },
   label: "Technical Indicators",
   interactive: false,
   columnSpacing: 1,
   columnWidth: [35, 10, 10]
 });
 
-var networkTable = grid.set(7, 0, 4, 4, contrib.table, {
+var networkTable = grid.set(6.8, 0, 4, 4, contrib.table, {
   keys: true,
   interactive: true,
   fg: "green",
+  style: {
+    border: {
+      fg: "light-red"
+    }
+  },
   label: "Network Indicators",
   interactive: false,
   columnSpacing: 1,
@@ -554,7 +574,12 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
   elementSpacing: 4,
   elementPadding: 2,
   color: "white", // color for the segments
-  label: "Minutes Until Next Trade"
+  label: "Minutes Until Next Trade",
+  style: {
+    border: {
+      fg: "light-blue"
+    },
+  },
 })
 
 var logs = grid.set(6, 7, 5, 4, blessed.box, {
@@ -572,11 +597,25 @@ let menubar = blessed.listbar({
   bottom: 0,
   left: 0,
   height: 1,
+  style: {
+    item: {
+      fg: "yellow"
+    },
+    selected: {
+      fg: "yellow"
+    },
+  },
   commands: {
     "Toggle Trading": {
       keys: ["t", "T"],
       callback: () => {
-        toggleTrading()
+        toggleTrading();
+      }
+    },
+    "Trading Amount": {
+      keys: ["p", "P"],
+      callback: () => {
+        showTransactionAmountPopup();
       }
     },
     "Refresh Data": {
@@ -601,20 +640,20 @@ let menubar = blessed.listbar({
         clearCredentials()
       }
     },
-    "Buy BTC": {
-      keys: ["b", "B"],
-      callback: () => {
-        log("Buy BTC")
-        // buyBitcoin()
-      }
-    },
-    "Sell BTC": {
-      keys: ["s", "S"],
-      callback: () => {
-        log("Sell BTC")
-        // sellBitcoin()
-      }
-    },
+    // "Buy BTC": {
+    //   keys: ["b", "B"],
+    //   callback: () => {
+    //     log("Buy BTC")
+    //     buyBitcoin()
+    //   }
+    // },
+    // "Sell BTC": {
+    //   keys: ["s", "S"],
+    //   callback: () => {
+    //     log("Sell BTC")
+    //     sellBitcoin()
+    //   }
+    // },
     "Focus on Headlines": {
       keys: ["f", "F"],
       callback: () => {
