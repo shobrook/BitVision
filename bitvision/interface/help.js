@@ -110,7 +110,7 @@ module.exports = {
     screen.key(["q", "Q"], function(ch, key) {
       // console.log("destroy")
       helpMenuLayout.destroy();
-      screen.render()
+      screen.render();
     });
   }
 };

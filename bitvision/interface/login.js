@@ -8,13 +8,13 @@ let loginSpacingConstants = {
   "apiKey": 4,
   "secret": 8,
   "passphrase": 12
-}
+};
 
 let loginStrings = {
   "apiKey": " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
   "passphrase": " {bold}{blue-fg}Passphrase{/bold}{/blue-fg} ",
   "secret": " {bold}{blue-fg}Secret{/bold}{/blue-fg} "
-}
+};
 
 // GLOBALS
 
@@ -195,8 +195,8 @@ module.exports = {
       // console.log(enteredCreds.passphrase);
 
       if (validateEnteredLoginCreds()) {
-        callback(enteredCreds)
-        loginForm.destroy()
+        callback(enteredCreds);
+        loginForm.destroy();
       } else {
         // console.log("Invalid input.");
         keyEntryBox.setValue("");

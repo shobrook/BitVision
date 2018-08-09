@@ -19,7 +19,7 @@ let transaction = require("./transaction")
 // CONSTANTS
 // ----------
 
-let VERSION = "v0.1a"
+let VERSION = "v0.1a";
 let MAX_HEADLINE_LENTH = 35;
 var helpOpenCloseCount = 0;
 // TODO: Figure out how to write to home directory.
@@ -50,23 +50,23 @@ screen.key(["escape", "C-c"], function(ch, key) {
 const log = (text) => {
   logs.pushLine(text);
   screen.render();
-}
+};
 
 // -------------------------
 // DOTFILE RELATED FUNCTIONS
 // -------------------------
 
 function writeDotfile(config) {
-  log("WRITING DOTFILE")
+  log("WRITING DOTFILE");
   writeJsonFile(dotfilePath, config).then(() => {
-    log('File Saved');
+    log("File Saved");
   });
 }
 
 /**
  * Read dotfile and do something with the data
  */
-function readDotfile(callback) {
+ function readDotfile(callback) {
   fs.readFile(dotfilePath, "utf8", function(err, data) {
     if (err) {
       console.log(err);
@@ -78,12 +78,12 @@ function readDotfile(callback) {
 /**
  * Gets config file in dictionary form.
  */
-function getConfig(callback) {
+ function getConfig(callback) {
   log("GETTING CONFIG");
   readDotfile((data) => {
     let cfg = JSON.parse(data);
     callback(cfg);
-  })
+  });
 }
 
 /**
@@ -91,10 +91,10 @@ function getConfig(callback) {
  *
  * @return {Bool} Returns true if all creds exist, false otherwise.
  */
-function checkForCredentials() {
+ function checkForCredentials() {
   getConfig( (cfg) => {
     let creds = cfg.credentials;
-    if (creds.key == "" || creds.secret !== "" || passphrase !== "") {
+    if (creds.key === "" || creds.secret !== "" || creds.passphrase !== "") {
       return false;
     } else {
       return true;
@@ -105,13 +105,13 @@ function checkForCredentials() {
 /**
  * Creates dotfile with default values if it doesn't exist.
  */
-function createDotfileIfNeeded() {
+ function createDotfileIfNeeded() {
   log("CHECKING FOR DOTFILE");
   fs.stat(dotfilePath, function(err, stat) {
     if (err == null) {
       log("Exists");
-      return
-    } else if (err.code == "ENOENT") {
+      return;
+    } else if (err.code === "ENOENT") {
       log("No dotfile found. Creating DEFAULT.");
       // Create file
       let emptyConfig = {
@@ -143,9 +143,11 @@ function saveCredentials(newCreds) {
 /**
  * Clear credentials by removing the dotfile.
  */
-function clearCredentials() {
+ function clearCredentials() {
   fs.unlink(dotfilePath, (err) => {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
     log(`${dotfilePath} was deleted.`);
   });
 }
@@ -157,14 +159,14 @@ function clearCredentials() {
 /**
  * Display login screen, allowing user to replace credentials.
  */
-function displayLoginScreen() {
+ function displayLoginScreen() {
   log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, (creds) => {
     // console.log("callback");
     if (creds != null) {
       log("New creds, saving.");
       saveCredentials(creds);
-      log("Login success.")
+      log("Login success.");
     } else {
       log("No creds, abort.");
     }
@@ -211,7 +213,7 @@ function toggleTrading() {
     }
 
     // Store updated configuration
-    writeDotfile(cfg)
+    writeDotfile(cfg);
   })
 }
 
@@ -224,7 +226,7 @@ function showTransactionAmountPopup() {
 /**
  * Replaces public Coinbase client with authenticated client so trades can be placed.
  */
-function authenticateWithCoinbase() {
+ function authenticateWithCoinbase() {
   console.log("AUTHENTICATE WITH COINBASE")
   let credentials = getConfig().credentials;
   let key = credentials.key;
@@ -236,9 +238,9 @@ function authenticateWithCoinbase() {
   let sandboxURI = "https://api-public.sandbox.pro.coinbase.com";
 
   gdaxClient = new Gdax.AuthenticatedClient(key,
-    secret,
-    passphrase,
-    sandboxURI);
+                                            secret,
+                                            passphrase,
+                                            sandboxURI);
 }
 
 /**
@@ -246,7 +248,7 @@ function authenticateWithCoinbase() {
  *
  * @return {Double} Current bitcoin price
  */
-function getUpdatedBitcoinPrice() {
+ function getUpdatedBitcoinPrice() {
   gdaxClient.getProductTicker("ETH-USD", (error, response, data) => {
     if (error) {
       console.log("ERROR");
@@ -261,7 +263,7 @@ function getUpdatedBitcoinPrice() {
  * @param  {Double} price In this format: "100.00"
  * @param  {Double} size  [description]
  */
-function createBuyOrder(price, size, callback) {
+ function createBuyOrder(price, size, callback) {
   // Buy 1 BTC @ 100 USD
   let buyParams = {
     price: `${price}`, // USD
@@ -276,12 +278,12 @@ function createBuyOrder(price, size, callback) {
  * @param  {Double} price
  * @param  {Double} size  [description]
  */
-function createSellOrder(price, size, callback) {
+ function createSellOrder(price, size, callback) {
   let sellParams = {
     price: `${price}`, // USD
     size: `${size}`, // BTC
     product_id: "BTC-USD"
-  };
+  }
   authedClient.sell(sellParams, callback);
 };
 
@@ -302,33 +304,31 @@ function retrainModel() {
 // --------------------
 
 function getRandomInteger(min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-
-  return Math.floor(Math.random() * (max - min)) + min
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function getRandomSentiment() {
-  return String(Math.random().toFixed(2))
+  return String(Math.random().toFixed(2));
 }
 
 function getRandomDate() {
-  let month = Math.floor(Math.random() * 12) + 1
-  let day = Math.floor(Math.random() * 30) + 1
-  return `${month}/${day}`
+  let month = Math.floor(Math.random() * 12) + 1;
+  let day = Math.floor(Math.random() * 30) + 1;
+  return `${month}/${day}`;
 }
 
 function getRandomHeadline() {
   let possiblities = ["Zerocoin's widget promises Bitcoin privacy",
-    "Bitcoin is bad news for stability",
-    "WikiLeaks' Assange hypes bitcoin in secret talk",
-    "Butterfly Labs' Jalapeno aims to spice up bitcoin mining",
-    "Are alternative Ecoins 'anti-bitcoins'?",
-    "Canada to tax bitcoin users",
-    "Google Ventures invests in Bitcoin competitor OpenCoin",
-    "Economists wrestle with Bitcoin's 'narrative problem'"
-  ]
-  return possiblities[Math.floor(Math.random() * possiblities.length)]
+  "Bitcoin is bad news for stability",
+  "WikiLeaks' Assange hypes bitcoin in secret talk",
+  "Butterfly Labs' Jalapeno aims to spice up bitcoin mining",
+  "Are alternative Ecoins 'anti-bitcoins'?",
+  "Canada to tax bitcoin users",
+  "Google Ventures invests in Bitcoin competitor OpenCoin",
+  "Economists wrestle with Bitcoin's 'narrative problem'" ];
+  return possiblities[Math.floor(Math.random() * possiblities.length)];
 }
 
 // ------------------
@@ -338,13 +338,13 @@ function getRandomHeadline() {
 /**
  * Execute shell command.
  **/
-function executeShellCommand(command) {
-  console.log(command)
-  let args = command.split(" ")
+ function executeShellCommand(command) {
+  console.log(command);
+  let args = command.split(" ");
   // Remove first element
   let program = args.splice(0, 1)[0];
-  console.log(args)
-  console.log(program)
+  console.log(args);
+  console.log(program);
   let cmd = childProcess.spawn(program, args);
 
   cmd.stdout.on("data", function(data) {
@@ -358,21 +358,20 @@ function executeShellCommand(command) {
 
 function trimIfLongerThan(text, len) {
   if (text.length > len) {
-    return text.slice(0, len)
+    return text.slice(0, len);
   } else {
-    return text
+    return text;
   }
 }
 
 function setLineData(mockData, line) {
   for (var i = 0; i < mockData.length; i++) {
-    var last = mockData[i].y[mockData[i].y.length - 1]
-    mockData[i].y.shift()
-    var num = Math.max(last + Math.round(Math.random() * 10) - 5, 10)
-    mockData[i].y.push(num)
+    var last = mockData[i].y[mockData[i].y.length - 1];
+    mockData[i].y.shift();
+    var num = Math.max(last + Math.round(Math.random() * 10) - 5, 10);
+    mockData[i].y.push(num);
   }
-
-  line.setData(mockData)
+  line.setData(mockData);
 }
 
 /**
@@ -382,12 +381,12 @@ function setLineData(mockData, line) {
  * [a,b,c] -> [ [1,a,!], [2,b,@], [3,c,#] ]
  * [!,@,#]
  */
-function zipThreeArrays(a, b, c) {
-  let zipped = []
+ function zipThreeArrays(a, b, c) {
+  let zipped = [];
   for (var i = 0; i < a.length; i++) {
-    zipped.push([a[i], b[i], c[i]])
+    zipped.push([a[i], b[i], c[i]]);
   }
-  return zipped
+  return zipped;
 }
 
 // Takes dictionary with key -> list pairs and returns a list of lists.
@@ -642,20 +641,20 @@ let menubar = blessed.listbar({
         clearCredentials()
       }
     },
-    // "Buy BTC": {
-    //   keys: ["b", "B"],
-    //   callback: () => {
-    //     log("Buy BTC")
-    //     buyBitcoin()
-    //   }
-    // },
-    // "Sell BTC": {
-    //   keys: ["s", "S"],
-    //   callback: () => {
-    //     log("Sell BTC")
-    //     sellBitcoin()
-    //   }
-    // },
+    "Buy BTC": {
+      keys: ["b", "B"],
+      callback: () => {
+        log("Buy BTC")
+        buyBitcoin()
+      }
+    },
+    "Sell BTC": {
+      keys: ["s", "S"],
+      callback: () => {
+        log("Sell BTC")
+        sellBitcoin()
+      }
+    },
     "Focus on Headlines": {
       keys: ["f", "F"],
       callback: () => {
