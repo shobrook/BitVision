@@ -61,20 +61,20 @@ const log = (text) => {
  * Execute shell command.
  **/
 function executeShellCommand(command) {
-  console.log(command);
+  log(command);
   let args = command.split(" ");
   // Remove first element
   let program = args.splice(0, 1)[0];
-  console.log(args);
-  console.log(program);
+  log(args);
+  log(program);
   let cmd = childProcess.spawn(program, args);
 
   cmd.stdout.on("data", function(data) {
-    console.log("OUTPUT: " + data);
+    log("OUTPUT: " + data);
   });
 
   cmd.on("close", function(code, signal) {
-    console.log("command finished...");
+    log("command finished...");
   });
 }
 
@@ -626,13 +626,6 @@ let menubar = blessed.listbar({
       keys: ["t", "T"],
       callback: () => {
         showAutotradingToggle();
-      }
-    },
-    // TODO: Convert this method into separate BUY/SELL methods.
-    "Trading Amount": {
-      keys: ["p", "P"],
-      callback: () => {
-        showTransactionAmountPopup();
       }
     },
     "Refresh Data": {
