@@ -219,7 +219,7 @@ function toggleTrading() {
 
 function showTransactionAmountPopup() {
   transaction.createTransactionAmountPopup(screen, function(amount) {
-    log(`Max transaction: ${amount} BTC`)
+    log(`Max transaction: ${amount} BTC`);
   });
 }
 
@@ -630,48 +630,48 @@ let menubar = blessed.listbar({
       keys: ["l", "L"],
       callback: () => {
         log("Login")
-        displayLoginScreen()
+        displayLoginScreen();
         // login()
       }
     },
     "Clear Credentials": {
       keys: ["c", "C"],
       callback: () => {
-        log("Clear Credentials")
-        clearCredentials()
+        log("Clear Credentials");
+        clearCredentials();
       }
     },
     "Buy BTC": {
       keys: ["b", "B"],
       callback: () => {
-        log("Buy BTC")
-        buyBitcoin()
+        log("Buy BTC");
+        buyBitcoin();
       }
     },
     "Sell BTC": {
       keys: ["s", "S"],
       callback: () => {
-        log("Sell BTC")
-        sellBitcoin()
+        log("Sell BTC");
+        sellBitcoin();
       }
     },
     "Focus on Headlines": {
       keys: ["f", "F"],
       callback: () => {
-        headlineTable.focus()
+        headlineTable.focus();
       }
     },
     "Open": {
       keys: ["o", "O"],
       callback: () => {
-        openArticle()
+        openArticle();
       }
     },
     "Show Help": {
       keys: ["h", "H"],
       callback: () => {
-        log("Help Menu Opened")
-        displayHelpScreen()
+        log("Help Menu Opened");
+        displayHelpScreen();
       }
     },
     "Exit": {

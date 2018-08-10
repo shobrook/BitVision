@@ -60,4 +60,4 @@ module.exports = {
 
     screen.render();
   }
-}
+};
