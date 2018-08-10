@@ -113,12 +113,12 @@ function zipThreeArrays(a, b, c) {
 
 // Takes dictionary with key -> list pairs and returns a list of lists.
 function unpackData(dict) {
-  var listOfIndicatorData = []
+  var listOfIndicatorData = [];
   Object.keys(dict["data"]).forEach(function(key) {
-    listOfIndicatorData.push([key, dict["data"][key]["value"], dict["data"][key]["signal"]])
+    listOfIndicatorData.push([key, dict["data"][key]["value"], dict["data"][key]["signal"]]);
   });
 
-  return listOfIndicatorData
+  return listOfIndicatorData;
 }
 
 // -------------------------
@@ -310,7 +310,7 @@ function showTransactionAmountPopup() {
  * Replaces public Coinbase client with authenticated client so trades can be placed.
  */
 function authenticateWithCoinbase() {
-  console.log("AUTHENTICATE WITH COINBASE")
+  console.log("AUTHENTICATE WITH COINBASE");
   let credentials = getConfig().credentials;
   let key = credentials.key;
   let secret = btoa(credentials.secret); // base64 encoded secret
@@ -552,7 +552,6 @@ var technicalTable = grid.set(3.5, 0, 3.5, 4, contrib.table, {
 
 var networkTable = grid.set(6.8, 0, 4, 4, contrib.table, {
   keys: true,
-  interactive: true,
   fg: "green",
   style: {
     border: {
@@ -623,12 +622,13 @@ let menubar = blessed.listbar({
     },
   },
   commands: {
-    "Toggle Trading": {
+    "Autotrading Settings": {
       keys: ["t", "T"],
       callback: () => {
         showAutotradingToggle();
       }
     },
+    // TODO: Convert this method into separate BUY/SELL methods.
     "Trading Amount": {
       keys: ["p", "P"],
       callback: () => {
@@ -638,7 +638,7 @@ let menubar = blessed.listbar({
     "Refresh Data": {
       keys: ["r", "R"],
       callback: () => {
-        log("Refresh Data")
+        log("Refresh Data");
         // refreshData()
       }
     },
@@ -661,14 +661,18 @@ let menubar = blessed.listbar({
       keys: ["b", "B"],
       callback: () => {
         log("Buy BTC");
-        buyBitcoin();
+        transaction.createBuyTransactionPopup(screen, function() {
+          // TODO: Create buy order
+        });
       }
     },
     "Sell BTC": {
       keys: ["s", "S"],
       callback: () => {
         log("Sell BTC");
-        sellBitcoin();
+        transaction.createSellTransactionPopup(screen, function() {
+          // TODO: Create sell order
+        });
       }
     },
     "Focus on Headlines": {
