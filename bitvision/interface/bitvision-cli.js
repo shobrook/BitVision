@@ -13,12 +13,14 @@ let writeJsonFile = require("write-json-file");
 
 let login = require("./login");
 let help = require("./help");
+let transaction = require("./transaction");
+let tradingToggle = require("./autotrading-toggle");
 
 // ----------
 // CONSTANTS
 // ----------
 
-let VERSION = "v0.1a"
+let VERSION = "v0.1a";
 let MAX_HEADLINE_LENTH = 35;
 var helpOpenCloseCount = 0;
 // TODO: Figure out how to write to home directory.
@@ -49,6 +51,74 @@ screen.key(["escape", "C-c"], function(ch, key) {
 const log = (text) => {
   logs.pushLine(text);
   screen.render();
+};
+
+// ------------------
+// UTILITY FUNCTIONS
+// ------------------
+
+/**
+ * Execute shell command.
+ **/
+function executeShellCommand(command) {
+  log(command);
+  let args = command.split(" ");
+  // Remove first element
+  let program = args.splice(0, 1)[0];
+  log(args);
+  log(program);
+  let cmd = childProcess.spawn(program, args);
+
+  cmd.stdout.on("data", function(data) {
+    log("OUTPUT: " + data);
+  });
+
+  cmd.on("close", function(code, signal) {
+    log("command finished...");
+  });
+}
+
+function trimIfLongerThan(text, len) {
+  if (text.length > len) {
+    return text.slice(0, len);
+  } else {
+    return text;
+  }
+}
+
+function setLineData(mockData, line) {
+  for (var i = 0; i < mockData.length; i++) {
+    var last = mockData[i].y[mockData[i].y.length - 1];
+    mockData[i].y.shift();
+    var num = Math.max(last + Math.round(Math.random() * 10) - 5, 10);
+    mockData[i].y.push(num);
+  }
+  line.setData(mockData);
+}
+
+/**
+ * Takes three arrays and zips them into a list of lists like this:
+ *
+ * [1,2,3]
+ * [a,b,c] -> [ [1,a,!], [2,b,@], [3,c,#] ]
+ * [!,@,#]
+ */
+function zipThreeArrays(a, b, c) {
+  let zipped = [];
+  for (var i = 0; i < a.length; i++) {
+    zipped.push([a[i], b[i], c[i]]);
+  }
+  return zipped;
+}
+
+// Takes dictionary with key -> list pairs and returns a list of lists.
+function unpackData(dict) {
+  var listOfIndicatorData = [];
+  Object.keys(dict["data"]).forEach(function(key) {
+    listOfIndicatorData.push([key, dict["data"][key]["value"], dict["data"][key]["signal"]]);
+  });
+
+  return listOfIndicatorData;
 }
 
 // -------------------------
@@ -56,9 +126,9 @@ const log = (text) => {
 // -------------------------
 
 function writeDotfile(config) {
-  console.log("WRITING DOTFILE")
+  log("WRITING DOTFILE");
   writeJsonFile(dotfilePath, config).then(() => {
-    console.log('File Saved');
+    // log("File Saved");
   });
 }
 
@@ -78,11 +148,27 @@ function readDotfile(callback) {
  * Gets config file in dictionary form.
  */
 function getConfig(callback) {
-  console.log("GETTING CONFIG");
+  // log("GETTING CONFIG");
   readDotfile((data) => {
     let cfg = JSON.parse(data);
     callback(cfg);
-  })
+  });
+}
+
+/**
+ * Checks for credentials in the config file.
+ *
+ * @return {Bool} Returns true if all creds exist, false otherwise.
+ */
+function checkForCredentials() {
+  getConfig((cfg) => {
+    let creds = cfg.credentials;
+    if (creds.key === "" || creds.secret !== "" || creds.passphrase !== "") {
+      return false;
+    } else {
+      return true;
+    }
+  });
 }
 
 /**
@@ -93,9 +179,9 @@ function createDotfileIfNeeded() {
   fs.stat(dotfilePath, function(err, stat) {
     if (err == null) {
       log("Exists");
-      return
-    } else if (err.code == "ENOENT") {
-      console.log("No dotfile found. Creating DEFAULT.");
+      return;
+    } else if (err.code === "ENOENT") {
+      log("No dotfile found. Creating DEFAULT.");
       // Create file
       let emptyConfig = {
         "credentials": {
@@ -116,7 +202,7 @@ function createDotfileIfNeeded() {
 }
 
 function saveCredentials(newCreds) {
-  console.log("SAVING CREDENTIALS");
+  log("SAVING CREDENTIALS");
   getConfig((cfg) => {
     cfg.credentials = newCreds;
     writeDotfile(cfg);
@@ -128,8 +214,10 @@ function saveCredentials(newCreds) {
  */
 function clearCredentials() {
   fs.unlink(dotfilePath, (err) => {
-    if (err) throw err;
-    console.log(`${dotfilePath} was deleted.`);
+    if (err) {
+      throw err;
+    }
+    log(`${dotfilePath} was deleted.`);
   });
 }
 
@@ -137,15 +225,19 @@ function clearCredentials() {
 // LOGIN SCREEN FUNCTIONS
 // ----------------------
 
+/**
+ * Display login screen, allowing user to replace credentials.
+ */
 function displayLoginScreen() {
-  console.log("DISPLAY LOGIN SCREEN");
+  log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, (creds) => {
-    console.log("callback");
+    // console.log("callback");
     if (creds != null) {
-      console.log("New creds, saving.");
+      log("New creds, saving.");
       saveCredentials(creds);
+      log("Login success.");
     } else {
-      console.log("No creds, abort.");
+      log("No creds, abort.");
     }
   });
 }
@@ -171,31 +263,54 @@ function openArticle() {
 // COINBASE FUNCTIONS
 // ------------------
 
-// TODO: FINISH THINKING ABOUT THIS
-function toggleTrading() {
-  log("Toggle Trading");
-  getConfig((cfg) => {
-    // If autotrade was enabled, disable it and reset counter.
-    if (cfg.autotrade.enabled) {
-      cfg.autotrade.enabled = false;
-      cfg.autotrade["next-trade-timestamp-UTC"] = 0;
-      cfg.autotrade["next-trade-amount"] = 0;
-      cfg.autotrade["next-trade-side"] = "";
-    } else {
-      // If autotrade was disabled, enable, set next timestamp for 24 hr from now.
-      cfg.autotrade.enabled = true;
-      cfg.autotrade["next-trade-timestamp-UTC"] = 0;
-      cfg.autotrade["next-trade-amount"] = 0;
-      cfg.autotrade["next-trade-side"] = "";
-    }
-  })
+function showAutotradingToggle() {
+  log("Autotrading Toggle");
+  tradingToggle.createToggleScreen(screen, function(isEnabling) {
+
+    // log(`Enabling: ${isEnabling}`)
+
+    getConfig((cfg) => {
+      let isCurrentlyEnabled = cfg.autotrade.enabled;
+
+      // Setting autotrading to the same state should do nothing.
+      if ((isEnabling && isCurrentlyEnabled) || (!isEnabling && !isCurrentlyEnabled)) {
+        log("Redundant autotrading change.");
+        return;
+      }
+
+      // Autotrading disabled, so reset all properties to default
+      if (!isEnabling) {
+        log("Disabling autotrading.");
+        cfg.autotrade.enabled = false;
+        cfg.autotrade["next-trade-timestamp-UTC"] = 0;
+        cfg.autotrade["next-trade-amount"] = 0;
+        cfg.autotrade["next-trade-side"] = "";
+      } else {
+        // Autotrading enabled, so set next trade timestamp for +24 hr from now.
+        log("Enabling autotrading.");
+        cfg.autotrade.enabled = true;
+        cfg.autotrade["next-trade-timestamp-UTC"] = 0; // TODO:
+        cfg.autotrade["next-trade-amount"] = 0;
+        cfg.autotrade["next-trade-side"] = "";
+      }
+
+      // Store updated configuration
+      writeDotfile(cfg);
+    })
+  });
+}
+
+function showTransactionAmountPopup() {
+  transaction.createTransactionAmountPopup(screen, function(amount) {
+    log(`Max transaction: ${amount} BTC`);
+  });
 }
 
 /**
  * Replaces public Coinbase client with authenticated client so trades can be placed.
  */
 function authenticateWithCoinbase() {
-  console.log("AUTHENTICATE WITH COINBASE")
+  console.log("AUTHENTICATE WITH COINBASE");
   let credentials = getConfig().credentials;
   let key = credentials.key;
   let secret = btoa(credentials.secret); // base64 encoded secret
@@ -251,26 +366,20 @@ function createSellOrder(price, size, callback) {
     price: `${price}`, // USD
     size: `${size}`, // BTC
     product_id: "BTC-USD"
-  };
+  }
   authedClient.sell(sellParams, callback);
 };
-
-// ------------------
-// UTILITY FUNCTIONS
-// ------------------
-
-
 
 // ----------------------
 // PYTHON CONTROL METHODS
 // ----------------------
 
 function refreshData() {
-  executeShellCommand("python3 refresh_data.py")
+  executeShellCommand("python3 refresh_data.py");
 }
 
 function retrainModel() {
-  executeShellCommand("python3 retrain_model.py")
+  executeShellCommand("python3 retrain_model.py");
 }
 
 // --------------------
@@ -278,20 +387,19 @@ function retrainModel() {
 // --------------------
 
 function getRandomInteger(min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-
-  return Math.floor(Math.random() * (max - min)) + min
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function getRandomSentiment() {
-  return String(Math.random().toFixed(2))
+  return String(Math.random().toFixed(2));
 }
 
 function getRandomDate() {
-  let month = Math.floor(Math.random() * 12) + 1
-  let day = Math.floor(Math.random() * 30) + 1
-  return `${month}/${day}`
+  let month = Math.floor(Math.random() * 12) + 1;
+  let day = Math.floor(Math.random() * 30) + 1;
+  return `${month}/${day}`;
 }
 
 function getRandomHeadline() {
@@ -303,75 +411,8 @@ function getRandomHeadline() {
     "Canada to tax bitcoin users",
     "Google Ventures invests in Bitcoin competitor OpenCoin",
     "Economists wrestle with Bitcoin's 'narrative problem'"
-  ]
-  return possiblities[Math.floor(Math.random() * possiblities.length)]
-}
-
-// Utilities
-
-/**
- * Execute shell command.
- **/
-function executeShellCommand(command) {
-  console.log(command)
-  let args = command.split(" ")
-  // Remove first element
-  let program = args.splice(0, 1)[0];
-  console.log(args)
-  console.log(program)
-  let cmd = childProcess.spawn(program, args);
-
-  cmd.stdout.on("data", function(data) {
-    console.log("OUTPUT: " + data);
-  });
-
-  cmd.on("close", function(code, signal) {
-    console.log("command finished...");
-  });
-}
-
-function trimIfLongerThan(text, len) {
-  if (text.length > len) {
-    return text.slice(0, len)
-  } else {
-    return text
-  }
-}
-
-function setLineData(mockData, line) {
-  for (var i = 0; i < mockData.length; i++) {
-    var last = mockData[i].y[mockData[i].y.length - 1]
-    mockData[i].y.shift()
-    var num = Math.max(last + Math.round(Math.random() * 10) - 5, 10)
-    mockData[i].y.push(num)
-  }
-
-  line.setData(mockData)
-}
-
-/**
- * Takes three arrays and zips them into a list of lists like this:
- *
- * [1,2,3]
- * [a,b,c] -> [ [1,a,!], [2,b,@], [3,c,#] ]
- * [!,@,#]
- */
-function zipThreeArrays(a, b, c) {
-  let zipped = []
-  for (var i = 0; i < a.length; i++) {
-    zipped.push([a[i], b[i], c[i]])
-  }
-  return zipped
-}
-
-// Takes dictionary with key -> list pairs and returns a list of lists.
-function unpackData(dict) {
-  var listOfIndicatorData = []
-  Object.keys(dict["data"]).forEach(function(key) {
-    listOfIndicatorData.push([key, dict["data"][key]["value"], dict["data"][key]["signal"]])
-  });
-
-  return listOfIndicatorData
+  ];
+  return possiblities[Math.floor(Math.random() * possiblities.length)];
 }
 
 var signalEnum = Object.freeze({
@@ -484,6 +525,11 @@ var grid = new contrib.grid({
 var headlineTable = grid.set(0, 0, 3.5, 4, contrib.table, {
   keys: true,
   fg: "green",
+  style: {
+    border: {
+      fg: "light-red"
+    }
+  },
   label: "Headlines",
   interactive: true,
   columnSpacing: 1,
@@ -493,16 +539,25 @@ var headlineTable = grid.set(0, 0, 3.5, 4, contrib.table, {
 var technicalTable = grid.set(3.5, 0, 3.5, 4, contrib.table, {
   keys: true,
   fg: "green",
+  style: {
+    border: {
+      fg: "light-red"
+    }
+  },
   label: "Technical Indicators",
   interactive: false,
   columnSpacing: 1,
   columnWidth: [35, 10, 10]
 });
 
-var networkTable = grid.set(7, 0, 4, 4, contrib.table, {
+var networkTable = grid.set(6.8, 0, 4, 4, contrib.table, {
   keys: true,
-  interactive: true,
   fg: "green",
+  style: {
+    border: {
+      fg: "light-red"
+    }
+  },
   label: "Network Indicators",
   interactive: false,
   columnSpacing: 1,
@@ -535,7 +590,12 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
   elementSpacing: 4,
   elementPadding: 2,
   color: "white", // color for the segments
-  label: "Minutes Until Next Trade"
+  label: "Minutes Until Next Trade",
+  style: {
+    border: {
+      fg: "light-blue"
+    },
+  },
 })
 
 var logs = grid.set(6, 7, 5, 4, blessed.box, {
@@ -553,17 +613,25 @@ let menubar = blessed.listbar({
   bottom: 0,
   left: 0,
   height: 1,
+  style: {
+    item: {
+      fg: "yellow"
+    },
+    selected: {
+      fg: "yellow"
+    },
+  },
   commands: {
-    "Toggle Trading": {
+    "Autotrading Settings": {
       keys: ["t", "T"],
       callback: () => {
-        toggleTrading()
+        showAutotradingToggle();
       }
     },
     "Refresh Data": {
       keys: ["r", "R"],
       callback: () => {
-        log("Refresh Data")
+        log("Refresh Data");
         // refreshData()
       }
     },
@@ -571,48 +639,52 @@ let menubar = blessed.listbar({
       keys: ["l", "L"],
       callback: () => {
         log("Login")
-        displayLoginScreen()
+        displayLoginScreen();
         // login()
       }
     },
     "Clear Credentials": {
       keys: ["c", "C"],
       callback: () => {
-        log("Clear Credentials")
-        clearCredentials()
+        log("Clear Credentials");
+        clearCredentials();
       }
     },
     "Buy BTC": {
       keys: ["b", "B"],
       callback: () => {
-        log("Buy BTC")
-        // buyBitcoin()
+        log("Buy BTC");
+        transaction.createBuyTransactionPopup(screen, function() {
+          // TODO: Create buy order
+        });
       }
     },
     "Sell BTC": {
       keys: ["s", "S"],
       callback: () => {
-        log("Sell BTC")
-        // sellBitcoin()
+        log("Sell BTC");
+        transaction.createSellTransactionPopup(screen, function() {
+          // TODO: Create sell order
+        });
       }
     },
     "Focus on Headlines": {
       keys: ["f", "F"],
       callback: () => {
-        headlineTable.focus()
+        headlineTable.focus();
       }
     },
     "Open": {
       keys: ["o", "O"],
       callback: () => {
-        openArticle()
+        openArticle();
       }
     },
     "Show Help": {
       keys: ["h", "H"],
       callback: () => {
-        log("Help Menu Opened")
-        displayHelpScreen()
+        log("Help Menu Opened");
+        displayHelpScreen();
       }
     },
     "Exit": {

@@ -8,13 +8,13 @@ let loginSpacingConstants = {
   "apiKey": 4,
   "secret": 8,
   "passphrase": 12
-}
+};
 
 let loginStrings = {
   "apiKey": " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
   "passphrase": " {bold}{blue-fg}Passphrase{/bold}{/blue-fg} ",
   "secret": " {bold}{blue-fg}Secret{/bold}{/blue-fg} "
-}
+};
 
 // GLOBALS
 
@@ -185,22 +185,23 @@ module.exports = {
     })
 
     login.on("press", function() {
-      console.log("Login Pressed.");
+      // console.log("Login Pressed.");
       enteredCreds.apiKey = keyEntryBox.content;
       enteredCreds.secret = secretEntryBox.content;
       enteredCreds.passphrase = passphraseEntryBox.content;
 
-      console.log(enteredCreds.apiKey);
-      console.log(enteredCreds.secret);
-      console.log(enteredCreds.passphrase);
+      // console.log(enteredCreds.apiKey);
+      // console.log(enteredCreds.secret);
+      // console.log(enteredCreds.passphrase);
 
       if (validateEnteredLoginCreds()) {
-        callback(enteredCreds)
+        callback(enteredCreds);
+        loginForm.destroy();
       } else {
-        console.log("Invalid input.");
-        keyEntryBox.content = "";
-        secretEntryBox.content = "";
-        passphraseEntryBox.content = "";
+        // console.log("Invalid input.");
+        keyEntryBox.setValue("");
+        secretEntryBox.setValue("");
+        passphraseEntryBox.setValue("");
         keyEntryBox.style.border.fg = "red";
         secretEntryBox.style.border.fg = "red";
         passphraseEntryBox.style.border.fg = "red";
