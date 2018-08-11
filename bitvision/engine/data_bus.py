@@ -13,7 +13,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from ftfy import ftfy
-from .transformers import Transformer
+from .transformers import transformer
 
 
 #########
@@ -39,6 +39,7 @@ def page_config(tree):
     except:
         return {"title": "N/A", "date": "N/A"}
 
+
 def results_config(current_page):
     """
     Returns a config for Coindesk's search results page.
@@ -46,13 +47,16 @@ def results_config(current_page):
 
     return {
         "page_url": ''.join(["https://www.coindesk.com/page/", str(current_page), "/?s=Bitcoin"]),
-        "item_XPATH": "//div[@class='post-info']", # XPATH for the search result item container
-        "url_XPATH": "./h3/a", # XPATH for url to full article, relative from item_XPATH
-        "date_on_page": True, # Whether it's possible to collect datetime objects from the results page
+        # XPATH for the search result item container
+        "item_XPATH": "//div[@class='post-info']",
+        "url_XPATH": "./h3/a",  # XPATH for url to full article, relative from item_XPATH
+        # Whether it's possible to collect datetime objects from the results page
+        "date_on_page": True,
         "date_ordered": True,
         "base_url": "https://coindesk.com",
         "results_per_page": 10,
         "date_XPATH": "./p[@class='timeauthor']/time"},  # XPATH for article date, will look for datetime object
+
 
 def parse_html(url):
     """
@@ -72,6 +76,7 @@ def parse_html(url):
 
     return html.fromstring(page.content)
 
+
 def collect_articles(urls, end_date, filename):
     """
     Loops over all the URLs collected in the parent function.
@@ -85,8 +90,10 @@ def collect_articles(urls, end_date, filename):
             if end_date and dateParse(config["date"]) < dateParse(end_date):
                 break
             else:
-                csv_writer = csv.writer(open(os.path.dirname(os.getcwd()) + "/../cache/" + filename, "a"))
-                csv_writer.writerow([config["date"], ftfy.fix_text(config["title"]), url])
+                csv_writer = csv.writer(open(os.path.dirname(
+                    os.getcwd()) + "/../cache/" + filename, "a"))
+                csv_writer.writerow(
+                    [config["date"], ftfy.fix_text(config["title"]), url])
         except:
             pass
 
@@ -99,6 +106,7 @@ def collect_articles(urls, end_date, filename):
 def fetch_price_data():
     return pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/\
                         BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+
 
 def fetch_blockchain_data():
     # Loads datasets from Quandl
@@ -128,17 +136,24 @@ def fetch_blockchain_data():
                             TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
 
     # Reassigns column names
-    conf_time.columns, block_size.columns = ["Date", "Conf. Time"], ["Date", "Block Size"]
-    txn_cost.columns, difficulty.columns = ["Date", "TXN Cost"], ["Date", "Difficulty"]
-    txn_count.columns, hash_rate.columns = ["Date", "TXNs per Day"], ["Date", "Hash Rate (GH/s)"]
-    market_cap.columns, miners_rev.columns = ["Date", "Market Cap"], ["Date", "Miners Revenue"]
-    block_txn.columns, unique_addr.columns = ["Date", "TXNs per Block"], ["Date", "Unique Addresses"]
-    total_btc.columns, txn_fees.columns = ["Date", "Total BTC"], ["Date", "TXN Fees"]
+    conf_time.columns, block_size.columns = [
+        "Date", "Conf. Time"], ["Date", "Block Size"]
+    txn_cost.columns, difficulty.columns = [
+        "Date", "TXN Cost"], ["Date", "Difficulty"]
+    txn_count.columns, hash_rate.columns = [
+        "Date", "TXNs per Day"], ["Date", "Hash Rate (GH/s)"]
+    market_cap.columns, miners_rev.columns = [
+        "Date", "Market Cap"], ["Date", "Miners Revenue"]
+    block_txn.columns, unique_addr.columns = [
+        "Date", "TXNs per Block"], ["Date", "Unique Addresses"]
+    total_btc.columns, txn_fees.columns = [
+        "Date", "Total BTC"], ["Date", "TXN Fees"]
 
-    dfs = [conf_time, block_size, txn_cost, difficulty, txn_count, hash_rate, \
+    dfs = [conf_time, block_size, txn_cost, difficulty, txn_count, hash_rate,
            market_cap, miners_rev, block_txn, unique_addr, total_btc, txn_fees]
 
-    return Transformer("MERGE_DATASETS")(dfs[0], dfs[1:])
+    return transformer("MERGE_DATASETS")(dfs[0], dfs[1:])
+
 
 def fetch_coindesk_headlines(end_date):
     filename = "coindesk_headlines.csv"
@@ -163,7 +178,8 @@ def fetch_coindesk_headlines(end_date):
             if "://" not in url:
                 url = results_config(current_page)["base_url"] + url
 
-            url_filters = ["/videos/", "/audio/", "/gadfly/", "/features/", "/press-releases/"]
+            url_filters = ["/videos/", "/audio/",
+                           "/gadfly/", "/features/", "/press-releases/"]
             if any(filter in url for filter in url_filters):
                 pass
             else:
@@ -177,6 +193,7 @@ def fetch_coindesk_headlines(end_date):
         current_page += 1
         urls = []
 
+
 def fetch_tweets():
     pass
 
@@ -186,7 +203,7 @@ def fetch_tweets():
 ######
 
 
-def Dataset(name):
+def dataset(name):
     if name == "PRICE_DATA":
         path = "../cache/price_data.csv"
 
