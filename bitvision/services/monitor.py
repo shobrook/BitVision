@@ -145,7 +145,7 @@ def fetch_coindesk_stats():
         headline[0]: {
             "timestamp": moment.date(headline[1]).format("YYYY-M-D"),
             "url": headline[2],
-            #"sentiment": get_headline_sentiment(headline[0])
+            "sentiment": round(TextBlob(headline[0]).sentiment.polarity, 2)
         }
         for headline in featured_headlines + other_headlines}
 
