@@ -60,8 +60,7 @@ USER_AGENTS = [
 
 def fetch_price_data():
     response = requests.get("https://www.bitstamp.net/api/ticker/").json()
-
-    return {
+    data = {
         "last": response["last"],
         "high": response["high"],
         "low": response["low"],
@@ -70,10 +69,21 @@ def fetch_price_data():
         "timestamp": response["timestamp"]
     }
 
+    fname = "../cache/data/price_data.json"
+    with open(fname) as old_price_data:
+        new_data = {
+            "fetching": False,
+            "data": [data] + json.load(old_price_data)["data"]
+        }
+    with open(fname, 'w') as price_data:
+        price_data.write(json.dumps(new_data, indent=2))
+
+    return True
+
 
 def fetch_tech_indicators():
-    with open("../cache/price_data.json") as price_data_json:
-        price_data = json.load(price_data_json)
+    with open("../cache/data/price_data.json") as price_data_json:
+        price_data = json.load(price_data_json)["data"]
 
         if len(price_data) > 20:  # Enough data to calculate indicators in real-time
             price_data = pd.DataFrame(price_data)
@@ -92,40 +102,52 @@ def fetch_tech_indicators():
 
         # TODO: Create a mapping between indicator values and signals
 
-        return {
-            #"MACD": {}, # MACD, MACD (Signal), MACD (Historical)
-            "MOM (1)": {"value": indicators["MOM (1)"], "signal": ""},
-            "MOM (3)": {"value": indicators["MOM (3)"], "signal": ""},
-            "ADX (14)": {"value": indicators["ADX (14)"], "signal": ""},
-            "ADX (20)": {"value": indicators["ADX (20)"], "signal": ""},
-            "WILLR": {"value": indicators["WILLR"], "signal": ""},
-            "RSI (6)": {"value": indicators["RSI (6)"], "signal": ""},
-            "RSI (12)": {"value": indicators["RSI (12)"], "signal": ""},
-            "ATR (14)": {"value": indicators["ATR (14)"], "signal": ""},
-            "OBV": {"value": indicators["OBV"], "signal": ""},
-            "TRIX (20)": {"value": indicators["TRIX (20)"], "signal": ""},
-            "EMA (6)": {"value": indicators["EMA (6)"], "signal": "NONE"},
-            "EMA (12)": {"value": indicators["EMA (12)"], "signal": "NONE"}
-        }
+        with open("../cache/data/indicators.json", 'w') as indicators_json:
+            indicators_json.write(json.dumps({
+                "fetching": False,
+                "data": {
+                    #"MACD": {}, # MACD, MACD (Signal), MACD (Historical)
+                    "MOM (1)": {"value": indicators["MOM (1)"][0], "signal": ""},
+                    "MOM (3)": {"value": indicators["MOM (3)"][0], "signal": ""},
+                    "ADX (14)": {"value": indicators["ADX (14)"][0], "signal": ""},
+                    "ADX (20)": {"value": indicators["ADX (20)"][0], "signal": ""},
+                    "WILLR": {"value": indicators["WILLR"][0], "signal": ""},
+                    "RSI (6)": {"value": indicators["RSI (6)"][0], "signal": ""},
+                    "RSI (12)": {"value": indicators["RSI (12)"][0], "signal": ""},
+                    "ATR (14)": {"value": indicators["ATR (14)"][0], "signal": ""},
+                    "OBV": {"value": indicators["OBV"][0], "signal": ""},
+                    "TRIX (20)": {"value": indicators["TRIX (20)"][0], "signal": ""},
+                    "EMA (6)": {"value": indicators["EMA (6)"][0], "signal": "NONE"},
+                    "EMA (12)": {"value": indicators["EMA (12)"][0], "signal": "NONE"}
+                }
+            }, indent=2))
+
+    return True
 
 
 def fetch_network_attributes():
     blockchain_data = dataset("blockchain_data")
 
-    return {
-        "Confirmation Time": blockchain_data["Conf. Time"],
-        "Block Size": blockchain_data["Block Size"],
-        "Transaction Cost": blockchain_data["TXN Cost"],
-        "Difficulty": blockchain_data["Difficulty"],
-        "Transactions per Day": blockchain_data["TXNs per Day"],
-        "Hash Rate (GH/s)": blockchain_data["Hash Rate (GH/s)"],
-        "Market Capitalization": blockchain_data["Market Cap"],
-        "Miners Revenue": blockchain_data["Miners Revenue"],
-        "Transactions per Block": blockchain_data["TXNs per Block"],
-        "Unique Addresses": blockchain_data["Unique Addresses"],
-        "Total Bitcoin": blockchain_data["Total BTC"],
-        "Transaction Fees": blockchain_data["TXN Fees"]
-    }
+    with open("../cache/data/blockchain.json", 'w') as blockchain_data_json:
+        blockchain_data_json.write(json.dumps({
+            "fetching": False,
+            "data": {
+                "Confirmation Time": blockchain_data["Conf. Time"][0],
+                "Block Size": blockchain_data["Block Size"][0],
+                "Transaction Cost": blockchain_data["TXN Cost"][0],
+                "Difficulty": blockchain_data["Difficulty"][0],
+                "Transactions per Day": blockchain_data["TXNs per Day"][0],
+                "Hash Rate (GH/s)": blockchain_data["Hash Rate (GH/s)"][0],
+                "Market Capitalization": blockchain_data["Market Cap"][0],
+                "Miners Revenue": blockchain_data["Miners Revenue"][0],
+                "Transactions per Block": blockchain_data["TXNs per Block"][0],
+                "Unique Addresses": blockchain_data["Unique Addresses"][0],
+                "Total Bitcoin": blockchain_data["Total BTC"][0],
+                "Transaction Fees": blockchain_data["TXN Fees"][0]
+            }
+        }, indent=2))
+
+    return True
 
 
 def fetch_coindesk_stats():
@@ -137,17 +159,23 @@ def fetch_coindesk_stats():
     featured_headline_containers = [feature.find_all('a', class_="fade")[
         0] for feature in soup.find_all("div", class_="article article-featured")]
     featured_headlines = [(headline.get_text().strip(), headline.find_all("time")[
-                           0]["datetime"], headline["href"]) for headline in featured_headline_containers]
+        0]["datetime"], headline["href"]) for headline in featured_headline_containers]
     other_headlines = [(headline.find_all("a", class_="fade")[0].get_text().strip(), headline.find_all("time")[
-                        0]["datetime"], headline.find_all("a", class_="fade")[0]["href"]) for headline in soup.find_all("div", class_="post-info")]
+        0]["datetime"], headline.find_all("a", class_="fade")[0]["href"]) for headline in soup.find_all("div", class_="post-info")]
 
-    return {
-        headline[0]: {
-            "timestamp": moment.date(headline[1]).format("YYYY-M-D"),
-            "url": headline[2],
-            "sentiment": round(TextBlob(headline[0]).sentiment.polarity, 2)
-        }
-        for headline in featured_headlines + other_headlines}
+    with open("../cache/data/headlines.json", 'w') as headlines_json:
+        headlines_json.write(json.dumps({
+            "fetching": False,
+            "data": {
+                headline[0]: {
+                    "timestamp": moment.date(headline[1]).format("YYYY-M-D"),
+                    "url": headline[2],
+                    "sentiment": round(TextBlob(headline[0]).sentiment.polarity, 2)
+                }
+                for headline in featured_headlines + other_headlines}
+        }, indent=2))
+
+    return True
 
 
 def fetch_twitter_stats():
@@ -181,12 +209,6 @@ def fetch_performance_stats():
     return {}
 
 
-def write(data):
-    # TODO: Write data to a JSON file
-
-    return True
-
-
 ######
 # MAIN
 ######
@@ -194,8 +216,14 @@ def write(data):
 
 def refresh(names):
     for name in names:
-        pass
+        if name == "price_data":
+            fetch_price_data()
+        elif name == "indicators":
+            fetch_tech_indicators()
+        elif name == "network_attributes":
+            fetch_network_attributes()
+        elif name == "coindesk_stats":
+            fetch_coindesk_stats()
 
 
-from pprint import pprint
-pprint(fetch_coindesk_stats())
+refresh(["price_data", "indicators", "network_attributes", "coindesk_stats"])
