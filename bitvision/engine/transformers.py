@@ -153,7 +153,7 @@ def binarize_labels(df):
             trends.append(1)
 
     df["Trend"] = pd.Series(trends).values
-    #df = df.drop(df.index[0])
+    # df = df.drop(df.index[0])
 
     return df
 

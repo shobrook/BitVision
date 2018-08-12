@@ -15,6 +15,21 @@ from bs4 import BeautifulSoup
 from ftfy import ftfy
 from .transformers import transformer
 
+quandlAPI = {
+    "conf_time": "https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw",
+    "block_size": "https://www.quandl.com/api/v3/datasets/BCHAIN/AVBLS.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "txn_cost": "https://www.quandl.com/api/v3/datasets/BCHAIN/CPTRA.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "difficulty": "https://www.quandl.com/api/v3/datasets/BCHAIN/DIFF.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "txn_count": "https://www.quandl.com/api/v3/datasets/BCHAIN/NTRAN.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "hash_rate": "https://www.quandl.com/api/v3/datasets/BCHAIN/HRATE.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "market_cap": "https://www.quandl.com/api/v3/datasets/BCHAIN/MKTCP.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "miners_rev": "https://www.quandl.com/api/v3/datasets/BCHAIN/MIREV.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "block_txn": "https://www.quandl.com/api/v3/datasets/BCHAIN/NTRBL.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "unique_addr": "https://www.quandl.com/api/v3/datasets/BCHAIN/NADDU.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "total_btc": "https://www.quandl.com/api/v3/datasets/BCHAIN/TOTBC.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+    "txn_fees": "https://www.quandl.com/api/v3/datasets/BCHAIN/TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw"
+}
+
 
 #########
 # HELPERS
@@ -50,7 +65,7 @@ def results_config(current_page):
         # XPATH for the search result item container
         "item_XPATH": "//div[@class='post-info']",
         # XPATH for url to full article, relative from item_XPATH
-        "url_XPATH": "./h3/a",  
+        "url_XPATH": "./h3/a",
         # Whether it's possible to collect datetime objects from the results page
         "date_on_page": True,
         "date_ordered": True,
@@ -110,30 +125,18 @@ def fetch_price_data():
 
 def fetch_blockchain_data():
     # Loads datasets from Quandl
-    conf_time = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    block_size = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/AVBLS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    txn_cost = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/CPTRA.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    difficulty = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/DIFF.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    txn_count = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/NTRAN.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    hash_rate = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/HRATE.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    market_cap = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/MKTCP.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    miners_rev = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/MIREV.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    block_txn = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/NTRBL.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    unique_addr = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/NADDU.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    total_btc = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/TOTBC.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    txn_fees = pd.read_csv(
-        "https://www.quandl.com/api/v3/datasets/BCHAIN/TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    conf_time = pd.read_csv(quandlAPI["conf_time"], sep=',')
+    block_size = pd.read_csv(quandlAPI["block_size"], sep=',')
+    txn_cost = pd.read_csv(quandlAPI["txn_cost"], sep=',')
+    difficulty = pd.read_csv(quandlAPI["difficulty"], sep=',')
+    txn_count = pd.read_csv(quandlAPI["txn_count"], sep=',')
+    hash_rate = pd.read_csv(quandlAPI["hash_rate"], sep=',')
+    market_cap = pd.read_csv(quandlAPI["market_cap"], sep=',')
+    miners_rev = pd.read_csv(quandlAPI["miners_rev"], sep=',')
+    block_txn = pd.read_csv(quandlAPI["block_txn"], sep=',')
+    unique_addr = pd.read_csv(quandlAPI["unique_addr"], sep=',')
+    total_btc = pd.read_csv(quandlAPI["total_btc"], sep=',')
+    txn_fees = pd.read_csv(quandlAPI["txn_fees"], sep=',')
 
     # Reassigns column names
     conf_time.columns, block_size.columns = [
