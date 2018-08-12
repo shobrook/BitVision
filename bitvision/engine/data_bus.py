@@ -49,7 +49,8 @@ def results_config(current_page):
         "page_url": ''.join(["https://www.coindesk.com/page/", str(current_page), "/?s=Bitcoin"]),
         # XPATH for the search result item container
         "item_XPATH": "//div[@class='post-info']",
-        "url_XPATH": "./h3/a",  # XPATH for url to full article, relative from item_XPATH
+        # XPATH for url to full article, relative from item_XPATH
+        "url_XPATH": "./h3/a",  
         # Whether it's possible to collect datetime objects from the results page
         "date_on_page": True,
         "date_ordered": True,
