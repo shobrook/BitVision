@@ -104,36 +104,35 @@ def collect_articles(urls, end_date, filename):
 
 
 def fetch_price_data():
-    return pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/\
-                        BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    return pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
 
 
 def fetch_blockchain_data():
     # Loads datasets from Quandl
-    conf_time = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                             ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    block_size = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                              AVBLS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    txn_cost = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                            CPTRA.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    difficulty = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                              DIFF.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    txn_count = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                             NTRAN.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    hash_rate = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                             HRATE.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    market_cap = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                              MKTCP.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    miners_rev = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                              MIREV.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    block_txn = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                             NTRBL.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    unique_addr = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                               NADDU.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    total_btc = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                             TOTBC.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
-    txn_fees = pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHAIN/\
-                            TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    conf_time = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    block_size = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/AVBLS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    txn_cost = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/CPTRA.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    difficulty = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/DIFF.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    txn_count = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/NTRAN.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    hash_rate = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/HRATE.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    market_cap = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/MKTCP.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    miners_rev = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/MIREV.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    block_txn = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/NTRBL.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    unique_addr = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/NADDU.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    total_btc = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/TOTBC.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
+    txn_fees = pd.read_csv(
+        "https://www.quandl.com/api/v3/datasets/BCHAIN/TRFUS.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
 
     # Reassigns column names
     conf_time.columns, block_size.columns = [
@@ -152,7 +151,7 @@ def fetch_blockchain_data():
     dfs = [conf_time, block_size, txn_cost, difficulty, txn_count, hash_rate,
            market_cap, miners_rev, block_txn, unique_addr, total_btc, txn_fees]
 
-    return transformer("MERGE_DATASETS")(dfs[0], dfs[1:])
+    return transformer("merge_datasets")(dfs[0], dfs[1:])
 
 
 def fetch_coindesk_headlines(end_date):
@@ -204,7 +203,7 @@ def fetch_tweets():
 
 
 def dataset(name):
-    if name == "PRICE_DATA":
+    if name == "price_data":
         path = "../cache/price_data.csv"
 
         # Fetches from Quandl if local dataset is out of date or corrupted
@@ -215,7 +214,7 @@ def dataset(name):
             return price_data
 
         return pd.read_csv(path, sep=',')
-    elif name == "BLOCKCHAIN_DATA":
+    elif name == "blockchain_data":
         path = "../cache/blockchain_data.csv"
 
         # Fetches from Quandl if local dataset is out of date or corrupted
@@ -226,7 +225,7 @@ def dataset(name):
             return blockchain_data
 
         return pd.read_csv(path, sep=',')
-    elif name == "COINDESK_HEADLINES":
+    elif name == "coindesk_headlines":
         return fetch_coindesk_headlines()
-    elif name == "TWEETS":
+    elif name == "tweets":
         return fetch_tweets()

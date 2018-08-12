@@ -176,17 +176,17 @@ def recursive_feature_elim(df):
 
 
 def transformer(name):
-    if name == "CALCULATE_INDICATORS":
+    if name == "calculate_indicators":
         return calculate_indicators
-    elif name == "MERGE_DATASETS":
+    elif name == "merge_datasets":
         return merge_datasets
-    elif name == "BINARIZE_LABELS":
+    elif name == "binarize_labels":
         return binarize_labels
-    elif name == "FIX_NULL_VALS":
+    elif name == "fix_null_vals":
         return fix_null_vals
-    elif name == "ADD_LAG_VARS":
+    elif name == "add_lag_vars":
         return add_lag_vars
-    elif name == "POWER_TRANSFORM":
+    elif name == "power_transform":
         return power_transform
-    elif name == "SELECT_FEATURES":
+    elif name == "select_features":
         return recursive_feature_elim
