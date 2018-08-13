@@ -5,6 +5,7 @@ from pathlib import Path
 from pprint import pprint
 
 # Set Bitstamp client as Public until auth.
+# https://github.com/kmadac/bitstamp-python-client
 bitstamp_client = bitstamp.client.Public()
 
 ########
