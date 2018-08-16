@@ -26,7 +26,7 @@ const paths = {
   "configPath": ".bitvision.json",
   "blockchainDataPath": "../cache/data/blockchain.json",
   "headlineDataPath": "../cache/data/headlines.json",
-  "technicalIndicatorDataPath": "../cache/data/indicators.json",
+  "technicalDataPath": "../cache/data/indicators.json",
   "priceDataPath": "../cache/data/price_data.json"
 }
 
@@ -513,7 +513,7 @@ let headlineData = {
   ]
 }
 
-let blockchainIndicatorData = {
+let blockchainData = {
   "name": "BLOCKCHAIN_DATA",
   "data": [
     ["Confirmation Time", "14.45"],
@@ -531,7 +531,7 @@ let blockchainIndicatorData = {
   ]
 }
 
-let technicalIndicatorData = {
+let technicalData = {
   "name": "TECHNICAL_INDICATORS",
   "data": [
     ['Rate of Change Ratio', 'Val', 'BUY'],
@@ -572,34 +572,35 @@ let priceData = {
 // -----------------------
 
 function getBlockchainData() {
-  readJsonFile(paths.blockchainDataPath, (data) => {
-    blockchainIndicatorData = data;
-    // log(blockchainIndicatorData)
+  readJsonFile(paths.blockchainDataPath, (blockchainData) => {
+    // log(blockchainData)
+    return blockchainData;
   });
 }
 
 function getHeadlineData() {
-  readJsonFile(paths.headlineDataPath, (data) => {
+  readJsonFile(paths.headlineDataPath, (headlineData) => {
     // TODO: Trim headlines if too long.
     // headlines.map(str => trimIfLongerThan(str, MAX_HEADLINE_LENTH));
-    headlineData = data;
     // log(headlineData);
+    return headlineData;
+
   });
 }
 
-function getTechnicalIndicatorData() {
-  readJsonFile(paths.technicalIndicatorDataPath, (data) => {
-    technicalIndicatorData = data;
-    // log(technicalIndicatorData);
+function gettechnicalData() {
+  readJsonFile(paths.technicalDataPath, (technicalData) => {
+    // log(technicalData);
+    return technicalData;
   });
 }
 
-// function getPriceData() {
-//   readJsonFile(paths.priceDataPath, (data) => {
-//     priceData = data.data;
-//     console.log(priceData);
-//   });
-// }
+function getPriceData() {
+  readJsonFile(paths.priceDataPath, (data) => {
+    // console.log(priceData);
+    return priceData;
+  });
+}
 
 function getRandomInteger(min, max) {
   min = Math.ceil(min);
@@ -617,14 +618,14 @@ let exchangeRateSeries = {
   })
 }
 
-console.log("Technical Indicators");
-console.log(technicalIndicatorData);
-console.log("Blockchain Indicators");
-console.log(blockchainIndicatorData);
-console.log("Headline Data");
-console.log(headlineData);
-console.log("Price Data");
-console.log(priceData);
+// console.log("Technical Indicators");
+// console.log(technicalData);
+// console.log("Blockchain Indicators");
+// console.log(blockchainData);
+// console.log("Headline Data");
+// console.log(headlineData);
+// console.log("Price Data");
+// console.log(priceData);
 
 function setLineData(mockData, line) {
   for (var i = 0; i < mockData.length; i++) {
@@ -639,32 +640,39 @@ function setLineData(mockData, line) {
 /**
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
-function refreshData() {
-  getBlockchainData();
-  getHeadlineData();
-  getTechnicalIndicatorData();
-  getPriceData()
+function refreshData(callback) {
+  headlineData = getHeadlineData();
+  technicalData = gettechnicalData();
+  blockchainData = getBlockchainData();
+  priceData = getPriceData();
+  callback(headlineData, technicalData, blockchainData, priceData);
 }
 
 /**
  * Set all tables with data.
  */
-function setAllTables() {
+function setAllTables(headlines, technicals, blockchains, prices) {
+  console.log("setAllTables");
+  console.log(headlines);
+  console.log(technicalData);
+  console.log(blockchainData);
   headlinesTable.setData({
     headers: ["Date", "Title", "Sentiment"],
-    data: headlineData.data
-  })
+    data: headlines.data
+  });
 
   technicalIndicatorsTable.setData({
     headers: ["Name", "Value", "Signal"],
-    data: technicalIndicatorData.data
-  })
+    data: technicals.data
+  });
 
   blockchainIndicatorsTable.setData({
     headers: ["Name", "Value"],
-    data: blockchainIndicatorData.data
-  })
-  console.log("setAllTables COMPLETE")
+    data: blockchains.data
+  });
+
+  screen.render();
+  console.log("setAllTables COMPLETE");
 }
 
 /**
@@ -672,6 +680,7 @@ function setAllTables() {
  * TODO: Fix this.
  */
 function setChart() {
+  console.log("setChart CALLED")
   setLineData([exchangeRateSeries], exchangeRateChart)
 
   setInterval(function() {
@@ -684,20 +693,17 @@ function setChart() {
  * Take care of things that need to be done when the app is started.
  */
 function start() {
-  // START DOING THINGS
   createConfigIfNeeded();
-  setAllTables();
-  setChart()
+  setAllTables(headlineData, technicalData, blockchainData, priceData);
+  setChart();
   headlinesTable.focus();
   screen.render();
 
-  // BUG: Something in here causes everything to crash. No ideas.
-  // setInterval(function() {
-  //   log("RESETTING")
-  //   refreshData()
-  //   setAllTables()
-  //   screen.render();
-  // }, 500)
+  // BUG: setAllTables in here causes everything to crash. No ideas.
+  setInterval(function() {
+    log("RESETTING")
+    refreshData(setAllTables)
+  }, 500)
 }
 
 start();
