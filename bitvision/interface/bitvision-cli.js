@@ -645,6 +645,7 @@ function refreshData(callback) {
   technicalData = gettechnicalData();
   blockchainData = getBlockchainData();
   priceData = getPriceData();
+  console.log("Fetched all data")
   callback(headlineData, technicalData, blockchainData, priceData);
 }
 
@@ -699,11 +700,11 @@ function start() {
   headlinesTable.focus();
   screen.render();
 
-  // BUG: setAllTables in here causes everything to crash. No ideas.
-  setInterval(function() {
-    log("RESETTING")
-    refreshData(setAllTables)
-  }, 500)
+  // console.log("RESETTING")
+  // // BUG: setAllTables in here causes everything to crash. No ideas.
+  // setInterval(function() {
+  //   refreshData(setAllTables)
+  // }, 1500)
 }
 
 start();
