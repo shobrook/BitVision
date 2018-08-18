@@ -63,6 +63,27 @@ const headers = {
 // ------------------
 
 /**
+ * Takes a list of lists and returns an array with the last element in every row.
+ * Removes the last element of each list from the original array.
+ *
+ * [[1,2,3]
+ *  [a,b,c] returns [3,c,#] and removes it from the original list of lists.
+ *  [!,@,#]]
+ */
+function extractURLsAndTrim(listOfArticles) {
+  let urls = [];
+  let index = 3;
+  for (var i = 0; i < listOfArticles.length; i++) {
+    urls.push(listOfArticles[i][3])
+    listOfArticles[i].splice(index, 1)
+  }
+
+  // console.log(urls)
+  // console.log(listOfArticles)
+  return urls
+}
+
+/**
  * Truncates text if longer than len, otherwise does nothing.
  * @param  {String} text Text to be length checked and modified.
  * @param  {Number} len  Integer for longest allowable length.
@@ -490,12 +511,9 @@ let menubar = blessed.listbar({
     "Open Article": {
       keys: ["o"],
       callback: () => {
-        // TODO: Open article
-        let index = headlinesTable.selected;
-        log(`Pressed o at index ${index}`)
-        // console.log(headlineData)
-        let selectedArticleURL = headlineData.data[index].url
-        // log(selectedArticle[0])
+        // log(`Pressed o at index ${headlinesTable.selected}`)
+        let selectedArticleURL = URLs[headlinesTable.selected - 1]
+        // log(`Opening ${selectedArticleURL} in browser`)
         openBrowser(selectedArticleURL)
       }
     },
@@ -535,24 +553,26 @@ screen.key(["escape", "C-c"], function(ch, key) {
 let headlineData = {
   "name": "HEADLINES",
   "data": [
-    ["8/9", "Canada to tax bitcoin users", "0.10"],
-    ["10/22", "Google Ventures invests in Bitcoin ", "0.21"],
-    ["3/9", "Canada to tax bitcoin users", "0.23"],
-    ["6/9", "Canada to tax bitcoin users", "0.08"],
-    ["3/15", "Bitcoin is bad news for stability", "0.10"],
-    ["4/15", "Google Ventures invests in Bitcoin ", "0.08"],
-    ["10/7", "WikiLeaks\' Assange hypes bitcoin in", "0.36"],
-    ["3/4", "Canada to tax bitcoin users", "0.54"],
-    ["11/27", "Are alternative Ecoins \'anti-bitcoi", "0.07"],
-    ["10/30", "Google Ventures invests in Bitcoin ", "0.68"],
-    ["9/14", "Canada to tax bitcoin users", '0.74'],
-    ["6/24", "Google Ventures invests in Bitcoin ", "0.55"],
-    ["4/5", "Zerocoin\'s widget promises Bitcoin ", "0.47"],
-    ["12/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17"],
-    ["7/30", "Google Ventures invests in Bitcoin ", "0.36"],
-    ["5/4", "WikiLeaks\' Assange hypes bitcoin in", "0.19"]
+    ["8/9", "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
+    ["10/22", "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
+    ["3/9", "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
+    ["6/9", "Canada to tax bitcoin users", "0.08", "https://www.coindesk.com"],
+    ["3/15", "Bitcoin is bad news for stability", "0.10", "https://www.coindesk.com"],
+    ["4/15", "Google Ventures invests in Bitcoin ", "0.08", "https://www.coindesk.com"],
+    ["10/7", "WikiLeaks\' Assange hypes bitcoin in", "0.36", "https://www.coindesk.com"],
+    ["3/4", "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
+    ["11/27", "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
+    ["10/30", "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
+    ["9/14", "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
+    ["6/24", "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
+    ["4/5", "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
+    ["12/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
+    ["7/30", "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
+    ["5/4", "WikiLeaks\' Assange hypes bitcoin in", "0.19", "https://www.coindesk.com"]
   ]
 }
+
+let URLs = null;
 
 let technicalData = {
   "name": "TECHNICAL_INDICATORS",
@@ -692,6 +712,8 @@ function setAllTables(headlines, technicals, blockchains, prices) {
   // console.log(technicals);
   // console.log(blockchains);
   // console.log(prices);
+
+  URLs = extractURLsAndTrim(headlines)
 
   // Set headers for each table.
   headlines.splice(0, 0, headers.headline);
