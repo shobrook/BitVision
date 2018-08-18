@@ -28,8 +28,8 @@ let tradingToggle = require("./autotrading-toggle");
 
 const paths = {
   // TODO: Figure out how to write to home directory.
-  // "configPath": "~/.bitvision",
-  "configPath": ".bitvision.json",
+  "configPath": "~/.bitvision",
+  // "configPath": ".bitvision.json",
   "blockchainDataPath": "../cache/data/blockchain.json",
   "headlineDataPath": "../cache/data/headlines.json",
   "technicalDataPath": "../cache/data/indicators.json",
@@ -137,10 +137,17 @@ function retrainModelCommand() {
 // -------------------------
 
 function writeConfig(config) {
-  log("WRITING DOTFILE");
-  writeJsonFile(paths.configPath, config).then(() => {
-    // log("File Saved");
+  log(`WRITING FILE at ${paths.configPath}`);
+  fs.writeFile(paths.configPath, config, function(err) {
+    if (err) {
+      return log(err);
+    }
+
+    log("The file was saved!");
   });
+  // writeJsonFile(paths.configPath, config).then(() => {
+  //   // log("File Saved");
+  // });
 }
 
 /**
