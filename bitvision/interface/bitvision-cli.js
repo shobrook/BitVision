@@ -74,13 +74,11 @@ function extractURLsAndTrim(listOfArticles) {
   let urls = [];
   let index = 3;
   for (var i = 0; i < listOfArticles.length; i++) {
-    urls.push(listOfArticles[i][3])
-    listOfArticles[i].splice(index, 1)
+    urls.push(listOfArticles[i][3]);
+    listOfArticles[i].splice(index, 1);
   }
 
-  // console.log(urls)
-  // console.log(listOfArticles)
-  return urls
+  return urls;
 }
 
 /**
@@ -109,10 +107,6 @@ function readJsonFile(path, callback) {
   });
 }
 
-// -----------------------
-// PYTHON CONTROL METHODS
-// -----------------------
-
 /**
  * Execute shell command.
  **/
@@ -133,6 +127,10 @@ function executeShellCommand(command) {
     log("command finished...");
   });
 }
+
+// -----------------------
+// PYTHON CONTROL METHODS
+// -----------------------
 
 function loginCommand() {
   executeShellCommand(commands.login)
@@ -247,8 +245,6 @@ function clearCredentials() {
 // ** Bless up -> 3x preach emoji **
 // ---------------------------------
 
-
-
 var screen = blessed.screen({
   smartCSR: true,
   title: "Bitvision",
@@ -264,10 +260,6 @@ const log = (text) => {
   logs.pushLine(text);
   screen.render();
 };
-
-// -------------
-// LOGIN SCREEN
-// -------------
 
 /**
  * Display login screen, allowing user to replace credentials.
@@ -285,12 +277,9 @@ function displayLoginScreen() {
   });
 }
 
-// ------------------
-// COINBASE FUNCTIONS
-// ------------------
 
-function showAutotradingToggle() {
-  log("Autotrading Toggle");
+function showAutotradingMenu() {
+  log("Autotrading Menu");
   tradingToggle.createToggleScreen(screen, function(isEnabling) {
     // log(`Enabling: ${isEnabling}`)
     getConfig((cfg) => {
@@ -444,7 +433,6 @@ var logs = grid.set(6, 7, 5, 4, blessed.box, {
 
 let menubar = blessed.listbar({
   parent: screen,
-  mouse: true,
   keys: true,
   bottom: 0,
   left: 0,
@@ -461,7 +449,7 @@ let menubar = blessed.listbar({
     "Autotrading Settings": {
       keys: ["t"],
       callback: () => {
-        showAutotradingToggle();
+        showAutotradingMenu();
       }
     },
     "Refresh Data": {
@@ -511,10 +499,8 @@ let menubar = blessed.listbar({
     "Open Article": {
       keys: ["o"],
       callback: () => {
-        // log(`Pressed o at index ${headlinesTable.selected}`)
-        let selectedArticleURL = URLs[headlinesTable.selected - 1]
-        // log(`Opening ${selectedArticleURL} in browser`)
-        openBrowser(selectedArticleURL)
+        let selectedArticleURL = URLs[headlinesTable.selected - 1];
+        openBrowser(selectedArticleURL);
       }
     },
     "Help": {
@@ -738,12 +724,12 @@ function setAllTables(headlines, technicals, blockchains, prices) {
  * TODO: Fix this.
  */
 function setChart() {
-  console.log("setChart CALLED")
-  setLineData([exchangeRateSeries], exchangeRateChart)
+  console.log("setChart CALLED");
+  setLineData([exchangeRateSeries], exchangeRateChart);
 
   setInterval(function() {
-    setLineData([exchangeRateSeries], exchangeRateChart)
-    screen.render()
+    setLineData([exchangeRateSeries], exchangeRateChart);
+    screen.render();
   }, 500)
 }
 
