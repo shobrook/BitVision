@@ -1,12 +1,14 @@
 // GLOBALS
 "use strict";
+let os = require("os");
 let fs = require("fs");
+let path = require("path")
 let cli = require("commander");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let writeJsonFile = require("write-json-file");
-let VERSION = require('../package.json').version
+let VERSION = require("../package.json").version
 let MAX_HEADLINE_LENTH = 35;
 
 cli
@@ -27,9 +29,7 @@ let tradingToggle = require("./autotrading-toggle");
 // ----------
 
 const paths = {
-  // TODO: Figure out how to write to home directory.
-  "configPath": "~/.bitvision",
-  // "configPath": ".bitvision.json",
+  "configPath": path.join(os.homedir(), ".bitvision"),
   "blockchainDataPath": "../cache/data/blockchain.json",
   "headlineDataPath": "../cache/data/headlines.json",
   "technicalDataPath": "../cache/data/indicators.json",
@@ -138,16 +138,9 @@ function retrainModelCommand() {
 
 function writeConfig(config) {
   log(`WRITING FILE at ${paths.configPath}`);
-  fs.writeFile(paths.configPath, config, function(err) {
-    if (err) {
-      return log(err);
-    }
-
-    log("The file was saved!");
+  writeJsonFile(paths.configPath, config).then(() => {
+    log("File Saved");
   });
-  // writeJsonFile(paths.configPath, config).then(() => {
-  //   // log("File Saved");
-  // });
 }
 
 /**
