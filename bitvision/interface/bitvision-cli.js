@@ -2,7 +2,8 @@
 "use strict";
 let os = require("os");
 let fs = require("fs");
-let path = require("path")
+let path = require("path");
+let openBrowser = require("opn");
 let cli = require("commander");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
@@ -493,8 +494,9 @@ let menubar = blessed.listbar({
         let index = headlinesTable.selected;
         log(`Pressed o at index ${index}`)
         // console.log(headlineData)
-        let selectedArticle = headlineData.data[index]
+        let selectedArticleURL = headlineData.data[index].url
         // log(selectedArticle[0])
+        openBrowser(selectedArticleURL)
       }
     },
     "Help": {
