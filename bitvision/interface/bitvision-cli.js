@@ -1,12 +1,17 @@
 // GLOBALS
 "use strict";
 let fs = require("fs");
+let cli = require("commander");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let writeJsonFile = require("write-json-file");
 let VERSION = require('../package.json').version
 let MAX_HEADLINE_LENTH = 35;
+
+cli
+  .version(VERSION, '-v, --version')
+  .parse(process.argv)
 
 // ----------
 // MODULES
