@@ -5,6 +5,8 @@ let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let writeJsonFile = require("write-json-file");
+let VERSION = require('../package.json').version
+let MAX_HEADLINE_LENTH = 35;
 
 // ----------
 // MODULES
@@ -49,9 +51,6 @@ const headers = {
   "technical": [" Technical Indicator ", " Value ", " Signal "],
   "blockchain": [" Blockchain Network ", " Value "],
 }
-
-const VERSION = "v0.1a";
-const MAX_HEADLINE_LENTH = 35;
 
 // ------------------
 // UTILITY FUNCTIONS
@@ -510,12 +509,15 @@ screen.on("resize", function() {
 });
 
 // Open article
-// screen.on('keypress', (ch, key) => {
-//   if (key.name === 'o') {
-//     let selectedArticle = headlinesTable.getItem(headlinesTable.selected)
-//     console.log(selectedArticle);
-//   }
-// });
+screen.on('keypress', (ch, key) => {
+  if (key.name === 'o') {
+    let index = headlinesTable.selected;
+    log(`Pressed o at index ${index}`)
+    console.log(headlineData)
+    let selectedArticle = headlineData.data[index]
+    log(selectedArticle[0])
+  }
+});
 
 
 // Quit
@@ -549,6 +551,21 @@ let headlineData = {
   ]
 }
 
+let technicalData = {
+  "name": "TECHNICAL_INDICATORS",
+  "data": [
+    ['Rate of Change Ratio', 'Val', 'BUY'],
+    ['Momentum', 'Val', 'SELL'],
+    ['Avg Directional Index', 'Val', 'BUY'],
+    ['Williams %R', 'Val', 'SELL'],
+    ['Relative Strength Index', 'Val', 'BUY'],
+    ['Moving Avg Convergence Divergence', 'Val', 'SELL'],
+    ['Avg True Range', 'Val', 'SELL'],
+    ['On-Balance Volume', 'Val', 'BUY'],
+    ['Triple Exponential Moving Avg', 'Val', 'SELL']
+  ]
+}
+
 let blockchainData = {
   "name": "BLOCKCHAIN_DATA",
   "data": [
@@ -564,21 +581,6 @@ let blockchainData = {
     ["Unique Addresses", "452409.0"],
     ["Total Bitcoin", "17194350.0"],
     ["Transaction Fees", "124854.43486300002"]
-  ]
-}
-
-let technicalData = {
-  "name": "TECHNICAL_INDICATORS",
-  "data": [
-    ['Rate of Change Ratio', 'Val', 'BUY'],
-    ['Momentum', 'Val', 'SELL'],
-    ['Avg Directional Index', 'Val', 'BUY'],
-    ['Williams %R', 'Val', 'SELL'],
-    ['Relative Strength Index', 'Val', 'BUY'],
-    ['Moving Avg Convergence Divergence', 'Val', 'SELL'],
-    ['Avg True Range', 'Val', 'SELL'],
-    ['On-Balance Volume', 'Val', 'BUY'],
-    ['Triple Exponential Moving Avg', 'Val', 'SELL']
   ]
 }
 
