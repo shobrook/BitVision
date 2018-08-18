@@ -483,6 +483,14 @@ let menubar = blessed.listbar({
     },
     "Open Article": {
       keys: ["o"],
+      callback: () => {
+        // TODO: Open article
+        let index = headlinesTable.selected;
+        log(`Pressed o at index ${index}`)
+        // console.log(headlineData)
+        let selectedArticle = headlineData.data[index]
+        // log(selectedArticle[0])
+      }
     },
     "Help": {
       keys: ["h"],
@@ -507,18 +515,6 @@ screen.on("resize", function() {
   countdown.emit("attach");
   menubar.emit("attach");
 });
-
-// Open article
-screen.on('keypress', (ch, key) => {
-  if (key.name === 'o') {
-    let index = headlinesTable.selected;
-    log(`Pressed o at index ${index}`)
-    console.log(headlineData)
-    let selectedArticle = headlineData.data[index]
-    log(selectedArticle[0])
-  }
-});
-
 
 // Quit
 screen.key(["escape", "C-c"], function(ch, key) {
@@ -656,14 +652,6 @@ let exchangeRateSeries = {
   })
 }
 
-// console.log("Technical Indicators");
-// console.log(technicalData);
-// console.log("Blockchain Indicators");
-// console.log(blockchainData);
-// console.log("Headline Data");
-// console.log(headlineData);
-// console.log("Price Data");
-// console.log(priceData);
 
 function setLineData(mockData, line) {
   for (var i = 0; i < mockData.length; i++) {
