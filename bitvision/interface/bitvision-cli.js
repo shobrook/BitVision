@@ -4,7 +4,6 @@ let fs = require("fs");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
-let Gdax = require("gdax");
 let writeJsonFile = require("write-json-file");
 
 // ----------
@@ -37,6 +36,18 @@ const commands = {
   "sell": "python3 ../services/trader.py -s ",
   "refresh": "python3 ../services/controller.py REFRESH",
   "retrain_model": "python3 ../services/controller.py RETRAIN"
+}
+
+const colors = {
+  "border": "cyan",
+  "tableText": "light-blue",
+  "tableHeader": "red"
+}
+
+const headers = {
+  "headline": [" Date ", " Headline ", " Sentiment "],
+  "technical": [" Technical Indicator ", " Value ", " Signal "],
+  "blockchain": [" Blockchain Network ", " Value "],
 }
 
 const VERSION = "v0.1a";
@@ -201,7 +212,7 @@ function clearCredentials() {
     if (err) {
       throw err;
     }
-    log(`${configPath} successfully deleted.`);
+    log("Login credentials cleared.");
   });
 }
 
@@ -209,6 +220,8 @@ function clearCredentials() {
 // BUILDING INTERFACE
 // ** Bless up -> 3x preach emoji **
 // ---------------------------------
+
+
 
 var screen = blessed.screen({
   smartCSR: true,
@@ -285,59 +298,77 @@ function showAutotradingToggle() {
   });
 }
 
-function showTransactionAmountPopup() {
-  transaction.createTransactionAmountPopup(screen, function(amount) {
-    log(`Max transaction: ${amount} BTC`);
-  });
-}
-
 // Placing widgets
 
 var grid = new contrib.grid({
-  rows: 12,
+  rows: 11,
   cols: 12,
   screen: screen
 })
 
 // Place 3 tables on the left side of the screen, stacked vertically.
 
-var headlinesTable = grid.set(0, 0, 3.5, 4, contrib.table, {
+var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
+  parent: screen,
   keys: true,
   fg: "green",
-  style: {
-    border: {
-      fg: "light-red"
-    }
-  },
-  label: "Headlines",
+  align: "center",
+  selectedFg: "white",
+  selectedBg: "blue",
   interactive: true,
-  columnSpacing: 1,
-  columnWidth: [7, 38, 10]
-})
-
-var technicalIndicatorsTable = grid.set(3.5, 0, 3.5, 4, contrib.table, {
-  keys: true,
-  fg: "green",
   style: {
+    fg: colors.tableText,
     border: {
-      fg: "light-red"
-    }
+      fg: colors.border
+    },
+    cell: {
+      selected: {
+        fg: "black",
+        bg: "light-yellow"
+      },
+    },
+    header: {
+      fg: 'red',
+      bold: true
+    },
   },
-  label: "Technical Indicators",
+  columnWidth: [10, 35, 10],
+  columnSpacing: 1
+});
+
+var technicalIndicatorsTable = grid.set(4, 0, 3, 4, blessed.ListTable, {
+  parent: screen,
+  keys: true,
+  align: "center",
+  style: {
+    fg: colors.tableText,
+    border: {
+      fg: colors.border
+    },
+    header: {
+      fg: colors.tableHeader,
+      bold: true
+    },
+  },
   interactive: false,
   columnSpacing: 1,
   columnWidth: [35, 10, 10]
 });
 
-var blockchainIndicatorsTable = grid.set(6.8, 0, 4, 4, contrib.table, {
+var blockchainIndicatorsTable = grid.set(7, 0, 3.8, 4, blessed.ListTable, {
+  parent: screen,
   keys: true,
-  fg: "green",
+  align: "center",
   style: {
+    fg: colors.tableText,
     border: {
-      fg: "light-red"
-    }
+      fg: colors.border
+    },
+    header: {
+      fg: colors.tableHeader,
+      bold: true
+    },
   },
-  label: "Blockchain Indicators",
   interactive: false,
   columnSpacing: 1,
   columnWidth: [25, 20]
@@ -372,7 +403,7 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
   label: "Minutes Until Next Trade",
   style: {
     border: {
-      fg: "light-blue"
+      fg: colors.border
     },
   },
 })
@@ -402,34 +433,33 @@ let menubar = blessed.listbar({
   },
   commands: {
     "Autotrading Settings": {
-      keys: ["t", "T"],
+      keys: ["t"],
       callback: () => {
         showAutotradingToggle();
       }
     },
     "Refresh Data": {
-      keys: ["r", "R"],
+      keys: ["r"],
       callback: () => {
         log("Refresh Data");
         // refreshData()
       }
     },
     "Bitstamp Login": {
-      keys: ["l", "L"],
+      keys: ["l"],
       callback: () => {
         log("Login")
         displayLoginScreen();
       }
     },
     "Clear Credentials": {
-      keys: ["c", "C"],
+      keys: ["c"],
       callback: () => {
-        log("Clear Credentials");
         clearCredentials();
       }
     },
     "Buy BTC": {
-      keys: ["b", "B"],
+      keys: ["b"],
       callback: () => {
         log("Buy BTC");
         transaction.createBuyTransactionPopup(screen, function() {
@@ -438,7 +468,7 @@ let menubar = blessed.listbar({
       }
     },
     "Sell BTC": {
-      keys: ["s", "S"],
+      keys: ["s"],
       callback: () => {
         log("Sell BTC");
         transaction.createSellTransactionPopup(screen, function() {
@@ -447,19 +477,16 @@ let menubar = blessed.listbar({
       }
     },
     "Focus on Headlines": {
-      keys: ["f", "F"],
+      keys: ["f"],
       callback: () => {
         headlinesTable.focus();
       }
     },
-    "Open": {
-      keys: ["o", "O"],
-      callback: () => {
-        openArticle();
-      }
+    "Open Article": {
+      keys: ["o"],
     },
-    "Show Help": {
-      keys: ["h", "H"],
+    "Help": {
+      keys: ["h"],
       callback: () => {
         log("Help Menu Opened");
         help.createHelpScreen(screen, VERSION);
@@ -482,6 +509,15 @@ screen.on("resize", function() {
   menubar.emit("attach");
 });
 
+// Open article
+// screen.on('keypress', (ch, key) => {
+//   if (key.name === 'o') {
+//     let selectedArticle = headlinesTable.getItem(headlinesTable.selected)
+//     console.log(selectedArticle);
+//   }
+// });
+
+
 // Quit
 screen.key(["escape", "C-c"], function(ch, key) {
   return process.exit(0);
@@ -494,22 +530,22 @@ screen.key(["escape", "C-c"], function(ch, key) {
 let headlineData = {
   "name": "HEADLINES",
   "data": [
-    ['8/9', 'Canada to tax bitcoin users', '0.10'],
-    ['10/22', 'Google Ventures invests in Bitcoin ', '0.21'],
-    ['3/9', 'Canada to tax bitcoin users', '0.23'],
-    ['6/9', 'Canada to tax bitcoin users', '0.08'],
-    ['3/15', 'Bitcoin is bad news for stability', '0.10'],
-    ['4/15', 'Google Ventures invests in Bitcoin ', '0.08'],
-    ['10/7', 'WikiLeaks\' Assange hypes bitcoin in', '0.36'],
-    ['3/4', 'Canada to tax bitcoin users', '0.54'],
-    ['11/27', 'Are alternative Ecoins \'anti-bitcoi', '0.07'],
-    ['10/30', 'Google Ventures invests in Bitcoin ', '0.68'],
-    ['9/14', 'Canada to tax bitcoin users', '0.74'],
-    ['6/24', 'Google Ventures invests in Bitcoin ', '0.55'],
-    ['4/5', 'Zerocoin\'s widget promises Bitcoin ', '0.47'],
-    ['12/4', 'WikiLeaks\' Assange hypes bitcoin in', '0.17'],
-    ['7/30', 'Google Ventures invests in Bitcoin ', '0.36'],
-    ['5/4', 'WikiLeaks\' Assange hypes bitcoin in', '0.19']
+    ["8/9", "Canada to tax bitcoin users", "0.10"],
+    ["10/22", "Google Ventures invests in Bitcoin ", "0.21"],
+    ["3/9", "Canada to tax bitcoin users", "0.23"],
+    ["6/9", "Canada to tax bitcoin users", "0.08"],
+    ["3/15", "Bitcoin is bad news for stability", "0.10"],
+    ["4/15", "Google Ventures invests in Bitcoin ", "0.08"],
+    ["10/7", "WikiLeaks\' Assange hypes bitcoin in", "0.36"],
+    ["3/4", "Canada to tax bitcoin users", "0.54"],
+    ["11/27", "Are alternative Ecoins \'anti-bitcoi", "0.07"],
+    ["10/30", "Google Ventures invests in Bitcoin ", "0.68"],
+    ["9/14", "Canada to tax bitcoin users", '0.74'],
+    ["6/24", "Google Ventures invests in Bitcoin ", "0.55"],
+    ["4/5", "Zerocoin\'s widget promises Bitcoin ", "0.47"],
+    ["12/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17"],
+    ["7/30", "Google Ventures invests in Bitcoin ", "0.36"],
+    ["5/4", "WikiLeaks\' Assange hypes bitcoin in", "0.19"]
   ]
 }
 
@@ -649,28 +685,30 @@ function refreshData(callback) {
   callback(headlineData, technicalData, blockchainData, priceData);
 }
 
+
 /**
  * Set all tables with data.
  */
 function setAllTables(headlines, technicals, blockchains, prices) {
   console.log("setAllTables");
-  console.log(headlines);
-  console.log(technicalData);
-  console.log(blockchainData);
-  headlinesTable.setData({
-    headers: ["Date", "Title", "Sentiment"],
-    data: headlines.data
-  });
+  // console.log(headlines);
+  // console.log(technicals);
+  // console.log(blockchains);
+  // console.log(prices);
 
-  technicalIndicatorsTable.setData({
-    headers: ["Name", "Value", "Signal"],
-    data: technicals.data
-  });
+  // Set headers for each table.
+  headlines.splice(0, 0, headers.headline);
+  technicals.splice(0, 0, headers.technical);
+  blockchains.splice(0, 0, headers.blockchain)
 
-  blockchainIndicatorsTable.setData({
-    headers: ["Name", "Value"],
-    data: blockchains.data
-  });
+  console.log("Setting headlines...");
+  headlinesTable.setData(headlines);
+
+  console.log("Setting technicals...");
+  technicalIndicatorsTable.setData(technicals);
+
+  console.log("Setting blockchain network table...");
+  blockchainIndicatorsTable.setData(blockchains);
 
   screen.render();
   console.log("setAllTables COMPLETE");
@@ -695,7 +733,7 @@ function setChart() {
  */
 function start() {
   createConfigIfNeeded();
-  setAllTables(headlineData, technicalData, blockchainData, priceData);
+  setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
   setChart();
   headlinesTable.focus();
   screen.render();
