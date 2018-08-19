@@ -11,10 +11,18 @@ let loginSpacingConstants = {
 };
 
 let loginStrings = {
-  "apiKey": " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
-  "passphrase": " {bold}{blue-fg}Passphrase{/bold}{/blue-fg} ",
-  "secret": " {bold}{blue-fg}Secret{/bold}{/blue-fg} "
+  apiKey: " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
+  passphrase: " {bold}{blue-fg}Passphrase{/bold}{/blue-fg} ",
+  secret: " {bold}{blue-fg}Secret{/bold}{/blue-fg} ",
+  label: " Bitstamp Login ",
+  hint: " Press tab to start entry. "
 };
+
+let colors = {
+  textFieldBorderFocused: "green",
+  textFieldBorderUnfocused: "#f0f0f0",
+  background: "#27474e"
+}
 
 // GLOBALS
 
@@ -51,21 +59,21 @@ function createPromptBox(form, key) {
     tags: true,
     keys: true,
     inputOnFocus: true,
-    left: loginSpacingConstants["left"],
+    left: loginSpacingConstants.left,
     top: loginSpacingConstants[key],
     border: {
       type: "line"
     },
-    width: loginSpacingConstants["width"],
-    height: loginSpacingConstants["height"],
+    width: loginSpacingConstants.width,
+    height: loginSpacingConstants.height,
     style: {
       focus: {
         border: {
-          fg: "green",
+          fg: colors.textFieldBorderFocused,
         },
       },
       border: {
-        fg: "#f0f0f0"
+        fg: colors.textFieldBorderUnfocused
       },
     }
   });
@@ -88,7 +96,7 @@ module.exports = {
       left: "center",
       width: 30,
       height: 18,
-      bg: "#27474e",
+      bg: colors.background,
       color: "white",
     });
 
@@ -98,7 +106,7 @@ module.exports = {
       left: "center",
       width: 16,
       height: 1,
-      content: " Coinbase Login ",
+      content: loginStrings.label,
       style: {
         bg: "#27474e",
         fg: "green",
@@ -114,7 +122,7 @@ module.exports = {
       width: 27,
       height: 1,
       shrink: true,
-      content: " Press tab to start entry. ",
+      content: loginStrings.hint,
       style: {
         bg: "#27474e",
         fg: "white",
