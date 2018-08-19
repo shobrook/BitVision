@@ -56,11 +56,13 @@ function validateEnteredLoginCreds() {
 function createPromptBox(form, key) {
   return blessed.textbox({
     parent: form,
+    // TODO: WTF is going on here. These keys shouldn't exist....
     label: loginStrings[key],
     tags: true,
     keys: true,
     inputOnFocus: true,
     left: loginSpacingConstants.left,
+    // TODO: WTF is going on here. These keys shouldn't exist....
     top: loginSpacingConstants[key],
     border: {
       type: "line"
