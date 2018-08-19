@@ -10,7 +10,9 @@ let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let writeJsonFile = require("write-json-file");
 let VERSION = require("../package.json").version
+
 let MAX_HEADLINE_LENTH = 35;
+var LOGGED_IN = false;
 
 cli
   .version(VERSION, '-v, --version')
@@ -39,7 +41,7 @@ const paths = {
 
 // TODO: Sync up with Jon about these commands.
 const commands = {
-  "login": "",
+  "login": "python3 ../services/trader.py LOGIN",
   "buy": "python3 ../services/trader.py -b ",
   "sell": "python3 ../services/trader.py -s ",
   "refresh": "python3 ../services/controller.py REFRESH",
@@ -148,23 +150,36 @@ function getTimeXHoursFromNow(hours) {
 // -----------------------
 
 function loginCommand() {
-  executeShellCommand(commands.login)
+  console.log(`Executing: ${commands.login}`)
+  // executeShellCommand(commands.login)
 }
 
 function buyBTCCommand(amount) {
-  executeShellCommand(commands.buyBTC + amount)
+  if (LOGGED_IN) {
+    console.log(`Executing: ${commands.buyBTC + amount}`)
+    // executeShellCommand(commands.buyBTC + amount)
+  } else {
+    console.log("TRADE ERROR: NOT LOGGED IN. SHOULD BE IMPOSSIBLE.")
+  }
 }
 
 function sellBTCCommand(amount) {
-  executeShellCommand(commands.sellBTC + amount)
+  if (LOGGED_IN) {
+    console.log(`Executing: ${commands.sellBTC + amount}`)
+    // executeShellCommand(commands.sellBTC + amount)
+  } else {
+    console.log("TRADE ERROR: NOT LOGGED IN. SHOULD BE IMPOSSIBLE.")
+  }
 }
 
 function refreshDataCommand() {
-  executeShellCommand(commands.refresh);
+  console.log(`Executing: ${commands.refresh}`)
+  // executeShellCommand(commands.refresh);
 }
 
 function retrainModelCommand() {
-  executeShellCommand(commands.retrain_model);
+  console.log(`Executing: ${commands.retrain_model}`)
+  // executeShellCommand(commands.retrain_model);
 }
 
 // -------------------------
@@ -191,10 +206,10 @@ function getConfig(callback) {
 
 /**
  * Checks for credentials in the config file.
- *
  * @return {Bool} Returns true if all creds exist, false otherwise.
  */
-function checkForCredentials() {
+function hasCredentialsInConfig() {
+  console.log("Checking for credentials in config...")
   getConfig((cfg) => {
     let creds = cfg.credentials;
     if (creds.key === "" || creds.secret !== "" || creds.passphrase !== "") {
@@ -455,26 +470,9 @@ var exchangeRateChart = grid.set(0, 4, 6, 6, contrib.line, {
   label: "Exchange Rate"
 });
 
-// Countdown under chart
+// Price table above countdown.
 
-var countdown = grid.set(6, 4, 2, 3, contrib.lcd, {
-  segmentWidth: 0.06,
-  segmentInterval: 0.10,
-  strokeWidth: 0.1,
-  elements: 4,
-  display: "0000",
-  elementSpacing: 4,
-  elementPadding: 2,
-  color: "white", // color for the segments
-  label: "Minutes Until Next Trade",
-  style: {
-    border: {
-      fg: colors.border
-    },
-  },
-})
-
-var priceTable = grid.set(8, 4, 2.3, 3, blessed.ListTable, {
+var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
   parent: screen,
   keys: true,
   align: "center",
@@ -493,7 +491,26 @@ var priceTable = grid.set(8, 4, 2.3, 3, blessed.ListTable, {
   columnWidth: [25, 20]
 });
 
-var logs = grid.set(6, 7, 5, 4, blessed.box, {
+// Countdown under price data.
+
+var countdown = grid.set(8.3, 4, 2.7, 2, contrib.lcd, {
+  segmentWidth: 0.06,
+  segmentInterval: 0.10,
+  strokeWidth: 0.1,
+  elements: 2,
+  display: "60",
+  elementSpacing: 4,
+  elementPadding: 2,
+  color: "white", // color for the segments
+  label: "Minutes Until Next Trade",
+  style: {
+    border: {
+      fg: colors.border
+    },
+  },
+})
+
+var logs = grid.set(6, 7, 4.5, 3, blessed.box, {
   label: "DEBUGGING LOG",
   top: 0,
   left: 0,
@@ -546,18 +563,28 @@ let menubar = blessed.listbar({
       keys: ["b"],
       callback: () => {
         log("Buy BTC");
-        transaction.createBuyTransactionPopup(screen, function() {
-          // TODO: Pass buy order to backend
-        });
+        if (LOGGED_IN) {
+          transaction.createBuyTransactionPopup(screen, function(amount) {
+            // Pass buy order to backend
+            buyBTCCommand(amount)
+          });
+        } else {
+          displayLoginScreen();
+        }
       }
     },
     "Sell BTC": {
       keys: ["s"],
       callback: () => {
         log("Sell BTC");
-        transaction.createSellTransactionPopup(screen, function() {
-          // TODO: Pass sell order to backend
-        });
+        if (LOGGED_IN) {
+          transaction.createSellTransactionPopup(screen, function(amount) {
+            // Pass sell order to backend
+            sellBTCCommand(amount)
+          });
+        } else {
+          displayLoginScreen();
+        }
       }
     },
     "Focus on Headlines": {
@@ -805,10 +832,21 @@ function setChart() {
 }
 
 /**
- * Take care of things that need to be done when the app is started.
+ * Let's get this show on the road.
+ * Start up sequence.
  */
-function start() {
+function doThings() {
   createConfigIfNeeded();
+
+  // Login if they have creds
+  // TODO: Restructure this global setting.
+  if (hasCredentialsInConfig()) {
+    loginCommand();
+    LOGGED_IN = true;
+  } else {
+    LOGGED_IN = false;
+  }
+
   setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
   setChart();
   headlinesTable.focus();
@@ -821,4 +859,4 @@ function start() {
   // }, 1500)
 }
 
-start();
+doThings();
