@@ -56,6 +56,7 @@ const headers = {
   "headline": [" Date ", " Headline ", " Sentiment "],
   "technical": [" Technical Indicator ", " Value ", " Signal "],
   "blockchain": [" Blockchain Network ", " Value "],
+  "price": [" Price Data ", " Value "]
 }
 
 // ------------------
@@ -321,6 +322,48 @@ var grid = new contrib.grid({
   screen: screen
 })
 
+// TODO: Finish refactoring this out.
+
+// /**
+//  * Creates a new list table.
+//  * @param  {Boolean} isInteractive   True to make the ListTable interactive.
+//  * @param  {[Number]}  columnWidthList List for col spacing.
+//  * @return {blessed.ListTable}       blessed ListTable
+//  */
+// function createListTableParams(isInteractive, columnWidthList) {
+//   return {
+//     parent: screen,
+//     keys: true,
+//     fg: "green",
+//     align: "center",
+//     selectedFg: "white",
+//     selectedBg: "blue",
+//     interactive: isInteractive,
+//     style: {
+//       fg: colors.tableText,
+//       border: {
+//         fg: colors.border
+//       },
+//       cell: {
+//         selected: {
+//           fg: "black",
+//           bg: "light-yellow"
+//         },
+//       },
+//       header: {
+//         fg: 'red',
+//         bold: true
+//       },
+//     },
+//     columnWidth: columnWidthList,
+//     columnSpacing: 1
+//   };
+// }
+
+// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
+  // createListTableParams(true, [10, 35, 10])
+// })
+
 // Place 3 tables on the left side of the screen, stacked vertically.
 
 var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
@@ -406,7 +449,7 @@ var exchangeRateChart = grid.set(0, 4, 6, 6, contrib.line, {
 
 // Countdown under chart
 
-var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
+var countdown = grid.set(6, 4, 2, 3, contrib.lcd, {
   segmentWidth: 0.06,
   segmentInterval: 0.10,
   strokeWidth: 0.1,
@@ -422,6 +465,25 @@ var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
     },
   },
 })
+
+var priceTable = grid.set(8, 4, 2.3, 3, blessed.ListTable, {
+  parent: screen,
+  keys: true,
+  align: "center",
+  style: {
+    fg: colors.tableText,
+    border: {
+      fg: colors.border
+    },
+    header: {
+      fg: colors.tableHeader,
+      bold: true
+    },
+  },
+  interactive: false,
+  columnSpacing: 1,
+  columnWidth: [25, 20]
+});
 
 var logs = grid.set(6, 7, 5, 4, blessed.box, {
   label: "DEBUGGING LOG",
@@ -524,6 +586,7 @@ screen.on("resize", function() {
   headlinesTable.emit("attach");
   exchangeRateChart.emit("attach");
   countdown.emit("attach");
+  priceTable.emit("attach");
   menubar.emit("attach");
 });
 
@@ -560,57 +623,53 @@ let headlineData = {
 
 let URLs = null;
 
+let tempNameConst = {
+  buy: "BUY ",
+  sell: "SELL"
+}
+
 let technicalData = {
   "name": "TECHNICAL_INDICATORS",
   "data": [
-    ['Rate of Change Ratio', 'Val', 'BUY'],
-    ['Momentum', 'Val', 'SELL'],
-    ['Avg Directional Index', 'Val', 'BUY'],
-    ['Williams %R', 'Val', 'SELL'],
-    ['Relative Strength Index', 'Val', 'BUY'],
-    ['Moving Avg Convergence Divergence', 'Val', 'SELL'],
-    ['Avg True Range', 'Val', 'SELL'],
-    ['On-Balance Volume', 'Val', 'BUY'],
-    ['Triple Exponential Moving Avg', 'Val', 'SELL']
+    ['Momentum', 'Val', tempNameConst.sell],
+    ['Williams %R', 'Val', tempNameConst.sell],
+    ['Avg True Range', 'Val', tempNameConst.sell],
+    ['On-Balance Volume', 'Val', tempNameConst.sell],
+    ['Rate of Change Ratio', 'Val', tempNameConst.buy],
+    ['Avg Directional Index', 'Val', tempNameConst.buy],
+    ['Relative Strength Index', 'Val', tempNameConst.buy],
+    ['Triple Exponential Moving Avg', 'Val', tempNameConst.sell],
+    ['Moving Avg Convergence Divergence', 'Val', tempNameConst.sell],
   ]
 }
 
 let blockchainData = {
   "name": "BLOCKCHAIN_DATA",
   "data": [
-    ["Confirmation Time", "14.45"],
     ["Block Size", "1.0509867022900001"],
-    ["Transaction Cost", "53.2590456155"],
     ["Difficulty", "5949437371610.0"],
-    ["Transactions per Day", "218607.0"],
-    ["Hash Rate (GH/s)", "38743005.8012"],
-    ["Market Capitalization", "120942650691.00003"],
-    ["Miners Revenue", "11517945.75"],
-    ["Transactions per Block", "1668.75572519"],
-    ["Unique Addresses", "452409.0"],
     ["Total Bitcoin", "17194350.0"],
-    ["Transaction Fees", "124854.43486300002"]
+    ["Miners Revenue", "11517945.75"],
+    ["Transaction Cost", "53.2590456155"],
+    ["Unique Addresses", "452409.0"],
+    ["Transaction Fees", "124854.43486300002"],
+    ["Hash Rate (GH/s)", "38743005.8012"],
+    ["Confirmation Time", "14.45"],
+    ["Transactions per Day", "218607.0"],
+    ["Market Capitalization", "120942650691.00003"],
+    ["Transactions per Block", "1668.75572519"],
   ]
 }
 
 let priceData = {
   "fetching": false,
-  "data": [{
-      "last": "6319.35",
-      "high": "6494.13000000",
-      "low": "6068.52000000",
-      "open": 6240.49,
-      "volume": "6708.87922004",
-      "timestamp": "1534060816"
-    },
-    {
-      "last": "6317.89",
-      "high": "6494.13000000",
-      "low": "6068.52000000",
-      "open": 6240.49,
-      "volume": "6709.53131157",
-      "timestamp": "1534060732"
-    }
+  "data": [
+    ["Current Price", "6319.35"],
+    ["24H High", "6494.13000000"],
+    ["24H Low", "6068.52000000"],
+    ["Open Price", "6240.49"],
+    ["Volume", "6708.87922004"],
+    ["Timestamp", "1534060816"]
   ]
 }
 
@@ -697,7 +756,7 @@ function setAllTables(headlines, technicals, blockchains, prices) {
   // console.log(headlines);
   // console.log(technicals);
   // console.log(blockchains);
-  // console.log(prices);
+  console.log(prices);
 
   URLs = extractURLsAndTrim(headlines)
 
@@ -705,6 +764,7 @@ function setAllTables(headlines, technicals, blockchains, prices) {
   headlines.splice(0, 0, headers.headline);
   technicals.splice(0, 0, headers.technical);
   blockchains.splice(0, 0, headers.blockchain)
+  prices.splice(0, 0, headers.price);
 
   console.log("Setting headlines...");
   headlinesTable.setData(headlines);
@@ -714,6 +774,9 @@ function setAllTables(headlines, technicals, blockchains, prices) {
 
   console.log("Setting blockchain network table...");
   blockchainIndicatorsTable.setData(blockchains);
+
+  console.log("Setting price table...")
+  priceTable.setData(prices);
 
   screen.render();
   console.log("setAllTables COMPLETE");
