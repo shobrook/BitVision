@@ -2,9 +2,10 @@ let blessed = require("blessed");
 
 // CONSTANTS
 let loginSpacingConstants = {
-  "height": 3,
-  "width": 26,
-  "left": 2,
+  height: 3,
+  width: 26,
+  left: 2,
+  top: 1,
   "apiKey": 4,
   "secret": 8,
   "passphrase": 12
