@@ -295,15 +295,11 @@ function showAutotradingMenu() {
         log("Disabling autotrading.");
         cfg.autotrade.enabled = false;
         cfg.autotrade["next-trade-timestamp-UTC"] = 0;
-        cfg.autotrade["next-trade-amount"] = 0;
-        cfg.autotrade["next-trade-side"] = "";
       } else {
-        // Autotrading enabled, so set next trade timestamp for +24 hr from now.
+        // Autotrading enabled, so set next trade timestamp for +3 hr from now.
         log("Enabling autotrading.");
         cfg.autotrade.enabled = true;
         cfg.autotrade["next-trade-timestamp-UTC"] = 0; // TODO:
-        cfg.autotrade["next-trade-amount"] = 0;
-        cfg.autotrade["next-trade-side"] = "";
       }
 
       // Store updated configuration
