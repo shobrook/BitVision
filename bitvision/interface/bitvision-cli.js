@@ -212,8 +212,6 @@ function createConfigIfNeeded() {
         "autotrade": {
           "enabled": false,
           "next-trade-timestamp-UTC": 0,
-          "next-trade-amount": 0,
-          "next-trade-side": "",
         },
       }
       writeConfig(emptyConfig);
