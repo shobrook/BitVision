@@ -129,6 +129,20 @@ function executeShellCommand(command) {
   });
 }
 
+/**
+ * Returns a Date object set with the current time + x hours.
+ * @param  {Number} hours
+ * @return {String} UTC Representation
+ */
+function getTimeXHoursFromNow(hours) {
+  let currentTime = new Date();
+  let futureTime = new Date(currentTime);
+  futureTime.setHours(currentTime.getHours() + hours);
+  console.log(`CurrentTime: ${currentTime.toJSON()}`)
+  console.log(`FutureTime : ${futureTime.toJSON()}`)
+  return futureTime.toJSON()
+}
+
 // -----------------------
 // PYTHON CONTROL METHODS
 // -----------------------
@@ -296,10 +310,10 @@ function showAutotradingMenu() {
         cfg.autotrade.enabled = false;
         cfg.autotrade["next-trade-timestamp-UTC"] = 0;
       } else {
-        // Autotrading enabled, so set next trade timestamp for +3 hr from now.
+        // Autotrading enabled, so set next trade timestamp for +1 hr from now.
         log("Enabling autotrading.");
         cfg.autotrade.enabled = true;
-        cfg.autotrade["next-trade-timestamp-UTC"] = 0; // TODO:
+        cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(1);
       }
 
       // Store updated configuration
@@ -355,7 +369,7 @@ var grid = new contrib.grid({
 // }
 
 // var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
-  // createListTableParams(true, [10, 35, 10])
+// createListTableParams(true, [10, 35, 10])
 // })
 
 // Place 3 tables on the left side of the screen, stacked vertically.
