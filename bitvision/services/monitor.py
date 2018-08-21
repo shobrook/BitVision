@@ -125,7 +125,7 @@ def fetch_tech_indicators():
     return True
 
 
-def fetch_network_attributes():
+def fetch_blockchain_data():
     blockchain_data = dataset("blockchain_data")
 
     with open("../cache/data/blockchain.json", 'w') as blockchain_data_json:
@@ -220,10 +220,7 @@ def refresh(names):
             fetch_price_data()
         elif name == "indicators":
             fetch_tech_indicators()
-        elif name == "network_attributes":
-            fetch_network_attributes()
+        elif name == "blockchain":
+            fetch_blockchain_data()
         elif name == "coindesk_stats":
             fetch_coindesk_stats()
-
-
-refresh(["price_data", "indicators", "network_attributes", "coindesk_stats"])
