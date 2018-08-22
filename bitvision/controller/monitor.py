@@ -13,8 +13,6 @@ from bs4 import BeautifulSoup
 from typing import Dict
 from textblob import TextBlob
 
-sys.path.append("..")
-
 from engine import dataset
 from engine import transformer
 
@@ -69,7 +67,7 @@ def fetch_price_data():
         "timestamp": response["timestamp"]
     }
 
-    fname = "../cache/data/price_data.json"
+    fname = "../cache/data/ticker.json"
     with open(fname) as old_price_data:
         new_data = {
             "fetching": False,
@@ -82,7 +80,7 @@ def fetch_price_data():
 
 
 def fetch_tech_indicators():
-    with open("../cache/data/price_data.json") as price_data_json:
+    with open("../cache/data/ticker.json") as price_data_json:
         price_data = json.load(price_data_json)["data"]
 
         if len(price_data) > 20:  # Enough data to calculate indicators in real-time

@@ -15,6 +15,7 @@ class BaseClient(object):
     A base class for the API Client methods that handles interaction with
     the requests library.
     """
+
     api_url = {1: 'https://www.bitstamp.net/api/',
                2: 'https://www.bitstamp.net/api/v2/'}
     exception_on_error = True
@@ -26,12 +27,14 @@ class BaseClient(object):
         """
         Make a GET request.
         """
+
         return self._request(requests.get, *args, **kwargs)
 
     def _post(self, *args, **kwargs):
         """
         Make a POST request.
         """
+
         data = self._default_data()
         data.update(kwargs.get('data') or {})
         kwargs['data'] = data
@@ -41,12 +44,14 @@ class BaseClient(object):
         """
         Default data for a POST request.
         """
+
         return {}
 
     def _construct_url(self, url, base, quote):
         """
         Adds the orderbook to the url if base and quote are specified.
         """
+
         if not base and not quote:
             return url
         else:
@@ -60,6 +65,7 @@ class BaseClient(object):
         raises a :class:`BitstampError` if the response contains a json encoded
         error message.
         """
+
         return_json = kwargs.pop('return_json', False)
         url = self.api_url[version] + url
         response = func(url, *args, **kwargs)
@@ -95,17 +101,18 @@ class Public(BaseClient):
         """
         Returns dictionary.
         """
+
         url = self._construct_url("ticker/", base, quote)
         return self._get(url, return_json=True, version=2)
 
 
 class Trading(Public):
-
     def __init__(self, username, key, secret, *args, **kwargs):
         """
         Stores the username, key, and secret which is used when making POST
         requests to Bitstamp.
         """
+
         super(Trading, self).__init__(
             username=username, key=key, secret=secret, *args, **kwargs)
         self.username = username
@@ -122,6 +129,7 @@ class Trading(Public):
         single thread if you have a high level of concurrent API requests in
         your application.
         """
+
         nonce = getattr(self, '_nonce', 0)
         if nonce:
             nonce += 1
@@ -135,6 +143,7 @@ class Trading(Public):
         Generate a one-time signature and other data required to send a secure
         POST request to the Bitstamp API.
         """
+
         data = super(Trading, self)._default_data(*args, **kwargs)
         data['key'] = self.key
         nonce = self.get_nonce()
@@ -152,6 +161,7 @@ class Trading(Public):
         A shortcut that raises a :class:`BitstampError` if the response didn't
         just contain the text 'true'.
         """
+
         if response.text == u'true':
             return True
         raise BitstampError("Unexpected response")
@@ -177,6 +187,7 @@ class Trading(Public):
             because the result then will contain the fees for all currency pairs
             For backwards compatibility this can not be the default however.
         """
+
         url = self._construct_url("balance/", base, quote)
         return self._post(url, return_json=True, version=2)
 
@@ -185,6 +196,7 @@ class Trading(Public):
         Returns JSON list of open orders. Each order is represented as a
         dictionary.
         """
+
         url = self._construct_url("open_orders/", base, quote)
         return self._post(url, return_json=True, version=2)
 
@@ -200,6 +212,7 @@ class Trading(Public):
           or  btc, eur, ....
           or  eur, usd, ....
         """
+
         data = {'id': order_id}
         return self._post("order_status/", data=data, return_json=True,
                           version=1)
@@ -214,6 +227,7 @@ class Trading(Public):
         Returns dictionary of the canceled order, containing the keys:
         id, type, price, amount
         """
+
         data = {'id': order_id}
         return self._post("cancel_order/", data=data, return_json=True,
                           version=version)
@@ -224,12 +238,14 @@ class Trading(Public):
         Returns True if it was successful, otherwise raises a
         BitstampError.
         """
+
         return self._post("cancel_all_orders/", return_json=True, version=1)
 
     def buy_instant_order(self, amount, base="btc", quote="usd"):
         """
         Order to buy amount of bitcoins for market price.
         """
+
         data = {"amount": amount}
         url = self._construct_url("buy/instant/", base, quote)
         return self._post(url, data=data, return_json=True, version=2)
@@ -238,6 +254,7 @@ class Trading(Public):
         """
         Order to sell amount of bitcoins for market price.
         """
+
         data = {'amount': amount}
         url = self._construct_url("sell/instant/", base, quote)
         return self._post(url, data=data, return_json=True, version=2)
@@ -248,6 +265,7 @@ class Trading(Public):
         Each request is represented as a dictionary.
         By default, the last 24 hours (86400 seconds) are returned.
         """
+
         data = {'timedelta': timedelta}
         return self._post("withdrawal_requests/", return_json=True, version=1, data=data)
 
@@ -255,6 +273,7 @@ class Trading(Public):
         """
         Send bitcoins to another bitcoin wallet specified by address.
         """
+
         data = {'amount': amount, 'address': address}
         return self._post("bitcoin_withdrawal/", data=data, return_json=True,
                           version=1)
@@ -263,6 +282,7 @@ class Trading(Public):
         """
         Returns bitcoin deposit address as unicode string
         """
+
         return self._post("bitcoin_deposit_address/", return_json=True,
                           version=1)
 
@@ -277,4 +297,5 @@ class Trading(Public):
         confirmations
           number of confirmations
         """
+
         return self._post("unconfirmed_btc/", return_json=True, version=1)
