@@ -74,7 +74,6 @@ module.exports = {
 
     screen.render();
   },
-
   createSellTransactionPopup: function(screen, callback) {
     var prompt = createPrompt(screen, transactionStrings.sellLabel);
 

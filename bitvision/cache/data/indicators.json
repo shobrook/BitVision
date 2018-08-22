@@ -3,43 +3,43 @@
   "data": {
     "MOM (1)": {
       "value": 254.35000000000036,
-      "signal": ""
+      "signal": "BUY"
     },
     "MOM (3)": {
       "value": 110.75,
-      "signal": ""
+      "signal": "SELL"
     },
     "ADX (14)": {
       "value": 30.819375811644196,
-      "signal": ""
+      "signal": "BUY"
     },
     "ADX (20)": {
       "value": 24.436357409902122,
-      "signal": ""
+      "signal": "SELL"
     },
     "WILLR": {
       "value": -82.70188869215012,
-      "signal": ""
+      "signal": "BUY"
     },
     "RSI (6)": {
       "value": 33.95160827480577,
-      "signal": ""
+      "signal": "SELL"
     },
     "RSI (12)": {
       "value": 36.73415539493215,
-      "signal": ""
+      "signal": "BUY"
     },
     "ATR (14)": {
       "value": 404.4763176137203,
-      "signal": ""
+      "signal": "SELL"
     },
     "OBV": {
       "value": -2282864189.4328084,
-      "signal": ""
+      "signal": "BUY"
     },
     "TRIX (20)": {
       "value": 0.18150964785383916,
-      "signal": ""
+      "signal": "BUY"
     },
     "EMA (6)": {
       "value": 6533.508727767468,

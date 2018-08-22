@@ -10,7 +10,7 @@ def fit_model():
     price_data = Dataset("PRICE_DATA")
     blockchain_data = Dataset("BLOCKCHAIN_DATA")
     coindesk_headlines = Dataset("COINDESK_HEADLINES")
-    #tweets = Dataset("TWEETS")
+    # tweets = Dataset("TWEETS")
 
     processed_data = (
         price_data.pipe(Transformer("CALCULATE_INDICATORS"))
