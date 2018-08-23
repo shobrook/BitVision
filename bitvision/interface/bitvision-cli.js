@@ -11,7 +11,7 @@ let childProcess = require("child_process");
 let writeJsonFile = require("write-json-file");
 let VERSION = require("../package.json").version
 
-let MAX_HEADLINE_LENTH = 35;
+let MAX_HEADLINE_LENTH = 25;
 var LOGGED_IN = false;
 
 cli
@@ -55,10 +55,10 @@ const colors = {
 }
 
 const headers = {
-  "headline": [" Date ", " Headline ", " Sentiment "],
-  "technical": [" Technical Indicator ", " Value ", " Signal "],
-  "blockchain": [" Blockchain Network ", " Value "],
-  "price": [" Price Data ", " Value "]
+  "headline": ["Date", "Headline", "Senti"],
+  "technical": ["Technical Indicator", "Value", "Signal"],
+  "blockchain": ["Blockchain Network", "Value"],
+  "price": ["Price Data", "Value"]
 }
 
 // ------------------
@@ -393,7 +393,11 @@ var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
   parent: screen,
   keys: true,
   fg: "green",
-  align: "center",
+  align: "left",
+  padding: {
+    left: 1,
+    right: 1
+  },
   selectedFg: "white",
   selectedBg: "blue",
   interactive: true,
@@ -413,14 +417,18 @@ var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
       bold: true
     },
   },
-  columnWidth: [10, 35, 10],
+  // columnWidth: [10, 20, 25],
   columnSpacing: 1
 });
 
 var technicalIndicatorsTable = grid.set(4, 0, 3, 4, blessed.ListTable, {
   parent: screen,
   keys: true,
-  align: "center",
+  align: "left",
+  padding: {
+    left: 1,
+    right: 1
+  },
   style: {
     fg: colors.tableText,
     border: {
@@ -721,11 +729,13 @@ function getBlockchainData() {
 
 function getHeadlineData() {
   readJsonFile(paths.headlineDataPath, (headlineData) => {
-    // TODO: Trim headlines if too long.
-    // headlines.map(str => trimIfLongerThan(str, MAX_HEADLINE_LENTH));
-    // log(headlineData);
-    return headlineData;
-
+    // Trim headlines if too long.
+    shortenedHeadlines = [];
+    for (let i = 0; i < headlineData.length; i++) {
+      shortenedHeadlines.splice(i, 0, trimIfLongerThan(str, MAX_HEADLINE_LENTH))
+    }
+    log(shortenedHeadlines);
+    return shortenedHeadlines;
   });
 }
 
