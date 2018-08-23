@@ -386,9 +386,7 @@ var grid = new contrib.grid({
 //   };
 // }
 
-// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
-// createListTableParams(true, [10, 35, 10])
-// })
+// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, createListTableParams(true, [10, 35, 10]));
 
 // Place 3 tables on the left side of the screen, stacked vertically.
 
@@ -553,7 +551,7 @@ let menubar = blessed.listbar({
   },
   commands: {
     "Autotrading Settings": {
-      keys: ["t"],
+      keys: ["a"],
       callback: () => {
         showAutotradingMenu();
       }
@@ -578,34 +576,40 @@ let menubar = blessed.listbar({
         clearCredentials();
       }
     },
-    "Buy BTC": {
-      keys: ["b"],
+    "Deposit BTC": {
+      keys: ["d"],
       callback: () => {
-        log("Buy BTC");
-        if (LOGGED_IN) {
-          transaction.createBuyTransactionPopup(screen, function(amount) {
-            // Pass buy order to backend
-            buyBTCCommand(amount)
-          });
-        } else {
-          displayLoginScreen();
-        }
+        depositBTC();
       }
     },
-    "Sell BTC": {
-      keys: ["s"],
-      callback: () => {
-        log("Sell BTC");
-        if (LOGGED_IN) {
-          transaction.createSellTransactionPopup(screen, function(amount) {
-            // Pass sell order to backend
-            sellBTCCommand(amount)
-          });
-        } else {
-          displayLoginScreen();
-        }
-      }
-    },
+    // "Buy BTC": {
+    //   keys: ["b"],
+    //   callback: () => {
+    //     log("Buy BTC");
+    //     if (LOGGED_IN) {
+    //       transaction.createBuyTransactionPopup(screen, function(amount) {
+    //         // Pass buy order to backend
+    //         buyBTCCommand(amount)
+    //       });
+    //     } else {
+    //       displayLoginScreen();
+    //     }
+    //   }
+    // },
+    // "Sell BTC": {
+    //   keys: ["s"],
+    //   callback: () => {
+    //     log("Sell BTC");
+    //     if (LOGGED_IN) {
+    //       transaction.createSellTransactionPopup(screen, function(amount) {
+    //         // Pass sell order to backend
+    //         sellBTCCommand(amount)
+    //       });
+    //     } else {
+    //       displayLoginScreen();
+    //     }
+    //   }
+    // },
     "Focus on Headlines": {
       keys: ["f"],
       callback: () => {

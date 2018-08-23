@@ -4,17 +4,18 @@ let contrib = require("blessed-contrib");
 let helpMenuData = [
   ["Keybinding", "Action"],
   ["---", "---"],
-  // ["A", "Show account information."],
-  ["L", "Login"],
-  ["H", "Show help menu"],
-  ["F", "Focus on headlines"],
+  ["A", "Autotrading Settings"],
+  ["D", "Deposit BTC"],
   ["C", "Clear Credentials"],
+  ["F", "Focus on headlines"],
+  ["L", "Bitstamp Login"],
   ["O", "Open article."],
-  ["T", "Toggle automatic trading"],
+  ["R", "Refresh data"],
+  ["C-c", "Exit"]
 ];
 
 let helpStrings = {
-  autotrading: "## Automatic Trading\n\n 1. Enter account credentials \n 2. Press \`T\` to toggle this option.\n 3. Enter the max amount you\"d like to trade.\n 3.5. Watch our algorithm trade BTC for you.\n 4. Profit",
+  autotrading: "## Automatic Trading\n\n 1. Login to Bitstamp and press \`A\` and enable autotrading.\n 2. Watch our algorithm trade BTC for you.\n 3. ...\n 4. Profit (or deep regret and resentment)",
   authors: "\n\n## Authors\n\n Written by Jon Shobrook and Aaron Lichtman.\n -> https://www.github.com/shobrook\n -> https://www.github.com/alichtman",
   warning: "\n\n## Warning\n\n Use this software to trade bitcoin at your own risk.\n We are not responsible if our algorithm misbehaves.",
   source: "\n\n## Source Code\n\n -> https://github.com/shobrook/BitVision"
@@ -33,7 +34,7 @@ module.exports = {
       top: "center",
       left: "center",
       width: 80,
-      height: 36,
+      height: 37,
       border: "line",
       style: {
         border: {
@@ -49,9 +50,10 @@ module.exports = {
       left: "center",
       data: helpMenuData,
       border: "line",
+      align: "center",
       pad: 2,
       width: 53,
-      height: 10,
+      height: 12,
       style: {
         border: {
           fg: "bright-blue"
@@ -90,7 +92,7 @@ module.exports = {
     var largeTextBox = blessed.box({
       parent: helpMenuLayout,
       width: 78,
-      height: 24,
+      height: 23,
       left: "center",
       top: "center",
       padding: {
