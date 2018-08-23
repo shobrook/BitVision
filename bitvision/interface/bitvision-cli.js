@@ -33,10 +33,10 @@ let tradingToggle = require("./autotrading-toggle");
 
 const paths = {
   "configPath": path.join(os.homedir(), ".bitvision"),
-  "blockchainDataPath": "../cache/data/blockchain.json",
-  "headlineDataPath": "../cache/data/headlines.json",
-  "technicalDataPath": "../cache/data/indicators.json",
-  "priceDataPath": "../cache/data/price_data.json"
+  "blockchainDataPath": path.join(__dirname, "..", "cache", "data", "blockchain.json"),
+  "headlineDataPath": path.join(__dirname, "..", "cache", "data", "headlines.json"),
+  "technicalDataPath": path.join(__dirname, "..", "cache", "data", "indicators.json"),
+  "priceDataPath": path.join(__dirname, "..", "cache", "data", "price_data.json")
 }
 
 // TODO: Sync up with Jon about these commands.
@@ -102,12 +102,16 @@ function trimIfLongerThan(text, len) {
  * Read JSON file and do something with the data
  */
 function readJsonFile(path, callback) {
+  console.log("Reading " + path)
   fs.readFile(path, "utf8", function(err, data) {
+    console.log("Finished reading file.")
     if (err) {
       console.log(err);
     }
-    callback(data);
+    let dataJson = JSON.parse(data)
+    callback(dataJson);
   });
+  console.log("Ending function.")
 }
 
 /**
@@ -198,8 +202,7 @@ function writeConfig(config) {
  */
 function getConfig(callback) {
   // log("GETTING CONFIG");
-  readJsonFile(paths.configPath, (data) => {
-    let cfg = JSON.parse(data);
+  readJsonFile(paths.configPath, (cfg) => {
     callback(cfg);
   });
 }
@@ -723,12 +726,14 @@ let priceData = {
 function getBlockchainData() {
   readJsonFile(paths.blockchainDataPath, (blockchainData) => {
     // log(blockchainData)
+    blockchainData = blockchainData.data;
     return blockchainData;
   });
 }
 
 function getHeadlineData() {
   readJsonFile(paths.headlineDataPath, (headlineData) => {
+    headlineData = headlineData.data;
     // Trim headlines if too long.
     shortenedHeadlines = [];
     for (let i = 0; i < headlineData.length; i++) {
@@ -739,8 +744,9 @@ function getHeadlineData() {
   });
 }
 
-function gettechnicalData() {
+function getTechnicalData() {
   readJsonFile(paths.technicalDataPath, (technicalData) => {
+    technicalData = technicalData.data;
     // log(technicalData);
     return technicalData;
   });
@@ -748,6 +754,7 @@ function gettechnicalData() {
 
 function getPriceData() {
   readJsonFile(paths.priceDataPath, (data) => {
+    priceData = priceData.data;
     // console.log(priceData);
     return priceData;
   });
@@ -784,11 +791,12 @@ function setLineData(mockData, line) {
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
 function refreshData(callback) {
+  console.log("Refreshing data...");
   headlineData = getHeadlineData();
-  technicalData = gettechnicalData();
+  technicalData = getTechnicalData();
   blockchainData = getBlockchainData();
   priceData = getPriceData();
-  console.log("Fetched all data")
+  console.log("Refreshed all data...");
   callback(headlineData, technicalData, blockchainData, priceData);
 }
 
@@ -797,7 +805,7 @@ function refreshData(callback) {
  * Set all tables with data.
  */
 function setAllTables(headlines, technicals, blockchains, prices) {
-  console.log("setAllTables");
+  console.log("Set all tables...");
   // console.log(headlines);
   // console.log(technicals);
   // console.log(blockchains);
@@ -857,10 +865,17 @@ function doThings() {
     LOGGED_IN = false;
   }
 
-  setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-  setChart();
-  headlinesTable.focus();
-  screen.render();
+  // headlineData = getHeadlineData()
+  // console.log(headlineData)
+
+  refreshData( (headlineData, technicalData, blockchainData, priceData) => {
+    setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+    setChart();
+    headlinesTable.focus();
+    screen.render();
+  });
+
+
 
   // console.log("RESETTING")
   // // BUG: setAllTables in here causes everything to crash. No ideas.
