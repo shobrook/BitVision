@@ -450,7 +450,11 @@ var technicalIndicatorsTable = grid.set(4, 0, 3, 4, blessed.ListTable, {
 var blockchainIndicatorsTable = grid.set(7, 0, 3.8, 4, blessed.ListTable, {
   parent: screen,
   keys: true,
-  align: "center",
+  align: "left",
+  padding: {
+    left: 1,
+    right: 1
+  },
   style: {
     fg: colors.tableText,
     border: {
@@ -463,7 +467,7 @@ var blockchainIndicatorsTable = grid.set(7, 0, 3.8, 4, blessed.ListTable, {
   },
   interactive: false,
   columnSpacing: 1,
-  columnWidth: [25, 20]
+  columnWidth: [20, 20]
 });
 
 // Line chart on the right of the tables
@@ -486,7 +490,11 @@ var exchangeRateChart = grid.set(0, 4, 6, 6, contrib.line, {
 var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
   parent: screen,
   keys: true,
-  align: "center",
+  align: "left",
+  padding: {
+    left: 1,
+    right: 1
+  },
   style: {
     fg: colors.tableText,
     border: {
@@ -504,12 +512,12 @@ var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
 
 // Countdown under price data.
 
-var countdown = grid.set(8.3, 4, 2.7, 2, contrib.lcd, {
+var countdown = grid.set(8, 4, 2.7, 2, contrib.lcd, {
   segmentWidth: 0.06,
   segmentInterval: 0.10,
   strokeWidth: 0.1,
   elements: 2,
-  display: "60",
+  display: "45",
   elementSpacing: 4,
   elementPadding: 2,
   color: "white", // color for the segments
@@ -648,22 +656,22 @@ screen.key(["escape", "C-c"], function(ch, key) {
 let headlineData = {
   "name": "HEADLINES",
   "data": [
-    ["8/9", "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
-    ["10/22", "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
-    ["3/9", "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
-    ["6/9", "Canada to tax bitcoin users", "0.08", "https://www.coindesk.com"],
-    ["3/15", "Bitcoin is bad news for stability", "0.10", "https://www.coindesk.com"],
-    ["4/15", "Google Ventures invests in Bitcoin ", "0.08", "https://www.coindesk.com"],
-    ["10/7", "WikiLeaks\' Assange hypes bitcoin in", "0.36", "https://www.coindesk.com"],
-    ["3/4", "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
-    ["11/27", "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
-    ["10/30", "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
-    ["9/14", "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
-    ["6/24", "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
-    ["4/5", "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
-    ["12/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
-    ["7/30", "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
-    ["5/4", "WikiLeaks\' Assange hypes bitcoin in", "0.19", "https://www.coindesk.com"]
+    ["12/3",  "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
+    ["12/2",  "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
+    ["12/1",  "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
+    ["11/22", "Canada to tax bitcoin users", "0.08", "https://www.coindesk.com"],
+    ["11/19", "Bitcoin is bad news for stability", "0.10", "https://www.coindesk.com"],
+    ["10/15", "Google Ventures invests in Bitcoin ", "0.08", "https://www.coindesk.com"],
+    ["10/7",  "WikiLeaks\' Assange hypes bitcoin in", "0.36", "https://www.coindesk.com"],
+    ["9/4",   "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
+    ["8/27",  "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
+    ["8/26",  "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
+    ["8/20",  "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
+    ["7/24",  "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
+    ["7/5",   "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
+    ["6/4",   "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
+    ["5/30",  "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
+    ["5/4",   "WikiLeaks\' Assange hypes bitcoin in", "0.19", "https://www.coindesk.com"]
   ]
 }
 
@@ -868,14 +876,17 @@ function doThings() {
   // headlineData = getHeadlineData()
   // console.log(headlineData)
 
-  refreshData( (headlineData, technicalData, blockchainData, priceData) => {
-    setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-    setChart();
-    headlinesTable.focus();
-    screen.render();
-  });
+  setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+  setChart();
+  headlinesTable.focus();
+  screen.render();
 
-
+  // refreshData((headlineData, technicalData, blockchainData, priceData) => {
+  //   setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+  //   setChart();
+  //   headlinesTable.focus();
+  //   screen.render();
+  // });
 
   // console.log("RESETTING")
   // // BUG: setAllTables in here causes everything to crash. No ideas.
