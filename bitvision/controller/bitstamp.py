@@ -1,3 +1,15 @@
+"""
+Bitstamp API client.
+<https://www.bitstamp.net/api/>
+
+-----
+Based on:
+    kmadac/bitstamp-python-client
+    Copyright (c) 2013 Kamil Madac
+    <https://github.com/kmadac/bitstamp-python-client/blob/master/LICENSE.txt>
+-----
+"""
+
 from functools import wraps
 import hmac
 import hashlib

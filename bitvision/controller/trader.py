@@ -5,7 +5,7 @@
 
 import sys
 from engine import dataset, transformer, Model
-from bitstamp_client import Trading
+from bitstamp import Trading
 
 
 ######
