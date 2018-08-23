@@ -876,6 +876,8 @@ function doThings() {
   // headlineData = getHeadlineData()
   // console.log(headlineData)
 
+  // @Jon, comment the next four lines out, and uncomment the block after that for the bug.
+
   setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
   setChart();
   headlinesTable.focus();
