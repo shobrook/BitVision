@@ -1,11 +1,22 @@
 // GLOBALS
 "use strict";
+let os = require("os");
 let fs = require("fs");
+let path = require("path");
+let openBrowser = require("opn");
+let cli = require("commander");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
-let Gdax = require("gdax");
 let writeJsonFile = require("write-json-file");
+let VERSION = require("../package.json").version
+
+let MAX_HEADLINE_LENTH = 35;
+var LOGGED_IN = false;
+
+cli
+  .version(VERSION, '-v, --version')
+  .parse(process.argv)
 
 // ----------
 // MODULES
@@ -20,42 +31,84 @@ let tradingToggle = require("./autotrading-toggle");
 // CONSTANTS
 // ----------
 
-let VERSION = "v0.1a";
-let MAX_HEADLINE_LENTH = 35;
-var helpOpenCloseCount = 0;
-// TODO: Figure out how to write to home directory.
-// const dotfilePath = "~/.bitvision";
-const dotfilePath = ".bitvision.json";
-var gdaxClient = new Gdax.PublicClient();
+const paths = {
+  "configPath": path.join(os.homedir(), ".bitvision"),
+  "blockchainDataPath": "../cache/data/blockchain.json",
+  "headlineDataPath": "../cache/data/headlines.json",
+  "technicalDataPath": "../cache/data/indicators.json",
+  "priceDataPath": "../cache/data/price_data.json"
+}
 
-// ---------
-// Bless up
-// ---------
+// TODO: Sync up with Jon about these commands.
+const commands = {
+  "login": "python3 ../services/trader.py LOGIN",
+  "buy": "python3 ../services/trader.py -b ",
+  "sell": "python3 ../services/trader.py -s ",
+  "refresh": "python3 ../services/controller.py REFRESH",
+  "retrain_model": "python3 ../services/controller.py RETRAIN"
+}
 
-var screen = blessed.screen({
-  smartCSR: true,
-  title: "Bitvision",
-  cursor: {
-    artificial: true,
-    shape: "line",
-    blink: true,
-    color: "red"
-  }
-});
+const colors = {
+  "border": "cyan",
+  "tableText": "light-blue",
+  "tableHeader": "red"
+}
 
-// Quit
-screen.key(["escape", "C-c"], function(ch, key) {
-  return process.exit(0);
-});
-
-const log = (text) => {
-  logs.pushLine(text);
-  screen.render();
-};
+const headers = {
+  "headline": [" Date ", " Headline ", " Sentiment "],
+  "technical": [" Technical Indicator ", " Value ", " Signal "],
+  "blockchain": [" Blockchain Network ", " Value "],
+  "price": [" Price Data ", " Value "]
+}
 
 // ------------------
 // UTILITY FUNCTIONS
 // ------------------
+
+/**
+ * Takes a list of lists and returns an array with the last element in every row.
+ * Removes the last element of each list from the original array.
+ *
+ * [[1,2,3]
+ *  [a,b,c] returns [3,c,#] and removes it from the original list of lists.
+ *  [!,@,#]]
+ */
+function extractURLsAndTrim(listOfArticles) {
+  let urls = [];
+  let index = 3;
+  for (var i = 0; i < listOfArticles.length; i++) {
+    urls.push(listOfArticles[i][3]);
+    listOfArticles[i].splice(index, 1);
+  }
+
+  return urls;
+}
+
+/**
+ * Truncates text if longer than len, otherwise does nothing.
+ * @param  {String} text Text to be length checked and modified.
+ * @param  {Number} len  Integer for longest allowable length.
+ * @return {String}      Modified or unmodified input string.
+ */
+function trimIfLongerThan(text, len) {
+  if (text.length > len) {
+    return text.slice(0, len);
+  } else {
+    return text;
+  }
+}
+
+/**
+ * Read JSON file and do something with the data
+ */
+function readJsonFile(path, callback) {
+  fs.readFile(path, "utf8", function(err, data) {
+    if (err) {
+      console.log(err);
+    }
+    callback(data);
+  });
+}
 
 /**
  * Execute shell command.
@@ -78,69 +131,65 @@ function executeShellCommand(command) {
   });
 }
 
-function trimIfLongerThan(text, len) {
-  if (text.length > len) {
-    return text.slice(0, len);
+/**
+ * Returns a Date object set with the current time + x hours.
+ * @param  {Number} hours
+ * @return {String} UTC Representation
+ */
+function getTimeXHoursFromNow(hours) {
+  let currentTime = new Date();
+  let futureTime = new Date(currentTime);
+  futureTime.setHours(currentTime.getHours() + hours);
+  console.log(`CurrentTime: ${currentTime.toJSON()}`)
+  console.log(`FutureTime : ${futureTime.toJSON()}`)
+  return futureTime.toJSON()
+}
+
+// -----------------------
+// PYTHON CONTROL METHODS
+// -----------------------
+
+function loginCommand() {
+  console.log(`Executing: ${commands.login}`)
+  // executeShellCommand(commands.login)
+}
+
+function buyBTCCommand(amount) {
+  if (LOGGED_IN) {
+    console.log(`Executing: ${commands.buyBTC + amount}`)
+    // executeShellCommand(commands.buyBTC + amount)
   } else {
-    return text;
+    console.log("TRADE ERROR: NOT LOGGED IN. SHOULD BE IMPOSSIBLE.")
   }
 }
 
-function setLineData(mockData, line) {
-  for (var i = 0; i < mockData.length; i++) {
-    var last = mockData[i].y[mockData[i].y.length - 1];
-    mockData[i].y.shift();
-    var num = Math.max(last + Math.round(Math.random() * 10) - 5, 10);
-    mockData[i].y.push(num);
+function sellBTCCommand(amount) {
+  if (LOGGED_IN) {
+    console.log(`Executing: ${commands.sellBTC + amount}`)
+    // executeShellCommand(commands.sellBTC + amount)
+  } else {
+    console.log("TRADE ERROR: NOT LOGGED IN. SHOULD BE IMPOSSIBLE.")
   }
-  line.setData(mockData);
 }
 
-/**
- * Takes three arrays and zips them into a list of lists like this:
- *
- * [1,2,3]
- * [a,b,c] -> [ [1,a,!], [2,b,@], [3,c,#] ]
- * [!,@,#]
- */
-function zipThreeArrays(a, b, c) {
-  let zipped = [];
-  for (var i = 0; i < a.length; i++) {
-    zipped.push([a[i], b[i], c[i]]);
-  }
-  return zipped;
+function refreshDataCommand() {
+  console.log(`Executing: ${commands.refresh}`)
+  // executeShellCommand(commands.refresh);
 }
 
-// Takes dictionary with key -> list pairs and returns a list of lists.
-function unpackData(dict) {
-  var listOfIndicatorData = [];
-  Object.keys(dict["data"]).forEach(function(key) {
-    listOfIndicatorData.push([key, dict["data"][key]["value"], dict["data"][key]["signal"]]);
-  });
-
-  return listOfIndicatorData;
+function retrainModelCommand() {
+  console.log(`Executing: ${commands.retrain_model}`)
+  // executeShellCommand(commands.retrain_model);
 }
 
 // -------------------------
-// DOTFILE RELATED FUNCTIONS
+// CONFIG/CREDENTIALS FUNCTIONS
 // -------------------------
 
-function writeDotfile(config) {
-  log("WRITING DOTFILE");
-  writeJsonFile(dotfilePath, config).then(() => {
-    // log("File Saved");
-  });
-}
-
-/**
- * Read dotfile and do something with the data
- */
-function readDotfile(callback) {
-  fs.readFile(dotfilePath, "utf8", function(err, data) {
-    if (err) {
-      console.log(err);
-    }
-    callback(data);
+function writeConfig(config) {
+  log(`WRITING FILE at ${paths.configPath}`);
+  writeJsonFile(paths.configPath, config).then(() => {
+    log("File Saved");
   });
 }
 
@@ -149,7 +198,7 @@ function readDotfile(callback) {
  */
 function getConfig(callback) {
   // log("GETTING CONFIG");
-  readDotfile((data) => {
+  readJsonFile(paths.configPath, (data) => {
     let cfg = JSON.parse(data);
     callback(cfg);
   });
@@ -157,10 +206,10 @@ function getConfig(callback) {
 
 /**
  * Checks for credentials in the config file.
- *
  * @return {Bool} Returns true if all creds exist, false otherwise.
  */
-function checkForCredentials() {
+function hasCredentialsInConfig() {
+  console.log("Checking for credentials in config...")
   getConfig((cfg) => {
     let creds = cfg.credentials;
     if (creds.key === "" || creds.secret !== "" || creds.passphrase !== "") {
@@ -174,9 +223,9 @@ function checkForCredentials() {
 /**
  * Creates dotfile with default values if it doesn't exist.
  */
-function createDotfileIfNeeded() {
+function createConfigIfNeeded() {
   log("CHECKING FOR DOTFILE");
-  fs.stat(dotfilePath, function(err, stat) {
+  fs.stat(paths.configPath, function(err, stat) {
     if (err == null) {
       log("Exists");
       return;
@@ -192,11 +241,9 @@ function createDotfileIfNeeded() {
         "autotrade": {
           "enabled": false,
           "next-trade-timestamp-UTC": 0,
-          "next-trade-amount": 0,
-          "next-trade-side": "",
         },
       }
-      writeDotfile(emptyConfig);
+      writeConfig(emptyConfig);
     }
   });
 }
@@ -205,7 +252,7 @@ function saveCredentials(newCreds) {
   log("SAVING CREDENTIALS");
   getConfig((cfg) => {
     cfg.credentials = newCreds;
-    writeDotfile(cfg);
+    writeConfig(cfg);
   })
 }
 
@@ -213,17 +260,34 @@ function saveCredentials(newCreds) {
  * Clear credentials by removing the dotfile.
  */
 function clearCredentials() {
-  fs.unlink(dotfilePath, (err) => {
+  fs.unlink(paths.configPath, (err) => {
     if (err) {
       throw err;
     }
-    log(`${dotfilePath} was deleted.`);
+    log("Login credentials cleared.");
   });
 }
 
-// ----------------------
-// LOGIN SCREEN FUNCTIONS
-// ----------------------
+// ---------------------------------
+// BUILDING INTERFACE
+// ** Bless up -> 3x preach emoji **
+// ---------------------------------
+
+var screen = blessed.screen({
+  smartCSR: true,
+  title: "Bitvision",
+  cursor: {
+    artificial: true,
+    shape: "line",
+    blink: true,
+    color: "red"
+  }
+});
+
+const log = (text) => {
+  logs.pushLine(text);
+  screen.render();
+};
 
 /**
  * Display login screen, allowing user to replace credentials.
@@ -231,7 +295,6 @@ function clearCredentials() {
 function displayLoginScreen() {
   log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, (creds) => {
-    // console.log("callback");
     if (creds != null) {
       log("New creds, saving.");
       saveCredentials(creds);
@@ -242,33 +305,11 @@ function displayLoginScreen() {
   });
 }
 
-// ----------------------
-// HELP SCREEN FUNCTIONS
-// ----------------------
 
-function displayHelpScreen() {
-  help.createHelpScreen(screen, VERSION);
-}
-
-// ------------------------------
-// HEADLINE INTERACTION FUNCTIONS
-// ------------------------------
-
-// TODO: Figure out how to do this.
-function openArticle() {
-  log("OPEN ARTICLE");
-}
-
-// ------------------
-// COINBASE FUNCTIONS
-// ------------------
-
-function showAutotradingToggle() {
-  log("Autotrading Toggle");
+function showAutotradingMenu() {
+  log("Autotrading Menu");
   tradingToggle.createToggleScreen(screen, function(isEnabling) {
-
     // log(`Enabling: ${isEnabling}`)
-
     getConfig((cfg) => {
       let isCurrentlyEnabled = cfg.autotrade.enabled;
 
@@ -283,290 +324,140 @@ function showAutotradingToggle() {
         log("Disabling autotrading.");
         cfg.autotrade.enabled = false;
         cfg.autotrade["next-trade-timestamp-UTC"] = 0;
-        cfg.autotrade["next-trade-amount"] = 0;
-        cfg.autotrade["next-trade-side"] = "";
       } else {
-        // Autotrading enabled, so set next trade timestamp for +24 hr from now.
+        // Autotrading enabled, so set next trade timestamp for +1 hr from now.
         log("Enabling autotrading.");
         cfg.autotrade.enabled = true;
-        cfg.autotrade["next-trade-timestamp-UTC"] = 0; // TODO:
-        cfg.autotrade["next-trade-amount"] = 0;
-        cfg.autotrade["next-trade-side"] = "";
+        cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(1);
       }
 
       // Store updated configuration
-      writeDotfile(cfg);
+      writeConfig(cfg);
     })
   });
-}
-
-function showTransactionAmountPopup() {
-  transaction.createTransactionAmountPopup(screen, function(amount) {
-    log(`Max transaction: ${amount} BTC`);
-  });
-}
-
-/**
- * Replaces public Coinbase client with authenticated client so trades can be placed.
- */
-function authenticateWithCoinbase() {
-  console.log("AUTHENTICATE WITH COINBASE");
-  let credentials = getConfig().credentials;
-  let key = credentials.key;
-  let secret = btoa(credentials.secret); // base64 encoded secret
-  let passphrase = credentials.passphrase;
-
-  // DO NOT USE
-  // let apiURI = "https://api.pro.coinbase.com";
-  let sandboxURI = "https://api-public.sandbox.pro.coinbase.com";
-
-  gdaxClient = new Gdax.AuthenticatedClient(key,
-    secret,
-    passphrase,
-    sandboxURI);
-}
-
-/**
- * Returns the current BTC price in USD.
- *
- * @return {Double} Current bitcoin price
- */
-function getUpdatedBitcoinPrice() {
-  gdaxClient.getProductTicker("ETH-USD", (error, response, data) => {
-    if (error) {
-      console.log("ERROR");
-    } else {
-      return data["price"];
-    }
-  });
-}
-
-/**
- * Creates a buy order.
- * @param  {Double} price In this format: "100.00"
- * @param  {Double} size  [description]
- */
-function createBuyOrder(price, size, callback) {
-  // Buy 1 BTC @ 100 USD
-  let buyParams = {
-    price: `${price}`, // USD
-    size: `${size}`, // BTC
-    product_id: "BTC-USD"
-  };
-  authedClient.buy(buyParams, callback);
-}
-
-/**
- * Creates a sell order.
- * @param  {Double} price
- * @param  {Double} size  [description]
- */
-function createSellOrder(price, size, callback) {
-  let sellParams = {
-    price: `${price}`, // USD
-    size: `${size}`, // BTC
-    product_id: "BTC-USD"
-  }
-  authedClient.sell(sellParams, callback);
-};
-
-// ----------------------
-// PYTHON CONTROL METHODS
-// ----------------------
-
-function refreshData() {
-  executeShellCommand("python3 refresh_data.py");
-}
-
-function retrainModel() {
-  executeShellCommand("python3 retrain_model.py");
-}
-
-// --------------------
-// TEST DATA GENERATION
-// --------------------
-
-function getRandomInteger(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function getRandomSentiment() {
-  return String(Math.random().toFixed(2));
-}
-
-function getRandomDate() {
-  let month = Math.floor(Math.random() * 12) + 1;
-  let day = Math.floor(Math.random() * 30) + 1;
-  return `${month}/${day}`;
-}
-
-function getRandomHeadline() {
-  let possiblities = ["Zerocoin's widget promises Bitcoin privacy",
-    "Bitcoin is bad news for stability",
-    "WikiLeaks' Assange hypes bitcoin in secret talk",
-    "Butterfly Labs' Jalapeno aims to spice up bitcoin mining",
-    "Are alternative Ecoins 'anti-bitcoins'?",
-    "Canada to tax bitcoin users",
-    "Google Ventures invests in Bitcoin competitor OpenCoin",
-    "Economists wrestle with Bitcoin's 'narrative problem'"
-  ];
-  return possiblities[Math.floor(Math.random() * possiblities.length)];
-}
-
-var signalEnum = Object.freeze({
-  buy: "BUY",
-  sell: "SELL"
-});
-
-let networkIndicatorData = {
-  "name": "NETWORK_DATA",
-  "data": {
-    "Confirmation Time": {
-      value: "42ms",
-      signal: signalEnum.buy
-    },
-    "Block Size": {
-      value: "129MB",
-      signal: signalEnum.sell
-    },
-    "Avg Transaction Cost": {
-      value: "Val",
-      signal: signalEnum.buy
-    },
-    "Difficulty": {
-      value: "Val",
-      signal: signalEnum.sell
-    },
-    "Transaction Value": {
-      value: "Val",
-      signal: signalEnum.buy
-    },
-    "Hash Rate": {
-      value: "Val",
-      signal: signalEnum.sell
-    },
-    "Transactions per Block": {
-      value: "Val",
-      signal: signalEnum.sell
-    },
-    "Unique Addresses": {
-      value: "Val",
-      signal: signalEnum.buy
-    },
-    "Total BTC": {
-      value: "Val",
-      signal: signalEnum.sell
-    },
-    "Transaction Fees": {
-      value: "Val",
-      signal: signalEnum.buy
-    },
-    "Transactions per Day": {
-      value: "Val",
-      signal: signalEnum.sell
-    }
-  }
-}
-
-let technicalIndicatorData = {
-  "name": "TECHNICAL_INDICATORS",
-  "data": {
-    "Rate of Change Ratio": {
-      value: "Val",
-      signal: signalEnum.buy
-    },
-    "Momentum": {
-      value: "Val",
-      signal: signalEnum.sell
-    },
-    "Avg Directional Index": {
-      value: "Val",
-      signal: signalEnum.buy
-    },
-    "Williams %R": {
-      value: "Val",
-      signal: signalEnum.sell
-    },
-    "Relative Strength Index": {
-      value: "Val",
-      signal: signalEnum.buy
-    },
-    "Moving Avg Convergence Divergence": {
-      value: "Val",
-      signal: signalEnum.sell
-    },
-    "Avg True Range": {
-      value: "Val",
-      signal: signalEnum.sell
-    },
-    "On-Balance Volume": {
-      value: "Val",
-      signal: signalEnum.buy
-    },
-    "Triple Exponential Moving Avg": {
-      value: "Val",
-      signal: signalEnum.sell
-    }
-  }
 }
 
 // Placing widgets
 
 var grid = new contrib.grid({
-  rows: 12,
+  rows: 11,
   cols: 12,
   screen: screen
 })
 
-// Place tables on the left side of the screen.
+// TODO: Finish refactoring this out.
 
-var headlineTable = grid.set(0, 0, 3.5, 4, contrib.table, {
+// /**
+//  * Creates a new list table.
+//  * @param  {Boolean} isInteractive   True to make the ListTable interactive.
+//  * @param  {[Number]}  columnWidthList List for col spacing.
+//  * @return {blessed.ListTable}       blessed ListTable
+//  */
+// function createListTableParams(isInteractive, columnWidthList) {
+//   return {
+//     parent: screen,
+//     keys: true,
+//     fg: "green",
+//     align: "center",
+//     selectedFg: "white",
+//     selectedBg: "blue",
+//     interactive: isInteractive,
+//     style: {
+//       fg: colors.tableText,
+//       border: {
+//         fg: colors.border
+//       },
+//       cell: {
+//         selected: {
+//           fg: "black",
+//           bg: "light-yellow"
+//         },
+//       },
+//       header: {
+//         fg: 'red',
+//         bold: true
+//       },
+//     },
+//     columnWidth: columnWidthList,
+//     columnSpacing: 1
+//   };
+// }
+
+// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
+// createListTableParams(true, [10, 35, 10])
+// })
+
+// Place 3 tables on the left side of the screen, stacked vertically.
+
+var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
+  parent: screen,
   keys: true,
   fg: "green",
-  style: {
-    border: {
-      fg: "light-red"
-    }
-  },
-  label: "Headlines",
+  align: "center",
+  selectedFg: "white",
+  selectedBg: "blue",
   interactive: true,
-  columnSpacing: 1,
-  columnWidth: [7, 38, 10]
-})
-
-var technicalTable = grid.set(3.5, 0, 3.5, 4, contrib.table, {
-  keys: true,
-  fg: "green",
   style: {
+    fg: colors.tableText,
     border: {
-      fg: "light-red"
-    }
+      fg: colors.border
+    },
+    cell: {
+      selected: {
+        fg: "black",
+        bg: "light-yellow"
+      },
+    },
+    header: {
+      fg: 'red',
+      bold: true
+    },
   },
-  label: "Technical Indicators",
+  columnWidth: [10, 35, 10],
+  columnSpacing: 1
+});
+
+var technicalIndicatorsTable = grid.set(4, 0, 3, 4, blessed.ListTable, {
+  parent: screen,
+  keys: true,
+  align: "center",
+  style: {
+    fg: colors.tableText,
+    border: {
+      fg: colors.border
+    },
+    header: {
+      fg: colors.tableHeader,
+      bold: true
+    },
+  },
   interactive: false,
   columnSpacing: 1,
   columnWidth: [35, 10, 10]
 });
 
-var networkTable = grid.set(6.8, 0, 4, 4, contrib.table, {
+var blockchainIndicatorsTable = grid.set(7, 0, 3.8, 4, blessed.ListTable, {
+  parent: screen,
   keys: true,
-  fg: "green",
+  align: "center",
   style: {
+    fg: colors.tableText,
     border: {
-      fg: "light-red"
-    }
+      fg: colors.border
+    },
+    header: {
+      fg: colors.tableHeader,
+      bold: true
+    },
   },
-  label: "Network Indicators",
   interactive: false,
   columnSpacing: 1,
-  columnWidth: [35, 10, 10]
+  columnWidth: [25, 20]
 });
 
 // Line chart on the right of the tables
 
-var exchangeRateCurve = grid.set(0, 4, 6, 6, contrib.line, {
+var exchangeRateChart = grid.set(0, 4, 6, 6, contrib.line, {
   style: {
     line: "yellow",
     text: "green",
@@ -574,31 +465,52 @@ var exchangeRateCurve = grid.set(0, 4, 6, 6, contrib.line, {
   },
   xLabelPadding: 3,
   xPadding: 5,
-  showLegend: true,
-  wholeNumbersOnly: false,
+  // showLegend: true,
+  wholeNumbersOnly: true,
   label: "Exchange Rate"
 });
 
-// Countdown under chart
+// Price table above countdown.
 
-var countdown = grid.set(6, 4, 3, 3, contrib.lcd, {
+var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
+  parent: screen,
+  keys: true,
+  align: "center",
+  style: {
+    fg: colors.tableText,
+    border: {
+      fg: colors.border
+    },
+    header: {
+      fg: colors.tableHeader,
+      bold: true
+    },
+  },
+  interactive: false,
+  columnSpacing: 1,
+  columnWidth: [25, 20]
+});
+
+// Countdown under price data.
+
+var countdown = grid.set(8.3, 4, 2.7, 2, contrib.lcd, {
   segmentWidth: 0.06,
   segmentInterval: 0.10,
   strokeWidth: 0.1,
-  elements: 4,
-  display: "0000",
+  elements: 2,
+  display: "60",
   elementSpacing: 4,
   elementPadding: 2,
   color: "white", // color for the segments
   label: "Minutes Until Next Trade",
   style: {
     border: {
-      fg: "light-blue"
+      fg: colors.border
     },
   },
 })
 
-var logs = grid.set(6, 7, 5, 4, blessed.box, {
+var logs = grid.set(6, 7, 4.5, 3, blessed.box, {
   label: "DEBUGGING LOG",
   top: 0,
   left: 0,
@@ -608,7 +520,6 @@ var logs = grid.set(6, 7, 5, 4, blessed.box, {
 
 let menubar = blessed.listbar({
   parent: screen,
-  mouse: true,
   keys: true,
   bottom: 0,
   left: 0,
@@ -623,68 +534,77 @@ let menubar = blessed.listbar({
   },
   commands: {
     "Autotrading Settings": {
-      keys: ["t", "T"],
+      keys: ["t"],
       callback: () => {
-        showAutotradingToggle();
+        showAutotradingMenu();
       }
     },
     "Refresh Data": {
-      keys: ["r", "R"],
+      keys: ["r"],
       callback: () => {
         log("Refresh Data");
         // refreshData()
       }
     },
-    "Coinbase Login": {
-      keys: ["l", "L"],
+    "Bitstamp Login": {
+      keys: ["l"],
       callback: () => {
         log("Login")
         displayLoginScreen();
-        // login()
       }
     },
     "Clear Credentials": {
-      keys: ["c", "C"],
+      keys: ["c"],
       callback: () => {
-        log("Clear Credentials");
         clearCredentials();
       }
     },
     "Buy BTC": {
-      keys: ["b", "B"],
+      keys: ["b"],
       callback: () => {
         log("Buy BTC");
-        transaction.createBuyTransactionPopup(screen, function() {
-          // TODO: Create buy order
-        });
+        if (LOGGED_IN) {
+          transaction.createBuyTransactionPopup(screen, function(amount) {
+            // Pass buy order to backend
+            buyBTCCommand(amount)
+          });
+        } else {
+          displayLoginScreen();
+        }
       }
     },
     "Sell BTC": {
-      keys: ["s", "S"],
+      keys: ["s"],
       callback: () => {
         log("Sell BTC");
-        transaction.createSellTransactionPopup(screen, function() {
-          // TODO: Create sell order
-        });
+        if (LOGGED_IN) {
+          transaction.createSellTransactionPopup(screen, function(amount) {
+            // Pass sell order to backend
+            sellBTCCommand(amount)
+          });
+        } else {
+          displayLoginScreen();
+        }
       }
     },
     "Focus on Headlines": {
-      keys: ["f", "F"],
+      keys: ["f"],
       callback: () => {
-        headlineTable.focus();
+        headlinesTable.focus();
       }
     },
-    "Open": {
-      keys: ["o", "O"],
+    "Open Article": {
+      keys: ["o"],
       callback: () => {
-        openArticle();
+        let selectedArticleURL = URLs[headlinesTable.selected - 1];
+        openBrowser(selectedArticleURL);
       }
     },
-    "Show Help": {
-      keys: ["h", "H"],
+    "Help": {
+      keys: ["h"],
       callback: () => {
         log("Help Menu Opened");
-        displayHelpScreen();
+        help.createHelpScreen(screen, VERSION);
       }
     },
     "Exit": {
@@ -696,79 +616,247 @@ let menubar = blessed.listbar({
 
 // Resizing
 screen.on("resize", function() {
-  technicalTable.emit("attach");
-  networkTable.emit("attach");
-  headlineTable.emit("attach");
-  exchangeRateCurve.emit("attach");
+  technicalIndicatorsTable.emit("attach");
+  blockchainIndicatorsTable.emit("attach");
+  headlinesTable.emit("attach");
+  exchangeRateChart.emit("attach");
   countdown.emit("attach");
+  priceTable.emit("attach");
   menubar.emit("attach");
 });
 
-// ------------
-// TESTING DATA
-// ------------
+// Quit
+screen.key(["escape", "C-c"], function(ch, key) {
+  return process.exit(0);
+});
 
-let headlineDates = [...Array(16).keys()].map((key) => {
-  return getRandomDate()
-})
+// -----------------
+// WORKING WITH DATA
+// -----------------
 
-let headlines = [...Array(16).keys()].map((key) => {
-  return getRandomHeadline()
-})
+let headlineData = {
+  "name": "HEADLINES",
+  "data": [
+    ["8/9", "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
+    ["10/22", "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
+    ["3/9", "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
+    ["6/9", "Canada to tax bitcoin users", "0.08", "https://www.coindesk.com"],
+    ["3/15", "Bitcoin is bad news for stability", "0.10", "https://www.coindesk.com"],
+    ["4/15", "Google Ventures invests in Bitcoin ", "0.08", "https://www.coindesk.com"],
+    ["10/7", "WikiLeaks\' Assange hypes bitcoin in", "0.36", "https://www.coindesk.com"],
+    ["3/4", "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
+    ["11/27", "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
+    ["10/30", "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
+    ["9/14", "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
+    ["6/24", "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
+    ["4/5", "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
+    ["12/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
+    ["7/30", "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
+    ["5/4", "WikiLeaks\' Assange hypes bitcoin in", "0.19", "https://www.coindesk.com"]
+  ]
+}
 
-let headlineSentiment = [...Array(16).keys()].map((key) => {
-  return getRandomSentiment()
-})
+let URLs = null;
 
-let headlinesTrimmed = headlines.map(str => trimIfLongerThan(str, MAX_HEADLINE_LENTH));
-let headlinesZipped = zipThreeArrays(headlineDates, headlinesTrimmed, headlineSentiment)
+let tempNameConst = {
+  buy: "BUY ",
+  sell: "SELL"
+}
 
-let networkIndicators = unpackData(networkIndicatorData)
-let technicalIndicators = unpackData(technicalIndicatorData)
+let technicalData = {
+  "name": "TECHNICAL_INDICATORS",
+  "data": [
+    ['Momentum', 'Val', tempNameConst.sell],
+    ['Williams %R', 'Val', tempNameConst.sell],
+    ['Avg True Range', 'Val', tempNameConst.sell],
+    ['On-Balance Volume', 'Val', tempNameConst.sell],
+    ['Rate of Change Ratio', 'Val', tempNameConst.buy],
+    ['Avg Directional Index', 'Val', tempNameConst.buy],
+    ['Relative Strength Index', 'Val', tempNameConst.buy],
+    ['Triple Exponential Moving Avg', 'Val', tempNameConst.sell],
+    ['Moving Avg Convergence Divergence', 'Val', tempNameConst.sell],
+  ]
+}
 
-headlineTable.setData({
-  headers: ["Date", "Title", "Sentiment"],
-  data: headlinesZipped
-})
+let blockchainData = {
+  "name": "BLOCKCHAIN_DATA",
+  "data": [
+    ["Block Size", "1.0509867022900001"],
+    ["Difficulty", "5949437371610.0"],
+    ["Total Bitcoin", "17194350.0"],
+    ["Miners Revenue", "11517945.75"],
+    ["Transaction Cost", "53.2590456155"],
+    ["Unique Addresses", "452409.0"],
+    ["Transaction Fees", "124854.43486300002"],
+    ["Hash Rate (GH/s)", "38743005.8012"],
+    ["Confirmation Time", "14.45"],
+    ["Transactions per Day", "218607.0"],
+    ["Market Capitalization", "120942650691.00003"],
+    ["Transactions per Block", "1668.75572519"],
+  ]
+}
 
-// headlineTable.on("select", function() {
-//   log("DEBUG ME")
-// })
-//
-// // If box is focused, handle `enter`/`return` and give us some more content.
-// headlineTable.key('o', function(ch, key) {
-//   log("HSA");
-// });
+let priceData = {
+  "fetching": false,
+  "data": [
+    ["Current Price", "6319.35"],
+    ["24H High", "6494.13000000"],
+    ["24H Low", "6068.52000000"],
+    ["Open Price", "6240.49"],
+    ["Volume", "6708.87922004"],
+    ["Timestamp", "1534060816"]
+  ]
+}
 
-technicalTable.setData({
-  headers: ["Name", "Value", "Signal"],
-  data: technicalIndicators
-})
+// -----------------------
+// DATA FETCHING FUNCTIONS
+// -----------------------
 
-networkTable.setData({
-  headers: ["Name", "Value", "Signal"],
-  data: networkIndicators
-})
+function getBlockchainData() {
+  readJsonFile(paths.blockchainDataPath, (blockchainData) => {
+    // log(blockchainData)
+    return blockchainData;
+  });
+}
+
+function getHeadlineData() {
+  readJsonFile(paths.headlineDataPath, (headlineData) => {
+    // TODO: Trim headlines if too long.
+    // headlines.map(str => trimIfLongerThan(str, MAX_HEADLINE_LENTH));
+    // log(headlineData);
+    return headlineData;
+
+  });
+}
+
+function gettechnicalData() {
+  readJsonFile(paths.technicalDataPath, (technicalData) => {
+    // log(technicalData);
+    return technicalData;
+  });
+}
+
+function getPriceData() {
+  readJsonFile(paths.priceDataPath, (data) => {
+    // console.log(priceData);
+    return priceData;
+  });
+}
+
+function getRandomInteger(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
 let exchangeRateSeries = {
   title: "Exchange Rate",
-  x: [...Array(24).keys()].map((key) => {
+  x: [...Array(100).keys()].map((key) => {
     return String(key) + ":00"
   }),
-  y: [...Array(24).keys()].map((key) => {
-    return key * getRandomInteger(1000, 1200)
+  y: [...Array(100).keys()].map((key) => {
+    return key * getRandomInteger(750, 1200)
   })
 }
 
-setLineData([exchangeRateSeries], exchangeRateCurve)
 
-setInterval(function() {
-  setLineData([exchangeRateSeries], exchangeRateCurve)
-  screen.render()
-}, 500)
+function setLineData(mockData, line) {
+  for (var i = 0; i < mockData.length; i++) {
+    var last = mockData[i].y[mockData[i].y.length - 1];
+    mockData[i].y.shift();
+    var num = Math.max(last + Math.round(Math.random() * 10) - 5, 10);
+    mockData[i].y.push(num);
+  }
+  line.setData(mockData);
+}
 
-// START DOING THINGS
-createDotfileIfNeeded()
-headlineTable.focus()
+/**
+ * Gets updated data for blockchain, technical indicators, headlines and price.
+ */
+function refreshData(callback) {
+  headlineData = getHeadlineData();
+  technicalData = gettechnicalData();
+  blockchainData = getBlockchainData();
+  priceData = getPriceData();
+  console.log("Fetched all data")
+  callback(headlineData, technicalData, blockchainData, priceData);
+}
 
-screen.render()
+
+/**
+ * Set all tables with data.
+ */
+function setAllTables(headlines, technicals, blockchains, prices) {
+  console.log("setAllTables");
+  // console.log(headlines);
+  // console.log(technicals);
+  // console.log(blockchains);
+  console.log(prices);
+
+  URLs = extractURLsAndTrim(headlines)
+
+  // Set headers for each table.
+  headlines.splice(0, 0, headers.headline);
+  technicals.splice(0, 0, headers.technical);
+  blockchains.splice(0, 0, headers.blockchain)
+  prices.splice(0, 0, headers.price);
+
+  console.log("Setting headlines...");
+  headlinesTable.setData(headlines);
+
+  console.log("Setting technicals...");
+  technicalIndicatorsTable.setData(technicals);
+
+  console.log("Setting blockchain network table...");
+  blockchainIndicatorsTable.setData(blockchains);
+
+  console.log("Setting price table...")
+  priceTable.setData(prices);
+
+  screen.render();
+  console.log("setAllTables COMPLETE");
+}
+
+/**
+ * Set exchange rate chart with data.
+ * TODO: Fix this.
+ */
+function setChart() {
+  console.log("setChart CALLED");
+  setLineData([exchangeRateSeries], exchangeRateChart);
+
+  setInterval(function() {
+    setLineData([exchangeRateSeries], exchangeRateChart);
+    screen.render();
+  }, 500)
+}
+
+/**
+ * Let's get this show on the road.
+ * Start up sequence.
+ */
+function doThings() {
+  createConfigIfNeeded();
+
+  // Login if they have creds
+  // TODO: Restructure this global setting.
+  if (hasCredentialsInConfig()) {
+    loginCommand();
+    LOGGED_IN = true;
+  } else {
+    LOGGED_IN = false;
+  }
+
+  setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+  setChart();
+  headlinesTable.focus();
+  screen.render();
+
+  // console.log("RESETTING")
+  // // BUG: setAllTables in here causes everything to crash. No ideas.
+  // setInterval(function() {
+  //   refreshData(setAllTables)
+  // }, 1500)
+}
+
+doThings();
