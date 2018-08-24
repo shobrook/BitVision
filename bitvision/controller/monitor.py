@@ -13,8 +13,6 @@ from bs4 import BeautifulSoup
 from typing import Dict
 from textblob import TextBlob
 
-sys.path.append("..")
-
 from engine import dataset
 from engine import transformer
 
@@ -69,7 +67,7 @@ def fetch_price_data():
         "timestamp": response["timestamp"]
     }
 
-    fname = "../cache/data/price_data.json"
+    fname = "../cache/data/ticker.json"
     with open(fname) as old_price_data:
         new_data = {
             "fetching": False,
@@ -82,7 +80,7 @@ def fetch_price_data():
 
 
 def fetch_tech_indicators():
-    with open("../cache/data/price_data.json") as price_data_json:
+    with open("../cache/data/ticker.json") as price_data_json:
         price_data = json.load(price_data_json)["data"]
 
         if len(price_data) > 20:  # Enough data to calculate indicators in real-time
@@ -125,7 +123,7 @@ def fetch_tech_indicators():
     return True
 
 
-def fetch_network_attributes():
+def fetch_blockchain_data():
     blockchain_data = dataset("blockchain_data")
 
     with open("../cache/data/blockchain.json", 'w') as blockchain_data_json:
@@ -220,10 +218,7 @@ def refresh(names):
             fetch_price_data()
         elif name == "indicators":
             fetch_tech_indicators()
-        elif name == "network_attributes":
-            fetch_network_attributes()
+        elif name == "blockchain":
+            fetch_blockchain_data()
         elif name == "coindesk_stats":
             fetch_coindesk_stats()
-
-
-refresh(["price_data", "indicators", "network_attributes", "coindesk_stats"])
