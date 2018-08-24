@@ -1,6 +1,7 @@
 BitVision
 ===
 
+<!-- [![npm](https://img.shields.io/npm/v/:package.svg)](https://www.npmjs.com/package/bitvision) -->
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/shobrook/BitVision/blob/master/LICENSE)
 [![Scikit-Learn](https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg)](http://scikit-learn.org/stable/)
 

@@ -226,7 +226,7 @@ function hasCredentialsInConfig() {
 /**
  * Creates dotfile with default values if it doesn't exist.
  */
-function createConfigIfNeeded() {
+function createConfigIfNeeded(callback) {
   log("CHECKING FOR DOTFILE");
   fs.stat(paths.configPath, function(err, stat) {
     if (err == null) {
@@ -249,6 +249,7 @@ function createConfigIfNeeded() {
       writeConfig(emptyConfig);
     }
   });
+  callback();
 }
 
 function saveCredentials(newCreds) {
@@ -510,7 +511,7 @@ var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
 
 // Countdown under price data.
 
-var countdown = grid.set(8, 4, 2.7, 2, contrib.lcd, {
+var countdown = grid.set(8.3 , 4, 2.5, 2, contrib.lcd, {
   segmentWidth: 0.06,
   segmentInterval: 0.10,
   strokeWidth: 0.1,
@@ -550,7 +551,7 @@ let menubar = blessed.listbar({
     },
   },
   commands: {
-    "Autotrading Settings": {
+    "Autotrading": {
       keys: ["a"],
       callback: () => {
         showAutotradingMenu();
@@ -570,8 +571,8 @@ let menubar = blessed.listbar({
         displayLoginScreen();
       }
     },
-    "Clear Credentials": {
-      keys: ["c"],
+    "Logout": {
+      keys: ["k"],
       callback: () => {
         clearCredentials();
       }
@@ -582,34 +583,34 @@ let menubar = blessed.listbar({
         depositBTC();
       }
     },
-    // "Buy BTC": {
-    //   keys: ["b"],
-    //   callback: () => {
-    //     log("Buy BTC");
-    //     if (LOGGED_IN) {
-    //       transaction.createBuyTransactionPopup(screen, function(amount) {
-    //         // Pass buy order to backend
-    //         buyBTCCommand(amount)
-    //       });
-    //     } else {
-    //       displayLoginScreen();
-    //     }
-    //   }
-    // },
-    // "Sell BTC": {
-    //   keys: ["s"],
-    //   callback: () => {
-    //     log("Sell BTC");
-    //     if (LOGGED_IN) {
-    //       transaction.createSellTransactionPopup(screen, function(amount) {
-    //         // Pass sell order to backend
-    //         sellBTCCommand(amount)
-    //       });
-    //     } else {
-    //       displayLoginScreen();
-    //     }
-    //   }
-    // },
+    "Buy BTC": {
+      keys: ["b"],
+      callback: () => {
+        log("Buy BTC");
+        if (LOGGED_IN) {
+          transaction.createBuyTransactionPopup(screen, function(amount) {
+            // Pass buy order to backend
+            buyBTCCommand(amount)
+          });
+        } else {
+          displayLoginScreen();
+        }
+      }
+    },
+    "Sell BTC": {
+      keys: ["s"],
+      callback: () => {
+        log("Sell BTC");
+        if (LOGGED_IN) {
+          transaction.createSellTransactionPopup(screen, function(amount) {
+            // Pass sell order to backend
+            sellBTCCommand(amount)
+          });
+        } else {
+          displayLoginScreen();
+        }
+      }
+    },
     "Focus on Headlines": {
       keys: ["f"],
       callback: () => {
@@ -660,22 +661,22 @@ screen.key(["escape", "C-c"], function(ch, key) {
 let headlineData = {
   "name": "HEADLINES",
   "data": [
-    ["12/3",  "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
-    ["12/2",  "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
-    ["12/1",  "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
+    ["12/3", "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
+    ["12/2", "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
+    ["12/1", "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
     ["11/22", "Canada to tax bitcoin users", "0.08", "https://www.coindesk.com"],
     ["11/19", "Bitcoin is bad news for stability", "0.10", "https://www.coindesk.com"],
     ["10/15", "Google Ventures invests in Bitcoin ", "0.08", "https://www.coindesk.com"],
-    ["10/7",  "WikiLeaks\' Assange hypes bitcoin in", "0.36", "https://www.coindesk.com"],
-    ["9/4",   "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
-    ["8/27",  "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
-    ["8/26",  "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
-    ["8/20",  "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
-    ["7/24",  "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
-    ["7/5",   "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
-    ["6/4",   "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
-    ["5/30",  "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
-    ["5/4",   "WikiLeaks\' Assange hypes bitcoin in", "0.19", "https://www.coindesk.com"]
+    ["10/7", "WikiLeaks\' Assange hypes bitcoin in", "0.36", "https://www.coindesk.com"],
+    ["9/4", "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
+    ["8/27", "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
+    ["8/26", "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
+    ["8/20", "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
+    ["7/24", "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
+    ["7/5", "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
+    ["6/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
+    ["5/30", "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
+    ["5/4", "WikiLeaks\' Assange hypes bitcoin in", "0.19", "https://www.coindesk.com"]
   ]
 }
 
@@ -866,39 +867,39 @@ function setChart() {
  * Start up sequence.
  */
 function doThings() {
-  createConfigIfNeeded();
+  createConfigIfNeeded(function() {
+    // Login if they have creds
+    // TODO: Restructure this global setting.
+    if (hasCredentialsInConfig()) {
+      loginCommand();
+      LOGGED_IN = true;
+    } else {
+      LOGGED_IN = false;
+    }
 
-  // Login if they have creds
-  // TODO: Restructure this global setting.
-  if (hasCredentialsInConfig()) {
-    loginCommand();
-    LOGGED_IN = true;
-  } else {
-    LOGGED_IN = false;
-  }
+    // headlineData = getHeadlineData()
+    // console.log(headlineData)
 
-  // headlineData = getHeadlineData()
-  // console.log(headlineData)
+    // @Jon, comment the next four lines out, and uncomment the block after that for the bug.
 
-  // @Jon, comment the next four lines out, and uncomment the block after that for the bug.
+    setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+    setChart();
+    headlinesTable.focus();
+    screen.render();
 
-  setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-  setChart();
-  headlinesTable.focus();
-  screen.render();
+    // refreshData((headlineData, technicalData, blockchainData, priceData) => {
+    //   setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+    //   setChart();
+    //   headlinesTable.focus();
+    //   screen.render();
+    // });
 
-  // refreshData((headlineData, technicalData, blockchainData, priceData) => {
-  //   setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-  //   setChart();
-  //   headlinesTable.focus();
-  //   screen.render();
-  // });
-
-  // console.log("RESETTING")
-  // // BUG: setAllTables in here causes everything to crash. No ideas.
-  // setInterval(function() {
-  //   refreshData(setAllTables)
-  // }, 1500)
+    // console.log("RESETTING")
+    // // BUG: setAllTables in here causes everything to crash. No ideas.
+    // setInterval(function() {
+    //   refreshData(setAllTables)
+    // }, 1500)
+  });
 }
 
 doThings();
