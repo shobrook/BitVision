@@ -8,10 +8,9 @@ let cli = require("commander");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
-let writeJsonFile = require("write-json-file");
 let VERSION = require("../package.json").version
 
-let MAX_HEADLINE_LENTH = 35;
+let MAX_HEADLINE_LENTH = 25;
 var LOGGED_IN = false;
 
 cli
@@ -32,11 +31,11 @@ let tradingToggle = require("./autotrading-toggle");
 // ----------
 
 const paths = {
-  "configPath": path.join(os.homedir(), ".bitvision"),
-  "blockchainDataPath": "../cache/data/blockchain.json",
-  "headlineDataPath": "../cache/data/headlines.json",
-  "technicalDataPath": "../cache/data/indicators.json",
-  "priceDataPath": "../cache/data/price_data.json"
+  "configPath": path.join(__dirname, "..", "cache", "config.json"),
+  "blockchainDataPath": path.join(__dirname, "..", "cache", "data", "blockchain.json"),
+  "headlineDataPath": path.join(__dirname, "..", "cache", "data", "headlines.json"),
+  "technicalDataPath": path.join(__dirname, "..", "cache", "data", "indicators.json"),
+  "priceDataPath": path.join(__dirname, "..", "cache", "data", "ticker.json")
 }
 
 // TODO: Sync up with Jon about these commands.
@@ -55,10 +54,10 @@ const colors = {
 }
 
 const headers = {
-  "headline": [" Date ", " Headline ", " Sentiment "],
-  "technical": [" Technical Indicator ", " Value ", " Signal "],
-  "blockchain": [" Blockchain Network ", " Value "],
-  "price": [" Price Data ", " Value "]
+  "headline": ["Date", "Headline", "Senti"],
+  "technical": ["Technical Indicator", "Value", "Signal"],
+  "blockchain": ["Blockchain Network", "Value"],
+  "price": ["Price Data", "Value"]
 }
 
 // ------------------
@@ -85,29 +84,11 @@ function extractURLsAndTrim(listOfArticles) {
 }
 
 /**
- * Truncates text if longer than len, otherwise does nothing.
- * @param  {String} text Text to be length checked and modified.
- * @param  {Number} len  Integer for longest allowable length.
- * @return {String}      Modified or unmodified input string.
- */
-function trimIfLongerThan(text, len) {
-  if (text.length > len) {
-    return text.slice(0, len);
-  } else {
-    return text;
-  }
-}
-
-/**
  * Read JSON file and do something with the data
  */
-function readJsonFile(path, callback) {
-  fs.readFile(path, "utf8", function(err, data) {
-    if (err) {
-      console.log(err);
-    }
-    callback(data);
-  });
+function readJsonFile(path) {
+  console.log("Reading " + path)
+  return JSON.parse(fs.readFileSync(path, "utf8"))
 }
 
 /**
@@ -188,8 +169,8 @@ function retrainModelCommand() {
 
 function writeConfig(config) {
   log(`WRITING FILE at ${paths.configPath}`);
-  writeJsonFile(paths.configPath, config).then(() => {
-    log("File Saved");
+  fs.writeFile(paths.configPath, JSON.stringify(config), "utf8", () => {
+    log("File Saved.");
   });
 }
 
@@ -198,10 +179,7 @@ function writeConfig(config) {
  */
 function getConfig(callback) {
   // log("GETTING CONFIG");
-  readJsonFile(paths.configPath, (data) => {
-    let cfg = JSON.parse(data);
-    callback(cfg);
-  });
+  return readJsonFile(paths.configPath);
 }
 
 /**
@@ -210,27 +188,21 @@ function getConfig(callback) {
  */
 function hasCredentialsInConfig() {
   console.log("Checking for credentials in config...")
-  getConfig((cfg) => {
-    let creds = cfg.credentials;
-    if (creds.key === "" || creds.secret !== "" || creds.passphrase !== "") {
-      return false;
-    } else {
-      return true;
-    }
-  });
+  let creds = getConfig().credentials
+  return !(creds.key === "" || creds.secret !== "" || creds.passphrase !== "")
 }
 
 /**
  * Creates dotfile with default values if it doesn't exist.
  */
-function createConfigIfNeeded() {
-  log("CHECKING FOR DOTFILE");
+function createConfigIfNeeded(callback) {
+  console.log("CHECKING FOR DOTFILE");
   fs.stat(paths.configPath, function(err, stat) {
     if (err == null) {
-      log("Exists");
-      return;
+      console.log("Exists");
+      callback();
     } else if (err.code === "ENOENT") {
-      log("No dotfile found. Creating DEFAULT.");
+      console.log("No dotfile found. Creating DEFAULT.");
       // Create file
       let emptyConfig = {
         "credentials": {
@@ -244,16 +216,16 @@ function createConfigIfNeeded() {
         },
       }
       writeConfig(emptyConfig);
+      callback();
     }
   });
 }
 
 function saveCredentials(newCreds) {
   log("SAVING CREDENTIALS");
-  getConfig((cfg) => {
-    cfg.credentials = newCreds;
-    writeConfig(cfg);
-  })
+  let cfg = getConfig()
+  cfg.credentials = newCreds;
+  writeConfig(cfg);
 }
 
 /**
@@ -309,31 +281,30 @@ function displayLoginScreen() {
 function showAutotradingMenu() {
   log("Autotrading Menu");
   tradingToggle.createToggleScreen(screen, function(isEnabling) {
+    let cfg = getConfig()
     // log(`Enabling: ${isEnabling}`)
-    getConfig((cfg) => {
-      let isCurrentlyEnabled = cfg.autotrade.enabled;
+    let isCurrentlyEnabled = cfg.autotrade.enabled;
 
-      // Setting autotrading to the same state should do nothing.
-      if ((isEnabling && isCurrentlyEnabled) || (!isEnabling && !isCurrentlyEnabled)) {
-        log("Redundant autotrading change.");
-        return;
-      }
+    // Setting autotrading to the same state should do nothing.
+    if ((isEnabling && isCurrentlyEnabled) || (!isEnabling && !isCurrentlyEnabled)) {
+      log("Redundant autotrading change.");
+      return;
+    }
 
-      // Autotrading disabled, so reset all properties to default
-      if (!isEnabling) {
-        log("Disabling autotrading.");
-        cfg.autotrade.enabled = false;
-        cfg.autotrade["next-trade-timestamp-UTC"] = 0;
-      } else {
-        // Autotrading enabled, so set next trade timestamp for +1 hr from now.
-        log("Enabling autotrading.");
-        cfg.autotrade.enabled = true;
-        cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(1);
-      }
+    // Autotrading disabled, so reset all properties to default
+    if (!isEnabling) {
+      log("Disabling autotrading.");
+      cfg.autotrade.enabled = false;
+      cfg.autotrade["next-trade-timestamp-UTC"] = 0;
+    } else {
+      // Autotrading enabled, so set next trade timestamp for +1 hr from now.
+      log("Enabling autotrading.");
+      cfg.autotrade.enabled = true;
+      cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(1);
+    }
 
-      // Store updated configuration
-      writeConfig(cfg);
-    })
+    // Store updated configuration
+    writeConfig(cfg);
   });
 }
 
@@ -383,9 +354,7 @@ var grid = new contrib.grid({
 //   };
 // }
 
-// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
-// createListTableParams(true, [10, 35, 10])
-// })
+// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, createListTableParams(true, [10, 35, 10]));
 
 // Place 3 tables on the left side of the screen, stacked vertically.
 
@@ -393,7 +362,11 @@ var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
   parent: screen,
   keys: true,
   fg: "green",
-  align: "center",
+  align: "left",
+  padding: {
+    left: 1,
+    right: 1
+  },
   selectedFg: "white",
   selectedBg: "blue",
   interactive: true,
@@ -413,14 +386,18 @@ var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
       bold: true
     },
   },
-  columnWidth: [10, 35, 10],
+  // columnWidth: [10, 20, 25],
   columnSpacing: 1
 });
 
 var technicalIndicatorsTable = grid.set(4, 0, 3, 4, blessed.ListTable, {
   parent: screen,
   keys: true,
-  align: "center",
+  align: "left",
+  padding: {
+    left: 1,
+    right: 1
+  },
   style: {
     fg: colors.tableText,
     border: {
@@ -439,7 +416,11 @@ var technicalIndicatorsTable = grid.set(4, 0, 3, 4, blessed.ListTable, {
 var blockchainIndicatorsTable = grid.set(7, 0, 3.8, 4, blessed.ListTable, {
   parent: screen,
   keys: true,
-  align: "center",
+  align: "left",
+  padding: {
+    left: 1,
+    right: 1
+  },
   style: {
     fg: colors.tableText,
     border: {
@@ -452,7 +433,7 @@ var blockchainIndicatorsTable = grid.set(7, 0, 3.8, 4, blessed.ListTable, {
   },
   interactive: false,
   columnSpacing: 1,
-  columnWidth: [25, 20]
+  columnWidth: [20, 20]
 });
 
 // Line chart on the right of the tables
@@ -475,7 +456,11 @@ var exchangeRateChart = grid.set(0, 4, 6, 6, contrib.line, {
 var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
   parent: screen,
   keys: true,
-  align: "center",
+  align: "left",
+  padding: {
+    left: 1,
+    right: 1
+  },
   style: {
     fg: colors.tableText,
     border: {
@@ -493,12 +478,12 @@ var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
 
 // Countdown under price data.
 
-var countdown = grid.set(8.3, 4, 2.7, 2, contrib.lcd, {
+var countdown = grid.set(8.3, 4, 2.5, 2, contrib.lcd, {
   segmentWidth: 0.06,
   segmentInterval: 0.10,
   strokeWidth: 0.1,
   elements: 2,
-  display: "60",
+  display: "45",
   elementSpacing: 4,
   elementPadding: 2,
   color: "white", // color for the segments
@@ -533,8 +518,8 @@ let menubar = blessed.listbar({
     },
   },
   commands: {
-    "Autotrading Settings": {
-      keys: ["t"],
+    "Autotrading": {
+      keys: ["a"],
       callback: () => {
         showAutotradingMenu();
       }
@@ -553,10 +538,16 @@ let menubar = blessed.listbar({
         displayLoginScreen();
       }
     },
-    "Clear Credentials": {
-      keys: ["c"],
+    "Logout": {
+      keys: ["k"],
       callback: () => {
         clearCredentials();
+      }
+    },
+    "Deposit BTC": {
+      keys: ["d"],
+      callback: () => {
+        depositBTC();
       }
     },
     "Buy BTC": {
@@ -637,21 +628,21 @@ screen.key(["escape", "C-c"], function(ch, key) {
 let headlineData = {
   "name": "HEADLINES",
   "data": [
-    ["8/9", "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
-    ["10/22", "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
-    ["3/9", "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
-    ["6/9", "Canada to tax bitcoin users", "0.08", "https://www.coindesk.com"],
-    ["3/15", "Bitcoin is bad news for stability", "0.10", "https://www.coindesk.com"],
-    ["4/15", "Google Ventures invests in Bitcoin ", "0.08", "https://www.coindesk.com"],
+    ["12/3", "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
+    ["12/2", "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
+    ["12/1", "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
+    ["11/22", "Canada to tax bitcoin users", "0.08", "https://www.coindesk.com"],
+    ["11/19", "Bitcoin is bad news for stability", "0.10", "https://www.coindesk.com"],
+    ["10/15", "Google Ventures invests in Bitcoin ", "0.08", "https://www.coindesk.com"],
     ["10/7", "WikiLeaks\' Assange hypes bitcoin in", "0.36", "https://www.coindesk.com"],
-    ["3/4", "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
-    ["11/27", "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
-    ["10/30", "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
-    ["9/14", "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
-    ["6/24", "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
-    ["4/5", "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
-    ["12/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
-    ["7/30", "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
+    ["9/4", "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
+    ["8/27", "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
+    ["8/26", "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
+    ["8/20", "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
+    ["7/24", "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
+    ["7/5", "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
+    ["6/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
+    ["5/30", "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
     ["5/4", "WikiLeaks\' Assange hypes bitcoin in", "0.19", "https://www.coindesk.com"]
   ]
 }
@@ -712,35 +703,37 @@ let priceData = {
 // DATA FETCHING FUNCTIONS
 // -----------------------
 
-function getBlockchainData() {
-  readJsonFile(paths.blockchainDataPath, (blockchainData) => {
-    // log(blockchainData)
-    return blockchainData;
-  });
+function getData(path) {
+  let data = readJsonFile(path)
+  // TODO: Uncomment this.
+  // while (!data.fetching) {
+    // data = readJsonFile(path)
+  // }
+
+  return data.data
 }
 
-function getHeadlineData() {
-  readJsonFile(paths.headlineDataPath, (headlineData) => {
-    // TODO: Trim headlines if too long.
-    // headlines.map(str => trimIfLongerThan(str, MAX_HEADLINE_LENTH));
-    // log(headlineData);
-    return headlineData;
-
-  });
+function reformatPriceData(priceData) {
+  return [
+    ["Current Price", priceData[0].last],
+    ["24H High", priceData[0].high],
+    ["24H Low", priceData[0].low],
+    ["Open Price", priceData[0].open],
+    ["Volume", priceData[0].volume],
+    ["Timestamp", priceData[0].timestamp]
+  ]
 }
 
-function gettechnicalData() {
-  readJsonFile(paths.technicalDataPath, (technicalData) => {
-    // log(technicalData);
-    return technicalData;
-  });
-}
-
-function getPriceData() {
-  readJsonFile(paths.priceDataPath, (data) => {
-    // console.log(priceData);
-    return priceData;
-  });
+function trimHeadlines(headlines) {
+  // Trim headlines if too long.
+  let shortenedHeadlines = [];
+  for (let idx = 0; idx < headlines.length; idx++) {
+    let headline = headlines[idx]
+    let trimmedHeadline = headline.length > MAX_HEADLINE_LENTH ? headline.slice(0, MAX_HEADLINE_LENTH) : headline
+    shortenedHeadlines.push(trimmedHeadline);
+  }
+  log(shortenedHeadlines);
+  return shortenedHeadlines;
 }
 
 function getRandomInteger(min, max) {
@@ -774,11 +767,12 @@ function setLineData(mockData, line) {
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
 function refreshData(callback) {
-  headlineData = getHeadlineData();
-  technicalData = gettechnicalData();
-  blockchainData = getBlockchainData();
-  priceData = getPriceData();
-  console.log("Fetched all data")
+  console.log("Refreshing data...");
+  headlineData = trimHeadlines(getData(paths.headlineDataPath));
+  technicalData = getData(paths.technicalDataPath);
+  blockchainData = getData(paths.blockchainDataPath);
+  priceData = reformatPriceData(getData(paths.priceDataPath));
+  console.log("Refreshed all data...");
   callback(headlineData, technicalData, blockchainData, priceData);
 }
 
@@ -787,7 +781,7 @@ function refreshData(callback) {
  * Set all tables with data.
  */
 function setAllTables(headlines, technicals, blockchains, prices) {
-  console.log("setAllTables");
+  console.log("Set all tables...");
   // console.log(headlines);
   // console.log(technicals);
   // console.log(blockchains);
@@ -836,27 +830,36 @@ function setChart() {
  * Start up sequence.
  */
 function doThings() {
-  createConfigIfNeeded();
+  createConfigIfNeeded(function() {
+    // Login if they have creds
+    // TODO: Restructure this global setting.
+    if (hasCredentialsInConfig()) {
+      loginCommand();
+      LOGGED_IN = true;
+    } else {
+      LOGGED_IN = false;
+    }
 
-  // Login if they have creds
-  // TODO: Restructure this global setting.
-  if (hasCredentialsInConfig()) {
-    loginCommand();
-    LOGGED_IN = true;
-  } else {
-    LOGGED_IN = false;
-  }
+    // @Jon, comment the next four lines out, and uncomment the block after that for the bug.
 
-  setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-  setChart();
-  headlinesTable.focus();
-  screen.render();
+    // setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+    // setChart();
+    // headlinesTable.focus();
+    // screen.render();
 
-  // console.log("RESETTING")
-  // // BUG: setAllTables in here causes everything to crash. No ideas.
-  // setInterval(function() {
-  //   refreshData(setAllTables)
-  // }, 1500)
+    refreshData((headlineData, technicalData, blockchainData, priceData) => {
+      setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+      setChart();
+      headlinesTable.focus();
+      screen.render();
+    });
+
+    // console.log("RESETTING")
+    // // BUG: setAllTables in here causes everything to crash. No ideas.
+    // setInterval(function() {
+    //   refreshData(setAllTables)
+    // }, 1500)
+  });
 }
 
 doThings();

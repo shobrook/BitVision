@@ -201,10 +201,6 @@ module.exports = {
       enteredCreds.secret = secretEntryBox.content;
       enteredCreds.passphrase = passphraseEntryBox.content;
 
-      // console.log(enteredCreds.apiKey);
-      // console.log(enteredCreds.secret);
-      // console.log(enteredCreds.passphrase);
-
       if (validateEnteredLoginCreds()) {
         callback(enteredCreds);
         loginForm.destroy();
