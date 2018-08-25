@@ -1,7 +1,7 @@
 import sys
 from monitor import refresh
 from trader import train_and_predict, make_trade
-from bitstamp_client import Trading
+from bitstamp import Trading
 
 
 def action(name):
