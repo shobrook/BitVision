@@ -1,53 +1,45 @@
 {
   "fetching": false,
-  "data": {
-    "MOM (1)": {
-      "value": 254.35000000000036,
-      "signal": "BUY"
-    },
-    "MOM (3)": {
-      "value": 110.75,
-      "signal": "SELL"
-    },
-    "ADX (14)": {
-      "value": 30.819375811644196,
-      "signal": "BUY"
-    },
-    "ADX (20)": {
-      "value": 24.436357409902122,
-      "signal": "SELL"
-    },
-    "WILLR": {
-      "value": -82.70188869215012,
-      "signal": "BUY"
-    },
-    "RSI (6)": {
-      "value": 33.95160827480577,
-      "signal": "SELL"
-    },
-    "RSI (12)": {
-      "value": 36.73415539493215,
-      "signal": "BUY"
-    },
-    "ATR (14)": {
-      "value": 404.4763176137203,
-      "signal": "SELL"
-    },
-    "OBV": {
-      "value": -2282864189.4328084,
-      "signal": "BUY"
-    },
-    "TRIX (20)": {
-      "value": 0.18150964785383916,
-      "signal": "BUY"
-    },
-    "EMA (6)": {
-      "value": 6533.508727767468,
-      "signal": "NONE"
-    },
-    "EMA (12)": {
-      "value": 6839.683685383843,
-      "signal": "NONE"
-    }
-  }
+  "data": [
+    [
+      "Triple Exponential Average (20-period)",
+      -0.28,
+      ""
+    ],
+    [
+      "Average Directional Index (14-period)",
+      23.11,
+      ""
+    ],
+    [
+      "Exponential Moving Average (6-period)",
+      6566.42,
+      ""
+    ],
+    [
+      "Relative Strength Index (6-period)",
+      63.92,
+      ""
+    ],
+    [
+      "Average True Range (14-period)",
+      345.15,
+      ""
+    ],
+    [
+      "Momentum (3-period)",
+      29.44,
+      ""
+    ],
+    [
+      "On-Balance Volume",
+      -2193430488.25,
+      ""
+    ],
+    [
+      "Williams %R",
+      -17.96,
+      ""
+    ]
+  ]
 }

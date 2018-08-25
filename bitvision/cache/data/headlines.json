@@ -1,75 +1,89 @@
 {
   "fetching": false,
-  "data": {
-    "Crypto Unicorn Bitmain Weighs $18 Billion IPO, One of World's Largest\n\nAug 10, 2018 by Ada Hui": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/crypto-unicorn-bitmain-weighs-18-billion-ipo-one-of-worlds-largest/",
-      "sentiment": 0.0
-    },
-    "At Bitcoin Cash Birthday, Crypto Faces the Strange\n\nAug 11, 2018": {
-      "timestamp": "2018-08-11",
-      "url": "https://www.coindesk.com/at-bitcoin-cash-birthday-bash-crypto-embraces-the-strange/",
-      "sentiment": -0.05
-    },
-    "Crypto Trading 101: Reading an Exchange Order Book\n\nAug 11, 2018": {
-      "timestamp": "2018-08-11",
-      "url": "https://www.coindesk.com/crypto-trading-101-how-to-read-an-exchange-order-book/",
-      "sentiment": 0.0
-    },
-    "Bitcoin Dominance Rate Hits 50% For First Time in 2018\n\nAug 11, 2018": {
-      "timestamp": "2018-08-11",
-      "url": "https://www.coindesk.com/bitcoin-dominance-rate-hits-50-for-first-time-in-2018/",
-      "sentiment": 0.25
-    },
-    "Volumes Surge on Turkey's Crypto Exchanges as Lira Tanks": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/turkey-crypto-exchanges-bitcoin-lira/",
-      "sentiment": 0.0
-    },
-    "FinCEN Says It Now Receives 1,500 Crypto Complaints a Month": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/fincen-says-it-now-receives-1500-crypto-complaints-a-month/",
-      "sentiment": 0.0
-    },
-    "Coin Center Updates Its Securities Framework for Cryptocurrencies": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/coin-center-updates-its-securities-framework-for-cryptocurrencies/",
-      "sentiment": -0.1
-    },
-    "Facebook's Marcus Steps Down From Coinbase Board": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/facebooks-david-marcus-steps-down-from-coinbases-board/",
-      "sentiment": -0.16
-    },
-    "Early Crypto Adopter Dish Network Now Accepts Bitcoin Cash": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/early-crypto-adopter-dish-network-now-accepts-bitcoin-cash/",
-      "sentiment": 0.1
-    },
-    "Regulated Trader Templum Hosts Security Token Sale for Luxury Resort": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/regulated-trader-templum-hosts-security-token-sale-for-luxury-resort/",
-      "sentiment": 0.0
-    },
-    "Public Firm Becomes First to Launch an ICO in Singapore": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/public-firm-becomes-first-to-launch-an-ico-in-singapore/",
-      "sentiment": 0.02
-    },
-    "Honeyminer Signs Up 50K Users for Easy Crypto Mining App": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/bitcoin-gpu-crypto-mining/",
-      "sentiment": 0.43
-    },
-    "Today's Close Could be Pivotal for Bitcoin's Price": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/todays-close-could-be-pivotal-for-bitcoins-price/",
-      "sentiment": 0.5
-    },
-    "WeChat Eyes Blockchain for Faster Corporate Expense Refunds": {
-      "timestamp": "2018-08-10",
-      "url": "https://www.coindesk.com/wechat-trials-blockchain-for-faster-refunds-of-company-expenses/",
-      "sentiment": 0.0
-    }
-  }
+  "data": [
+    [
+      "08-25",
+      "The Weirdest Prediction Markets on Augur Right Now",
+      0.29,
+      "https://www.coindesk.com/the-weirdest-prediction-markets-on-augur-right-now/"
+    ],
+    [
+      "08-25",
+      "Crypto Is a Defense Against Discrimination",
+      0.0,
+      "https://www.coindesk.com/crypto-isnt-just-money-its-a-defense-against-discrimination/"
+    ],
+    [
+      "08-24",
+      "The SEC Bitcoin ETF Rejection Review Explained",
+      -0.1,
+      "https://www.coindesk.com/what-an-sec-bitcoin-etf-rejection-review-really-means/"
+    ],
+    [
+      "08-24",
+      "Ethereum Meeting Leaves Open Questions Ahead of October Upgrade",
+      0.0,
+      "https://www.coindesk.com/ethereum-call-leaves-pressing-questions-open-ahead-of-october-upgrade/"
+    ],
+    [
+      "08-24",
+      "WeChat, Alipay to Block Crypto Transactions on Payment Platforms",
+      0.0,
+      "https://www.coindesk.com/wechat-alipay-to-block-crypto-transactions-on-payment-platforms/"
+    ],
+    [
+      "08-24",
+      "Bitcoin Price Could End Day With Tightest Trading Range of 2018",
+      0.0,
+      "https://www.coindesk.com/bitcoin-could-end-day-with-tightest-trading-range-of-2018/"
+    ],
+    [
+      "08-24",
+      "World Bank's Blockchain Bond Experiment Raises $81 Million",
+      0.0,
+      "https://www.coindesk.com/world-banks-blockchain-bond-experiment-raises-81-million/"
+    ],
+    [
+      "08-24",
+      "CBP: Our 'Live Fire' Blockchain Test Is Entering the Proof-of-Concept Phase",
+      0.14,
+      "https://www.coindesk.com/cbp-our-live-fire-blockchain-test-is-entering-the-proof-of-concept-phase/"
+    ],
+    [
+      "08-24",
+      "Ohio Lawmakers Pitch Their State As a Future Hub for Blockchain",
+      0.0,
+      "https://www.coindesk.com/ohio-lawmakers-pitch-their-state-as-a-future-hub-for-blockchain/"
+    ],
+    [
+      "08-24",
+      "Mt Gox's Bitcoin Creditors Can Now File for Rehabilitation Claims",
+      0.0,
+      "https://www.coindesk.com/mt-goxs-bitcoin-creditors-can-now-file-for-rehabilitation-claims/"
+    ],
+    [
+      "08-24",
+      "Bitcoin's Price Builds Bottom As Upward Pressure Grows",
+      0.0,
+      "https://www.coindesk.com/bitcoins-price-builds-bottom-as-upward-pressure-grows/"
+    ],
+    [
+      "08-24",
+      "Singapore Stock Exchange Taps Blockchain for Faster Settlements",
+      0.0,
+      "https://www.coindesk.com/singapore-stock-exchange-taps-blockchain-for-faster-settlement/"
+    ],
+    [
+      "08-24",
+      "Chinese Regulators Blast Crypto Fundraising in New Joint Warning",
+      0.07,
+      "https://www.coindesk.com/chinese-watchdogs-blast-illegal-crypto-fundraising-in-new-joint-warning/"
+    ],
+    [
+      "08-24",
+      "A Phone Call Could Change Ethereum's Future \u2013\u00a0And It's Happening Today",
+      0.0,
+      "https://www.coindesk.com/a-phone-call-could-impact-ethereums-future-and-its-happening-today/"
+    ]
+  ]
 }
