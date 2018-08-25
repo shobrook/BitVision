@@ -89,16 +89,6 @@ function extractURLsAndTrim(listOfArticles) {
 function readJsonFile(path) {
   console.log("Reading " + path)
   return JSON.parse(fs.readFileSync(path, "utf8"))
-
-  // , function(err, data) {
-  //   console.log("Finished reading file.")
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  //   let dataJson = JSON.parse(data)
-  //   callback(dataJson);
-  // });
-  // console.log("Ending function.")
 }
 
 /**
