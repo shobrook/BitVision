@@ -35,7 +35,7 @@ const paths = {
   "blockchainDataPath": path.join(__dirname, "..", "cache", "data", "blockchain.json"),
   "headlineDataPath": path.join(__dirname, "..", "cache", "data", "headlines.json"),
   "technicalDataPath": path.join(__dirname, "..", "cache", "data", "indicators.json"),
-  "priceDataPath": path.join(__dirname, "..", "cache", "data", "price_data.json")
+  "priceDataPath": path.join(__dirname, "..", "cache", "data", "ticker.json")
 }
 
 // TODO: Sync up with Jon about these commands.
@@ -84,33 +84,21 @@ function extractURLsAndTrim(listOfArticles) {
 }
 
 /**
- * Truncates text if longer than len, otherwise does nothing.
- * @param  {String} text Text to be length checked and modified.
- * @param  {Number} len  Integer for longest allowable length.
- * @return {String}      Modified or unmodified input string.
- */
-function trimIfLongerThan(text, len) {
-  if (text.length > len) {
-    return text.slice(0, len);
-  } else {
-    return text;
-  }
-}
-
-/**
  * Read JSON file and do something with the data
  */
-function readJsonFile(path, callback) {
+function readJsonFile(path) {
   console.log("Reading " + path)
-  fs.readFile(path, "utf8", function(err, data) {
-    console.log("Finished reading file.")
-    if (err) {
-      console.log(err);
-    }
-    let dataJson = JSON.parse(data)
-    callback(dataJson);
-  });
-  console.log("Ending function.")
+  return JSON.parse(fs.readFileSync(path, "utf8"))
+
+  // , function(err, data) {
+  //   console.log("Finished reading file.")
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   let dataJson = JSON.parse(data)
+  //   callback(dataJson);
+  // });
+  // console.log("Ending function.")
 }
 
 /**
@@ -201,9 +189,7 @@ function writeConfig(config) {
  */
 function getConfig(callback) {
   // log("GETTING CONFIG");
-  readJsonFile(paths.configPath, (cfg) => {
-    callback(cfg);
-  });
+  return readJsonFile(paths.configPath);
 }
 
 /**
@@ -212,14 +198,8 @@ function getConfig(callback) {
  */
 function hasCredentialsInConfig() {
   console.log("Checking for credentials in config...")
-  getConfig((cfg) => {
-    let creds = cfg.credentials;
-    if (creds.key === "" || creds.secret !== "" || creds.passphrase !== "") {
-      return false;
-    } else {
-      return true;
-    }
-  });
+  let creds = getConfig().credentials
+  return !(creds.key === "" || creds.secret !== "" || creds.passphrase !== "")
 }
 
 /**
@@ -253,10 +233,9 @@ function createConfigIfNeeded(callback) {
 
 function saveCredentials(newCreds) {
   log("SAVING CREDENTIALS");
-  getConfig((cfg) => {
-    cfg.credentials = newCreds;
-    writeConfig(cfg);
-  })
+  let cfg = getConfig()
+  cfg.credentials = newCreds;
+  writeConfig(cfg);
 }
 
 /**
@@ -312,31 +291,30 @@ function displayLoginScreen() {
 function showAutotradingMenu() {
   log("Autotrading Menu");
   tradingToggle.createToggleScreen(screen, function(isEnabling) {
+    let cfg = getConfig()
     // log(`Enabling: ${isEnabling}`)
-    getConfig((cfg) => {
-      let isCurrentlyEnabled = cfg.autotrade.enabled;
+    let isCurrentlyEnabled = cfg.autotrade.enabled;
 
-      // Setting autotrading to the same state should do nothing.
-      if ((isEnabling && isCurrentlyEnabled) || (!isEnabling && !isCurrentlyEnabled)) {
-        log("Redundant autotrading change.");
-        return;
-      }
+    // Setting autotrading to the same state should do nothing.
+    if ((isEnabling && isCurrentlyEnabled) || (!isEnabling && !isCurrentlyEnabled)) {
+      log("Redundant autotrading change.");
+      return;
+    }
 
-      // Autotrading disabled, so reset all properties to default
-      if (!isEnabling) {
-        log("Disabling autotrading.");
-        cfg.autotrade.enabled = false;
-        cfg.autotrade["next-trade-timestamp-UTC"] = 0;
-      } else {
-        // Autotrading enabled, so set next trade timestamp for +1 hr from now.
-        log("Enabling autotrading.");
-        cfg.autotrade.enabled = true;
-        cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(1);
-      }
+    // Autotrading disabled, so reset all properties to default
+    if (!isEnabling) {
+      log("Disabling autotrading.");
+      cfg.autotrade.enabled = false;
+      cfg.autotrade["next-trade-timestamp-UTC"] = 0;
+    } else {
+      // Autotrading enabled, so set next trade timestamp for +1 hr from now.
+      log("Enabling autotrading.");
+      cfg.autotrade.enabled = true;
+      cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(1);
+    }
 
-      // Store updated configuration
-      writeConfig(cfg);
-    })
+    // Store updated configuration
+    writeConfig(cfg);
   });
 }
 
@@ -510,7 +488,7 @@ var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
 
 // Countdown under price data.
 
-var countdown = grid.set(8.3 , 4, 2.5, 2, contrib.lcd, {
+var countdown = grid.set(8.3, 4, 2.5, 2, contrib.lcd, {
   segmentWidth: 0.06,
   segmentInterval: 0.10,
   strokeWidth: 0.1,
@@ -735,38 +713,37 @@ let priceData = {
 // DATA FETCHING FUNCTIONS
 // -----------------------
 
-function getBlockchainData() {
-  readJsonFile(paths.blockchainDataPath, (blockchainData) => {
-    // log(blockchainData)
-    blockchainData = blockchainData.data;
-    return blockchainData;
-  });
+function getData(path) {
+  let data = readJsonFile(path)
+  // TODO: Uncomment this.
+  // while (!data.fetching) {
+    // data = readJsonFile(path)
+  // }
+
+  return data.data
 }
 
-function getHeadlineData() {
-  readJsonFile(paths.headlineDataPath, (headlineData) => {
-    // Trim headlines if too long.
-    shortenedHeadlines = [];
-    for (let i = 0; i < headlineData.length; i++) {
-      shortenedHeadlines.splice(i, 0, trimIfLongerThan(str, MAX_HEADLINE_LENTH))
-    }
-    log(shortenedHeadlines);
-    return shortenedHeadlines;
-  });
+function reformatPriceData(priceData) {
+  return [
+    ["Current Price", priceData[0].last],
+    ["24H High", priceData[0].high],
+    ["24H Low", priceData[0].low],
+    ["Open Price", priceData[0].open],
+    ["Volume", priceData[0].volume],
+    ["Timestamp", priceData[0].timestamp]
+  ]
 }
 
-function getTechnicalData() {
-  readJsonFile(paths.technicalDataPath, (technicalData) => {
-    // log(technicalData);
-    return technicalData;
-  });
-}
-
-function getPriceData() {
-  readJsonFile(paths.priceDataPath, (data) => {
-    // console.log(priceData);
-    return priceData;
-  });
+function trimHeadlines(headlines) {
+  // Trim headlines if too long.
+  let shortenedHeadlines = [];
+  for (let idx = 0; idx < headlines.length; idx++) {
+    let headline = headlines[idx]
+    let trimmedHeadline = headline.length > MAX_HEADLINE_LENTH ? headline.slice(0, MAX_HEADLINE_LENTH) : headline
+    shortenedHeadlines.push(trimmedHeadline);
+  }
+  log(shortenedHeadlines);
+  return shortenedHeadlines;
 }
 
 function getRandomInteger(min, max) {
@@ -801,10 +778,10 @@ function setLineData(mockData, line) {
  */
 function refreshData(callback) {
   console.log("Refreshing data...");
-  headlineData = getHeadlineData();
-  technicalData = getTechnicalData();
-  blockchainData = getBlockchainData();
-  priceData = getPriceData();
+  headlineData = trimHeadlines(getData(paths.headlineDataPath));
+  technicalData = getData(paths.technicalDataPath);
+  blockchainData = getData(paths.blockchainDataPath);
+  priceData = reformatPriceData(getData(paths.priceDataPath));
   console.log("Refreshed all data...");
   callback(headlineData, technicalData, blockchainData, priceData);
 }
@@ -873,22 +850,19 @@ function doThings() {
       LOGGED_IN = false;
     }
 
-    headlineData = getHeadlineData()
-    console.log(headlineData)
-
     // @Jon, comment the next four lines out, and uncomment the block after that for the bug.
 
-    setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-    setChart();
-    headlinesTable.focus();
-    screen.render();
+    // setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+    // setChart();
+    // headlinesTable.focus();
+    // screen.render();
 
-    // refreshData((headlineData, technicalData, blockchainData, priceData) => {
-    //   setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-    //   setChart();
-    //   headlinesTable.focus();
-    //   screen.render();
-    // });
+    refreshData((headlineData, technicalData, blockchainData, priceData) => {
+      setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
+      setChart();
+      headlinesTable.focus();
+      screen.render();
+    });
 
     // console.log("RESETTING")
     // // BUG: setAllTables in here causes everything to crash. No ideas.
