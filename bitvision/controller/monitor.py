@@ -59,12 +59,12 @@ USER_AGENTS = [
 def fetch_price_data():
     response = requests.get("https://www.bitstamp.net/api/ticker/").json()
     data = {
-        "last": response["last"],
-        "high": response["high"],
-        "low": response["low"],
-        "open": response["open"],
-        "volume": response["volume"],
-        "timestamp": response["timestamp"]
+        "last": round(int(response["last"]), 2),
+        "high": round(int(response["high"]), 2),
+        "low": round(int(response["low"]), 2),
+        "open": round(int(response["open"]), 2),
+        "volume": round(int(response["volume"]), 2),
+        "timestamp": round(int(response["timestamp"]), 2)
     }
 
     fname = "cache/data/ticker.json"
