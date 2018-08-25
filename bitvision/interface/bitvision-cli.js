@@ -8,7 +8,6 @@ let cli = require("commander");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
-let writeJsonFile = require("write-json-file");
 let VERSION = require("../package.json").version
 
 let MAX_HEADLINE_LENTH = 25;
@@ -32,7 +31,7 @@ let tradingToggle = require("./autotrading-toggle");
 // ----------
 
 const paths = {
-  "configPath": path.join(os.homedir(), ".bitvision"),
+  "configPath": path.join(__dirname, "..", "cache", "config.json"),
   "blockchainDataPath": path.join(__dirname, "..", "cache", "data", "blockchain.json"),
   "headlineDataPath": path.join(__dirname, "..", "cache", "data", "headlines.json"),
   "technicalDataPath": path.join(__dirname, "..", "cache", "data", "indicators.json"),
@@ -192,8 +191,8 @@ function retrainModelCommand() {
 
 function writeConfig(config) {
   log(`WRITING FILE at ${paths.configPath}`);
-  writeJsonFile(paths.configPath, config).then(() => {
-    log("File Saved");
+  fs.writeFile(paths.configPath, JSON.stringify(config), "utf8", () => {
+    log("File Saved.");
   });
 }
 
@@ -227,13 +226,13 @@ function hasCredentialsInConfig() {
  * Creates dotfile with default values if it doesn't exist.
  */
 function createConfigIfNeeded(callback) {
-  log("CHECKING FOR DOTFILE");
+  console.log("CHECKING FOR DOTFILE");
   fs.stat(paths.configPath, function(err, stat) {
     if (err == null) {
-      log("Exists");
-      return;
+      console.log("Exists");
+      callback();
     } else if (err.code === "ENOENT") {
-      log("No dotfile found. Creating DEFAULT.");
+      console.log("No dotfile found. Creating DEFAULT.");
       // Create file
       let emptyConfig = {
         "credentials": {
@@ -247,9 +246,9 @@ function createConfigIfNeeded(callback) {
         },
       }
       writeConfig(emptyConfig);
+      callback();
     }
   });
-  callback();
 }
 
 function saveCredentials(newCreds) {
@@ -746,7 +745,6 @@ function getBlockchainData() {
 
 function getHeadlineData() {
   readJsonFile(paths.headlineDataPath, (headlineData) => {
-    headlineData = headlineData.data;
     // Trim headlines if too long.
     shortenedHeadlines = [];
     for (let i = 0; i < headlineData.length; i++) {
@@ -759,7 +757,6 @@ function getHeadlineData() {
 
 function getTechnicalData() {
   readJsonFile(paths.technicalDataPath, (technicalData) => {
-    technicalData = technicalData.data;
     // log(technicalData);
     return technicalData;
   });
@@ -767,7 +764,6 @@ function getTechnicalData() {
 
 function getPriceData() {
   readJsonFile(paths.priceDataPath, (data) => {
-    priceData = priceData.data;
     // console.log(priceData);
     return priceData;
   });
@@ -877,8 +873,8 @@ function doThings() {
       LOGGED_IN = false;
     }
 
-    // headlineData = getHeadlineData()
-    // console.log(headlineData)
+    headlineData = getHeadlineData()
+    console.log(headlineData)
 
     // @Jon, comment the next four lines out, and uncomment the block after that for the bug.
 
