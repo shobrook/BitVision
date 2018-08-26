@@ -2,8 +2,28 @@
   "fetching": false,
   "data": [
     [
-      "Triple Exponential Average (20-period)",
-      -0.28,
+      "Williams %R",
+      -17.96,
+      ""
+    ],
+    [
+      "On-Balance Volume",
+      -2193430488.25,
+      ""
+    ],
+    [
+      "Momentum (3-period)",
+      29.44,
+      ""
+    ],
+    [
+      "Average True Range (14-period)",
+      345.15,
+      ""
+    ],
+    [
+      "Relative Strength Index (6-period)",
+      63.92,
       ""
     ],
     [
@@ -17,28 +37,8 @@
       ""
     ],
     [
-      "Relative Strength Index (6-period)",
-      63.92,
-      ""
-    ],
-    [
-      "Average True Range (14-period)",
-      345.15,
-      ""
-    ],
-    [
-      "Momentum (3-period)",
-      29.44,
-      ""
-    ],
-    [
-      "On-Balance Volume",
-      -2193430488.25,
-      ""
-    ],
-    [
-      "Williams %R",
-      -17.96,
+      "Triple Exponential Average (20-period)",
+      -0.28,
       ""
     ]
   ]
