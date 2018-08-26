@@ -634,11 +634,11 @@ function getData(path) {
 
 function reformatPriceData(priceData) {
   return [
-    ["Current Price", String(priceData[0].last]),
-    ["24H High", String(priceData[0].high]),
-    ["24H Low", String(priceData[0].low]),
-    ["Open Price", String(priceData[0].open]),
-    ["Volume", String(priceData[0].volume]),
+    ["Current Price", String(priceData[0].last)],
+    ["24H High", String(priceData[0].high)],
+    ["24H Low", String(priceData[0].low)],
+    ["Open Price", String(priceData[0].open)],
+    ["Volume", String(priceData[0].volume)],
     ["Timestamp", String(priceData[0].timestamp)]
   ]
 }
