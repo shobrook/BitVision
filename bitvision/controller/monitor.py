@@ -59,11 +59,11 @@ USER_AGENTS = [
 def fetch_price_data():
     response = requests.get("https://www.bitstamp.net/api/ticker/").json()
     data = {
-        "last": round(int(response["last"]), 2),
-        "high": round(int(response["high"]), 2),
-        "low": round(int(response["low"]), 2),
-        "open": round(int(response["open"]), 2),
-        "volume": round(int(response["volume"]), 2),
+        "last": round(float(response["last"]), 2),
+        "high": round(float(response["high"]), 2),
+        "low": round(float(response["low"]), 2),
+        "open": round(float(response["open"]), 2),
+        "volume": round(float(response["volume"]), 2),
         "timestamp": round(int(response["timestamp"]), 2)
     }
 
@@ -128,7 +128,7 @@ def fetch_tech_indicators():
 
             indicators_json.write(json.dumps({
                 "fetching": False,
-                "data": list(sorted(data, key=lambda i: len(i[0]), reverse=True))
+                "data": list(sorted(data, key=lambda i: len(i[0])))
             }, indent=2))
 
     return True
@@ -160,7 +160,7 @@ def fetch_blockchain_data():
 
         blockchain_data_json.write(json.dumps({
             "fetching": False,
-            "data": list(sorted(data, key=lambda i: len(i[0]), reverse=True))
+            "data": list(sorted(data, key=lambda i: len(i[0])))
         }, indent=2))
 
     return True
