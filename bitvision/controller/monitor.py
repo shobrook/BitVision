@@ -111,19 +111,21 @@ def fetch_tech_indicators():
             # "EMA (6)": {"value": indicators["EMA (6)"][0], "signal": "NONE"},
 
             data = [
-                ["Momentum (3-period)", round(indicators["MOM (1)"][0], 2), ""],
+                ["Momentum (3-period)",
+                 str(round(indicators["MOM (1)"][0], 2)), "SELL"],
                 ["Average Directional Index (14-period)",
-                 round(indicators["ADX (14)"][0], 2), ""],
-                ["Williams %R", round(indicators["WILLR"][0], 2), ""],
+                 str(round(indicators["ADX (14)"][0], 2)), "SELL"],
+                ["Williams %R", str(round(indicators["WILLR"][0], 2)), "SELL"],
                 ["Relative Strength Index (6-period)",
-                 round(indicators["RSI (6)"][0], 2), ""],
+                 str(round(indicators["RSI (6)"][0], 2)), "SELL"],
                 ["Average True Range (14-period)",
-                 round(indicators["ATR (14)"][0], 2), ""],
-                ["On-Balance Volume", round(indicators["OBV"][0], 2), ""],
+                 str(round(indicators["ATR (14)"][0], 2)), "SELL"],
+                ["On-Balance Volume",
+                    str(round(indicators["OBV"][0], 2)), "BUY"],
                 ["Triple Exponential Average (20-period)",
-                 round(indicators["TRIX (20)"][0], 2), ""],
+                 str(round(indicators["TRIX (20)"][0], 2)), "BUY"],
                 ["Exponential Moving Average (6-period)",
-                 round(indicators["EMA (6)"][0], 2), ""]
+                 str(round(indicators["EMA (6)"][0], 2)), "BUY"]
             ]
 
             indicators_json.write(json.dumps({
@@ -139,23 +141,25 @@ def fetch_blockchain_data():
 
     with open("cache/data/blockchain.json", 'w') as blockchain_data_json:
         data = [
-            ["Confirmation Time", round(blockchain_data["Conf. Time"][0], 2)],
-            ["Block Size", round(blockchain_data["Block Size"][0], 2)],
-            ["Transaction Cost", round(blockchain_data["TXN Cost"][0], 2)],
-            ["Difficulty", round(blockchain_data["Difficulty"][0], 2)],
-            ["Transactions per Day", round(
-                blockchain_data["TXNs per Day"][0], 2)],
+            ["Confirmation Time", str(
+                round(blockchain_data["Conf. Time"][0], 2))],
+            ["Block Size", str(round(blockchain_data["Block Size"][0], 2))],
+            ["Transaction Cost", str(round(blockchain_data["TXN Cost"][0], 2))],
+            ["Difficulty", str(round(blockchain_data["Difficulty"][0], 2))],
+            ["Transactions per Day", str(round(
+                blockchain_data["TXNs per Day"][0], 2))],
             ["Hash Rate (GH/s)",
-             round(blockchain_data["Hash Rate (GH/s)"][0], 2)],
-            ["Market Capitalization", round(
-                blockchain_data["Market Cap"][0], 2)],
-            ["Miners Revenue", round(blockchain_data["Miners Revenue"][0], 2)],
-            ["Transactions per Block", round(
-                blockchain_data["TXNs per Block"][0], 2)],
-            ["Unique Addresses", round(
-                blockchain_data["Unique Addresses"][0], 2)],
-            ["Total Bitcoin", round(blockchain_data["Total BTC"][0], 2)],
-            ["Transaction Fees", round(blockchain_data["TXN Fees"][0], 2)]
+             str(round(blockchain_data["Hash Rate (GH/s)"][0], 2))],
+            ["Market Capitalization", str(round(
+                blockchain_data["Market Cap"][0], 2))],
+            ["Miners Revenue", str(
+                round(blockchain_data["Miners Revenue"][0], 2))],
+            ["Transactions per Block", str(round(
+                blockchain_data["TXNs per Block"][0], 2))],
+            ["Unique Addresses", str(round(
+                blockchain_data["Unique Addresses"][0], 2))],
+            ["Total Bitcoin", str(round(blockchain_data["Total BTC"][0], 2))],
+            ["Transaction Fees", str(round(blockchain_data["TXN Fees"][0], 2))]
         ]
 
         blockchain_data_json.write(json.dumps({
@@ -185,7 +189,7 @@ def fetch_coindesk_stats():
             "data": [[
                 moment.date(headline[1]).format("M-D"),
                 headline[0].split("\n")[0],
-                round(TextBlob(headline[0]).sentiment.polarity, 2),
+                str(round(TextBlob(headline[0]).sentiment.polarity, 2)),
                 headline[2]]
                 for headline in featured_headlines + other_headlines]
         }, indent=2))
