@@ -72,7 +72,8 @@ const headers = {
  *  [a,b,c] returns [3,c,#] and removes it from the original list of lists.
  *  [!,@,#]]
  */
-function extractURLsAndTrim(listOfArticles) {
+function extractUrlAndRemove(listOfArticles) {
+  console.log(listOfArticles)
   let urls = [];
   let index = 3;
   for (var i = 0; i < listOfArticles.length; i++) {
@@ -177,7 +178,7 @@ function writeConfig(config) {
 /**
  * Gets config file in dictionary form.
  */
-function getConfig(callback) {
+function getConfig() {
   // log("GETTING CONFIG");
   return readJsonFile(paths.configPath);
 }
@@ -195,30 +196,26 @@ function hasCredentialsInConfig() {
 /**
  * Creates dotfile with default values if it doesn't exist.
  */
-function createConfigIfNeeded(callback) {
+function createConfigIfNeeded() {
   console.log("CHECKING FOR DOTFILE");
-  fs.stat(paths.configPath, function(err, stat) {
-    if (err == null) {
-      console.log("Exists");
-      callback();
-    } else if (err.code === "ENOENT") {
-      console.log("No dotfile found. Creating DEFAULT.");
-      // Create file
-      let emptyConfig = {
-        "credentials": {
-          "key": "",
-          "secret": "",
-          "passphrase": ""
-        },
-        "autotrade": {
-          "enabled": false,
-          "next-trade-timestamp-UTC": 0,
-        },
-      }
-      writeConfig(emptyConfig);
-      callback();
+  if (fs.existsSync(paths.configPath)) {
+    return
+  } else {
+    console.log("No dotfile found. Creating DEFAULT.");
+    // Create file
+    let emptyConfig = {
+      "credentials": {
+        "key": "",
+        "secret": "",
+        "passphrase": ""
+      },
+      "autotrade": {
+        "enabled": false,
+        "next-trade-timestamp-UTC": 0,
+      },
     }
-  });
+    writeConfig(emptyConfig);
+  }
 }
 
 function saveCredentials(newCreds) {
@@ -621,84 +618,6 @@ screen.key(["escape", "C-c"], function(ch, key) {
   return process.exit(0);
 });
 
-// -----------------
-// WORKING WITH DATA
-// -----------------
-
-let headlineData = {
-  "name": "HEADLINES",
-  "data": [
-    ["12/3", "Canada to tax bitcoin users", "0.10", "https://www.coindesk.com"],
-    ["12/2", "Google Ventures invests in Bitcoin ", "0.21", "https://www.coindesk.com"],
-    ["12/1", "Canada to tax bitcoin users", "0.23", "https://www.coindesk.com"],
-    ["11/22", "Canada to tax bitcoin users", "0.08", "https://www.coindesk.com"],
-    ["11/19", "Bitcoin is bad news for stability", "0.10", "https://www.coindesk.com"],
-    ["10/15", "Google Ventures invests in Bitcoin ", "0.08", "https://www.coindesk.com"],
-    ["10/7", "WikiLeaks\' Assange hypes bitcoin in", "0.36", "https://www.coindesk.com"],
-    ["9/4", "Canada to tax bitcoin users", "0.54", "https://www.coindesk.com"],
-    ["8/27", "Are alternative Ecoins \'anti-bitcoi", "0.07", "https://www.coindesk.com"],
-    ["8/26", "Google Ventures invests in Bitcoin ", "0.68", "https://www.coindesk.com"],
-    ["8/20", "Canada to tax bitcoin users", '0.74', "https://www.coindesk.com"],
-    ["7/24", "Google Ventures invests in Bitcoin ", "0.55", "https://www.coindesk.com"],
-    ["7/5", "Zerocoin\'s widget promises Bitcoin ", "0.47", "https://www.coindesk.com"],
-    ["6/4", "WikiLeaks\' Assange hypes bitcoin in", "0.17", "https://www.coindesk.com"],
-    ["5/30", "Google Ventures invests in Bitcoin ", "0.36", "https://www.coindesk.com"],
-    ["5/4", "WikiLeaks\' Assange hypes bitcoin in", "0.19", "https://www.coindesk.com"]
-  ]
-}
-
-let URLs = null;
-
-let tempNameConst = {
-  buy: "BUY ",
-  sell: "SELL"
-}
-
-let technicalData = {
-  "name": "TECHNICAL_INDICATORS",
-  "data": [
-    ['Momentum', 'Val', tempNameConst.sell],
-    ['Williams %R', 'Val', tempNameConst.sell],
-    ['Avg True Range', 'Val', tempNameConst.sell],
-    ['On-Balance Volume', 'Val', tempNameConst.sell],
-    ['Rate of Change Ratio', 'Val', tempNameConst.buy],
-    ['Avg Directional Index', 'Val', tempNameConst.buy],
-    ['Relative Strength Index', 'Val', tempNameConst.buy],
-    ['Triple Exponential Moving Avg', 'Val', tempNameConst.sell],
-    ['Moving Avg Convergence Divergence', 'Val', tempNameConst.sell],
-  ]
-}
-
-let blockchainData = {
-  "name": "BLOCKCHAIN_DATA",
-  "data": [
-    ["Block Size", "1.0509867022900001"],
-    ["Difficulty", "5949437371610.0"],
-    ["Total Bitcoin", "17194350.0"],
-    ["Miners Revenue", "11517945.75"],
-    ["Transaction Cost", "53.2590456155"],
-    ["Unique Addresses", "452409.0"],
-    ["Transaction Fees", "124854.43486300002"],
-    ["Hash Rate (GH/s)", "38743005.8012"],
-    ["Confirmation Time", "14.45"],
-    ["Transactions per Day", "218607.0"],
-    ["Market Capitalization", "120942650691.00003"],
-    ["Transactions per Block", "1668.75572519"],
-  ]
-}
-
-let priceData = {
-  "fetching": false,
-  "data": [
-    ["Current Price", "6319.35"],
-    ["24H High", "6494.13000000"],
-    ["24H Low", "6068.52000000"],
-    ["Open Price", "6240.49"],
-    ["Volume", "6708.87922004"],
-    ["Timestamp", "1534060816"]
-  ]
-}
-
 // -----------------------
 // DATA FETCHING FUNCTIONS
 // -----------------------
@@ -707,7 +626,7 @@ function getData(path) {
   let data = readJsonFile(path)
   // TODO: Uncomment this.
   // while (!data.fetching) {
-    // data = readJsonFile(path)
+  // data = readJsonFile(path)
   // }
 
   return data.data
@@ -715,12 +634,12 @@ function getData(path) {
 
 function reformatPriceData(priceData) {
   return [
-    ["Current Price", priceData[0].last],
-    ["24H High", priceData[0].high],
-    ["24H Low", priceData[0].low],
-    ["Open Price", priceData[0].open],
-    ["Volume", priceData[0].volume],
-    ["Timestamp", priceData[0].timestamp]
+    ["Current Price", String(priceData[0].last]),
+    ["24H High", String(priceData[0].high]),
+    ["24H Low", String(priceData[0].low]),
+    ["Open Price", String(priceData[0].open]),
+    ["Volume", String(priceData[0].volume]),
+    ["Timestamp", String(priceData[0].timestamp)]
   ]
 }
 
@@ -763,31 +682,39 @@ function setLineData(mockData, line) {
   line.setData(mockData);
 }
 
+var URLs = null
+
 /**
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
-function refreshData(callback) {
+function refreshData() {
   console.log("Refreshing data...");
-  headlineData = trimHeadlines(getData(paths.headlineDataPath));
-  technicalData = getData(paths.technicalDataPath);
-  blockchainData = getData(paths.blockchainDataPath);
-  priceData = reformatPriceData(getData(paths.priceDataPath));
+  let headlineData = trimHeadlines(getData(paths.headlineDataPath));
+  URLs = extractUrlAndRemove(headlineData);
+  let technicalData = getData(paths.technicalDataPath);
+  let blockchainData = getData(paths.blockchainDataPath);
+  let priceData = reformatPriceData(getData(paths.priceDataPath));
   console.log("Refreshed all data...");
-  callback(headlineData, technicalData, blockchainData, priceData);
-}
+  // console.log(, headlineData);
+  // console.log(, technicalData);
+  // console.log(, blockchainData);
+  // console.log(, priceData);
 
+  while (!(headlineData && technicalData && blockchainData && priceData)) {
+    console.log("waiting")
+  }
+  return [ headlineData, technicalData, blockchainData, priceData ]
+}
 
 /**
  * Set all tables with data.
  */
 function setAllTables(headlines, technicals, blockchains, prices) {
   console.log("Set all tables...");
-  // console.log(headlines);
-  // console.log(technicals);
-  // console.log(blockchains);
-  console.log(prices);
-
-  URLs = extractURLsAndTrim(headlines)
+  console.log("HEADLINES:", JSON.stringify(headlines, null, 2))
+  console.log(technicals)
+  console.log(blockchains)
+  console.log(prices)
 
   // Set headers for each table.
   headlines.splice(0, 0, headers.headline);
@@ -830,36 +757,27 @@ function setChart() {
  * Start up sequence.
  */
 function doThings() {
-  createConfigIfNeeded(function() {
-    // Login if they have creds
-    // TODO: Restructure this global setting.
-    if (hasCredentialsInConfig()) {
-      loginCommand();
-      LOGGED_IN = true;
-    } else {
-      LOGGED_IN = false;
-    }
+  createConfigIfNeeded();
+  // Login if they have creds
+  // TODO: Restructure this global setting.
+  if (hasCredentialsInConfig()) {
+    loginCommand();
+    LOGGED_IN = true;
+  } else {
+    LOGGED_IN = false;
+  }
 
-    // @Jon, comment the next four lines out, and uncomment the block after that for the bug.
+  let [headlineData, technicalData, blockchainData, priceData] = refreshData();
+  setAllTables(headlineData, technicalData, blockchainData, priceData);
+  setChart();
+  headlinesTable.focus();
+  screen.render();
 
-    // setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-    // setChart();
-    // headlinesTable.focus();
-    // screen.render();
-
-    refreshData((headlineData, technicalData, blockchainData, priceData) => {
-      setAllTables(headlineData.data, technicalData.data, blockchainData.data, priceData.data);
-      setChart();
-      headlinesTable.focus();
-      screen.render();
-    });
-
-    // console.log("RESETTING")
-    // // BUG: setAllTables in here causes everything to crash. No ideas.
-    // setInterval(function() {
-    //   refreshData(setAllTables)
-    // }, 1500)
-  });
+  // console.log("RESETTING")
+  // // BUG: setAllTables in here causes everything to crash. No ideas.
+  // setInterval(function() {
+  //   refreshData(setAllTables)
+  // }, 1500)
 }
 
 doThings();
