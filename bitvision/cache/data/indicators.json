@@ -3,43 +3,43 @@
   "data": [
     [
       "Williams %R",
-      -17.96,
-      ""
+      "-17.96",
+      "SELL"
     ],
     [
       "On-Balance Volume",
-      -2193430488.25,
-      ""
+      "-2193430488.25",
+      "BUY"
     ],
     [
       "Momentum (3-period)",
-      29.44,
-      ""
+      "29.44",
+      "SELL"
     ],
     [
       "Average True Range (14-period)",
-      345.15,
-      ""
+      "345.15",
+      "SELL"
     ],
     [
       "Relative Strength Index (6-period)",
-      63.92,
-      ""
+      "63.92",
+      "SELL"
     ],
     [
       "Average Directional Index (14-period)",
-      23.11,
-      ""
+      "23.11",
+      "SELL"
     ],
     [
       "Exponential Moving Average (6-period)",
-      6566.42,
-      ""
+      "6566.42",
+      "BUY"
     ],
     [
       "Triple Exponential Average (20-period)",
-      -0.28,
-      ""
+      "-0.28",
+      "BUY"
     ]
   ]
 }
