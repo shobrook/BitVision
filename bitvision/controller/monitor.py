@@ -113,7 +113,7 @@ def fetch_tech_indicators():
             data = [
                 ["MOM (3-period)",
                  str(round(indicators["MOM (1)"][0], 2)), "SELL"],
-                ["Average Directional Index (14-period)",
+                ["ADX (14-period)",
                  str(round(indicators["ADX (14)"][0], 2)), "SELL"],
                 ["WILLR", str(round(indicators["WILLR"][0], 2)), "SELL"],
                 ["RSI (6-period)",
