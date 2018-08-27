@@ -10,7 +10,7 @@ let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let VERSION = require("../package.json").version
 
-let MAX_HEADLINE_LENTH = 25;
+let MAX_HEADLINE_LENTH = 28;
 var LOGGED_IN = false;
 
 cli
@@ -40,9 +40,7 @@ const paths = {
 
 // TODO: Sync up with Jon about these commands.
 const commands = {
-  "login": "python3 ../services/trader.py LOGIN",
-  "buy": "python3 ../services/trader.py -b ",
-  "sell": "python3 ../services/trader.py -s ",
+  "transaction": `python3 ${path.join(__dirname, "..", "controller")} `,
   "refresh": "python3 ../services/controller.py REFRESH",
   "retrain_model": "python3 ../services/controller.py RETRAIN"
 }
@@ -54,7 +52,7 @@ const colors = {
 }
 
 const headers = {
-  "headline": ["Date", "Headline", "Senti"],
+  "headline": ["Date", "Headline", "Sentiment"],
   "technical": ["Technical Indicator", "Value", "Signal"],
   "blockchain": ["Blockchain Network", "Value"],
   "price": ["Price Data", "Value"]
@@ -73,7 +71,7 @@ const headers = {
  *  [!,@,#]]
  */
 function extractUrlAndRemove(listOfArticles) {
-  console.log(listOfArticles)
+  // log(listOfArticles)
   let urls = [];
   let index = 3;
   for (var i = 0; i < listOfArticles.length; i++) {
@@ -88,8 +86,8 @@ function extractUrlAndRemove(listOfArticles) {
  * Read JSON file and do something with the data
  */
 function readJsonFile(path) {
-  console.log("Reading " + path)
-  return JSON.parse(fs.readFileSync(path, "utf8"))
+  // log("Reading " + path);
+  return JSON.parse(fs.readFileSync(path, "utf8"));
 }
 
 /**
@@ -122,8 +120,8 @@ function getTimeXHoursFromNow(hours) {
   let currentTime = new Date();
   let futureTime = new Date(currentTime);
   futureTime.setHours(currentTime.getHours() + hours);
-  console.log(`CurrentTime: ${currentTime.toJSON()}`)
-  console.log(`FutureTime : ${futureTime.toJSON()}`)
+  // log(`CurrentTime: ${currentTime.toJSON()}`)
+  // log(`FutureTime : ${futureTime.toJSON()}`)
   return futureTime.toJSON()
 }
 
@@ -131,36 +129,32 @@ function getTimeXHoursFromNow(hours) {
 // PYTHON CONTROL METHODS
 // -----------------------
 
-function loginCommand() {
-  console.log(`Executing: ${commands.login}`)
-  // executeShellCommand(commands.login)
+function transactionPayload(amount, type) {
+  return {
+    "amount": amount,
+    "type": type
+  }
 }
 
 function buyBTCCommand(amount) {
-  if (LOGGED_IN) {
-    console.log(`Executing: ${commands.buyBTC + amount}`)
-    // executeShellCommand(commands.buyBTC + amount)
-  } else {
-    console.log("TRADE ERROR: NOT LOGGED IN. SHOULD BE IMPOSSIBLE.")
-  }
+  let cmd = `${commands.transaction}${transactionPayload(amount, "BUY")}`
+  log(`Executing: ${cmd}`)
+  // executeShellCommand(cmd)
 }
 
 function sellBTCCommand(amount) {
-  if (LOGGED_IN) {
-    console.log(`Executing: ${commands.sellBTC + amount}`)
-    // executeShellCommand(commands.sellBTC + amount)
-  } else {
-    console.log("TRADE ERROR: NOT LOGGED IN. SHOULD BE IMPOSSIBLE.")
-  }
+  let cmd = `${commands.transaction}${transactionPayload(amount, "SELL")}`
+  log(`Executing: ${cmd}`)
+  // executeShellCommand(cmd)
 }
 
 function refreshDataCommand() {
-  console.log(`Executing: ${commands.refresh}`)
+  log(`Executing: ${commands.refresh}`)
   // executeShellCommand(commands.refresh);
 }
 
 function retrainModelCommand() {
-  console.log(`Executing: ${commands.retrain_model}`)
+  log(`Executing: ${commands.retrain_model}`)
   // executeShellCommand(commands.retrain_model);
 }
 
@@ -169,9 +163,9 @@ function retrainModelCommand() {
 // -------------------------
 
 function writeConfig(config) {
-  log(`WRITING FILE at ${paths.configPath}`);
+  // log(`WRITING FILE at ${paths.configPath}`);
   fs.writeFile(paths.configPath, JSON.stringify(config), "utf8", () => {
-    log("File Saved.");
+    // log("File Saved.");
   });
 }
 
@@ -188,20 +182,20 @@ function getConfig() {
  * @return {Bool} Returns true if all creds exist, false otherwise.
  */
 function hasCredentialsInConfig() {
-  console.log("Checking for credentials in config...")
-  let creds = getConfig().credentials
-  return !(creds.key === "" || creds.secret !== "" || creds.passphrase !== "")
+  // log("Checking for credentials in config...");
+  let creds = getConfig().credentials;
+  return !(creds.key === "" || creds.secret !== "" || creds.passphrase !== "");
 }
 
 /**
  * Creates dotfile with default values if it doesn't exist.
  */
 function createConfigIfNeeded() {
-  console.log("CHECKING FOR DOTFILE");
+  // log("CHECKING FOR DOTFILE");
   if (fs.existsSync(paths.configPath)) {
     return
   } else {
-    console.log("No dotfile found. Creating DEFAULT.");
+    // log("No dotfile found. Creating DEFAULT.");
     // Create file
     let emptyConfig = {
       "credentials": {
@@ -219,7 +213,7 @@ function createConfigIfNeeded() {
 }
 
 function saveCredentials(newCreds) {
-  log("SAVING CREDENTIALS");
+  // log("SAVING CREDENTIALS");
   let cfg = getConfig()
   cfg.credentials = newCreds;
   writeConfig(cfg);
@@ -267,7 +261,6 @@ function displayLoginScreen() {
     if (creds != null) {
       log("New creds, saving.");
       saveCredentials(creds);
-      log("Login success.");
     } else {
       log("No creds, abort.");
     }
@@ -308,8 +301,8 @@ function showAutotradingMenu() {
 // Placing widgets
 
 var grid = new contrib.grid({
-  rows: 11,
-  cols: 12,
+  rows: 36,
+  cols: 36,
   screen: screen
 })
 
@@ -355,7 +348,7 @@ var grid = new contrib.grid({
 
 // Place 3 tables on the left side of the screen, stacked vertically.
 
-var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
+var headlinesTable = grid.set(0, 0, 11, 13, blessed.ListTable, {
   parent: screen,
   keys: true,
   fg: "green",
@@ -383,11 +376,10 @@ var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, {
       bold: true
     },
   },
-  // columnWidth: [10, 20, 25],
-  columnSpacing: 1
+  // columnSpacing: 1,
 });
 
-var technicalIndicatorsTable = grid.set(4, 0, 3, 4, blessed.ListTable, {
+var technicalIndicatorsTable = grid.set(11, 0, 8, 13, blessed.ListTable, {
   parent: screen,
   keys: true,
   align: "left",
@@ -407,10 +399,29 @@ var technicalIndicatorsTable = grid.set(4, 0, 3, 4, blessed.ListTable, {
   },
   interactive: false,
   columnSpacing: 1,
-  columnWidth: [35, 10, 10]
+  // columnWidth: [35, 10, 10]
 });
 
-var blockchainIndicatorsTable = grid.set(7, 0, 3.8, 4, blessed.ListTable, {
+var technicalIndicatorsGauge = grid.set(19, 0, 7, 13, contrib.gauge, {
+  label: '{bold}{red-fg}Buy/Sell Gauge{/red-fg}{/bold}',
+  style: {
+    fg: "red",
+    bold: true,
+  },
+  gaugeSpacing: 0,
+  gaugeHeight: 1,
+  showLabel: true
+})
+
+technicalIndicatorsGauge.setStack([{
+  percent: 50,
+  stroke: 'red'
+}, {
+  percent: 50,
+  stroke: 'green'
+}]);
+
+var blockchainIndicatorsTable = grid.set(25, 0, 10, 13, blessed.ListTable, {
   parent: screen,
   keys: true,
   align: "left",
@@ -430,12 +441,12 @@ var blockchainIndicatorsTable = grid.set(7, 0, 3.8, 4, blessed.ListTable, {
   },
   interactive: false,
   columnSpacing: 1,
-  columnWidth: [20, 20]
+  // columnWidth: [20, 20]
 });
 
 // Line chart on the right of the tables
 
-var exchangeRateChart = grid.set(0, 4, 6, 6, contrib.line, {
+var exchangeRateChart = grid.set(0, 13, 25, 20, contrib.line, {
   style: {
     line: "yellow",
     text: "green",
@@ -450,7 +461,7 @@ var exchangeRateChart = grid.set(0, 4, 6, 6, contrib.line, {
 
 // Price table above countdown.
 
-var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
+var priceTable = grid.set(26, 13, 7, 7, blessed.ListTable, {
   parent: screen,
   keys: true,
   align: "left",
@@ -475,24 +486,24 @@ var priceTable = grid.set(6, 4, 2.3, 3, blessed.ListTable, {
 
 // Countdown under price data.
 
-var countdown = grid.set(8.3, 4, 2.5, 2, contrib.lcd, {
-  segmentWidth: 0.06,
-  segmentInterval: 0.10,
-  strokeWidth: 0.1,
-  elements: 2,
-  display: "45",
-  elementSpacing: 4,
-  elementPadding: 2,
-  color: "white", // color for the segments
-  label: "Minutes Until Next Trade",
-  style: {
-    border: {
-      fg: colors.border
-    },
-  },
-})
+// var countdown = grid.set(26, 20, 7, 5, contrib.lcd, {
+//   segmentWidth: 0.06,
+//   segmentInterval: 0.10,
+//   strokeWidth: 0.1,
+//   elements: 2,
+//   display: "45",
+//   elementSpacing: 4,
+//   elementPadding: 2,
+//   color: "white", // color for the segments
+//   // label: "Min. Until Next Trade",
+//   style: {
+//     border: {
+//       fg: colors.border
+//     },
+//   },
+// })
 
-var logs = grid.set(6, 7, 4.5, 3, blessed.box, {
+var logs = grid.set(26, 20, 7, 15, blessed.box, {
   label: "DEBUGGING LOG",
   top: 0,
   left: 0,
@@ -525,7 +536,7 @@ let menubar = blessed.listbar({
       keys: ["r"],
       callback: () => {
         log("Refresh Data");
-        // refreshData()
+        // fetchData()
       }
     },
     "Bitstamp Login": {
@@ -634,11 +645,11 @@ function getData(path) {
 
 function reformatPriceData(priceData) {
   return [
-    ["Current Price", String(priceData[0].last]),
-    ["24H High", String(priceData[0].high]),
-    ["24H Low", String(priceData[0].low]),
-    ["Open Price", String(priceData[0].open]),
-    ["Volume", String(priceData[0].volume]),
+    ["Current Price", String(priceData[0].last)],
+    ["24H High", String(priceData[0].high)],
+    ["24H Low", String(priceData[0].low)],
+    ["Open Price", String(priceData[0].open)],
+    ["Volume", String(priceData[0].volume)],
     ["Timestamp", String(priceData[0].timestamp)]
   ]
 }
@@ -647,11 +658,12 @@ function trimHeadlines(headlines) {
   // Trim headlines if too long.
   let shortenedHeadlines = [];
   for (let idx = 0; idx < headlines.length; idx++) {
-    let headline = headlines[idx]
-    let trimmedHeadline = headline.length > MAX_HEADLINE_LENTH ? headline.slice(0, MAX_HEADLINE_LENTH) : headline
-    shortenedHeadlines.push(trimmedHeadline);
+    let article = headlines[idx]
+    let headline = article[1]
+    article[1] = headline.length > MAX_HEADLINE_LENTH ? headline.slice(0, MAX_HEADLINE_LENTH) + "..." : headline + "..."
+    shortenedHeadlines.push(article);
   }
-  log(shortenedHeadlines);
+  // log("SHORTENED", shortenedHeadlines);
   return shortenedHeadlines;
 }
 
@@ -687,34 +699,30 @@ var URLs = null
 /**
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
-function refreshData() {
-  console.log("Refreshing data...");
+function fetchData() {
+  log("Fetching data...");
   let headlineData = trimHeadlines(getData(paths.headlineDataPath));
   URLs = extractUrlAndRemove(headlineData);
   let technicalData = getData(paths.technicalDataPath);
   let blockchainData = getData(paths.blockchainDataPath);
   let priceData = reformatPriceData(getData(paths.priceDataPath));
-  console.log("Refreshed all data...");
-  // console.log(, headlineData);
-  // console.log(, technicalData);
-  // console.log(, blockchainData);
-  // console.log(, priceData);
+  log("Fetched all data...");
 
   while (!(headlineData && technicalData && blockchainData && priceData)) {
-    console.log("waiting")
+    log("waiting")
   }
-  return [ headlineData, technicalData, blockchainData, priceData ]
+  return [headlineData, technicalData, blockchainData, priceData]
 }
 
 /**
  * Set all tables with data.
  */
 function setAllTables(headlines, technicals, blockchains, prices) {
-  console.log("Set all tables...");
-  console.log("HEADLINES:", JSON.stringify(headlines, null, 2))
-  console.log(technicals)
-  console.log(blockchains)
-  console.log(prices)
+  log("Set all tables...");
+  // log("HEADLINES:", JSON.stringify(headlines, null, 2))
+  // log(technicals)
+  // log(blockchains)
+  // log(prices)
 
   // Set headers for each table.
   headlines.splice(0, 0, headers.headline);
@@ -722,20 +730,20 @@ function setAllTables(headlines, technicals, blockchains, prices) {
   blockchains.splice(0, 0, headers.blockchain)
   prices.splice(0, 0, headers.price);
 
-  console.log("Setting headlines...");
+  log("Setting headlines...");
   headlinesTable.setData(headlines);
 
-  console.log("Setting technicals...");
+  log("Setting technicals...");
   technicalIndicatorsTable.setData(technicals);
 
-  console.log("Setting blockchain network table...");
+  log("Setting blockchain network table...");
   blockchainIndicatorsTable.setData(blockchains);
 
-  console.log("Setting price table...")
+  log("Setting price table...")
   priceTable.setData(prices);
 
   screen.render();
-  console.log("setAllTables COMPLETE");
+  log("setAllTables COMPLETE");
 }
 
 /**
@@ -743,13 +751,23 @@ function setAllTables(headlines, technicals, blockchains, prices) {
  * TODO: Fix this.
  */
 function setChart() {
-  console.log("setChart CALLED");
+  log("setChart CALLED");
   setLineData([exchangeRateSeries], exchangeRateChart);
 
   setInterval(function() {
     setLineData([exchangeRateSeries], exchangeRateChart);
     screen.render();
   }, 500)
+}
+
+/**
+ * Fetches new data and refreshes frontend displays.
+ */
+function fetchAndRefreshDataDisplay() {
+  log("Fetch and refresh data.")
+  let [headlineData, technicalData, blockchainData, priceData] = fetchData();
+  setAllTables(headlineData, technicalData, blockchainData, priceData);
+  setChart();
 }
 
 /**
@@ -767,17 +785,19 @@ function doThings() {
     LOGGED_IN = false;
   }
 
-  let [headlineData, technicalData, blockchainData, priceData] = refreshData();
-  setAllTables(headlineData, technicalData, blockchainData, priceData);
-  setChart();
+  LOGGED_IN = true
+
+  fetchAndRefreshDataDisplay();
   headlinesTable.focus();
   screen.render();
 
-  // console.log("RESETTING")
-  // // BUG: setAllTables in here causes everything to crash. No ideas.
-  // setInterval(function() {
-  //   refreshData(setAllTables)
-  // }, 1500)
+  log("Initial data fetching done. Starting refresh loops.");
+
+  setInterval(function() {
+    fetchAndRefreshDataDisplay();
+    headlinesTable.focus();
+    screen.render();
+  }, 3000)
 }
 
 doThings();

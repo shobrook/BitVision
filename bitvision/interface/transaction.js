@@ -43,6 +43,7 @@ function createPrompt(screen, popupLabel) {
     keys: true,
     style: {
       fg: "blue",
+      bg: "#27474e",
       border: {
         fg: "light-green"
       }

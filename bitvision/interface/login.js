@@ -3,8 +3,9 @@ let blessed = require("blessed");
 // CONSTANTS
 let loginSpacingConstants = {
   height: 3,
-  width: 26,
-  left: 2,
+  width: 36,
+  left: 4,
+  right: 5,
   top: 1,
   "apiKey": 4,
   "secret": 8,
@@ -22,7 +23,11 @@ let loginStrings = {
 let colors = {
   textFieldBorderFocused: "green",
   textFieldBorderUnfocused: "#f0f0f0",
-  background: "#27474e"
+  background: "#27474e",
+  confirmDark: "light-blue",
+  confirmLight: "blue",
+  cancelDark: "light-red",
+  cancelLight: "red",
 }
 
 // GLOBALS
@@ -56,13 +61,11 @@ function validateEnteredLoginCreds() {
 function createPromptBox(form, key) {
   return blessed.textbox({
     parent: form,
-    // TODO: WTF is going on here. These keys shouldn't exist....
     label: loginStrings[key],
     tags: true,
     keys: true,
     inputOnFocus: true,
     left: loginSpacingConstants.left,
-    // TODO: WTF is going on here. These keys shouldn't exist....
     top: loginSpacingConstants[key],
     border: {
       type: "line"
@@ -97,8 +100,8 @@ module.exports = {
       type: "overlay",
       top: "center",
       left: "center",
-      width: 30,
-      height: 18,
+      width: 45,
+      height: 20,
       bg: colors.background,
       color: "white",
     });
@@ -144,23 +147,26 @@ module.exports = {
       mouse: true,
       keys: true,
       shrink: true,
-      right: 2,
+      right: loginSpacingConstants.right,
       bottom: 1,
       padding: {
-        left: 2,
-        right: 2,
+        left: 4,
+        right: 4,
+        top: 1,
+        bottom: 1
       },
       name: "login",
       content: "login",
       style: {
-        bg: "blue",
+        bg: colors.confirmDark,
+        fg: "white",
         focus: {
-          bg: "green",
-          fg: "black"
+          bg: colors.confirmLight,
+          fg: "white"
         },
         hover: {
-          bg: "green",
-          fg: "black"
+          bg: colors.confirmLight,
+          fg: "white"
         }
       }
     });
@@ -170,22 +176,25 @@ module.exports = {
       mouse: true,
       keys: true,
       shrink: true,
-      left: 2,
+      left: loginSpacingConstants.left,
       bottom: 1,
       padding: {
-        left: 2,
-        right: 2
+        left: 4,
+        right: 4,
+        top: 1,
+        bottom: 1
       },
       name: "cancel",
       content: "cancel",
       style: {
-        bg: "blue",
+        bg: colors.cancelDark,
+        fg: "black",
         focus: {
-          bg: "red",
+          bg: colors.cancelLight,
           fg: "black"
         },
         hover: {
-          bg: "red",
+          bg: colors.cancelLight,
           fg: "black"
         }
       }
