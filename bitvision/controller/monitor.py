@@ -111,20 +111,20 @@ def fetch_tech_indicators():
             # "EMA (6)": {"value": indicators["EMA (6)"][0], "signal": "NONE"},
 
             data = [
-                ["Momentum (3-period)",
+                ["MOM (3-period)",
                  str(round(indicators["MOM (1)"][0], 2)), "SELL"],
-                ["Average Directional Index (14-period)",
+                ["ADX (14-period)",
                  str(round(indicators["ADX (14)"][0], 2)), "SELL"],
-                ["Williams %R", str(round(indicators["WILLR"][0], 2)), "SELL"],
-                ["Relative Strength Index (6-period)",
+                ["WILLR", str(round(indicators["WILLR"][0], 2)), "SELL"],
+                ["RSI (6-period)",
                  str(round(indicators["RSI (6)"][0], 2)), "SELL"],
-                ["Average True Range (14-period)",
+                ["ATR (14-period)",
                  str(round(indicators["ATR (14)"][0], 2)), "SELL"],
-                ["On-Balance Volume",
+                ["OBV",
                     str(round(indicators["OBV"][0], 2)), "BUY"],
-                ["Triple Exponential Average (20-period)",
+                ["TRIX (20-period)",
                  str(round(indicators["TRIX (20)"][0], 2)), "BUY"],
-                ["Exponential Moving Average (6-period)",
+                ["EMA (6-period)",
                  str(round(indicators["EMA (6)"][0], 2)), "BUY"]
             ]
 
