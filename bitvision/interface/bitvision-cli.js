@@ -40,8 +40,7 @@ const paths = {
 
 // TODO: Sync up with Jon about these commands.
 const commands = {
-  "buy": `python3 ${path.join(__dirname, "..", "controller")} `, // {"amount": 0, "type": "SELL"}
-  "sell": `python3 ${path.join(__dirname, "..", "controller")} `, // {"amount": 0, "type": "SELL"}
+  "transaction": `python3 ${path.join(__dirname, "..", "controller")} `,
   "refresh": "python3 ../services/controller.py REFRESH",
   "retrain_model": "python3 ../services/controller.py RETRAIN"
 }
@@ -130,22 +129,23 @@ function getTimeXHoursFromNow(hours) {
 // PYTHON CONTROL METHODS
 // -----------------------
 
-function buyBTCCommand(amount) {
-  if (LOGGED_IN) {
-    console.log(`Executing: ${commands.buyBTC + amount}`)
-    // executeShellCommand(commands.buyBTC + amount)
-  } else {
-    console.log("TRADE ERROR: NOT LOGGED IN. SHOULD BE IMPOSSIBLE.")
+function transactionPayload(amount, type) {
+  return {
+    "amount": amount,
+    "type": type
   }
 }
 
+function buyBTCCommand(amount) {
+  let cmd = `${commands.transaction}${transactionPayload(amount, "BUY")}`
+  console.log(`Executing: ${cmd}`)
+  // executeShellCommand(cmd)
+}
+
 function sellBTCCommand(amount) {
-  if (LOGGED_IN) {
-    console.log(`Executing: ${commands.sellBTC + amount}`)
-    // executeShellCommand(commands.sellBTC + amount)
-  } else {
-    console.log("TRADE ERROR: NOT LOGGED IN. SHOULD BE IMPOSSIBLE.")
-  }
+  let cmd = `${commands.transaction}${transactionPayload(amount, "SELL")}`
+  console.log(`Executing: ${cmd}`)
+  // executeShellCommand(cmd)
 }
 
 function refreshDataCommand() {
@@ -694,7 +694,7 @@ function refreshData() {
   while (!(headlineData && technicalData && blockchainData && priceData)) {
     console.log("waiting")
   }
-  return [ headlineData, technicalData, blockchainData, priceData ]
+  return [headlineData, technicalData, blockchainData, priceData]
 }
 
 /**
