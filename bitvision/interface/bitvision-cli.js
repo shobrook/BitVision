@@ -10,7 +10,7 @@ let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let VERSION = require("../package.json").version
 
-let MAX_HEADLINE_LENTH = 25;
+let MAX_HEADLINE_LENTH = 28;
 var LOGGED_IN = false;
 
 cli
@@ -40,9 +40,8 @@ const paths = {
 
 // TODO: Sync up with Jon about these commands.
 const commands = {
-  "login": "python3 ../services/trader.py LOGIN",
-  "buy": "python3 ../services/trader.py -b ",
-  "sell": "python3 ../services/trader.py -s ",
+  "buy": `python3 ${path.join(__dirname, "..", "controller")} `, // {"amount": 0, "type": "SELL"}
+  "sell": `python3 ${path.join(__dirname, "..", "controller")} `, // {"amount": 0, "type": "SELL"}
   "refresh": "python3 ../services/controller.py REFRESH",
   "retrain_model": "python3 ../services/controller.py RETRAIN"
 }
@@ -54,7 +53,7 @@ const colors = {
 }
 
 const headers = {
-  "headline": ["Date", "Headline", "Senti"],
+  "headline": ["Date", "Headline", "Sentiment"],
   "technical": ["Technical Indicator", "Value", "Signal"],
   "blockchain": ["Blockchain Network", "Value"],
   "price": ["Price Data", "Value"]
@@ -130,11 +129,6 @@ function getTimeXHoursFromNow(hours) {
 // -----------------------
 // PYTHON CONTROL METHODS
 // -----------------------
-
-function loginCommand() {
-  console.log(`Executing: ${commands.login}`)
-  // executeShellCommand(commands.login)
-}
 
 function buyBTCCommand(amount) {
   if (LOGGED_IN) {
@@ -647,11 +641,12 @@ function trimHeadlines(headlines) {
   // Trim headlines if too long.
   let shortenedHeadlines = [];
   for (let idx = 0; idx < headlines.length; idx++) {
-    let headline = headlines[idx]
-    let trimmedHeadline = headline.length > MAX_HEADLINE_LENTH ? headline.slice(0, MAX_HEADLINE_LENTH) : headline
-    shortenedHeadlines.push(trimmedHeadline);
+    let article = headlines[idx]
+    let headline = article[1]
+    article[1] = headline.length > MAX_HEADLINE_LENTH ? headline.slice(0, MAX_HEADLINE_LENTH) + "..." : headline + "..."
+    shortenedHeadlines.push(article);
   }
-  log(shortenedHeadlines);
+  console.log("SHORTENED", shortenedHeadlines);
   return shortenedHeadlines;
 }
 
@@ -695,10 +690,6 @@ function refreshData() {
   let blockchainData = getData(paths.blockchainDataPath);
   let priceData = reformatPriceData(getData(paths.priceDataPath));
   console.log("Refreshed all data...");
-  // console.log(, headlineData);
-  // console.log(, technicalData);
-  // console.log(, blockchainData);
-  // console.log(, priceData);
 
   while (!(headlineData && technicalData && blockchainData && priceData)) {
     console.log("waiting")
