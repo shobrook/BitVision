@@ -10,7 +10,7 @@ let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 
-let constants = require("./constants.js");
+let constants = require("./constants");
 let VERSION = require("../package.json").version
 
 let MAX_HEADLINE_LENTH = 35;
@@ -24,10 +24,10 @@ cli
 // MODULES
 // ----------
 
-let login = require("./login");
-let help = require("./help");
-let transaction = require("./transaction");
-let tradingToggle = require("./autotrading-toggle");
+let login = require("./popups/login");
+let help = require("./popups/help");
+let transaction = require("./popups/transaction");
+let autotrading = require("./popups/autotrading");
 
 // ----------
 // CONSTANTS
@@ -132,22 +132,13 @@ function getTimeXHoursFromNow(hours) {
 // PYTHON CONTROL METHODS
 // -----------------------
 
-function transactionPayload(amount, type) {
-  return {
+function transactionCommand(amount, type) {
+  let payload = {
     "amount": amount,
     "type": type
-  }
-}
-
-function buyBTCCommand(amount) {
-  let cmd = `${commands.transaction}${transactionPayload(amount, "BUY")}`
-  logs.log(`Executing: ${cmd}`)
-  // executeShellCommand(cmd)
-}
-
-function sellBTCCommand(amount) {
-  let cmd = `${commands.transaction}${transactionPayload(amount, "SELL")}`
-  logs.log(`Executing: ${cmd}`)
+  };
+  let cmd = `${commands.transaction}${payload}`;
+  logs.log(`Executing: ${cmd}`);
   // executeShellCommand(cmd)
 }
 
@@ -268,7 +259,7 @@ function displayLoginScreen() {
 
 function showAutotradingMenu() {
   logs.log("Autotrading Menu");
-  tradingToggle.createToggleScreen(screen, function(isEnabling) {
+  autotrading.createToggleScreen(screen, function(isEnabling) {
     let cfg = getConfig()
     // logs.log(`Enabling: ${isEnabling}`)
     let isCurrentlyEnabled = cfg.autotrade.enabled;
@@ -523,14 +514,14 @@ let menubar = blessed.listbar({
         clearCredentials();
       }
     },
-    "Buy/Sell BTC": {
+    "Trade BTC": {
       keys: ["t"],
       callback: () => {
         logs.log("Buy/Sell BTC");
         if (LOGGED_IN) {
-          transaction.createBuyTransactionPopup(screen, function(amount) {
-            // Pass buy order to backend
-            buyBTCCommand(amount)
+          transaction.createTransactionScreen(screen, function(amount, type) {
+            // Pass order to backend
+            transactionCommand(amount, type)
           });
         } else {
           displayLoginScreen();

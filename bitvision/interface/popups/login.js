@@ -1,17 +1,16 @@
 let blessed = require("blessed");
-
-let constants = require("./constants.js");
+let constants = require("../constants.js");
 
 // CONSTANTS
-let loginSpacingConstants = {
+let spacing = {
   height: 3,
   width: 36,
   left: 4,
   right: 5,
   top: 1,
-  "apiKey": 4,
-  "secret": 8,
-  "passphrase": 12
+  apiKey: 4,
+  secret: 8,
+  passphrase: 12
 };
 
 let loginStrings = {
@@ -21,8 +20,6 @@ let loginStrings = {
   label: " Bitstamp Login ",
   hint: " Press tab to start entry. "
 };
-
-// GLOBALS
 
 var enteredCreds = {
   "apiKey": "",
@@ -57,13 +54,13 @@ function createPromptBox(form, key) {
     tags: true,
     keys: true,
     inputOnFocus: true,
-    left: loginSpacingConstants.left,
-    top: loginSpacingConstants[key],
+    left: spacing.left,
+    top: spacing[key],
     border: {
       type: "line"
     },
-    width: loginSpacingConstants.width,
-    height: loginSpacingConstants.height,
+    width: spacing.width,
+    height: spacing.height,
     style: {
       focus: {
         border: {
@@ -139,7 +136,7 @@ module.exports = {
       mouse: true,
       keys: true,
       shrink: true,
-      right: loginSpacingConstants.right,
+      right: spacing.right,
       bottom: 1,
       padding: {
         left: 4,
@@ -168,7 +165,7 @@ module.exports = {
       mouse: true,
       keys: true,
       shrink: true,
-      left: loginSpacingConstants.left,
+      left: spacing.left,
       bottom: 1,
       padding: {
         left: 4,

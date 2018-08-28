@@ -1,6 +1,5 @@
 let blessed = require("blessed");
-
-let constants = require("./constants.js");
+let constants = require("../constants.js");
 
 var toggleForm = null;
 
