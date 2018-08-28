@@ -1,6 +1,8 @@
 let blessed = require("blessed");
+let constants = require("../constants.js");
 
 var toggleForm = null;
+
 
 module.exports = {
   /**
@@ -15,7 +17,7 @@ module.exports = {
       left: "center",
       width: 35,
       height: 5,
-      bg: "#27474e",
+      bg: constants.colors.background,
       color: "white",
     });
 
@@ -27,8 +29,8 @@ module.exports = {
       height: 1,
       content: " Set automatic trading status. ",
       style: {
-        bg: "#27474e",
-        fg: "green",
+        bg: constants.colors.background,
+        fg: "white",
         bold: true
       },
       tags: true
@@ -49,13 +51,13 @@ module.exports = {
       name: "enable",
       content: "enable",
       style: {
-        bg: "blue",
+        bg: constants.colors.confirmLight,
         focus: {
-          bg: "green",
+          bg: constants.colors.confirmDark,
           fg: "black"
         },
         hover: {
-          bg: "green",
+          bg: constants.colors.confirmDark,
           fg: "black"
         }
       }
@@ -75,13 +77,13 @@ module.exports = {
       name: "disable",
       content: "disable",
       style: {
-        bg: "blue",
+        bg: constants.colors.cancelLight,
         focus: {
-          bg: "red",
+          bg: constants.colors.cancelDark,
           fg: "black"
         },
         hover: {
-          bg: "red",
+          bg: constants.colors.cancelDark,
           fg: "black"
         }
       }

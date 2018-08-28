@@ -1,15 +1,16 @@
 let blessed = require("blessed");
+let constants = require("../constants.js");
 
 // CONSTANTS
-let loginSpacingConstants = {
+let spacing = {
   height: 3,
   width: 36,
   left: 4,
   right: 5,
   top: 1,
-  "apiKey": 4,
-  "secret": 8,
-  "passphrase": 12
+  apiKey: 4,
+  secret: 8,
+  passphrase: 12
 };
 
 let loginStrings = {
@@ -19,18 +20,6 @@ let loginStrings = {
   label: " Bitstamp Login ",
   hint: " Press tab to start entry. "
 };
-
-let colors = {
-  textFieldBorderFocused: "green",
-  textFieldBorderUnfocused: "#f0f0f0",
-  background: "#27474e",
-  confirmDark: "light-blue",
-  confirmLight: "blue",
-  cancelDark: "light-red",
-  cancelLight: "red",
-}
-
-// GLOBALS
 
 var enteredCreds = {
   "apiKey": "",
@@ -65,21 +54,21 @@ function createPromptBox(form, key) {
     tags: true,
     keys: true,
     inputOnFocus: true,
-    left: loginSpacingConstants.left,
-    top: loginSpacingConstants[key],
+    left: spacing.left,
+    top: spacing[key],
     border: {
       type: "line"
     },
-    width: loginSpacingConstants.width,
-    height: loginSpacingConstants.height,
+    width: spacing.width,
+    height: spacing.height,
     style: {
       focus: {
         border: {
-          fg: colors.textFieldBorderFocused,
+          fg: constants.colors.textFieldBorderFocused,
         },
       },
       border: {
-        fg: colors.textFieldBorderUnfocused
+        fg: constants.colors.textFieldBorderUnfocused
       },
     }
   });
@@ -102,7 +91,7 @@ module.exports = {
       left: "center",
       width: 45,
       height: 20,
-      bg: colors.background,
+      bg: constants.colors.background,
       color: "white",
     });
 
@@ -114,8 +103,8 @@ module.exports = {
       height: 1,
       content: loginStrings.label,
       style: {
-        bg: "#27474e",
-        fg: "green",
+        bg: constants.colors.background,
+        fg: "white",
         bold: true
       },
       tags: true
@@ -130,7 +119,7 @@ module.exports = {
       shrink: true,
       content: loginStrings.hint,
       style: {
-        bg: "#27474e",
+        bg: constants.colors.background,
         fg: "white",
       },
       tags: true
@@ -147,7 +136,7 @@ module.exports = {
       mouse: true,
       keys: true,
       shrink: true,
-      right: loginSpacingConstants.right,
+      right: spacing.right,
       bottom: 1,
       padding: {
         left: 4,
@@ -158,15 +147,15 @@ module.exports = {
       name: "login",
       content: "login",
       style: {
-        bg: colors.confirmDark,
-        fg: "white",
+        bg: constants.colors.confirmLight,
+        fg: "black",
         focus: {
-          bg: colors.confirmLight,
-          fg: "white"
+          bg: constants.colors.confirmDark,
+          fg: "black"
         },
         hover: {
-          bg: colors.confirmLight,
-          fg: "white"
+          bg: constants.colors.confirmDark,
+          fg: "black"
         }
       }
     });
@@ -176,7 +165,7 @@ module.exports = {
       mouse: true,
       keys: true,
       shrink: true,
-      left: loginSpacingConstants.left,
+      left: spacing.left,
       bottom: 1,
       padding: {
         left: 4,
@@ -187,14 +176,14 @@ module.exports = {
       name: "cancel",
       content: "cancel",
       style: {
-        bg: colors.cancelDark,
+        bg: constants.colors.cancelLight,
         fg: "black",
         focus: {
-          bg: colors.cancelLight,
+          bg: constants.colors.cancelDark,
           fg: "black"
         },
         hover: {
-          bg: colors.cancelLight,
+          bg: constants.colors.cancelDark,
           fg: "black"
         }
       }
