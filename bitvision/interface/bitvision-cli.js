@@ -9,6 +9,8 @@ let colors = require("colors");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
+
+let constants = require("./constants.js");
 let VERSION = require("../package.json").version
 
 let MAX_HEADLINE_LENTH = 35;
@@ -395,7 +397,7 @@ var technicalIndicatorsTable = grid.set(11, 0, 8, 13, blessed.ListTable, {
   columnSpacing: 1
 });
 
-var technicalIndicatorsGauge = grid.set(19, 0, 7, 13, contrib.gauge, {
+var technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
   label: ' Buy/Sell Gauge '.bold.red,
   gaugeSpacing: 0,
   gaugeHeight: 1,
@@ -449,7 +451,7 @@ var exchangeRateChart = grid.set(0, 13, 25, 20, contrib.line, {
 
 // Price table above countdown.
 
-var priceTable = grid.set(25, 13, 7, 7, blessed.ListTable, {
+var priceTable = grid.set(25, 13, 6.5, 6, blessed.ListTable, {
   parent: screen,
   keys: true,
   align: "left",
@@ -521,34 +523,14 @@ let menubar = blessed.listbar({
         clearCredentials();
       }
     },
-    "Deposit BTC": {
-      keys: ["d"],
+    "Buy/Sell BTC": {
+      keys: ["t"],
       callback: () => {
-        depositBTC();
-      }
-    },
-    "Buy BTC": {
-      keys: ["b"],
-      callback: () => {
-        logs.log("Buy BTC");
+        logs.log("Buy/Sell BTC");
         if (LOGGED_IN) {
           transaction.createBuyTransactionPopup(screen, function(amount) {
             // Pass buy order to backend
             buyBTCCommand(amount)
-          });
-        } else {
-          displayLoginScreen();
-        }
-      }
-    },
-    "Sell BTC": {
-      keys: ["s"],
-      callback: () => {
-        logs.log("Sell BTC");
-        if (LOGGED_IN) {
-          transaction.createSellTransactionPopup(screen, function(amount) {
-            // Pass sell order to backend
-            sellBTCCommand(amount)
           });
         } else {
           displayLoginScreen();
@@ -588,7 +570,7 @@ screen.on("resize", function() {
   blockchainIndicatorsTable.emit("attach");
   headlinesTable.emit("attach");
   exchangeRateChart.emit("attach");
-  countdown.emit("attach");
+  technicalIndicatorsGauge.emit("attach");
   priceTable.emit("attach");
   menubar.emit("attach");
 });
@@ -619,7 +601,9 @@ function getData(path) {
 function calculateGaugePercentages(technicalIndicators) {
   let totalBuy = 0;
   let totalSell = 0;
-  for (let idx = 0; idx < technicalIndicators.length; idx++) {
+  let total = technicalIndicators.length
+
+  for (let idx = 0; idx < total; idx++) {
     let lower = technicalIndicators[idx][2].toLowerCase().trim();
     if (lower == "buy") {
       totalBuy++;
@@ -628,21 +612,19 @@ function calculateGaugePercentages(technicalIndicators) {
     }
   }
 
-  let total = technicalIndicators.length
-  let buyPercentage = totalBuy / total * 100;
   let sellPercentage = totalSell / total * 100;
-  // console.log(sellPercentage, buyPercentage);
-  return [sellPercentage, buyPercentage]
+  let buyPercentage = totalBuy / total * 100;
+  return [sellPercentage, buyPercentage];
 }
 
 function reformatPriceData(priceData) {
   return [
-    ["Current Price", String(priceData[0].last)],
-    ["24H High", String(priceData[0].high)],
-    ["24H Low", String(priceData[0].low)],
-    ["Open Price", String(priceData[0].open)],
+    ["Price", String(priceData[0].last)],
     ["Volume", String(priceData[0].volume)],
-    ["Timestamp", String(priceData[0].timestamp)]
+    ["24H Low", String(priceData[0].low)],
+    ["24H High", String(priceData[0].high)],
+    // ["Timestamp", String(priceData[0].timestamp)],
+    ["Open Price", String(priceData[0].open)],
   ]
 }
 

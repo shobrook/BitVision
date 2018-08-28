@@ -1,5 +1,7 @@
 let blessed = require("blessed");
 
+let constants = require("./constants.js");
+
 // CONSTANTS
 let loginSpacingConstants = {
   height: 3,
@@ -19,16 +21,6 @@ let loginStrings = {
   label: " Bitstamp Login ",
   hint: " Press tab to start entry. "
 };
-
-let colors = {
-  textFieldBorderFocused: "green",
-  textFieldBorderUnfocused: "#f0f0f0",
-  background: "#54757c",
-  confirmDark: "light-blue",
-  confirmLight: "blue",
-  cancelDark: "light-red",
-  cancelLight: "red",
-}
 
 // GLOBALS
 
@@ -75,11 +67,11 @@ function createPromptBox(form, key) {
     style: {
       focus: {
         border: {
-          fg: colors.textFieldBorderFocused,
+          fg: constants.colors.textFieldBorderFocused,
         },
       },
       border: {
-        fg: colors.textFieldBorderUnfocused
+        fg: constants.colors.textFieldBorderUnfocused
       },
     }
   });
@@ -102,7 +94,7 @@ module.exports = {
       left: "center",
       width: 45,
       height: 20,
-      bg: colors.background,
+      bg: constants.colors.background,
       color: "white",
     });
 
@@ -114,7 +106,7 @@ module.exports = {
       height: 1,
       content: loginStrings.label,
       style: {
-        bg: colors.background,
+        bg: constants.colors.background,
         fg: "white",
         bold: true
       },
@@ -130,7 +122,7 @@ module.exports = {
       shrink: true,
       content: loginStrings.hint,
       style: {
-        bg: colors.background,
+        bg: constants.colors.background,
         fg: "white",
       },
       tags: true
@@ -158,14 +150,14 @@ module.exports = {
       name: "login",
       content: "login",
       style: {
-        bg: colors.confirmDark,
+        bg: constants.colors.confirmLight,
         fg: "black",
         focus: {
-          bg: colors.confirmLight,
+          bg: constants.colors.confirmDark,
           fg: "black"
         },
         hover: {
-          bg: colors.confirmLight,
+          bg: constants.colors.confirmDark,
           fg: "black"
         }
       }
@@ -187,14 +179,14 @@ module.exports = {
       name: "cancel",
       content: "cancel",
       style: {
-        bg: colors.cancelDark,
+        bg: constants.colors.cancelLight,
         fg: "black",
         focus: {
-          bg: colors.cancelLight,
+          bg: constants.colors.cancelDark,
           fg: "black"
         },
         hover: {
-          bg: colors.cancelLight,
+          bg: constants.colors.cancelDark,
           fg: "black"
         }
       }

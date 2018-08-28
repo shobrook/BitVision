@@ -1,4 +1,6 @@
 var blessed = require("blessed");
+let constants = require("./constants.js");
+
 
 let transactionStrings = {
   "buyLabel": " Buy BTC ",
@@ -7,15 +9,6 @@ let transactionStrings = {
   "sellText": "{bold}How much BTC do you want to sell?{/bold}\n Please enter a {bold}number{/bold}.",
   "invalid": "Invalid input. Press Enter to exit."
 };
-
-let colors = {
-  textFieldBorderUnfocused: "#f0f0f0",
-  background: "#54757c",
-  confirmDark: "light-blue",
-  confirmLight: "blue",
-  cancelDark: "light-red",
-  cancelLight: "red",
-}
 
 // FUNCTIONS
 
