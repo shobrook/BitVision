@@ -5,12 +5,13 @@ let fs = require("fs");
 let path = require("path");
 let openBrowser = require("opn");
 let cli = require("commander");
+let colors = require("colors");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
 let VERSION = require("../package.json").version
 
-let MAX_HEADLINE_LENTH = 28;
+let MAX_HEADLINE_LENTH = 35;
 var LOGGED_IN = false;
 
 cli
@@ -45,7 +46,7 @@ const commands = {
   "retrain_model": "python3 ../services/controller.py RETRAIN"
 }
 
-const colors = {
+const colorConstants = {
   "border": "cyan",
   "tableText": "light-blue",
   "tableHeader": "red"
@@ -71,7 +72,7 @@ const headers = {
  *  [!,@,#]]
  */
 function extractUrlAndRemove(listOfArticles) {
-  // log(listOfArticles)
+  // logs.log(listOfArticles)
   let urls = [];
   let index = 3;
   for (var i = 0; i < listOfArticles.length; i++) {
@@ -86,7 +87,7 @@ function extractUrlAndRemove(listOfArticles) {
  * Read JSON file and do something with the data
  */
 function readJsonFile(path) {
-  // log("Reading " + path);
+  // logs.log("Reading " + path);
   return JSON.parse(fs.readFileSync(path, "utf8"));
 }
 
@@ -94,20 +95,20 @@ function readJsonFile(path) {
  * Execute shell command.
  **/
 function executeShellCommand(command) {
-  log(command);
+  logs.log(command);
   let args = command.split(" ");
   // Remove first element
   let program = args.splice(0, 1)[0];
-  log(args);
-  log(program);
+  logs.log(args);
+  logs.log(program);
   let cmd = childProcess.spawn(program, args);
 
   cmd.stdout.on("data", function(data) {
-    log("OUTPUT: " + data);
+    logs.log("OUTPUT: " + data);
   });
 
   cmd.on("close", function(code, signal) {
-    log("command finished...");
+    logs.log("command finished...");
   });
 }
 
@@ -120,8 +121,8 @@ function getTimeXHoursFromNow(hours) {
   let currentTime = new Date();
   let futureTime = new Date(currentTime);
   futureTime.setHours(currentTime.getHours() + hours);
-  // log(`CurrentTime: ${currentTime.toJSON()}`)
-  // log(`FutureTime : ${futureTime.toJSON()}`)
+  // logs.log(`CurrentTime: ${currentTime.toJSON()}`)
+  // logs.log(`FutureTime : ${futureTime.toJSON()}`)
   return futureTime.toJSON()
 }
 
@@ -138,23 +139,23 @@ function transactionPayload(amount, type) {
 
 function buyBTCCommand(amount) {
   let cmd = `${commands.transaction}${transactionPayload(amount, "BUY")}`
-  log(`Executing: ${cmd}`)
+  logs.log(`Executing: ${cmd}`)
   // executeShellCommand(cmd)
 }
 
 function sellBTCCommand(amount) {
   let cmd = `${commands.transaction}${transactionPayload(amount, "SELL")}`
-  log(`Executing: ${cmd}`)
+  logs.log(`Executing: ${cmd}`)
   // executeShellCommand(cmd)
 }
 
 function refreshDataCommand() {
-  log(`Executing: ${commands.refresh}`)
+  logs.log(`Executing: ${commands.refresh}`)
   // executeShellCommand(commands.refresh);
 }
 
 function retrainModelCommand() {
-  log(`Executing: ${commands.retrain_model}`)
+  logs.log(`Executing: ${commands.retrain_model}`)
   // executeShellCommand(commands.retrain_model);
 }
 
@@ -163,9 +164,9 @@ function retrainModelCommand() {
 // -------------------------
 
 function writeConfig(config) {
-  // log(`WRITING FILE at ${paths.configPath}`);
+  // logs.log(`WRITING FILE at ${paths.configPath}`);
   fs.writeFile(paths.configPath, JSON.stringify(config), "utf8", () => {
-    // log("File Saved.");
+    // logs.log("File Saved.");
   });
 }
 
@@ -173,7 +174,7 @@ function writeConfig(config) {
  * Gets config file in dictionary form.
  */
 function getConfig() {
-  // log("GETTING CONFIG");
+  // logs.log("GETTING CONFIG");
   return readJsonFile(paths.configPath);
 }
 
@@ -182,7 +183,7 @@ function getConfig() {
  * @return {Bool} Returns true if all creds exist, false otherwise.
  */
 function hasCredentialsInConfig() {
-  // log("Checking for credentials in config...");
+  // logs.log("Checking for credentials in config...");
   let creds = getConfig().credentials;
   return !(creds.key === "" || creds.secret !== "" || creds.passphrase !== "");
 }
@@ -191,11 +192,11 @@ function hasCredentialsInConfig() {
  * Creates dotfile with default values if it doesn't exist.
  */
 function createConfigIfNeeded() {
-  // log("CHECKING FOR DOTFILE");
+  // logs.log("CHECKING FOR DOTFILE");
   if (fs.existsSync(paths.configPath)) {
     return
   } else {
-    // log("No dotfile found. Creating DEFAULT.");
+    // logs.log("No dotfile found. Creating DEFAULT.");
     // Create file
     let emptyConfig = {
       "credentials": {
@@ -213,7 +214,7 @@ function createConfigIfNeeded() {
 }
 
 function saveCredentials(newCreds) {
-  // log("SAVING CREDENTIALS");
+  // logs.log("SAVING CREDENTIALS");
   let cfg = getConfig()
   cfg.credentials = newCreds;
   writeConfig(cfg);
@@ -227,7 +228,7 @@ function clearCredentials() {
     if (err) {
       throw err;
     }
-    log("Login credentials cleared.");
+    logs.log("Login credentials cleared.");
   });
 }
 
@@ -247,48 +248,43 @@ var screen = blessed.screen({
   }
 });
 
-const log = (text) => {
-  logs.pushLine(text);
-  screen.render();
-};
-
 /**
  * Display login screen, allowing user to replace credentials.
  */
 function displayLoginScreen() {
-  log("DISPLAY LOGIN SCREEN");
+  logs.log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, (creds) => {
     if (creds != null) {
-      log("New creds, saving.");
+      logs.log("New creds, saving.");
       saveCredentials(creds);
     } else {
-      log("No creds, abort.");
+      logs.log("No creds, abort.");
     }
   });
 }
 
 
 function showAutotradingMenu() {
-  log("Autotrading Menu");
+  logs.log("Autotrading Menu");
   tradingToggle.createToggleScreen(screen, function(isEnabling) {
     let cfg = getConfig()
-    // log(`Enabling: ${isEnabling}`)
+    // logs.log(`Enabling: ${isEnabling}`)
     let isCurrentlyEnabled = cfg.autotrade.enabled;
 
     // Setting autotrading to the same state should do nothing.
     if ((isEnabling && isCurrentlyEnabled) || (!isEnabling && !isCurrentlyEnabled)) {
-      log("Redundant autotrading change.");
+      logs.log("Redundant autotrading change.");
       return;
     }
 
     // Autotrading disabled, so reset all properties to default
     if (!isEnabling) {
-      log("Disabling autotrading.");
+      logs.log("Disabling autotrading.");
       cfg.autotrade.enabled = false;
       cfg.autotrade["next-trade-timestamp-UTC"] = 0;
     } else {
       // Autotrading enabled, so set next trade timestamp for +1 hr from now.
-      log("Enabling autotrading.");
+      logs.log("Enabling autotrading.");
       cfg.autotrade.enabled = true;
       cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(1);
     }
@@ -311,10 +307,9 @@ var grid = new contrib.grid({
 // /**
 //  * Creates a new list table.
 //  * @param  {Boolean} isInteractive   True to make the ListTable interactive.
-//  * @param  {[Number]}  columnWidthList List for col spacing.
 //  * @return {blessed.ListTable}       blessed ListTable
 //  */
-// function createListTableParams(isInteractive, columnWidthList) {
+// function createListTableParams(isInteractive) {
 //   return {
 //     parent: screen,
 //     keys: true,
@@ -324,9 +319,9 @@ var grid = new contrib.grid({
 //     selectedBg: "blue",
 //     interactive: isInteractive,
 //     style: {
-//       fg: colors.tableText,
+//       fg: colorConstants.tableText,
 //       border: {
-//         fg: colors.border
+//         fg: colorConstants.border
 //       },
 //       cell: {
 //         selected: {
@@ -339,12 +334,11 @@ var grid = new contrib.grid({
 //         bold: true
 //       },
 //     },
-//     columnWidth: columnWidthList,
 //     columnSpacing: 1
 //   };
 // }
 
-// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, createListTableParams(true, [10, 35, 10]));
+// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, createListTableParams(true));
 
 // Place 3 tables on the left side of the screen, stacked vertically.
 
@@ -361,9 +355,9 @@ var headlinesTable = grid.set(0, 0, 11, 13, blessed.ListTable, {
   selectedBg: "blue",
   interactive: true,
   style: {
-    fg: colors.tableText,
+    fg: colorConstants.tableText,
     border: {
-      fg: colors.border
+      fg: colorConstants.border
     },
     cell: {
       selected: {
@@ -388,26 +382,21 @@ var technicalIndicatorsTable = grid.set(11, 0, 8, 13, blessed.ListTable, {
     right: 1
   },
   style: {
-    fg: colors.tableText,
+    fg: colorConstants.tableText,
     border: {
-      fg: colors.border
+      fg: colorConstants.border
     },
     header: {
-      fg: colors.tableHeader,
+      fg: colorConstants.tableHeader,
       bold: true
     },
   },
   interactive: false,
-  columnSpacing: 1,
-  // columnWidth: [35, 10, 10]
+  columnSpacing: 1
 });
 
 var technicalIndicatorsGauge = grid.set(19, 0, 7, 13, contrib.gauge, {
-  label: '{bold}{red-fg}Buy/Sell Gauge{/red-fg}{/bold}',
-  style: {
-    fg: "red",
-    bold: true,
-  },
+  label: ' Buy/Sell Gauge '.bold.red,
   gaugeSpacing: 0,
   gaugeHeight: 1,
   showLabel: true
@@ -415,7 +404,7 @@ var technicalIndicatorsGauge = grid.set(19, 0, 7, 13, contrib.gauge, {
 
 technicalIndicatorsGauge.setStack([{
   percent: 50,
-  stroke: 'red'
+  stroke: 'red',
 }, {
   percent: 50,
   stroke: 'green'
@@ -430,18 +419,17 @@ var blockchainIndicatorsTable = grid.set(25, 0, 10, 13, blessed.ListTable, {
     right: 1
   },
   style: {
-    fg: colors.tableText,
+    fg: colorConstants.tableText,
     border: {
-      fg: colors.border
+      fg: colorConstants.border
     },
     header: {
-      fg: colors.tableHeader,
+      fg: colorConstants.tableHeader,
       bold: true
     },
   },
   interactive: false,
-  columnSpacing: 1,
-  // columnWidth: [20, 20]
+  columnSpacing: 1
 });
 
 // Line chart on the right of the tables
@@ -456,12 +444,12 @@ var exchangeRateChart = grid.set(0, 13, 25, 20, contrib.line, {
   xPadding: 5,
   // showLegend: true,
   wholeNumbersOnly: true,
-  label: "Exchange Rate"
+  label: " Exchange Rate ".bold.red
 });
 
 // Price table above countdown.
 
-var priceTable = grid.set(26, 13, 7, 7, blessed.ListTable, {
+var priceTable = grid.set(25, 13, 7, 7, blessed.ListTable, {
   parent: screen,
   keys: true,
   align: "left",
@@ -470,12 +458,12 @@ var priceTable = grid.set(26, 13, 7, 7, blessed.ListTable, {
     right: 1
   },
   style: {
-    fg: colors.tableText,
+    fg: colorConstants.tableText,
     border: {
-      fg: colors.border
+      fg: colorConstants.border
     },
     header: {
-      fg: colors.tableHeader,
+      fg: colorConstants.tableHeader,
       bold: true
     },
   },
@@ -498,13 +486,13 @@ var priceTable = grid.set(26, 13, 7, 7, blessed.ListTable, {
 //   // label: "Min. Until Next Trade",
 //   style: {
 //     border: {
-//       fg: colors.border
+//       fg: colorConstants.border
 //     },
 //   },
 // })
 
-var logs = grid.set(26, 20, 7, 15, blessed.box, {
-  label: "DEBUGGING LOG",
+var logs = grid.set(25, 20, 10, 15, contrib.log, {
+  label: " DEBUGGING LOGS ".bold.red,
   top: 0,
   left: 0,
   height: "100%-1",
@@ -535,14 +523,14 @@ let menubar = blessed.listbar({
     "Refresh Data": {
       keys: ["r"],
       callback: () => {
-        log("Refresh Data");
+        logs.log("Refresh Data");
         // fetchData()
       }
     },
     "Bitstamp Login": {
       keys: ["l"],
       callback: () => {
-        log("Login")
+        logs.log("Login")
         displayLoginScreen();
       }
     },
@@ -561,7 +549,7 @@ let menubar = blessed.listbar({
     "Buy BTC": {
       keys: ["b"],
       callback: () => {
-        log("Buy BTC");
+        logs.log("Buy BTC");
         if (LOGGED_IN) {
           transaction.createBuyTransactionPopup(screen, function(amount) {
             // Pass buy order to backend
@@ -575,7 +563,7 @@ let menubar = blessed.listbar({
     "Sell BTC": {
       keys: ["s"],
       callback: () => {
-        log("Sell BTC");
+        logs.log("Sell BTC");
         if (LOGGED_IN) {
           transaction.createSellTransactionPopup(screen, function(amount) {
             // Pass sell order to backend
@@ -602,7 +590,7 @@ let menubar = blessed.listbar({
     "Help": {
       keys: ["h"],
       callback: () => {
-        log("Help Menu Opened");
+        logs.log("Help Menu Opened");
         help.createHelpScreen(screen, VERSION);
       }
     },
@@ -663,7 +651,7 @@ function trimHeadlines(headlines) {
     article[1] = headline.length > MAX_HEADLINE_LENTH ? headline.slice(0, MAX_HEADLINE_LENTH) + "..." : headline + "..."
     shortenedHeadlines.push(article);
   }
-  // log("SHORTENED", shortenedHeadlines);
+  // logs.log("SHORTENED", shortenedHeadlines);
   return shortenedHeadlines;
 }
 
@@ -700,16 +688,16 @@ var URLs = null
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
 function fetchData() {
-  log("Fetching data...");
+  logs.log("Fetching data...");
   let headlineData = trimHeadlines(getData(paths.headlineDataPath));
   URLs = extractUrlAndRemove(headlineData);
   let technicalData = getData(paths.technicalDataPath);
   let blockchainData = getData(paths.blockchainDataPath);
   let priceData = reformatPriceData(getData(paths.priceDataPath));
-  log("Fetched all data...");
+  logs.log("Fetched all data...");
 
   while (!(headlineData && technicalData && blockchainData && priceData)) {
-    log("waiting")
+    logs.log("waiting")
   }
   return [headlineData, technicalData, blockchainData, priceData]
 }
@@ -718,11 +706,11 @@ function fetchData() {
  * Set all tables with data.
  */
 function setAllTables(headlines, technicals, blockchains, prices) {
-  log("Set all tables...");
-  // log("HEADLINES:", JSON.stringify(headlines, null, 2))
-  // log(technicals)
-  // log(blockchains)
-  // log(prices)
+  logs.log("Set all tables...");
+  // logs.log("HEADLINES:", JSON.stringify(headlines, null, 2))
+  // logs.log(technicals)
+  // logs.log(blockchains)
+  // logs.log(prices)
 
   // Set headers for each table.
   headlines.splice(0, 0, headers.headline);
@@ -730,20 +718,14 @@ function setAllTables(headlines, technicals, blockchains, prices) {
   blockchains.splice(0, 0, headers.blockchain)
   prices.splice(0, 0, headers.price);
 
-  log("Setting headlines...");
+  // Set data
   headlinesTable.setData(headlines);
-
-  log("Setting technicals...");
   technicalIndicatorsTable.setData(technicals);
-
-  log("Setting blockchain network table...");
   blockchainIndicatorsTable.setData(blockchains);
-
-  log("Setting price table...")
   priceTable.setData(prices);
 
   screen.render();
-  log("setAllTables COMPLETE");
+  logs.log("setAllTables COMPLETE");
 }
 
 /**
@@ -751,7 +733,7 @@ function setAllTables(headlines, technicals, blockchains, prices) {
  * TODO: Fix this.
  */
 function setChart() {
-  log("setChart CALLED");
+  logs.log("setChart CALLED");
   setLineData([exchangeRateSeries], exchangeRateChart);
 
   setInterval(function() {
@@ -764,7 +746,7 @@ function setChart() {
  * Fetches new data and refreshes frontend displays.
  */
 function fetchAndRefreshDataDisplay() {
-  log("Fetch and refresh data.")
+  logs.log("Fetch and refresh data.")
   let [headlineData, technicalData, blockchainData, priceData] = fetchData();
   setAllTables(headlineData, technicalData, blockchainData, priceData);
   setChart();
@@ -789,14 +771,12 @@ function doThings() {
 
   fetchAndRefreshDataDisplay();
   headlinesTable.focus();
-  screen.render();
 
-  log("Initial data fetching done. Starting refresh loops.");
+  logs.log("Initial data fetching done. Starting refresh loops.");
 
+  // TODO: Fix headline refocusing bug.
   setInterval(function() {
     fetchAndRefreshDataDisplay();
-    headlinesTable.focus();
-    screen.render();
   }, 3000)
 }
 

@@ -23,7 +23,7 @@ let loginStrings = {
 let colors = {
   textFieldBorderFocused: "green",
   textFieldBorderUnfocused: "#f0f0f0",
-  background: "#27474e",
+  background: "#54757c",
   confirmDark: "light-blue",
   confirmLight: "blue",
   cancelDark: "light-red",
@@ -114,8 +114,8 @@ module.exports = {
       height: 1,
       content: loginStrings.label,
       style: {
-        bg: "#27474e",
-        fg: "green",
+        bg: colors.background,
+        fg: "white",
         bold: true
       },
       tags: true
@@ -130,7 +130,7 @@ module.exports = {
       shrink: true,
       content: loginStrings.hint,
       style: {
-        bg: "#27474e",
+        bg: colors.background,
         fg: "white",
       },
       tags: true
@@ -159,14 +159,14 @@ module.exports = {
       content: "login",
       style: {
         bg: colors.confirmDark,
-        fg: "white",
+        fg: "black",
         focus: {
           bg: colors.confirmLight,
-          fg: "white"
+          fg: "black"
         },
         hover: {
           bg: colors.confirmLight,
-          fg: "white"
+          fg: "black"
         }
       }
     });

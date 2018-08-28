@@ -8,6 +8,15 @@ let transactionStrings = {
   "invalid": "Invalid input. Press Enter to exit."
 };
 
+let colors = {
+  textFieldBorderUnfocused: "#f0f0f0",
+  background: "#54757c",
+  confirmDark: "light-blue",
+  confirmLight: "blue",
+  cancelDark: "light-red",
+  cancelLight: "red",
+}
+
 // FUNCTIONS
 
 /**
@@ -43,7 +52,7 @@ function createPrompt(screen, popupLabel) {
     keys: true,
     style: {
       fg: "blue",
-      bg: "#27474e",
+      bg: colors.background,
       border: {
         fg: "light-green"
       }

@@ -2,6 +2,14 @@ let blessed = require("blessed");
 
 var toggleForm = null;
 
+let colors = {
+  background: "#54757c",
+  confirmDark: "light-blue",
+  confirmLight: "blue",
+  cancelDark: "light-red",
+  cancelLight: "red",
+}
+
 module.exports = {
   /**
    * Creates a toggle settings screen for enabling or disabling trading.
@@ -15,7 +23,7 @@ module.exports = {
       left: "center",
       width: 35,
       height: 5,
-      bg: "#27474e",
+      bg: colors.background,
       color: "white",
     });
 
@@ -27,8 +35,8 @@ module.exports = {
       height: 1,
       content: " Set automatic trading status. ",
       style: {
-        bg: "#27474e",
-        fg: "green",
+        bg: colors.background,
+        fg: "white",
         bold: true
       },
       tags: true
@@ -49,13 +57,13 @@ module.exports = {
       name: "enable",
       content: "enable",
       style: {
-        bg: "blue",
+        bg: colors.confirmDark,
         focus: {
-          bg: "green",
+          bg: colors.confirmLight,
           fg: "black"
         },
         hover: {
-          bg: "green",
+          bg: colors.confirmLight,
           fg: "black"
         }
       }
@@ -75,13 +83,13 @@ module.exports = {
       name: "disable",
       content: "disable",
       style: {
-        bg: "blue",
+        bg: colors.cancelDark,
         focus: {
-          bg: "red",
+          bg: colors.cancelLight,
           fg: "black"
         },
         hover: {
-          bg: "red",
+          bg: colors.cancelLight,
           fg: "black"
         }
       }
