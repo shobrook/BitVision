@@ -402,13 +402,13 @@ var technicalIndicatorsGauge = grid.set(19, 0, 7, 13, contrib.gauge, {
   showLabel: true
 })
 
-technicalIndicatorsGauge.setStack([{
-  percent: 50,
-  stroke: 'red',
-}, {
-  percent: 50,
-  stroke: 'green'
-}]);
+// technicalIndicatorsGauge.setStack([{
+//   percent: 50,
+//   stroke: 'red',
+// }, {
+//   percent: 50,
+//   stroke: 'green'
+// }]);
 
 var blockchainIndicatorsTable = grid.set(25, 0, 10, 13, blessed.ListTable, {
   parent: screen,
@@ -471,25 +471,6 @@ var priceTable = grid.set(25, 13, 7, 7, blessed.ListTable, {
   columnSpacing: 1,
   columnWidth: [25, 20]
 });
-
-// Countdown under price data.
-
-// var countdown = grid.set(26, 20, 7, 5, contrib.lcd, {
-//   segmentWidth: 0.06,
-//   segmentInterval: 0.10,
-//   strokeWidth: 0.1,
-//   elements: 2,
-//   display: "45",
-//   elementSpacing: 4,
-//   elementPadding: 2,
-//   color: "white", // color for the segments
-//   // label: "Min. Until Next Trade",
-//   style: {
-//     border: {
-//       fg: colorConstants.border
-//     },
-//   },
-// })
 
 var logs = grid.set(25, 20, 10, 15, contrib.log, {
   label: " DEBUGGING LOGS ".bold.red,
@@ -631,6 +612,29 @@ function getData(path) {
   return data.data
 }
 
+/**
+ * Returns an array with 2 elements, [0] -> Sell Indicator %, [1] -> Buy Indicator %
+ * Must be done without headers in the technicalIndicators structure.
+ */
+function calculateGaugePercentages(technicalIndicators) {
+  let totalBuy = 0;
+  let totalSell = 0;
+  for (let idx = 0; idx < technicalIndicators.length; idx++) {
+    let lower = technicalIndicators[idx][2].toLowerCase().trim();
+    if (lower == "buy") {
+      totalBuy++;
+    } else {
+      totalSell++;
+    }
+  }
+
+  let total = technicalIndicators.length
+  let buyPercentage = totalBuy / total * 100;
+  let sellPercentage = totalSell / total * 100;
+  // console.log(sellPercentage, buyPercentage);
+  return [sellPercentage, buyPercentage]
+}
+
 function reformatPriceData(priceData) {
   return [
     ["Current Price", String(priceData[0].last)],
@@ -671,7 +675,6 @@ let exchangeRateSeries = {
   })
 }
 
-
 function setLineData(mockData, line) {
   for (var i = 0; i < mockData.length; i++) {
     var last = mockData[i].y[mockData[i].y.length - 1];
@@ -692,35 +695,45 @@ function fetchData() {
   let headlineData = trimHeadlines(getData(paths.headlineDataPath));
   URLs = extractUrlAndRemove(headlineData);
   let technicalData = getData(paths.technicalDataPath);
+  let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = getData(paths.blockchainDataPath);
   let priceData = reformatPriceData(getData(paths.priceDataPath));
   logs.log("Fetched all data...");
 
-  while (!(headlineData && technicalData && blockchainData && priceData)) {
+  while (!(headlineData && technicalData && gaugeData && blockchainData && priceData)) {
     logs.log("waiting")
   }
-  return [headlineData, technicalData, blockchainData, priceData]
+  return [headlineData, technicalData, gaugeData, blockchainData, priceData]
 }
 
 /**
  * Set all tables with data.
  */
-function setAllTables(headlines, technicals, blockchains, prices) {
+function setAllTables(headlines, technicals, gaugeData, blockchains, prices) {
   logs.log("Set all tables...");
   // logs.log("HEADLINES:", JSON.stringify(headlines, null, 2))
-  // logs.log(technicals)
-  // logs.log(blockchains)
-  // logs.log(prices)
+  // console.log(technicals)
+  // console.log(blockchains)
+  // console.log(prices)
+  // console.log(gaugeData)
 
   // Set headers for each table.
   headlines.splice(0, 0, headers.headline);
   technicals.splice(0, 0, headers.technical);
-  blockchains.splice(0, 0, headers.blockchain)
+  blockchains.splice(0, 0, headers.blockchain);
   prices.splice(0, 0, headers.price);
 
   // Set data
   headlinesTable.setData(headlines);
   technicalIndicatorsTable.setData(technicals);
+  technicalIndicatorsGauge.setStack([{
+    percent: gaugeData[0],
+    stroke: 'red',
+  }, {
+    percent: gaugeData[1],
+    stroke: 'green'
+  }]);
+  technicalIndicatorsGauge.setData()
   blockchainIndicatorsTable.setData(blockchains);
   priceTable.setData(prices);
 
@@ -747,8 +760,8 @@ function setChart() {
  */
 function fetchAndRefreshDataDisplay() {
   logs.log("Fetch and refresh data.")
-  let [headlineData, technicalData, blockchainData, priceData] = fetchData();
-  setAllTables(headlineData, technicalData, blockchainData, priceData);
+  let [headlineData, technicalData, gaugeData, blockchainData, priceData] = fetchData();
+  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData);
   setChart();
 }
 
