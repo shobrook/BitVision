@@ -41,17 +41,10 @@ const paths = {
   "priceDataPath": path.join(__dirname, "..", "cache", "data", "ticker.json")
 }
 
-// TODO: Sync up with Jon about these commands.
 const commands = {
   "transaction": `python3 ${path.join(__dirname, "..", "controller")} `,
   "refresh": "python3 ../services/controller.py REFRESH",
   "retrain_model": "python3 ../services/controller.py RETRAIN"
-}
-
-const colorConstants = {
-  "border": "cyan",
-  "tableText": "light-blue",
-  "tableHeader": "red"
 }
 
 const headers = {
@@ -297,96 +290,49 @@ var grid = new contrib.grid({
 
 // TODO: Finish refactoring this out.
 
-// /**
-//  * Creates a new list table.
-//  * @param  {Boolean} isInteractive   True to make the ListTable interactive.
-//  * @return {blessed.ListTable}       blessed ListTable
-//  */
-// function createListTableParams(isInteractive) {
-//   return {
-//     parent: screen,
-//     keys: true,
-//     fg: "green",
-//     align: "center",
-//     selectedFg: "white",
-//     selectedBg: "blue",
-//     interactive: isInteractive,
-//     style: {
-//       fg: colorConstants.tableText,
-//       border: {
-//         fg: colorConstants.border
-//       },
-//       cell: {
-//         selected: {
-//           fg: "black",
-//           bg: "light-yellow"
-//         },
-//       },
-//       header: {
-//         fg: 'red',
-//         bold: true
-//       },
-//     },
-//     columnSpacing: 1
-//   };
-// }
-
-// var headlinesTable = grid.set(0, 0, 4, 4, blessed.ListTable, createListTableParams(true));
-
-// Place 3 tables on the left side of the screen, stacked vertically.
-
-var headlinesTable = grid.set(0, 0, 11, 13, blessed.ListTable, {
-  parent: screen,
-  keys: true,
-  fg: "green",
-  align: "left",
-  padding: {
-    left: 1,
-    right: 1
-  },
-  selectedFg: "white",
-  selectedBg: "blue",
-  interactive: true,
-  style: {
-    fg: colorConstants.tableText,
-    border: {
-      fg: colorConstants.border
-    },
-    cell: {
-      selected: {
-        fg: "black",
-        bg: "light-yellow"
+/**
+ * Creates a new list table.
+ * @param  {Boolean} isInteractive   True to make the ListTable interactive.
+ * @return {blessed.ListTable}       blessed ListTable
+ */
+function createListTable(alignment, isInteractive, padding) {
+  return {
+    parent: screen,
+    keys: true,
+    align: alignment,
+    selectedFg: "white",
+    selectedBg: "blue",
+    interactive: isInteractive,
+    padding: padding,
+    style: {
+      fg: constants.colors.tableText,
+      border: {
+        fg: constants.colors.border
+      },
+      cell: {
+        selected: {
+          fg: "black",
+          bg: "light-yellow"
+        },
+      },
+      header: {
+        fg: 'red',
+        bold: true
       },
     },
-    header: {
-      fg: 'red',
-      bold: true
-    },
-  },
-  // columnSpacing: 1,
-});
+    columnSpacing: 1,
+  };
+}
 
-var technicalIndicatorsTable = grid.set(11, 0, 8, 13, blessed.ListTable, {
-  parent: screen,
-  keys: true,
-  align: "left",
-  padding: {
-    left: 1,
-    right: 1
-  },
-  style: {
-    fg: colorConstants.tableText,
-    border: {
-      fg: colorConstants.border
-    },
-    header: {
-      fg: colorConstants.tableHeader,
-      bold: true
-    },
-  },
-  interactive: false,
-  columnSpacing: 1
-});
+let padding = {
+  left: 1,
+  right: 1
+}
+
+// Place 3 tables and a gauge on the left side of the screen, stacked vertically.
+
+var headlinesTable = grid.set(0, 0, 11, 13, blessed.ListTable, createListTable("center", true, null));
+var technicalIndicatorsTable = grid.set(11, 0, 8, 13, blessed.ListTable, createListTable("left", false, padding));
 
 var technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
   label: ' Buy/Sell Gauge '.bold.red,
@@ -395,35 +341,7 @@ var technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
   showLabel: true
 })
 
-// technicalIndicatorsGauge.setStack([{
-//   percent: 50,
-//   stroke: 'red',
-// }, {
-//   percent: 50,
-//   stroke: 'green'
-// }]);
-
-var blockchainIndicatorsTable = grid.set(25, 0, 10, 13, blessed.ListTable, {
-  parent: screen,
-  keys: true,
-  align: "left",
-  padding: {
-    left: 1,
-    right: 1
-  },
-  style: {
-    fg: colorConstants.tableText,
-    border: {
-      fg: colorConstants.border
-    },
-    header: {
-      fg: colorConstants.tableHeader,
-      bold: true
-    },
-  },
-  interactive: false,
-  columnSpacing: 1
-});
+var blockchainIndicatorsTable = grid.set(25, 0, 10, 13, blessed.ListTable, createListTable("left", false, padding));// {
 
 // Line chart on the right of the tables
 
@@ -440,30 +358,9 @@ var exchangeRateChart = grid.set(0, 13, 25, 20, contrib.line, {
   label: " Exchange Rate ".bold.red
 });
 
-// Price table above countdown.
+// Price table
 
-var priceTable = grid.set(25, 13, 6.5, 6, blessed.ListTable, {
-  parent: screen,
-  keys: true,
-  align: "left",
-  padding: {
-    left: 1,
-    right: 1
-  },
-  style: {
-    fg: colorConstants.tableText,
-    border: {
-      fg: colorConstants.border
-    },
-    header: {
-      fg: colorConstants.tableHeader,
-      bold: true
-    },
-  },
-  interactive: false,
-  columnSpacing: 1,
-  columnWidth: [25, 20]
-});
+var priceTable = grid.set(25, 13, 6.5, 6, blessed.ListTable, createListTable("left", false, padding));
 
 var logs = grid.set(25, 20, 10, 15, contrib.log, {
   label: " DEBUGGING LOGS ".bold.red,
