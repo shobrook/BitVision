@@ -36,7 +36,7 @@ let autotrading = require("./popups/autotrading");
  * Read JSON file and do something with the data
  */
 function readJsonFile(path) {
-  console.log("Reading " + path);
+  logs.log("Reading " + path);
   return JSON.parse(fs.readFileSync(path, "utf8"));
 }
 
@@ -48,19 +48,11 @@ function executeShellCommand(command) {
   let args = command.split(" ");
   // Remove first element and cast to string.
   let program = args.splice(0, 1) + "";
-  let cmd = childProcess.spawn(program, args);
+  let cmd = childProcess.execSync(program, args);
 
-  cmd.stdout.on("data", function(data) {
-    console.log("OUTPUT: " + data);
-  });
-
-  cmd.stderr.on("data", function(data) {
-    console.log("ERR: " + data);
-  });
-
-  cmd.on("close", function(code, signal) {
-    logs.log("command finished...");
-  });
+  // cmd.stdout.on('data', (data) => {
+  //   logs.log("FINSIHED")
+  // });
 }
 
 /**
@@ -92,7 +84,9 @@ function transactionCommand(amount, type) {
 }
 
 function refreshDataCommand() {
-  executeShellCommand(constants.commands.refresh);
+  executeShellCommand(constants.commands.refresh_network);
+  executeShellCommand(constants.commands.refresh_headlines);
+  // executeShellCommand(constants.commands.refresh_portfolio);
 }
 
 function retrainModelCommand() {
@@ -105,8 +99,8 @@ function retrainModelCommand() {
 // -------------------------
 
 function writeJsonFile(path, data) {
-  console.log(`WRITING FILE at ${path}`);
-  console.log(JSON.stringify(data) + "\n")
+  logs.log(`WRITING FILE at ${path}`);
+  // logs.log(JSON.stringify(data) + "\n")
   fs.writeFileSync(path, JSON.stringify(data), "utf8", () => {
     // logs.log("File Saved.");
   });
@@ -316,7 +310,7 @@ var exchangeRateChart = grid.set(0, 13, 25, 20, contrib.line, {
 
 var priceTable = grid.set(25, 13, 6.5, 6, blessed.ListTable, createListTable("left", false, padding));
 
-var logs = grid.set(25, 20, 10, 15, contrib.log, {
+var logs = grid.set(15, 19, 20, 20, contrib.log, {
   label: " DEBUGGING LOGS ".bold.red,
   top: 0,
   left: 0,
@@ -349,7 +343,6 @@ let menubar = blessed.listbar({
       keys: ["r"],
       callback: () => {
         logs.log("Refresh Data");
-        refreshDataCommand();
         fetchAndRefreshDataDisplay();
       }
     },
@@ -434,9 +427,9 @@ screen.key(["escape", "C-c"], function(ch, key) {
  */
 function getData(path) {
   let file = readJsonFile(path);
-  while (file.fetching) {
-    file = readJsonFile(path);
-  }
+  // while (file.fetching) {
+  // file = readJsonFile(path);
+  // }
 
   return file.data;
 }
@@ -546,12 +539,6 @@ function setFetching(path, value) {
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
 function fetchData() {
-  console.log("Setting fetching status...\n");
-  setFetching(constants.paths.headlineDataPath, true);
-  setFetching(constants.paths.technicalDataPath, true);
-  setFetching(constants.paths.blockchainDataPath, true);
-  setFetching(constants.paths.priceDataPath, true);
-
   logs.log("Fetching data...");
   let headlineData = trimHeadlines(getData(constants.paths.headlineDataPath));
   URLs = extractUrlAndRemove(headlineData);
@@ -574,10 +561,10 @@ function fetchData() {
 function setAllTables(headlines, technicals, gaugeData, blockchains, prices) {
   logs.log("Set all tables...");
   // logs.log("HEADLINES:", JSON.stringify(headlines, null, 2))
-  // console.log(technicals)
-  // console.log(blockchains)
-  // console.log(prices)
-  // console.log(gaugeData)
+  // logs.log(technicals)
+  // logs.log(blockchains)
+  // logs.log(prices)
+  // logs.log(gaugeData)
 
   // Set headers for each table.
   headlines.splice(0, 0, ["Date", "Headline", "Sentiment"]);
@@ -621,7 +608,14 @@ function setChart() {
  * Fetches new data and refreshes frontend displays.
  */
 function fetchAndRefreshDataDisplay() {
-  console.log("Fetch and refresh data.")
+  logs.log("Fetch and refresh data.")
+
+  logs.log("Setting fetching status...\n");
+  setFetching(constants.paths.headlineDataPath, true);
+  setFetching(constants.paths.technicalDataPath, true);
+  setFetching(constants.paths.blockchainDataPath, true);
+  setFetching(constants.paths.priceDataPath, true);
+
   refreshDataCommand();
   let [headlineData, technicalData, gaugeData, blockchainData, priceData] = fetchData();
   setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData);
@@ -650,10 +644,10 @@ function doThings() {
 
   logs.log("Initial data fetching done. Starting refresh loops.");
 
-  // TODO: Fix headline refocusing bug.
-  setInterval(function() {
-    fetchAndRefreshDataDisplay();
-  }, 3000)
+  // // TODO: Fix headline refocusing bug.
+  // setInterval(function() {
+  //   fetchAndRefreshDataDisplay();
+  // }, 3000)
 }
 
 doThings();

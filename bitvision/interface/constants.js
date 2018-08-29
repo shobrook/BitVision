@@ -25,7 +25,9 @@ module.exports = {
   },
   commands: {
     "transaction": `python3 ${path.join(__dirname, "..", "controller")} `,
-    "refresh_network": "python3 ../controller.py monitor_network",
-    "retrain_model": "python3 ../controller.py RETRAIN"
+    "refresh_network": "python3 ../controller monitor_network",
+    "refresh_headlines": "python3 ../controller monitor_opinions",
+    "refresh_portfolio": "python3 ../controller monitor_portfolio",
+    // "retrain_model": "python3 ../controller.py RETRAIN"
   }
 }
