@@ -4,18 +4,18 @@ let contrib = require("blessed-contrib");
 let helpMenuData = [
   ["Keybinding", "Action"],
   ["---", "---"],
-  ["A", "Autotrading Settings"],
-  ["D", "Deposit BTC"],
-  ["C", "Clear Credentials"],
+  ["A", "Autotrading Toggle"],
   ["F", "Focus on headlines"],
   ["L", "Bitstamp Login"],
+  ["K", "Logout"],
+  ["T", "Trade BTC"],
   ["O", "Open article."],
   ["R", "Refresh data"],
   ["C-c", "Exit"]
 ];
 
 let helpStrings = {
-  autotrading: "## Automatic Trading\n\n 1. Login to Bitstamp and press \`A\` and enable autotrading.\n 2. Watch our algorithm trade BTC for you.\n 3. ...\n 4. Profit (or deep regret and resentment)",
+  autotrading: "## Automatic Trading\n\n 1. Login to Bitstamp and press \`A\` and enable autotrading.\n 2. Watch our algorithm trade BTC for you.\n 3. ???\n 4. Profit (or deep regret and resentment)",
   authors: "\n\n## Authors\n\n Written by Jon Shobrook and Aaron Lichtman.\n -> https://www.github.com/shobrook\n -> https://www.github.com/alichtman",
   warning: "\n\n## Warning\n\n Use this software to trade bitcoin at your own risk.\n We are not responsible if our algorithm misbehaves.",
   source: "\n\n## Source Code\n\n -> https://github.com/shobrook/BitVision"
