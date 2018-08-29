@@ -7,7 +7,7 @@ let colors = require("colors");
 let openBrowser = require("opn");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
-let childProcess = require("child_process");
+let exec = require('child-process-promise').exec;
 
 let constants = require("./constants");
 let VERSION = require("../package.json").version
@@ -36,8 +36,12 @@ let autotrading = require("./popups/autotrading");
  * Read JSON file and do something with the data
  */
 function readJsonFile(path) {
-  logs.log("Reading " + path);
-  return JSON.parse(fs.readFileSync(path, "utf8"));
+  // logs.log("Reading " + path);
+  let jsonFile = fs.readFileSync(path, "utf8")
+  if (jsonFile) {
+    return JSON.parse(jsonFile);
+  }
+  return false
 }
 
 /**
@@ -45,14 +49,15 @@ function readJsonFile(path) {
  **/
 function executeShellCommand(command) {
   logs.log(`Executing: ${command}`);
-  let args = command.split(" ");
-  // Remove first element and cast to string.
-  let program = args.splice(0, 1) + "";
-  let cmd = childProcess.execSync(program, args);
-
-  // cmd.stdout.on('data', (data) => {
-  //   logs.log("FINSIHED")
-  // });
+  exec(command).then(function(result) {
+      var stdout = result.stdout;
+      var stderr = result.stderr;
+      // logs.log('stdout: ', stdout);
+      // logs.log('stderr: ', stderr);
+    })
+    .catch(function(err) {
+      console.error('ERROR: ', err);
+    });
 }
 
 /**
@@ -101,9 +106,7 @@ function retrainModelCommand() {
 function writeJsonFile(path, data) {
   logs.log(`WRITING FILE at ${path}`);
   // logs.log(JSON.stringify(data) + "\n")
-  fs.writeFileSync(path, JSON.stringify(data), "utf8", () => {
-    // logs.log("File Saved.");
-  });
+  fs.writeFileSync(path, JSON.stringify(data, null, 2), "utf8");
 }
 
 /**
@@ -427,9 +430,9 @@ screen.key(["escape", "C-c"], function(ch, key) {
  */
 function getData(path) {
   let file = readJsonFile(path);
-  // while (file.fetching) {
-  // file = readJsonFile(path);
-  // }
+  while (file.fetching || !file) {
+    file = readJsonFile(path);
+  }
 
   return file.data;
 }

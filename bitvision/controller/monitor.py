@@ -65,10 +65,12 @@ def fetch_price_data():
         "low": round(float(response["low"]), 2),
         "open": round(float(response["open"]), 2),
         "volume": round(float(response["volume"]), 2),
-        "timestamp": round(int(response["timestamp"]), 2)
+        "timestamp": round(int(response["timestamp"]), 2),
+        "volume_btc": 0,
+        "weighted_price": 0
     }
 
-    fname = "cache/data/ticker.json"
+    fname = "../cache/data/ticker.json"
     with open(fname) as old_price_data:
         new_data = {
             "fetching": False,
@@ -81,7 +83,7 @@ def fetch_price_data():
 
 
 def fetch_tech_indicators():
-    with open("cache/data/ticker.json") as price_data_json:
+    with open("../cache/data/ticker.json") as price_data_json:
         price_data = json.load(price_data_json)["data"]
 
         if len(price_data) > 20:  # Enough data to calculate indicators in real-time
@@ -92,7 +94,9 @@ def fetch_tech_indicators():
                 "last": "Close",
                 "high": "High",
                 "low": "Low",
-                "open": "Open"
+                "open": "Open",
+                "weighted_price": "Weighted Price",
+                "volume_btc": "Volume (BTC)"
             })
             indicators = transformer("calculate_indicators")(price_data)
         else:  # Calculates indicators on a 24hr basis
@@ -101,7 +105,7 @@ def fetch_tech_indicators():
 
         # TODO: Create a mapping between indicator values and signals
 
-        with open("cache/data/indicators.json", 'w') as indicators_json:
+        with open("../cache/data/indicators.json", 'w') as indicators_json:
             # "MACD": {}, # MACD, MACD (Signal), MACD (Historical)
             # "MOM (1)": {"value": indicators["MOM (1)"][0], "signal": ""},
             # "ADX (20)": {"value": indicators["ADX (20)"][0], "signal": ""},
@@ -140,7 +144,7 @@ def fetch_tech_indicators():
 def fetch_blockchain_data():
     blockchain_data = dataset("blockchain_data")
 
-    with open("cache/data/blockchain.json", 'w') as blockchain_data_json:
+    with open("../cache/data/blockchain.json", 'w') as blockchain_data_json:
         data = [
             ["Confirmation Time", str(
                 round(blockchain_data["Conf. Time"][0], 2))],
@@ -184,7 +188,7 @@ def fetch_coindesk_stats():
     other_headlines = [(headline.find_all("a", class_="fade")[0].get_text().strip(), headline.find_all("time")[
         0]["datetime"], headline.find_all("a", class_="fade")[0]["href"]) for headline in soup.find_all("div", class_="post-info")]
 
-    with open("cache/data/headlines.json", 'w') as headlines_json:
+    with open("../cache/data/headlines.json", 'w') as headlines_json:
         headlines_json.write(json.dumps({
             "fetching": False,
             "data": [[
@@ -205,7 +209,7 @@ def fetch_portfolio_stats():
     #     secret="test"
     # )  # TODO: Pull creds from dotfile
 
-    with open("cache/data/portfolio.json") as portfolio_json:
+    with open("../cache/data/portfolio.json") as portfolio_json:
         portfolio_json.write(json.dumps({
             "fetching": False,
             "data": {
