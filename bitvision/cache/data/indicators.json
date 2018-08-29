@@ -1,1 +1,13 @@
-{"fetching":true,"data":[["OBV","-2214617707.78","BUY"],["WILLR","-22.19","SELL"],["MOM (3-period)","-53.48","SELL"],["RSI (6-period)","59.83","SELL"],["EMA (6-period)","6600.61","BUY"],["ADX (14-period)","22.12","SELL"],["ATR (14-period)","335.95","SELL"],["TRIX (20-period)","-0.28","BUY"]]}
+{
+  "fetching": true,
+  "data": [
+    ["OBV", "-2214617707.78", "BUY"],
+    ["WILLR", "-22.19", "SELL"],
+    ["MOM (3-period)", "-53.48", "SELL"],
+    ["RSI (6-period)", "59.83", "SELL"],
+    ["EMA (6-period)", "6600.61", "BUY"],
+    ["ADX (14-period)", "22.12", "SELL"],
+    ["ATR (14-period)", "335.95", "SELL"],
+    ["TRIX (20-period)", "-0.28", "BUY"]
+  ]
+}
