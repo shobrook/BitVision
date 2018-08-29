@@ -265,7 +265,8 @@ function createListTable(alignment, isInteractive, padding) {
       },
       header: {
         fg: 'red',
-        bold: true
+        bold: true,
+        // underline: true
       },
     },
     columnSpacing: 1,
