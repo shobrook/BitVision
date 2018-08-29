@@ -2,10 +2,9 @@
 "use strict";
 let os = require("os");
 let fs = require("fs");
-let path = require("path");
-let openBrowser = require("opn");
 let cli = require("commander");
 let colors = require("colors");
+let openBrowser = require("opn");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
 let childProcess = require("child_process");
@@ -29,60 +28,15 @@ let help = require("./popups/help");
 let transaction = require("./popups/transaction");
 let autotrading = require("./popups/autotrading");
 
-// ----------
-// CONSTANTS
-// ----------
-
-const paths = {
-  "configPath": path.join(__dirname, "..", "cache", "config.json"),
-  "blockchainDataPath": path.join(__dirname, "..", "cache", "data", "blockchain.json"),
-  "headlineDataPath": path.join(__dirname, "..", "cache", "data", "headlines.json"),
-  "technicalDataPath": path.join(__dirname, "..", "cache", "data", "indicators.json"),
-  "priceDataPath": path.join(__dirname, "..", "cache", "data", "ticker.json")
-}
-
-const commands = {
-  "transaction": `python3 ${path.join(__dirname, "..", "controller")} `,
-  "refresh": "python3 ../services/controller.py REFRESH",
-  "retrain_model": "python3 ../services/controller.py RETRAIN"
-}
-
-const headers = {
-  "headline": ["Date", "Headline", "Sentiment"],
-  "technical": ["Technical Indicator", "Value", "Signal"],
-  "blockchain": ["Blockchain Network", "Value"],
-  "price": ["Price Data", "Value"]
-}
-
 // ------------------
 // UTILITY FUNCTIONS
 // ------------------
 
 /**
- * Takes a list of lists and returns an array with the last element in every row.
- * Removes the last element of each list from the original array.
- *
- * [[1,2,3]
- *  [a,b,c] returns [3,c,#] and removes it from the original list of lists.
- *  [!,@,#]]
- */
-function extractUrlAndRemove(listOfArticles) {
-  // logs.log(listOfArticles)
-  let urls = [];
-  let index = 3;
-  for (var i = 0; i < listOfArticles.length; i++) {
-    urls.push(listOfArticles[i][3]);
-    listOfArticles[i].splice(index, 1);
-  }
-
-  return urls;
-}
-
-/**
  * Read JSON file and do something with the data
  */
 function readJsonFile(path) {
-  // logs.log("Reading " + path);
+  console.log("Reading " + path);
   return JSON.parse(fs.readFileSync(path, "utf8"));
 }
 
@@ -90,16 +44,18 @@ function readJsonFile(path) {
  * Execute shell command.
  **/
 function executeShellCommand(command) {
-  logs.log(command);
+  logs.log(`Executing: ${command}`);
   let args = command.split(" ");
-  // Remove first element
-  let program = args.splice(0, 1)[0];
-  logs.log(args);
-  logs.log(program);
+  // Remove first element and cast to string.
+  let program = args.splice(0, 1) + "";
   let cmd = childProcess.spawn(program, args);
 
   cmd.stdout.on("data", function(data) {
-    logs.log("OUTPUT: " + data);
+    console.log("OUTPUT: " + data);
+  });
+
+  cmd.stderr.on("data", function(data) {
+    console.log("ERR: " + data);
   });
 
   cmd.on("close", function(code, signal) {
@@ -130,28 +86,28 @@ function transactionCommand(amount, type) {
     "amount": amount,
     "type": type
   };
-  let cmd = `${commands.transaction}${payload}`;
+  let cmd = `${constants.commands.transaction}${payload}`;
   logs.log(`Executing: ${cmd}`);
   // executeShellCommand(cmd)
 }
 
 function refreshDataCommand() {
-  logs.log(`Executing: ${commands.refresh}`)
-  // executeShellCommand(commands.refresh);
+  executeShellCommand(constants.commands.refresh);
 }
 
 function retrainModelCommand() {
-  logs.log(`Executing: ${commands.retrain_model}`)
-  // executeShellCommand(commands.retrain_model);
+  logs.log(`Executing: ${constants.commands.retrain_model}`)
+  // executeShellCommand(constants.commands.retrain_model);
 }
 
 // -------------------------
 // CONFIG/CREDENTIALS FUNCTIONS
 // -------------------------
 
-function writeConfig(config) {
-  // logs.log(`WRITING FILE at ${paths.configPath}`);
-  fs.writeFile(paths.configPath, JSON.stringify(config), "utf8", () => {
+function writeJsonFile(path, data) {
+  console.log(`WRITING FILE at ${path}`);
+  console.log(JSON.stringify(data) + "\n")
+  fs.writeFileSync(path, JSON.stringify(data), "utf8", () => {
     // logs.log("File Saved.");
   });
 }
@@ -161,7 +117,7 @@ function writeConfig(config) {
  */
 function getConfig() {
   // logs.log("GETTING CONFIG");
-  return readJsonFile(paths.configPath);
+  return readJsonFile(constants.paths.configPath);
 }
 
 /**
@@ -179,7 +135,7 @@ function hasCredentialsInConfig() {
  */
 function createConfigIfNeeded() {
   // logs.log("CHECKING FOR DOTFILE");
-  if (fs.existsSync(paths.configPath)) {
+  if (fs.existsSync(constants.paths.configPath)) {
     return
   } else {
     // logs.log("No dotfile found. Creating DEFAULT.");
@@ -195,7 +151,7 @@ function createConfigIfNeeded() {
         "next-trade-timestamp-UTC": 0,
       },
     }
-    writeConfig(emptyConfig);
+    writeJsonFile(constants.paths.configPath, emptyConfig);
   }
 }
 
@@ -203,14 +159,14 @@ function saveCredentials(newCreds) {
   // logs.log("SAVING CREDENTIALS");
   let cfg = getConfig()
   cfg.credentials = newCreds;
-  writeConfig(cfg);
+  writeJsonFile(constants.paths.configPath, cfg);
 }
 
 /**
  * Clear credentials by removing the dotfile.
  */
 function clearCredentials() {
-  fs.unlink(paths.configPath, (err) => {
+  fs.unlink(constants.paths.configPath, (err) => {
     if (err) {
       throw err;
     }
@@ -276,7 +232,7 @@ function showAutotradingMenu() {
     }
 
     // Store updated configuration
-    writeConfig(cfg);
+    writeJsonFile(constants.paths.configPath, cfg);
   });
 }
 
@@ -287,8 +243,6 @@ var grid = new contrib.grid({
   cols: 36,
   screen: screen
 })
-
-// TODO: Finish refactoring this out.
 
 /**
  * Creates a new list table.
@@ -341,7 +295,7 @@ var technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
   showLabel: true
 })
 
-var blockchainIndicatorsTable = grid.set(25, 0, 10, 13, blessed.ListTable, createListTable("left", false, padding));// {
+var blockchainIndicatorsTable = grid.set(25, 0, 10, 13, blessed.ListTable, createListTable("left", false, padding)); // {
 
 // Line chart on the right of the tables
 
@@ -395,10 +349,11 @@ let menubar = blessed.listbar({
       keys: ["r"],
       callback: () => {
         logs.log("Refresh Data");
-        // fetchData()
+        refreshDataCommand();
+        fetchAndRefreshDataDisplay();
       }
     },
-    "Bitstamp Login": {
+    "Login": {
       keys: ["l"],
       callback: () => {
         logs.log("Login")
@@ -472,14 +427,18 @@ screen.key(["escape", "C-c"], function(ch, key) {
 // DATA FETCHING FUNCTIONS
 // -----------------------
 
+/**
+ * Wait until data.fetching is false and then return the data
+ * @param  {String} path File path
+ * @return {Dict}        Data
+ */
 function getData(path) {
-  let data = readJsonFile(path)
-  // TODO: Uncomment this.
-  // while (!data.fetching) {
-  // data = readJsonFile(path)
-  // }
+  let file = readJsonFile(path);
+  while (file.fetching) {
+    file = readJsonFile(path);
+  }
 
-  return data.data
+  return file.data;
 }
 
 /**
@@ -555,21 +514,54 @@ function setLineData(mockData, line) {
   line.setData(mockData);
 }
 
+/**
+ * Takes a list of lists and returns an array with the last element in every row.
+ * Removes the last element of each list from the original array.
+ *
+ * [[1,2,3]
+ *  [a,b,c] returns [3,c,#] and removes it from the original list of lists.
+ *  [!,@,#]]
+ */
+function extractUrlAndRemove(listOfArticles) {
+  // logs.log(listOfArticles)
+  let urls = [];
+  let index = 3;
+  for (var i = 0; i < listOfArticles.length; i++) {
+    urls.push(listOfArticles[i][3]);
+    listOfArticles[i].splice(index, 1);
+  }
+
+  return urls;
+}
+
 var URLs = null
+
+function setFetching(path, value) {
+  let json = readJsonFile(path);
+  json.fetching = value;
+  writeJsonFile(path, json);
+}
 
 /**
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
 function fetchData() {
+  console.log("Setting fetching status...\n");
+  setFetching(constants.paths.headlineDataPath, true);
+  setFetching(constants.paths.technicalDataPath, true);
+  setFetching(constants.paths.blockchainDataPath, true);
+  setFetching(constants.paths.priceDataPath, true);
+
   logs.log("Fetching data...");
-  let headlineData = trimHeadlines(getData(paths.headlineDataPath));
+  let headlineData = trimHeadlines(getData(constants.paths.headlineDataPath));
   URLs = extractUrlAndRemove(headlineData);
-  let technicalData = getData(paths.technicalDataPath);
+  let technicalData = getData(constants.paths.technicalDataPath);
   let gaugeData = calculateGaugePercentages(technicalData);
-  let blockchainData = getData(paths.blockchainDataPath);
-  let priceData = reformatPriceData(getData(paths.priceDataPath));
+  let blockchainData = getData(constants.paths.blockchainDataPath);
+  let priceData = reformatPriceData(getData(constants.paths.priceDataPath));
   logs.log("Fetched all data...");
 
+  // BUG: Fetch data is behaving asynchronously even though it isn't...
   while (!(headlineData && technicalData && gaugeData && blockchainData && priceData)) {
     logs.log("waiting")
   }
@@ -588,10 +580,10 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices) {
   // console.log(gaugeData)
 
   // Set headers for each table.
-  headlines.splice(0, 0, headers.headline);
-  technicals.splice(0, 0, headers.technical);
-  blockchains.splice(0, 0, headers.blockchain);
-  prices.splice(0, 0, headers.price);
+  headlines.splice(0, 0, ["Date", "Headline", "Sentiment"]);
+  technicals.splice(0, 0, ["Technical Indicator", "Value", "Signal"]);
+  blockchains.splice(0, 0, ["Blockchain Network", "Value"]);
+  prices.splice(0, 0, ["Price Data", "Value"]);
 
   // Set data
   headlinesTable.setData(headlines);
@@ -629,7 +621,8 @@ function setChart() {
  * Fetches new data and refreshes frontend displays.
  */
 function fetchAndRefreshDataDisplay() {
-  logs.log("Fetch and refresh data.")
+  console.log("Fetch and refresh data.")
+  refreshDataCommand();
   let [headlineData, technicalData, gaugeData, blockchainData, priceData] = fetchData();
   setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData);
   setChart();

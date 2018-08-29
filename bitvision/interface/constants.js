@@ -1,3 +1,5 @@
+let path = require("path");
+
 module.exports = {
   colors: {
     // Main
@@ -13,5 +15,17 @@ module.exports = {
     confirmDark: "blue",
     cancelLight: "light-red",
     cancelDark: "red",
+  },
+  paths: {
+    "configPath": path.join(__dirname, "..", "cache", "config.json"),
+    "blockchainDataPath": path.join(__dirname, "..", "cache", "data", "blockchain.json"),
+    "headlineDataPath": path.join(__dirname, "..", "cache", "data", "headlines.json"),
+    "technicalDataPath": path.join(__dirname, "..", "cache", "data", "indicators.json"),
+    "priceDataPath": path.join(__dirname, "..", "cache", "data", "ticker.json")
+  },
+  commands: {
+    "transaction": `python3 ${path.join(__dirname, "..", "controller")} `,
+    "refresh_network": "python3 ../controller.py monitor_network",
+    "retrain_model": "python3 ../controller.py RETRAIN"
   }
 }
