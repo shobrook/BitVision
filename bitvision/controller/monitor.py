@@ -15,6 +15,7 @@ from textblob import TextBlob
 
 from engine import dataset
 from engine import transformer
+from bitstamp import Trading
 
 USER_AGENTS = [
     "Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
@@ -197,35 +198,29 @@ def fetch_coindesk_stats():
     return True
 
 
-def fetch_twitter_stats():
-    # {
-    #     "name": "TWITTER_STATS",
-    #     "data": {
-    #         "POSITIVE": .65,
-    #         "NEUTRAL": .15,
-    #         "NEGATIVE": .20,
-    #         "VOLUME": 123456789
-    #     }
-    # }
+def fetch_portfolio_stats():
+    # client = Trading(
+    #     username="test",
+    #     key="test",
+    #     secret="test"
+    # )  # TODO: Pull creds from dotfile
 
-    return {}
+    with open("cache/data/portfolio.json") as portfolio_json:
+        portfolio_json.write(json.dumps({
+            "fetching": False,
+            "data": {
+                # ''.join(['$', str(client.account_balance()["usd_available"])]),
+                "account_balance": "$0.00",
+                "returns": "0.00%",
+                "net_profit": "$0.00",
+                "sharpe_ratio": "0.00",
+                "buy_accuracy": "0.00%",
+                "sell_accuracy": "0.00%",
+                "total_trades": "0"
+            }
+        }, indent=2))
 
-
-def fetch_performance_stats():
-    # {
-    #     "name": "PERFORMANCE_STATS",
-    #     "data": {
-    #         "capital": 0,
-    #         "returns": 0.00,
-    #         "net_profit": 0,
-    #         "sharpe_ratio": 0,
-    #         "buy_accuracy": 0.00,
-    #         "sell_accuracy": 0.00,
-    #         "total_trades": 0
-    #     }
-    # }
-
-    return {}
+    return True
 
 
 ######
@@ -234,12 +229,15 @@ def fetch_performance_stats():
 
 
 def refresh(names):
+    # TODO: Parallelize
     for name in names:
         if name == "price_data":
             fetch_price_data()
-        elif name == "indicators":
+        elif name == "tech_indicators":
             fetch_tech_indicators()
-        elif name == "blockchain":
+        elif name == "blockchain_data":
             fetch_blockchain_data()
         elif name == "coindesk_stats":
             fetch_coindesk_stats()
+        elif name == "portfolio_stats":
+            fetch_portfolio_stats()
