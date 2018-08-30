@@ -217,7 +217,7 @@ module.exports = {
       loginForm.destroy();
     });
 
-    screen.key(["q", "Q"], function(ch, key) {
+    screen.key(["q"], function(ch, key) {
       loginForm.destroy();
     });
 
