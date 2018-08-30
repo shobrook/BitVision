@@ -78,9 +78,9 @@ module.exports = {
       },
       border: "line",
       style: {
-        fg: "white",
+        fg: "red",
         border: {
-          fg: "red",
+          fg: "bright-blue",
         }
       },
       content: `Press Q to close.\n\nVersion: ${version}`
