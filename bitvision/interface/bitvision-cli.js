@@ -662,11 +662,16 @@ function doThings() { // nice function name
   splashScreen();
   createConfigIfNeeded();
 
+  refreshData("HEADLINES");
+  refreshData("NETWORK");
+  refreshData("PRICE");
+
   setInterval(function() {
     refreshData("NETWORK");
   }, 15000) // 15 sec
 
   setInterval(function() {
+    logs.log("HEADLINES REFRESH")
     refreshData("HEADLINES");
   }, 900000) // 15 min
 

@@ -2,14 +2,14 @@
 # GLOBALS
 #########
 
-
+import re
 import sys
 import json
 import random
 import requests
 import moment
 import pandas as pd
-import datetime # TODO: Just use moment
+import datetime  # TODO: Just use moment
 from bs4 import BeautifulSoup
 from typing import Dict
 from textblob import TextBlob
@@ -150,7 +150,8 @@ def fetch_blockchain_data():
             ["Confirmation Time", str(
                 round(blockchain_data["Conf. Time"][0], 2))],
             ["Block Size", str(round(blockchain_data["Block Size"][0], 2))],
-            ["Transaction Cost", str(round(blockchain_data["TXN Cost"][0], 2))],
+            ["Transaction Cost", str(
+                round(blockchain_data["TXN Cost"][0], 2))],
             ["Difficulty", str(round(blockchain_data["Difficulty"][0], 2))],
             ["Transactions per Day", str(round(
                 blockchain_data["TXNs per Day"][0], 2))],
@@ -188,6 +189,12 @@ def fetch_coindesk_stats():
     other_headlines = [(headline.find_all("a", class_="fade")[0].get_text().strip(), headline.find_all("time")[
         0]["datetime"], headline.find_all("a", class_="fade")[0]["href"]) for headline in soup.find_all("div", class_="post-info")]
 
+    # Strip out unrelated headlines
+    trimmed_headlines = [headline for headline in featured_headlines + other_headlines
+                     if (headline[0].lower().contains("bitcoin") or headline[0].lower().contains("btc")) and not (headline[0].lower().contains("bitcoin cash") or headline[0].lower().contains("bch"))]
+
+    print("ALL", trimmed_headlines)
+
     with open("../cache/data/headlines.json", 'w') as headlines_json:
         headlines_json.write(json.dumps({
             "data": [[
@@ -195,7 +202,7 @@ def fetch_coindesk_stats():
                 headline[0].split("\n")[0],
                 str(round(TextBlob(headline[0]).sentiment.polarity, 2)),
                 headline[2]]
-                for headline in featured_headlines + other_headlines]
+                for headline in trimmed_headlines]
         }, indent=2))
 
     return True

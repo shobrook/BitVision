@@ -1,41 +1,44 @@
-BitVision
-===
+# BitVision
 
 <!-- [![npm](https://img.shields.io/npm/v/:package.svg)](https://www.npmjs.com/package/bitvision) -->
+
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/shobrook/BitVision/blob/master/LICENSE)
 [![Scikit-Learn](https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg)](http://scikit-learn.org/stable/)
 
+**Bitvision is a Bitcoin trading interface backed by an automated trading algorithm that anyone can use.**
+
 ![An Engineer's Syllogism](img/engineer_syllogism.png)
 
-**Bitvision is a Bitcoin trading interface coupled with an automated trading algorithm that anyone can use.**
-**Remember to give us a star, and we'll give you a free copy of the software!**
+**Remember to give us a star, and we'll give you a free copy of the software! If you'd prefer to support the development of future projects, you can donate BTC at `113VcufvK4UEvMNbSMRxJ7L418KL2U4wpb`.**
 
-#### Installation and Usage
+#### How do you use it?
 
-1. `$ npm install bitvision`
-2. `$ pipenv install && pipenv shell`
-3. `$ bitvision`
-4. Press `L` to open the login screen and enter Bitstamp credentials.
-5. Press `A` to open the autotrading settings and enable it.
+**Installation and Usage**
+
+1.  `$ npm install bitvision`
+2.  `$ pipenv install && pipenv shell`
+3.  `$ bitvision`
+4.  Press `L` to open the login screen and enter Bitstamp credentials.
+5.  Press `A` to open the autotrading settings and enable it.
 
 **Create a New Bitstamp API Key**
 
-1. Login to your Bitstamp account
-2. Click on `Security` -> `API Access`
-3. Select permissions for your access key.
-4. Click on the `Generate Key` button and make sure to store your `secret` in a secure place.
-5. Click `Activate`.
-6. Go to your email and click on link sent by Bitstamp to activate the API key.
+1.  Login to your Bitstamp account
+2.  Click on `Security` -> `API Access`
+3.  Select permissions for your access key.
+4.  Click on the `Generate Key` button and make sure to store your `secret` in a secure place.
+5.  Click `Activate`.
+6.  Go to your email and click on link sent by Bitstamp to activate the API key.
 
 **CLI Keybindings**
 
-| Keybinding | Action |
-| --- | --- |
-| A | Autotrading Toggle |
-| L | Bitstamp Login |
-| K | Logout |
-| T | Trade BTC |
-| Ctrl-c | Exit |
+| Keybinding | Action             |
+| ---------- | ------------------ |
+| A          | Autotrading Toggle |
+| L          | Bitstamp Login     |
+| K          | Logout             |
+| T          | Trade BTC          |
+| Ctrl-c     | Exit               |
 
 #### How does it work?
 
@@ -71,17 +74,17 @@ Technical indicators help reduce noise in price data and may improve an algorith
 
 # TODO: Replace formulas with explanations.
 
-| Feature                               | Description                                                                                                   |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------|
-| Rate of Change Ratio                  | $\frac{Close(t)}{Close(t - n)} \cdot 100$                                                                     |
-| Momentum                              | $Close(t) - Close(t - n)$                                                                                     |
-| Average Directional Index             | $\frac{\Sigma\frac{DI - (-DI)}{DI + (-DI)}}{n}$                                                               |
-| Williams %R                           | $\frac{High - Close}{High - Low} \cdot 100$                                                                   |
-| Relative Strength Index               | $\frac{Avg(PriceUp)}{Avg(PriceUp) + Avg(PriceDown)} \cdot 100$                                                |
-| Moving Average Convergence Divergence | $(EMA_1(t) - EMA_2(t)) - EMA_osc(t)$                                                                          |
-| Average True Range                    | $ATR(t) = ((n - 1) \cdot ATR(t - 1) + max(Abs(High - Low), Abs(High - Close(t - 1)), Abs(Low - Close(t - 1)))$|
-| On-Balance Volume                     | $OBV(t) = OBV(t - 1) \pm Volume(t)$                                                                           |
-| Triple Exponential Moving Average     | $(EMA(EMA(EMA(Close(t)))))/(EMA(EMA(EMA(Close(t - 1)))))$                                                     |
+| Feature                               | Description |
+| ------------------------------------- | ----------- |
+| Rate of Change Ratio                  | EXPLANATION |
+| Momentum                              | EXPLANATION |
+| Average Directional Index             | EXPLANATION |
+| Williams %R                           | EXPLANATION |
+| Relative Strength Index               | EXPLANATION |
+| Moving Average Convergence Divergence | EXPLANATION |
+| Average True Range                    | EXPLANATION |
+| On-Balance Volume                     | EXPLANATION |
+| Triple Exponential Moving Average     | EXPLANATION |
 
 According to the Random Walk Hypothesis, which states that the future price of a publicly traded asset is not statistically dependent on past prices, it's impossible to reliably leverage technical analysis to beat the market. But this feature set is still considered because many traders utilize technical analysis in their trading strategies, and there may exist a relationship between buy/sell signals from technical indicators and executed trades, regardless of their actual effectiveness.
 
@@ -97,10 +100,10 @@ The target variable is the direction (sign) of next-day price change, making thi
 
 The following data cleaning and preprocessing techniques are applied to the feature set:
 
-* The Last Observation Carried Forward (LOCF) method is used to fill missing values in the dataset
-* Lag variables (spanning back three days) are created for each feature to provide information about trends
-* A Box-Cox transform, which automatically evaluates a suite of power transforms and selects the best fit for a given feature, is applied in an attempt to reveal the underlying signal in each time series
-* Lastly, features are scaled to more or less look like a Gaussian distribution with zero mean and unit variance
+-   The Last Observation Carried Forward (LOCF) method is used to fill missing values in the dataset
+-   Lag variables (spanning back three days) are created for each feature to provide information about trends
+-   A Box-Cox transform, which automatically evaluates a suite of power transforms and selects the best fit for a given feature, is applied in an attempt to reveal the underlying signal in each time series
+-   Lastly, features are scaled to more or less look like a Gaussian distribution with zero mean and unit variance
 
 (Addition of dimensionality reduction and feature elimination algorithms coming soon)
 
@@ -124,18 +127,18 @@ As the price of Bitcoin is generally increasing over time, the training set is b
 
 Some potential directions of this research:
 
-* Understanding which features have the most predictive power by performing the Granger Causality test
-* Exploring other feature engineering techniques
-* Understanding interdependencies and relationships between features via exploratory data analysis
-* Testing some potential features:
-  * There may be a correlation between price change and predictions made by popular Bitcoin forecasting websites, since it's possible that a non-trivial number of traders use those predictions to inform trades
-  * Bitcoin Core's Github activity could serve as another "fundamental" feature
+-   Understanding which features have the most predictive power by performing the Granger Causality test
+-   Exploring other feature engineering techniques
+-   Understanding interdependencies and relationships between features via exploratory data analysis
+-   Testing some potential features:
+    -   There may be a correlation between price change and predictions made by popular Bitcoin forecasting websites, since it's possible that a non-trivial number of traders use those predictions to inform trades
+    -   Bitcoin Core's Github activity could serve as another "fundamental" feature
 
-#### Authors
+#### Authors and Contributors
 
-- Jon Shobrook (`@shobrook`)
-- Aaron Lichtman (`@alichtman`)
+Core developers:
 
-#### Donations
+-   Jon Shobrook (`@shobrook`)
+-   Aaron Lichtman (`@alichtman`)
 
-This is free, open-source software. If you'd like to support the development of future projects, or say thanks for this one, you can donate BTC at `113VcufvK4UEvMNbSMRxJ7L418KL2U4wpb`.
+[![](https://sourcerer.io/fame/alichtman/shobrook/BitVision/images/0)](https://sourcerer.io/fame/alichtman/shobrook/BitVision/links/0)[![](https://sourcerer.io/fame/alichtman/shobrook/BitVision/images/1)](https://sourcerer.io/fame/alichtman/shobrook/BitVision/links/1)[![](https://sourcerer.io/fame/alichtman/shobrook/BitVision/images/2)](https://sourcerer.io/fame/alichtman/shobrook/BitVision/links/2)[![](https://sourcerer.io/fame/alichtman/shobrook/BitVision/images/3)](https://sourcerer.io/fame/alichtman/shobrook/BitVision/links/3)[![](https://sourcerer.io/fame/alichtman/shobrook/BitVision/images/4)](https://sourcerer.io/fame/alichtman/shobrook/BitVision/links/4)[![](https://sourcerer.io/fame/alichtman/shobrook/BitVision/images/5)](https://sourcerer.io/fame/alichtman/shobrook/BitVision/links/5)[![](https://sourcerer.io/fame/alichtman/shobrook/BitVision/images/6)](https://sourcerer.io/fame/alichtman/shobrook/BitVision/links/6)[![](https://sourcerer.io/fame/alichtman/shobrook/BitVision/images/7)](https://sourcerer.io/fame/alichtman/shobrook/BitVision/links/7)
