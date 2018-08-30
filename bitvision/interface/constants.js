@@ -26,7 +26,8 @@ module.exports = {
     "headlineDataPath": path.join(cachePath, "data", "headlines.json"),
     "technicalDataPath": path.join(cachePath, "data", "indicators.json"),
     "priceDataPath": path.join(cachePath, "data", "ticker.json"),
-    "portfolioDataPath": path.join(cachePath, "data", "portfolio.json")
+    "portfolioDataPath": path.join(cachePath, "data", "portfolio.json"),
+    "transactionsDataPath": path.join(cachePath, "data", "transactions.json"),
   },
   commands: {
     "transaction": `python3 ${controllerPath} `,
