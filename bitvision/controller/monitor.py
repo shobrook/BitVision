@@ -9,12 +9,14 @@ import random
 import requests
 import moment
 import pandas as pd
+import datetime # TODO: Just use moment
 from bs4 import BeautifulSoup
 from typing import Dict
 from textblob import TextBlob
 
 from engine import dataset
 from engine import transformer
+from bitstamp import Trading
 
 USER_AGENTS = [
     "Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
@@ -64,13 +66,14 @@ def fetch_price_data():
         "low": round(float(response["low"]), 2),
         "open": round(float(response["open"]), 2),
         "volume": round(float(response["volume"]), 2),
-        "timestamp": round(int(response["timestamp"]), 2)
+        "timestamp": datetime.datetime.fromtimestamp(int(response["timestamp"])).strftime("%Y-%m-%d"),
+        "volume_btc": 0,
+        "weighted_price": 0
     }
 
-    fname = "cache/data/ticker.json"
+    fname = "../cache/data/ticker.json"
     with open(fname) as old_price_data:
         new_data = {
-            "fetching": False,
             "data": [data] + json.load(old_price_data)["data"]
         }
     with open(fname, 'w') as price_data:
@@ -80,27 +83,31 @@ def fetch_price_data():
 
 
 def fetch_tech_indicators():
-    with open("cache/data/ticker.json") as price_data_json:
+    with open("../cache/data/ticker.json") as price_data_json:
         price_data = json.load(price_data_json)["data"]
 
-        if len(price_data) > 20:  # Enough data to calculate indicators in real-time
-            price_data = pd.DataFrame(price_data)
-            price_data.rename(index=str, columns={
-                "timestamp": "Date",
-                "volume": "Volume (Currency)",
-                "last": "Close",
-                "high": "High",
-                "low": "Low",
-                "open": "Open"
-            })
-            indicators = transformer("calculate_indicators")(price_data)
-        else:  # Calculates indicators on a 24hr basis
-            indicators = transformer("calculate_indicators")(
-                dataset("price_data"))
+        # if len(price_data) > 20:  # Enough data to calculate indicators in real-time
+        #     price_data = pd.DataFrame(price_data)
+        #     price_data.columns = ["Date", "Volume", "Close", "High", "Low", "Open", "Weighted Price", "Volume (BTC)"]
+        #     # price_data.rename(index=str, columns={
+        #     #     "timestamp": "Date",
+        #     #     "volume": "Volume",
+        #     #     "last": "Close",
+        #     #     "high": "High",
+        #     #     "low": "Low",
+        #     #     "open": "Open",
+        #     #     "weighted_price": "Weighted Price",
+        #     #     "volume_btc": "Volume (BTC)"
+        #     # })
+        #     indicators = transformer("calculate_indicators")(price_data)
+        # else:  # Calculates indicators on a 24hr basis
+        #     indicators = transformer("calculate_indicators")(
+        #         dataset("price_data"))
+        indicators = transformer("calculate_indicators")(dataset("price_data"))
 
         # TODO: Create a mapping between indicator values and signals
 
-        with open("cache/data/indicators.json", 'w') as indicators_json:
+        with open("../cache/data/indicators.json", 'w') as indicators_json:
             # "MACD": {}, # MACD, MACD (Signal), MACD (Historical)
             # "MOM (1)": {"value": indicators["MOM (1)"][0], "signal": ""},
             # "ADX (20)": {"value": indicators["ADX (20)"][0], "signal": ""},
@@ -129,7 +136,6 @@ def fetch_tech_indicators():
             ]
 
             indicators_json.write(json.dumps({
-                "fetching": False,
                 "data": list(sorted(data, key=lambda i: len(i[0])))
             }, indent=2))
 
@@ -139,7 +145,7 @@ def fetch_tech_indicators():
 def fetch_blockchain_data():
     blockchain_data = dataset("blockchain_data")
 
-    with open("cache/data/blockchain.json", 'w') as blockchain_data_json:
+    with open("../cache/data/blockchain.json", 'w') as blockchain_data_json:
         data = [
             ["Confirmation Time", str(
                 round(blockchain_data["Conf. Time"][0], 2))],
@@ -163,7 +169,6 @@ def fetch_blockchain_data():
         ]
 
         blockchain_data_json.write(json.dumps({
-            "fetching": False,
             "data": list(sorted(data, key=lambda i: len(i[0])))
         }, indent=2))
 
@@ -183,9 +188,8 @@ def fetch_coindesk_stats():
     other_headlines = [(headline.find_all("a", class_="fade")[0].get_text().strip(), headline.find_all("time")[
         0]["datetime"], headline.find_all("a", class_="fade")[0]["href"]) for headline in soup.find_all("div", class_="post-info")]
 
-    with open("cache/data/headlines.json", 'w') as headlines_json:
+    with open("../cache/data/headlines.json", 'w') as headlines_json:
         headlines_json.write(json.dumps({
-            "fetching": False,
             "data": [[
                 moment.date(headline[1]).format("M-D"),
                 headline[0].split("\n")[0],
@@ -197,35 +201,28 @@ def fetch_coindesk_stats():
     return True
 
 
-def fetch_twitter_stats():
-    # {
-    #     "name": "TWITTER_STATS",
-    #     "data": {
-    #         "POSITIVE": .65,
-    #         "NEUTRAL": .15,
-    #         "NEGATIVE": .20,
-    #         "VOLUME": 123456789
-    #     }
-    # }
+def fetch_portfolio_stats():
+    # client = Trading(
+    #     username="test",
+    #     key="test",
+    #     secret="test"
+    # )  # TODO: Pull creds from dotfile
 
-    return {}
+    with open("../cache/data/portfolio.json", 'w') as portfolio_json:
+        portfolio_json.write(json.dumps({
+            "data": {
+                # ''.join(['$', str(client.account_balance()["usd_available"])]),
+                "account_balance": "$0.00",
+                "returns": "0.00%",
+                "net_profit": "$0.00",
+                "sharpe_ratio": "0.00",
+                "buy_accuracy": "0.00%",
+                "sell_accuracy": "0.00%",
+                "total_trades": "0"
+            }
+        }, indent=2))
 
-
-def fetch_performance_stats():
-    # {
-    #     "name": "PERFORMANCE_STATS",
-    #     "data": {
-    #         "capital": 0,
-    #         "returns": 0.00,
-    #         "net_profit": 0,
-    #         "sharpe_ratio": 0,
-    #         "buy_accuracy": 0.00,
-    #         "sell_accuracy": 0.00,
-    #         "total_trades": 0
-    #     }
-    # }
-
-    return {}
+    return True
 
 
 ######
@@ -234,12 +231,15 @@ def fetch_performance_stats():
 
 
 def refresh(names):
+    # TODO: Parallelize
     for name in names:
         if name == "price_data":
             fetch_price_data()
-        elif name == "indicators":
+        elif name == "tech_indicators":
             fetch_tech_indicators()
-        elif name == "blockchain":
+        elif name == "blockchain_data":
             fetch_blockchain_data()
         elif name == "coindesk_stats":
             fetch_coindesk_stats()
+        elif name == "portfolio_stats":
+            fetch_portfolio_stats()

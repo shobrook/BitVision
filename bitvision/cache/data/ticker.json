@@ -1,93 +1,5364 @@
 {
-  "fetching": false,
   "data": [
     {
-      "last": 6716.8,
-      "high": 6775.34,
-      "low": 6641.35,
-      "open": 6700.13,
-      "volume": 4905.94,
-      "timestamp": 1535403983
+      "last": 7005.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5612.35,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": 6715.56,
-      "high": 6775.34,
-      "low": 6641.35,
-      "open": 6700.13,
-      "volume": 4901.83,
-      "timestamp": 1535403775
+      "last": 7005.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5612.35,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": 6732.74,
-      "high": 6800.0,
-      "low": 6664.25,
-      "open": 6732.99,
-      "volume": 4805.79,
-      "timestamp": 1535246293
+      "last": 7005.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5612.35,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": 6731.93,
-      "high": 6800.0,
-      "low": 6664.25,
-      "open": 6732.99,
-      "volume": 4980.84,
-      "timestamp": 1535241660
+      "last": 7005.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5612.35,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": "6745.88",
-      "high": "6800.00000000",
-      "low": "6664.25000000",
-      "open": 6692.99,
-      "volume": "5067.58179119",
-      "timestamp": "1535240274"
+      "last": 7007.19,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5611.78,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": "6750.32",
-      "high": "6800.00000000",
-      "low": "6664.25000000",
-      "open": 6692.99,
-      "volume": "5062.35340660",
-      "timestamp": "1535240217"
+      "last": 7007.19,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5611.78,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": "6756.24",
-      "high": "6800.00000000",
-      "low": "6664.25000000",
-      "open": 6692.99,
-      "volume": "5061.61893137",
-      "timestamp": "1535240105"
+      "last": 7007.19,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.92,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": "6759.83",
-      "high": "6800.00000000",
-      "low": "6664.25000000",
-      "open": 6692.99,
-      "volume": "5061.58099721",
-      "timestamp": "1535240041"
+      "last": 7007.19,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.92,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": "6759.32",
-      "high": "6800.00000000",
-      "low": "6664.25000000",
-      "open": 6692.99,
-      "volume": "5061.42484747",
-      "timestamp": "1535240009"
+      "last": 7007.19,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.92,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": "6319.35",
-      "high": "6494.13000000",
-      "low": "6068.52000000",
-      "open": 6240.49,
-      "volume": "6708.87922004",
-      "timestamp": "1534060816"
+      "last": 7007.19,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.92,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     },
     {
-      "last": "6317.89",
-      "high": "6494.13000000",
-      "low": "6068.52000000",
-      "open": 6240.49,
-      "volume": "6709.53131157",
-      "timestamp": "1534060732"
+      "last": 7007.19,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.92,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7007.19,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.92,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7008.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5612.65,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5612.65,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5612.65,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.19,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.2,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.14,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.09,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.09,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.14,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.14,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.22,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7014.57,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7014.57,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7014.57,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7014.57,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7014.57,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5612.59,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7014.57,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5613.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.15,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.16,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5614.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.03,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.03,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.03,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.03,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.51,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.51,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.51,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.51,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.51,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.12,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5616.51,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.57,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.59,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.63,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.55,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.55,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.73,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.77,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.78,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.78,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.78,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.82,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.82,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.82,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.82,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.16,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.87,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.93,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.96,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.96,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.96,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.96,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.96,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5617.96,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.34,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.07,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.44,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.07,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.44,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.07,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.44,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.07,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.44,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.87,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.83,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.87,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7013.17,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.87,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.84,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.25,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.25,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.27,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.8,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.8,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.8,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.8,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.8,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.11,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.11,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.11,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.11,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.11,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.11,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.56,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.56,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5621.56,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.61,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.61,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.61,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.61,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.61,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.35,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7006.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.88,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7006.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5623.88,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7006.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5625.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7006.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5625.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7006.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5625.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7006.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5625.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7006.48,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5625.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.71,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.71,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5626.85,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.2,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.79,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.2,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.79,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.2,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.79,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.2,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.79,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.2,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.79,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.2,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.79,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.2,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.79,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.2,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.79,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.21,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.21,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.58,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.58,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.21,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.58,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.58,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.58,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.58,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.59,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.59,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.59,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.86,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.86,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.86,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.88,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.88,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.88,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.88,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.88,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7015.47,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.88,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.72,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.72,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.72,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.76,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.76,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5631.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5631.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5633.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5633.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5633.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5633.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5633.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.75,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5633.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.75,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5633.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.62,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.94,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.62,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5628.94,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.62,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5636.76,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7019.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.26,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.25,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.25,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.25,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5651.25,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5652.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5652.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.97,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5652.31,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.09,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5664.61,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.09,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5664.61,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.37,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.43,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7017.76,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5709.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 6999.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5741.53,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 6999.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5741.53,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 6996.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5741.33,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 6996.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5741.33,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 6996.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5740.33,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 6996.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5740.33,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 6996.24,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5740.33,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7000.1,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5740.32,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.59,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5638.45,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.59,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5638.45,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.59,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5638.95,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.59,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5640.18,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7009.99,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5640.63,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7009.99,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5640.63,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5640.4,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5641.21,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5641.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5641.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5639.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5639.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5635.52,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5635.52,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.72,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5624.94,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5622.39,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7010.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5622.36,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5620.57,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5620.57,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.76,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5620.57,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7011.0,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5620.57,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7012.5,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7014.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7014.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.46,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7012.5,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5619.24,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7016.15,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5618.71,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.26,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.26,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.26,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.26,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.26,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.26,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7020.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.61,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7020.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7020.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.64,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7020.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7020.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7020.61,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5642.97,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7028.86,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5679.55,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7033.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.54,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7033.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.54,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7033.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5678.54,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7033.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5678.54,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7033.01,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5678.54,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7025.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5678.58,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7025.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5678.58,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.02,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.32,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.32,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7027.83,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.32,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.22,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7030.25,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.23,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.2,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.2,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.2,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.2,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.34,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.34,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.51,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5680.01,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5677.51,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5680.01,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.04,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.04,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.04,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.04,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.54,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.81,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.81,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.81,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.81,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.81,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5683.81,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.13,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.28,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
+    },
+    {
+      "last": 7032.42,
+      "high": 7124.06,
+      "low": 6890.0,
+      "open": 7034.47,
+      "volume": 5684.29,
+      "timestamp": "2018-08-29",
+      "volume_btc": 0,
+      "weighted_price": 0
     }
   ]
 }

@@ -1,3 +1,9 @@
+let path = require("path");
+let colors = require("colors");
+
+let cachePath = path.join(__dirname, "..", "cache");
+let controllerPath = path.join(__dirname, "..", "controller");
+
 module.exports = {
   colors: {
     // Main
@@ -13,5 +19,41 @@ module.exports = {
     confirmDark: "blue",
     cancelLight: "light-red",
     cancelDark: "red",
+  },
+  paths: {
+    "configPath": path.join(cachePath, "config.json"),
+    "blockchainDataPath": path.join(cachePath, "data", "blockchain.json"),
+    "headlineDataPath": path.join(cachePath, "data", "headlines.json"),
+    "technicalDataPath": path.join(cachePath, "data", "indicators.json"),
+    "priceDataPath": path.join(cachePath, "data", "ticker.json")
+  },
+  commands: {
+    "transaction": `python3 ${controllerPath} `,
+    "refresh_network": `python3 ${controllerPath} monitor_network`,
+    "refresh_price": `python3 ${controllerPath} monitor_price`,
+    "refresh_headlines": `python3 ${controllerPath} monitor_opinions`,
+    "refresh_portfolio": `python3 ${controllerPath} monitor_portfolio`,
+    // "retrain_model": `python3 ${controllerPath} RETRAIN`
+  },
+  baseConfig: {
+    "credentials": {
+      "key": "",
+      "secret": "",
+      "passphrase": ""
+    },
+    "autotrade": {
+      "enabled": false,
+      "next-trade-timestamp-UTC": -1,
+    }
+  },
+  splash: {
+    "logo": "\n    ██████╗ ██╗████████╗██╗   ██╗██╗███████╗██╗ ██████╗ ███╗   ██╗\n\
+    ██╔══██╗██║╚══██╔══╝██║   ██║██║██╔════╝██║██╔═══██╗████╗  ██║\n\
+    ██████╔╝██║   ██║   ██║   ██║██║███████╗██║██║   ██║██╔██╗ ██║\n\
+    ██╔══██╗██║   ██║   ╚██╗ ██╔╝██║╚════██║██║██║   ██║██║╚██╗██║\n\
+    ██████╔╝██║   ██║    ╚████╔╝ ██║███████║██║╚██████╔╝██║ ╚████║\n\
+    ╚═════╝ ╚═╝   ╚═╝     ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n\n".blue.bold,
+    "authors": "Written by:\n - Jon Shobrook (@shobrook)\n - Aaron Lichtman (@alichtman)\n\n".red.bold,
+    "stalling": "Fetching data... \n(This may take a few seconds)\n\n".blue.bold
   }
 }

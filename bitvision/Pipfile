@@ -13,6 +13,7 @@ scipy = "*"
 realtime-talib = "*"
 sklearn = "*"
 textblob = "*"
+crontab = "*"
 
 [dev-packages]
 
