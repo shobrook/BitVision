@@ -9,7 +9,7 @@ let helpMenuData = [
   ["L", "Bitstamp Login"],
   ["K", "Logout"],
   ["T", "Trade BTC"],
-  ["O", "Open article."],
+  ["O", "Open article"],
   ["R", "Refresh data"],
   ["C-c", "Exit"]
 ];

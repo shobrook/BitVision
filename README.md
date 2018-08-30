@@ -13,10 +13,10 @@ BitVision
 #### Installation and Usage
 
 1. `$ npm install bitvision`
-2. `$ ./install.sh`
+2. `$ pipenv install && pipenv shell`
 3. `$ bitvision`
-
-# TODO: Explain credential entry (either in CLI or editing the `.bitvision` file)
+4. Press `L` to open the login screen and enter Bitstamp credentials.
+5. Press `A` to open the autotrading settings and enable it.
 
 **Create a New Bitstamp API Key**
 
@@ -29,7 +29,16 @@ BitVision
 
 **CLI Keybindings**
 
-# TODO?
+| Keybinding | Action |
+| --- | --- |
+| A | Autotrading Toggle |
+| F | Focus on headlines |
+| L | Bitstamp Login |
+| K | Logout |
+| T | Trade BTC |
+| O | Open article |
+| R | Refresh data |
+| Ctrl-c | Exit |
 
 #### How does it work?
 
