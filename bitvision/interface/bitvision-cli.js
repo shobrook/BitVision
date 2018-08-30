@@ -497,7 +497,7 @@ function buildInterface() {
           }
         }
       },
-      "Login": {
+      "Bitstamp Login": {
         keys: ["l"],
         callback: () => {
           logs.log("Login")
@@ -526,12 +526,12 @@ function buildInterface() {
           }
         }
       },
-      "Focus on Headlines": {
-        keys: ["f"],
-        callback: () => {
-          headlinesTable.focus();
-        }
-      },
+      // "Focus on Headlines": {
+      //   keys: ["f"],
+      //   callback: () => {
+      //     headlinesTable.focus();
+      //   }
+      // },
       "Help": {
         keys: ["h"],
         callback: () => {

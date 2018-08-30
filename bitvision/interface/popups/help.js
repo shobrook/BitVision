@@ -5,12 +5,9 @@ let helpMenuData = [
   ["Keybinding", "Action"],
   ["---", "---"],
   ["A", "Autotrading Toggle"],
-  ["F", "Focus on headlines"],
   ["L", "Bitstamp Login"],
   ["K", "Logout"],
   ["T", "Trade BTC"],
-  ["O", "Open article"],
-  ["R", "Refresh data"],
   ["C-c", "Exit"]
 ];
 
@@ -34,7 +31,7 @@ module.exports = {
       top: "center",
       left: "center",
       width: 80,
-      height: 37,
+      height: 34,
       border: "line",
       style: {
         border: {
@@ -53,7 +50,7 @@ module.exports = {
       align: "center",
       pad: 2,
       width: 53,
-      height: 12,
+      height: 9,
       style: {
         border: {
           fg: "bright-blue"
@@ -106,7 +103,7 @@ module.exports = {
           fg: "bright-blue",
         }
       },
-      content: helpStrings["autotrading"] + helpStrings["authors"] + helpStrings["warning"] + helpStrings["source"]
+      content: helpStrings["autotrading"] + helpStrings["warning"] + helpStrings["authors"] + helpStrings["source"]
     });
 
     screen.key(["q"], function(ch, key) {
