@@ -21,7 +21,7 @@ let VERSION = require("../package.json").version
 
 // GLOBALS
 var helpActiveStatus = false
-
+var tradeEntryStatus = false
 
 // Display version with CLI args
 cli
@@ -424,22 +424,22 @@ function buildInterface() {
 
   // Place 3 tables and a gauge on the left side of the screen, stacked vertically.
 
-  headlinesTable = grid.set(0, 0, 11, 13, blessed.ListTable, createTable("center", true, null));
+  headlinesTable = grid.set(0, 0, 10, 13, blessed.ListTable, createTable("center", true, null));
   headlinesTable.focus();
-  technicalIndicatorsTable = grid.set(11, 0, 8, 13, blessed.ListTable, createTable("left", false, padding));
+  technicalIndicatorsTable = grid.set(10, 0, 9, 13, blessed.ListTable, createTable("left", false, padding));
 
-  technicalIndicatorsGauge = grid.set(18, 0, 7, 13, contrib.gauge, {
+  technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
     label: ' Buy/Sell Gauge '.bold.red,
     gaugeSpacing: 0,
     gaugeHeight: 1,
     showLabel: true
   })
 
-  blockchainIndicatorsTable = grid.set(25, 0, 10, 13, blessed.ListTable, createTable("left", false, padding));
+  blockchainIndicatorsTable = grid.set(26, 0, 10, 13, blessed.ListTable, createTable("left", false, padding));
 
   // Line chart on the right of the tables
 
-  exchangeRateChart = grid.set(0, 13, 18, 23, contrib.line, {
+  exchangeRateChart = grid.set(0, 13, 19, 23, contrib.line, {
     style: {
       line: "yellow",
       text: "green",
@@ -454,16 +454,16 @@ function buildInterface() {
 
   // Price table and logs under chart.
 
-  priceTable = grid.set(18, 30, 7, 6, blessed.ListTable, createTable("left", false, padding));
+  priceTable = grid.set(19, 30, 6.5, 6, blessed.ListTable, createTable("left", false, padding));
 
   // @Jon, skipTrace goes here
   // volumeSkipTrace = grid(18, 22, 7, 6,
 
-  portfolioTable = grid.set(25, 13, 10, 6, blessed.ListTable, createTable("left", false, padding));
+  portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable, createTable("left", false, padding));
 
-  transactionsTable = grid.set(25, 19, 10, 8, blessed.ListTable, createTable("left", false, padding));
+  transactionsTable = grid.set(26, 19, 10, 8, blessed.ListTable, createTable("left", false, padding));
 
-  logs = grid.set(25, 29, 10, 7, contrib.log, {
+  logs = grid.set(26, 29, 10, 7, contrib.log, {
     label: " DEBUGGING LOGS ".bold.red,
     top: 0,
     left: 0,
@@ -515,9 +515,11 @@ function buildInterface() {
         callback: () => {
           logs.log("Buy/Sell BTC");
           if (credentialsExist) {
+            tradeEntryStatus = true;
             transaction.createTransactionScreen(screen, function(amount, type) {
               // Pass order to backend
               executeTrade(amount, type)
+              tradeEntryStatus = false;
             });
           } else {
             displayLoginScreen();
@@ -528,13 +530,6 @@ function buildInterface() {
         keys: ["f"],
         callback: () => {
           headlinesTable.focus();
-        }
-      },
-      "Open Article": {
-        keys: ["o"],
-        callback: () => {
-          let selectedArticleURL = URLs[headlinesTable.selected - 1];
-          openBrowser(selectedArticleURL);
         }
       },
       "Help": {
@@ -568,6 +563,14 @@ function buildInterface() {
     priceTable.emit("attach");
     menubar.emit("attach");
   });
+
+  // Open article
+  screen.key(["enter"], function(ch, key) {
+    if (!tradeEntryStatus) {
+      let selectedArticleURL = URLs[headlinesTable.selected - 1];
+      openBrowser(selectedArticleURL);
+    };
+  })
 
   // Quit
   screen.key(["escape", "C-c"], function(ch, key) {
