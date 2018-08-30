@@ -32,12 +32,9 @@ BitVision
 | Keybinding | Action |
 | --- | --- |
 | A | Autotrading Toggle |
-| F | Focus on headlines |
 | L | Bitstamp Login |
 | K | Logout |
 | T | Trade BTC |
-| O | Open article |
-| R | Refresh data |
 | Ctrl-c | Exit |
 
 #### How does it work?
