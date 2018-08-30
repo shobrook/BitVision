@@ -10,6 +10,8 @@ let contrib = require("blessed-contrib");
 let spawn = require('child-process-promise').spawn;
 
 // LOCAL IMPORTS
+// TODO: Restructure imports like this.
+// import { paths } from "./constants"
 let constants = require("./constants");
 let login = require("./popups/login");
 let help = require("./popups/help");
@@ -272,8 +274,18 @@ function getDataFromJsonFiles() {
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
   let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
+  let portfolioDataKeys = ["Account Balance",
+    "Returns",
+    "Net Profit",
+    "Sharpe Ratio",
+    "Buy Accuracy",
+    "Sell Accuracy",
+    "Total Trades"
+  ]
+  let portfolioData = reformatPortfolioData(readJsonFile(constants.paths.portfolioDataPath).data, portfolioDataKeys)
 
-  return [headlineData, technicalData, gaugeData, blockchainData, priceData]
+
+  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData]
 }
 
 //--------------------------
@@ -288,6 +300,12 @@ function reformatPriceData(priceData) {
     ["24H High", String(priceData[0].high)],
     ["Open Price", String(priceData[0].open)],
   ]
+}
+
+function reformatPortfolioData(portfolioData, titles) {
+  return titles.map((title, idx) => {
+    return [title, Object.values(portfolioData)[idx]]
+  })
 }
 
 /**
@@ -364,9 +382,11 @@ var headlinesTable = null;
 var technicalIndicatorsTable = null;
 var technicalIndicatorsGauge = null;
 var blockchainIndicatorsTable = null;
+var portfolioTable = null;
 var priceTable = null;
 var exchangeRateChart = null;
 var menubar = null;
+var skipTrace = null;
 var URLs = null
 
 /**
@@ -414,7 +434,7 @@ function buildInterface() {
 
   // Line chart on the right of the tables
 
-  exchangeRateChart = grid.set(0, 13, 25, 20, contrib.line, {
+  exchangeRateChart = grid.set(0, 13, 18, 23, contrib.line, {
     style: {
       line: "yellow",
       text: "green",
@@ -427,11 +447,16 @@ function buildInterface() {
     label: " Exchange Rate ".bold.red
   });
 
-  // Price table
+  // Price table and logs under chart.
 
-  priceTable = grid.set(25, 13, 7, 6, blessed.ListTable, createTable("left", false, padding));
+  priceTable = grid.set(18, 30, 7, 6, blessed.ListTable, createTable("left", false, padding));
 
-  logs = grid.set(25, 20, 10, 10, contrib.log, {
+  // @Jon, skipTrace goes here
+  // volumeSkipTrace = grid(18, 22, 7, 6,
+
+  portfolioTable = grid.set(25, 13, 10, 6, blessed.ListTable, createTable("left", false, padding));
+
+  logs = grid.set(25, 25, 10, 10, contrib.log, {
     label: " DEBUGGING LOGS ".bold.red,
     top: 0,
     left: 0,
@@ -552,14 +577,15 @@ function buildInterface() {
 /**
  * Set all tables with data.
  */
-function setAllTables(headlines, technicals, gaugeData, blockchains, prices) {
+function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio) {
   logs.log("SetAllTables");
 
   // Set headers for each table.
   headlines.splice(0, 0, ["Date", "Headline", "Sentiment"]);
   technicals.splice(0, 0, ["Technical Indicator", "Value", "Signal"]);
   blockchains.splice(0, 0, ["Blockchain Network", "Value"]);
-  prices.splice(0, 0, ["Price Data", "Value"]);
+  prices.splice(0, 0, ["Ticker Data", "Value"]);
+  portfolio.splice(0, 0, ["Portfolio Stats", "Value"]);
 
   // Set data
   headlinesTable.setData(headlines);
@@ -573,6 +599,7 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices) {
   }]);
   blockchainIndicatorsTable.setData(blockchains);
   priceTable.setData(prices);
+  portfolioTable.setData(portfolio);
   screen.render();
 }
 
@@ -617,8 +644,8 @@ function setChart() {
 }
 
 function refreshInterface() {
-  let [headlineData, technicalData, gaugeData, blockchainData, priceData] = getDataFromJsonFiles();
-  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData);
+  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData] = getDataFromJsonFiles();
+  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData);
   setChart();
 }
 

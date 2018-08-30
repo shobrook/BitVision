@@ -25,7 +25,8 @@ module.exports = {
     "blockchainDataPath": path.join(cachePath, "data", "blockchain.json"),
     "headlineDataPath": path.join(cachePath, "data", "headlines.json"),
     "technicalDataPath": path.join(cachePath, "data", "indicators.json"),
-    "priceDataPath": path.join(cachePath, "data", "ticker.json")
+    "priceDataPath": path.join(cachePath, "data", "ticker.json"),
+    "portfolioDataPath": path.join(cachePath, "data", "portfolio.json")
   },
   commands: {
     "transaction": `python3 ${controllerPath} `,
@@ -33,7 +34,7 @@ module.exports = {
     "refresh_price": `python3 ${controllerPath} monitor_price`,
     "refresh_headlines": `python3 ${controllerPath} monitor_opinions`,
     "refresh_portfolio": `python3 ${controllerPath} monitor_portfolio`,
-    // "retrain_model": `python3 ${controllerPath} RETRAIN`
+    // "retrain_model": `python3 ${controllerPath} retrain_model`
   },
   baseConfig: {
     "credentials": {
