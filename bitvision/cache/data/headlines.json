@@ -1,5 +1,4 @@
 {
-  "fetching": false,
   "data": [
     [
       "08-29",
@@ -24,6 +23,12 @@
       "Lloyd\u2019s of London Enters Crypto Insurance Market",
       "0.0",
       "https://www.coindesk.com/lloyds-of-london-makes-quiet-entrance-into-crypto-insurance-market/"
+    ],
+    [
+      "08-29",
+      "OECD to Examine the Potential Impact of Blockchain Next Month",
+      "0.0",
+      "https://www.coindesk.com/oecd-to-examine-the-potential-impact-of-blockchain-next-month/"
     ],
     [
       "08-29",
@@ -78,12 +83,6 @@
       "Korean Crypto Exchange Bithumb to Restart User Registrations",
       "0.0",
       "https://www.coindesk.com/bithumb-to-restart-user-registrations-as-bank-agrees-contract-renewal/"
-    ],
-    [
-      "08-29",
-      "Tron Now Owns a Stake In BitTorrent Founder's New Crypto Project",
-      "0.14",
-      "https://www.coindesk.com/tron-now-owns-a-stake-in-bittorrent-founders-new-crypto-project/"
     ]
   ]
 }

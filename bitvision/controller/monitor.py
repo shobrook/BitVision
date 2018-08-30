@@ -9,6 +9,7 @@ import random
 import requests
 import moment
 import pandas as pd
+import datetime # TODO: Just use moment
 from bs4 import BeautifulSoup
 from typing import Dict
 from textblob import TextBlob
@@ -65,7 +66,7 @@ def fetch_price_data():
         "low": round(float(response["low"]), 2),
         "open": round(float(response["open"]), 2),
         "volume": round(float(response["volume"]), 2),
-        "timestamp": round(int(response["timestamp"]), 2),
+        "timestamp": datetime.datetime.fromtimestamp(int(response["timestamp"])).strftime("%Y-%m-%d"),
         "volume_btc": 0,
         "weighted_price": 0
     }
@@ -73,7 +74,6 @@ def fetch_price_data():
     fname = "../cache/data/ticker.json"
     with open(fname) as old_price_data:
         new_data = {
-            "fetching": False,
             "data": [data] + json.load(old_price_data)["data"]
         }
     with open(fname, 'w') as price_data:
@@ -86,22 +86,24 @@ def fetch_tech_indicators():
     with open("../cache/data/ticker.json") as price_data_json:
         price_data = json.load(price_data_json)["data"]
 
-        if len(price_data) > 20:  # Enough data to calculate indicators in real-time
-            price_data = pd.DataFrame(price_data)
-            price_data.rename(index=str, columns={
-                "timestamp": "Date",
-                "volume": "Volume (Currency)",
-                "last": "Close",
-                "high": "High",
-                "low": "Low",
-                "open": "Open",
-                "weighted_price": "Weighted Price",
-                "volume_btc": "Volume (BTC)"
-            })
-            indicators = transformer("calculate_indicators")(price_data)
-        else:  # Calculates indicators on a 24hr basis
-            indicators = transformer("calculate_indicators")(
-                dataset("price_data"))
+        # if len(price_data) > 20:  # Enough data to calculate indicators in real-time
+        #     price_data = pd.DataFrame(price_data)
+        #     price_data.columns = ["Date", "Volume", "Close", "High", "Low", "Open", "Weighted Price", "Volume (BTC)"]
+        #     # price_data.rename(index=str, columns={
+        #     #     "timestamp": "Date",
+        #     #     "volume": "Volume",
+        #     #     "last": "Close",
+        #     #     "high": "High",
+        #     #     "low": "Low",
+        #     #     "open": "Open",
+        #     #     "weighted_price": "Weighted Price",
+        #     #     "volume_btc": "Volume (BTC)"
+        #     # })
+        #     indicators = transformer("calculate_indicators")(price_data)
+        # else:  # Calculates indicators on a 24hr basis
+        #     indicators = transformer("calculate_indicators")(
+        #         dataset("price_data"))
+        indicators = transformer("calculate_indicators")(dataset("price_data"))
 
         # TODO: Create a mapping between indicator values and signals
 
@@ -134,7 +136,6 @@ def fetch_tech_indicators():
             ]
 
             indicators_json.write(json.dumps({
-                "fetching": False,
                 "data": list(sorted(data, key=lambda i: len(i[0])))
             }, indent=2))
 
@@ -168,7 +169,6 @@ def fetch_blockchain_data():
         ]
 
         blockchain_data_json.write(json.dumps({
-            "fetching": False,
             "data": list(sorted(data, key=lambda i: len(i[0])))
         }, indent=2))
 
@@ -190,7 +190,6 @@ def fetch_coindesk_stats():
 
     with open("../cache/data/headlines.json", 'w') as headlines_json:
         headlines_json.write(json.dumps({
-            "fetching": False,
             "data": [[
                 moment.date(headline[1]).format("M-D"),
                 headline[0].split("\n")[0],
@@ -209,9 +208,8 @@ def fetch_portfolio_stats():
     #     secret="test"
     # )  # TODO: Pull creds from dotfile
 
-    with open("../cache/data/portfolio.json") as portfolio_json:
+    with open("../cache/data/portfolio.json", 'w') as portfolio_json:
         portfolio_json.write(json.dumps({
-            "fetching": False,
             "data": {
                 # ''.join(['$', str(client.account_balance()["usd_available"])]),
                 "account_balance": "$0.00",

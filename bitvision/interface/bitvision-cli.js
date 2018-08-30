@@ -7,7 +7,7 @@ let colors = require("colors");
 let openBrowser = require("opn");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
-let exec = require('child-process-promise').exec;
+let spawn = require('child-process-promise').spawn;
 
 let constants = require("./constants");
 let VERSION = require("../package.json").version
@@ -33,7 +33,7 @@ let autotrading = require("./popups/autotrading");
 // ------------------
 
 /**
- * Read JSON file and do something with the data
+ * Read JSON file and return the data if it exists, false otherwise
  */
 function readJsonFile(path) {
   // logs.log("Reading " + path);
@@ -45,18 +45,32 @@ function readJsonFile(path) {
 }
 
 /**
+ * Writes data to file at path.
+ */
+function writeJsonFile(path, data) {
+  // logs.log(`WRITING: at ${path}`);
+  fs.writeFileSync(path, JSON.stringify(data, null, 2), "utf8");
+}
+
+/**
  * Execute shell command.
  **/
 function executeShellCommand(command) {
   logs.log(`Executing: ${command}`);
-  exec(command).then(function(result) {
-      var stdout = result.stdout;
-      var stderr = result.stderr;
-      // logs.log('stdout: ', stdout);
-      // logs.log('stderr: ', stderr);
+  // Extract first element
+  let args = command.split(" ");
+  let program = args.splice(0, 1)[0];
+
+  // logs.log(args);
+  logs.log(program);
+  var promise = spawn(program, args);
+  var childProcess = promise.childProcess;
+
+  promise.then(function() {
+      // console.log('[spawn] done!');
     })
     .catch(function(err) {
-      console.error('ERROR: ', err);
+      // console.log('[spawn] ERROR: ', err);
     });
 }
 
@@ -78,7 +92,7 @@ function getTimeXHoursFromNow(hours) {
 // PYTHON CONTROL METHODS
 // -----------------------
 
-function transactionCommand(amount, type) {
+function executeTrade(amount, type) {
   let payload = {
     "amount": amount,
     "type": type
@@ -88,26 +102,9 @@ function transactionCommand(amount, type) {
   // executeShellCommand(cmd)
 }
 
-function refreshDataCommand() {
-  executeShellCommand(constants.commands.refresh_network);
-  executeShellCommand(constants.commands.refresh_headlines);
-  // executeShellCommand(constants.commands.refresh_portfolio);
-}
-
-function retrainModelCommand() {
-  logs.log(`Executing: ${constants.commands.retrain_model}`)
-  // executeShellCommand(constants.commands.retrain_model);
-}
-
 // -------------------------
 // CONFIG/CREDENTIALS FUNCTIONS
 // -------------------------
-
-function writeJsonFile(path, data) {
-  logs.log(`WRITING FILE at ${path}`);
-  // logs.log(JSON.stringify(data) + "\n")
-  fs.writeFileSync(path, JSON.stringify(data, null, 2), "utf8");
-}
 
 /**
  * Gets config file in dictionary form.
@@ -138,6 +135,7 @@ function createConfigIfNeeded() {
     // logs.log("No dotfile found. Creating DEFAULT.");
     // Create file
     let emptyConfig = {
+      "first_login": true,
       "credentials": {
         "key": "",
         "secret": "",
@@ -285,7 +283,7 @@ let padding = {
 var headlinesTable = grid.set(0, 0, 11, 13, blessed.ListTable, createListTable("center", true, null));
 var technicalIndicatorsTable = grid.set(11, 0, 8, 13, blessed.ListTable, createListTable("left", false, padding));
 
-var technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
+var technicalIndicatorsGauge = grid.set(18, 0, 7, 13, contrib.gauge, {
   label: ' Buy/Sell Gauge '.bold.red,
   gaugeSpacing: 0,
   gaugeHeight: 1,
@@ -346,7 +344,8 @@ let menubar = blessed.listbar({
       keys: ["r"],
       callback: () => {
         logs.log("Refresh Data");
-        fetchAndRefreshDataDisplay();
+        refreshData();
+        refreshInterface();
       }
     },
     "Login": {
@@ -369,7 +368,7 @@ let menubar = blessed.listbar({
         if (LOGGED_IN) {
           transaction.createTransactionScreen(screen, function(amount, type) {
             // Pass order to backend
-            transactionCommand(amount, type)
+            executeTrade(amount, type)
           });
         } else {
           displayLoginScreen();
@@ -424,13 +423,13 @@ screen.key(["escape", "C-c"], function(ch, key) {
 // -----------------------
 
 /**
- * Wait until data.fetching is false and then return the data
+ * Return the data if the file exists.
  * @param  {String} path File path
  * @return {Dict}        Data
  */
 function getData(path) {
   let file = readJsonFile(path);
-  while (file.fetching || !file) {
+  while (!file) {
     file = readJsonFile(path);
   }
 
@@ -466,7 +465,6 @@ function reformatPriceData(priceData) {
     ["Volume", String(priceData[0].volume)],
     ["24H Low", String(priceData[0].low)],
     ["24H High", String(priceData[0].high)],
-    // ["Timestamp", String(priceData[0].timestamp)],
     ["Open Price", String(priceData[0].open)],
   ]
 }
@@ -532,29 +530,23 @@ function extractUrlAndRemove(listOfArticles) {
 
 var URLs = null
 
-function setFetching(path, value) {
-  let json = readJsonFile(path);
-  json.fetching = value;
-  writeJsonFile(path, json);
-}
-
 /**
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
-function fetchData() {
-  logs.log("Fetching data...");
+function getDataFromJsonFiles() {
+  logs.log("getDataFromJson..");
   let headlineData = trimHeadlines(getData(constants.paths.headlineDataPath));
   URLs = extractUrlAndRemove(headlineData);
   let technicalData = getData(constants.paths.technicalDataPath);
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = getData(constants.paths.blockchainDataPath);
   let priceData = reformatPriceData(getData(constants.paths.priceDataPath));
-  logs.log("Fetched all data...");
 
   // BUG: Fetch data is behaving asynchronously even though it isn't...
-  while (!(headlineData && technicalData && gaugeData && blockchainData && priceData)) {
-    logs.log("waiting")
-  }
+  // NOTE: And now it isn't? idk, leaving this here just in case.
+  // while (!(headlineData && technicalData && gaugeData && blockchainData && priceData)) {
+  //   logs.log("waiting")
+  // }
   return [headlineData, technicalData, gaugeData, blockchainData, priceData]
 }
 
@@ -563,11 +555,6 @@ function fetchData() {
  */
 function setAllTables(headlines, technicals, gaugeData, blockchains, prices) {
   logs.log("Set all tables...");
-  // logs.log("HEADLINES:", JSON.stringify(headlines, null, 2))
-  // logs.log(technicals)
-  // logs.log(blockchains)
-  // logs.log(prices)
-  // logs.log(gaugeData)
 
   // Set headers for each table.
   headlines.splice(0, 0, ["Date", "Headline", "Sentiment"]);
@@ -590,7 +577,6 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices) {
   priceTable.setData(prices);
 
   screen.render();
-  logs.log("setAllTables COMPLETE");
 }
 
 /**
@@ -610,17 +596,27 @@ function setChart() {
 /**
  * Fetches new data and refreshes frontend displays.
  */
-function fetchAndRefreshDataDisplay() {
-  logs.log("Fetch and refresh data.")
+function refreshData(type) {
+  logs.log("Getting new JSON data from the interwebs.")
 
-  logs.log("Setting fetching status...\n");
-  setFetching(constants.paths.headlineDataPath, true);
-  setFetching(constants.paths.technicalDataPath, true);
-  setFetching(constants.paths.blockchainDataPath, true);
-  setFetching(constants.paths.priceDataPath, true);
+  switch (type) {
+    case "NETWORK":
+      executeShellCommand(constants.commands.refresh_network);
+      break;
+    case "HEADLINES":
+      executeShellCommand(constants.commands.refresh_headlines);
+      break;
+    case "PRICE":
+      executeShellCommand(constants.commands.refresh_price);
+      break;
+    case "PORTFOLIO":
+      executeShellCommand(constants.commands.refresh_portfolio);
+      break;
+  }
+}
 
-  refreshDataCommand();
-  let [headlineData, technicalData, gaugeData, blockchainData, priceData] = fetchData();
+function refreshInterface() {
+  let [headlineData, technicalData, gaugeData, blockchainData, priceData] = getDataFromJsonFiles();
   setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData);
   setChart();
 }
@@ -629,28 +625,44 @@ function fetchAndRefreshDataDisplay() {
  * Let's get this show on the road.
  * Start up sequence.
  */
-function doThings() {
+function doThings() { // nice function name
   createConfigIfNeeded();
   // Login if they have creds
-  // TODO: Restructure this global setting.
+  // TODO: Refactor LOGGED_IN to a class.
   if (hasCredentialsInConfig()) {
-    loginCommand();
     LOGGED_IN = true;
   } else {
     LOGGED_IN = false;
   }
 
+  // TODO: Remove
   LOGGED_IN = true
 
-  fetchAndRefreshDataDisplay();
   headlinesTable.focus();
 
-  logs.log("Initial data fetching done. Starting refresh loops.");
+  logs.log("Fetching data...");
 
   // // TODO: Fix headline refocusing bug.
+  setInterval(function() {
+    refreshData("NETWORK");
+  }, 15000) // 15 sec
+
+  setInterval(function() {
+    refreshData("HEADLINES");
+  }, 900000) // 15 min
+
+  setInterval(function() {
+    refreshData("PRICE");
+  }, 2000)
+
   // setInterval(function() {
-  //   fetchAndRefreshDataDisplay();
+  //   refreshData("PORTFOLIO");
   // }, 3000)
+
+  setInterval(function() {
+    refreshInterface();
+  }, 3000)
+
 }
 
 doThings();

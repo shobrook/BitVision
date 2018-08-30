@@ -48,7 +48,6 @@ def make_trade(payload):
 
     with open("../cache/data/trading_log.json") as old_trading_log:
         new_log = {
-            "fetching": False,
             "trades": [{
                 "id": response["id"],
                 "datetime": response["datetime"],

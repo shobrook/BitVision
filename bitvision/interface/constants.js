@@ -29,8 +29,9 @@ module.exports = {
   commands: {
     "transaction": `python3 ${controllerPath} `,
     "refresh_network": `python3 ${controllerPath} monitor_network`,
+    "refresh_price": `python3 ${controllerPath} monitor_price`,
     "refresh_headlines": `python3 ${controllerPath} monitor_opinions`,
     "refresh_portfolio": `python3 ${controllerPath} monitor_portfolio`,
-    // "retrain_model": "python3 ../controller.py RETRAIN"
+    // "retrain_model": `python3 ${controllerPath} RETRAIN`
   }
 }
