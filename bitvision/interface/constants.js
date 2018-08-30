@@ -1,4 +1,5 @@
 let path = require("path");
+let colors = require("colors");
 
 let cachePath = path.join(__dirname, "..", "cache");
 let controllerPath = path.join(__dirname, "..", "controller");
@@ -33,5 +34,26 @@ module.exports = {
     "refresh_headlines": `python3 ${controllerPath} monitor_opinions`,
     "refresh_portfolio": `python3 ${controllerPath} monitor_portfolio`,
     // "retrain_model": `python3 ${controllerPath} RETRAIN`
+  },
+  baseConfig: {
+    "credentials": {
+      "key": "",
+      "secret": "",
+      "passphrase": ""
+    },
+    "autotrade": {
+      "enabled": false,
+      "next-trade-timestamp-UTC": -1,
+    }
+  },
+  splash: {
+    "logo": "\n    ██████╗ ██╗████████╗██╗   ██╗██╗███████╗██╗ ██████╗ ███╗   ██╗\n\
+    ██╔══██╗██║╚══██╔══╝██║   ██║██║██╔════╝██║██╔═══██╗████╗  ██║\n\
+    ██████╔╝██║   ██║   ██║   ██║██║███████╗██║██║   ██║██╔██╗ ██║\n\
+    ██╔══██╗██║   ██║   ╚██╗ ██╔╝██║╚════██║██║██║   ██║██║╚██╗██║\n\
+    ██████╔╝██║   ██║    ╚████╔╝ ██║███████║██║╚██████╔╝██║ ╚████║\n\
+    ╚═════╝ ╚═╝   ╚═╝     ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n\n".blue.bold,
+    "authors": "Written by:\n - Jon Shobrook (@shobrook)\n - Aaron Lichtman (@alichtman)\n\n".red.bold,
+    "stalling": "Fetching data... \n(This may take a few seconds)\n\n".blue.bold
   }
 }

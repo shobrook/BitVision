@@ -1,1 +1,11 @@
-{"credentials":{"key":"","secret":"","passphrase":""},"autotrade":{"enabled":false,"next-trade-timestamp-UTC":0}}
+{
+  "credentials": {
+    "key": "",
+    "secret": "",
+    "passphrase": ""
+  },
+  "autotrade": {
+    "enabled": false,
+    "next-trade-timestamp-UTC": -1
+  }
+}
