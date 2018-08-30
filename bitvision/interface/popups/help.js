@@ -109,10 +109,9 @@ module.exports = {
       content: helpStrings["autotrading"] + helpStrings["authors"] + helpStrings["warning"] + helpStrings["source"]
     });
 
-    screen.key(["q", "Q"], function(ch, key) {
-      // console.log("destroy")
+    screen.key(["q"], function(ch, key) {
       helpMenuLayout.destroy();
-      screen.render();
+      callback();
     });
   }
 };

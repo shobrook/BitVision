@@ -19,6 +19,10 @@ let transaction = require("./popups/transaction");
 let autotrading = require("./popups/autotrading");
 let VERSION = require("../package.json").version
 
+// GLOBALS
+var helpActiveStatus = false
+
+
 // Display version with CLI args
 cli
   .version(VERSION, '-v, --version')
@@ -374,7 +378,7 @@ function calculateGaugePercentages(technicalIndicators) {
 // ** Bless up -> 3x preach emoji **
 // ---------------------------------
 
-// Constants
+// Placeholders
 var screen = null;
 var grid = null;
 var logs = null;
@@ -536,8 +540,15 @@ function buildInterface() {
       "Help": {
         keys: ["h"],
         callback: () => {
-          logs.log("Help Menu Opened");
-          help.createHelpScreen(screen, VERSION);
+          logs.log(`Help Menu Opened, HAS: ${helpActiveStatus}`);
+          if (!helpActiveStatus) {
+            helpActiveStatus = true;
+            logs.log(`HAS set to: ${helpActiveStatus}`);
+            help.createHelpScreen(screen, VERSION, () => {
+              helpActiveStatus = false;
+              logs.log(`HAS set to: ${helpActiveStatus}`);
+            })
+          }
         }
       },
       "Exit": {
