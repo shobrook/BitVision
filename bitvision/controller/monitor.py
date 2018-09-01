@@ -9,7 +9,6 @@ import random
 import requests
 import moment
 import pandas as pd
-import datetime  # TODO: Just use moment
 from bs4 import BeautifulSoup
 from typing import Dict
 from textblob import TextBlob
@@ -59,85 +58,73 @@ USER_AGENTS = [
 
 
 def fetch_price_data():
-    response = requests.get("https://www.bitstamp.net/api/ticker/").json()
-    data = {
-        "last": round(float(response["last"]), 2),
-        "high": round(float(response["high"]), 2),
-        "low": round(float(response["low"]), 2),
-        "open": round(float(response["open"]), 2),
-        "volume": round(float(response["volume"]), 2),
-        "timestamp": datetime.datetime.fromtimestamp(int(response["timestamp"])).strftime("%Y-%m-%d"),
-        "volume_btc": 0,
-        "weighted_price": 0
-    }
+    with open("../cache/data/ticker.json", 'w') as price_data:
+        response = requests.get(
+            "https://www.bitstamp.net/api/ticker/").json()
 
-    fname = "../cache/data/ticker.json"
-    with open(fname) as old_price_data:
-        new_data = {
-            "data": [data] + json.load(old_price_data)["data"]
-        }
-    with open(fname, 'w') as price_data:
-        price_data.write(json.dumps(new_data, indent=2))
+        price_data.write(json.dumps({
+            "error": False,
+            "data": {
+                "last": round(float(response["last"]), 2),
+                "high": round(float(response["high"]), 2),
+                "low": round(float(response["low"]), 2),
+                "open": round(float(response["open"]), 2),
+                "volume": round(float(response["volume"]), 2),
+            }
+        }, indent=2))
+
+    with open("../cache/data/graph.json", 'w') as graph_data:
+        data = []
+        for index, row in dataset("price_data").iterrows():
+            data.append({
+                "date": row["Date"],
+                "price": row["Close"]
+            })
+
+        graph_data.write(json.dumps({
+            "error": False,
+            "data": data
+        }, indent=2))
 
     return True
 
 
 def fetch_tech_indicators():
-    with open("../cache/data/ticker.json") as price_data_json:
-        price_data = json.load(price_data_json)["data"]
+    indicators = transformer("calculate_indicators")(dataset("price_data"))
 
-        # if len(price_data) > 20:  # Enough data to calculate indicators in real-time
-        #     price_data = pd.DataFrame(price_data)
-        #     price_data.columns = ["Date", "Volume", "Close", "High", "Low", "Open", "Weighted Price", "Volume (BTC)"]
-        #     # price_data.rename(index=str, columns={
-        #     #     "timestamp": "Date",
-        #     #     "volume": "Volume",
-        #     #     "last": "Close",
-        #     #     "high": "High",
-        #     #     "low": "Low",
-        #     #     "open": "Open",
-        #     #     "weighted_price": "Weighted Price",
-        #     #     "volume_btc": "Volume (BTC)"
-        #     # })
-        #     indicators = transformer("calculate_indicators")(price_data)
-        # else:  # Calculates indicators on a 24hr basis
-        #     indicators = transformer("calculate_indicators")(
-        #         dataset("price_data"))
-        indicators = transformer("calculate_indicators")(dataset("price_data"))
+    # TODO: Create a mapping between indicator values and signals
 
-        # TODO: Create a mapping between indicator values and signals
+    with open("../cache/data/indicators.json", 'w') as indicators_json:
+        # "MACD": {}, # MACD, MACD (Signal), MACD (Historical)
+        # "MOM (1)": {"value": indicators["MOM (1)"][0], "signal": ""},
+        # "ADX (20)": {"value": indicators["ADX (20)"][0], "signal": ""},
+        # "RSI (12)": {"value": indicators["RSI (12)"][0], "signal": ""},
+        # "ATR (14)": {"value": indicators["ATR (14)"][0], "signal": ""},
+        # "OBV": {"value": indicators["OBV"][0], "signal": ""},
+        # "TRIX (20)": {"value": indicators["TRIX (20)"][0], "signal": ""},
+        # "EMA (6)": {"value": indicators["EMA (6)"][0], "signal": "NONE"},
 
-        with open("../cache/data/indicators.json", 'w') as indicators_json:
-            # "MACD": {}, # MACD, MACD (Signal), MACD (Historical)
-            # "MOM (1)": {"value": indicators["MOM (1)"][0], "signal": ""},
-            # "ADX (20)": {"value": indicators["ADX (20)"][0], "signal": ""},
-            # "RSI (12)": {"value": indicators["RSI (12)"][0], "signal": ""},
-            # "ATR (14)": {"value": indicators["ATR (14)"][0], "signal": ""},
-            # "OBV": {"value": indicators["OBV"][0], "signal": ""},
-            # "TRIX (20)": {"value": indicators["TRIX (20)"][0], "signal": ""},
-            # "EMA (6)": {"value": indicators["EMA (6)"][0], "signal": "NONE"},
+        data = [
+            ["MOM (3-period)",
+             str(round(indicators["MOM (1)"][0], 2)), "SELL"],
+            ["ADX (14-period)",
+             str(round(indicators["ADX (14)"][0], 2)), "SELL"],
+            ["WILLR", str(round(indicators["WILLR"][0], 2)), "SELL"],
+            ["RSI (6-period)",
+             str(round(indicators["RSI (6)"][0], 2)), "SELL"],
+            ["ATR (14-period)",
+             str(round(indicators["ATR (14)"][0], 2)), "SELL"],
+            ["OBV",
+                str(round(indicators["OBV"][0], 2)), "BUY"],
+            ["TRIX (20-period)",
+             str(round(indicators["TRIX (20)"][0], 2)), "BUY"],
+            ["EMA (6-period)",
+             str(round(indicators["EMA (6)"][0], 2)), "BUY"]
+        ]
 
-            data = [
-                ["MOM (3-period)",
-                 str(round(indicators["MOM (1)"][0], 2)), "SELL"],
-                ["ADX (14-period)",
-                 str(round(indicators["ADX (14)"][0], 2)), "SELL"],
-                ["WILLR", str(round(indicators["WILLR"][0], 2)), "SELL"],
-                ["RSI (6-period)",
-                 str(round(indicators["RSI (6)"][0], 2)), "SELL"],
-                ["ATR (14-period)",
-                 str(round(indicators["ATR (14)"][0], 2)), "SELL"],
-                ["OBV",
-                    str(round(indicators["OBV"][0], 2)), "BUY"],
-                ["TRIX (20-period)",
-                 str(round(indicators["TRIX (20)"][0], 2)), "BUY"],
-                ["EMA (6-period)",
-                 str(round(indicators["EMA (6)"][0], 2)), "BUY"]
-            ]
-
-            indicators_json.write(json.dumps({
-                "data": list(sorted(data, key=lambda i: len(i[0])))
-            }, indent=2))
+        indicators_json.write(json.dumps({
+            "data": list(sorted(data, key=lambda i: len(i[0])))
+        }, indent=2))
 
     return True
 
@@ -241,6 +228,10 @@ def fetch_portfolio_stats():
     return True
 
 
+def fetch_transaction_data():
+    pass
+
+
 ######
 # MAIN
 ######
@@ -259,3 +250,5 @@ def refresh(names):
             fetch_coindesk_stats()
         elif name == "portfolio_stats":
             fetch_portfolio_stats()
+        elif name == "transactions":
+            fetch_transaction_data()

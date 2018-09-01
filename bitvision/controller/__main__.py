@@ -12,14 +12,16 @@ def action(name):
     #     secret="test"
     # )
 
-    if name == "monitor_price": # Updates ticker data
+    if name == "authenticate":  # Authenticates Bitstamp credentials
+        pass
+    elif name == "monitor_price":  # Updates ticker data
         refresh(["price_data"])
     elif name == "monitor_network":  # Updates technical indicators and blockchain data
         refresh(["tech_indicators", "blockchain_data"])
     elif name == "monitor_opinions":  # Updates coindesk data
         refresh(["coindesk_stats"])
     elif name == "monitor_portfolio":  # Updates portfolio data
-        refresh(["portfolio_stats"])
+        refresh(["portfolio_stats", "transactions"])
     elif name == "toggle_algo":  # Toggles algorithmic trading
         cron = CronTab(user=True)
         job = cron.new(command="python3 __main__.py make_algotrade")
