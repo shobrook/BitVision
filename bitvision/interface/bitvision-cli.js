@@ -93,7 +93,7 @@ function executeTrade(amount, type) {
 /**
  * Returns a Date object set with the current time + x hours.
  * @param  {Number} hours
- * @return {String} UTC Representation
+ * @return {String} Unix Representation
  */
 function getTimeXHoursFromNow(hours) {
   let currentTime = new Date();
@@ -277,6 +277,7 @@ function getDataFromJsonFiles() {
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
   let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
+  let chartData = buildChartData(readJsonFile(constants.paths.priceDataPath).data);
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -289,7 +290,7 @@ function getDataFromJsonFiles() {
   let portfolioData = reformatPortfolioData(readJsonFile(constants.paths.portfolioDataPath).data, portfolioDataKeys)
   let transactionsData = readJsonFile(constants.paths.transactionsDataPath).data
 
-  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData]
+  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData]
 }
 
 //--------------------------
@@ -371,6 +372,26 @@ function calculateGaugePercentages(technicalIndicators) {
   let sellPercentage = totalSell / total * 100;
   let buyPercentage = totalBuy / total * 100;
   return [sellPercentage, buyPercentage];
+}
+
+
+/**
+ * Convert all UNIX timestamps to current timezone and put in this format:
+ * @param  {[type]} prices [description]
+ * @return {[type]}        [description]
+ */
+function buildChartData(priceData) {
+  // Take Array
+  // Convert to current timezone
+  // write new element with (time, price)
+  let convertedTimestamps = priceData.map(x => x.timestamp);
+  let prices = priceData.map(x => x.last);
+
+  return {
+     title: "Exchange Rate",
+     x: convertedTimestamps,
+     y : prices
+  }
 }
 
 // ---------------------------------
@@ -613,36 +634,12 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   screen.render();
 }
 
-function getRandomInteger(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function setLineData(lineData, chart) {
-  for (var i = 0; i < lineData.length; i++) {
-    var last = lineData[i].y[lineData[i].y.length - 1];
-    lineData[i].y.shift();
-    var num = getRandomInteger(750, 800)
-    lineData[i].y.push(num);
-  }
-  chart.setData(lineData);
-}
-
-let exchangeRateSeries = {
-  title: "Exchange Rate",
-  x: [...Array(700).keys()].map((key) => {
-    return String(key) + ":00"
-  }),
-  y: [...Array(700).keys()].map((key) => {
-    return key * getRandomInteger(10, 14)
-  })
-}
 
 function refreshInterface() {
-  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData] = getDataFromJsonFiles();
+  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData] = getDataFromJsonFiles();
   setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData);
-  setLineData([exchangeRateSeries], exchangeRateChart);
+  // setLineData([chartData], exchangeRateChart);
+  exchangeRateChart.setData(chartData);
 }
 
 //------
