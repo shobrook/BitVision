@@ -190,10 +190,19 @@ def fetch_coindesk_stats():
         0]["datetime"], headline.find_all("a", class_="fade")[0]["href"]) for headline in soup.find_all("div", class_="post-info")]
 
     # Strip out unrelated headlines
-    trimmed_headlines = [headline for headline in featured_headlines + other_headlines
-                     if (headline[0].lower().contains("bitcoin") or headline[0].lower().contains("btc")) and not (headline[0].lower().contains("bitcoin cash") or headline[0].lower().contains("bch"))]
 
-    print("ALL", trimmed_headlines)
+    filtered_headlines = [headline for headline in featured_headlines +
+                          other_headlines if "bitcoin" in headline[0].lower() or "btc" in headline[0].lower()]
+
+    bad_bch_headlines = []
+
+    for headline in filtered_headlines:
+        if "bitcoin cash" in headline[0].lower() or "bch" in headline[0].lower():
+            if not any("bitcoin" in headline_splice or "btc" in headline_splice for headline_splice in headline[0].split("bitcoin cash")):
+                # then this is not a valid headline
+                bad_bch_headlines.append(headline)
+
+    good_headlines = list(set(filtered_headlines) - set(bad_bch_headlines))
 
     with open("../cache/data/headlines.json", 'w') as headlines_json:
         headlines_json.write(json.dumps({
@@ -202,7 +211,7 @@ def fetch_coindesk_stats():
                 headline[0].split("\n")[0],
                 str(round(TextBlob(headline[0]).sentiment.polarity, 2)),
                 headline[2]]
-                for headline in trimmed_headlines]
+                for headline in good_headlines]
         }, indent=2))
 
     return True
