@@ -13,7 +13,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from ftfy import ftfy
-from .transformers import transformer
+from transformers import transformer
 
 quandl_endpoints = {
     "conf_time": "https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw",
@@ -71,7 +71,8 @@ def results_config(current_page):
         "date_ordered": True,
         "base_url": "https://coindesk.com",
         "results_per_page": 10,
-        "date_XPATH": "./p[@class='timeauthor']/time"},  # XPATH for article date, will look for datetime object
+        "date_XPATH": "./p[@class='timeauthor']/time" # XPATH for article date, will look for datetime object
+    }
 
 
 def parse_html(url):
@@ -234,6 +235,8 @@ def dataset(name):
 
         return fetch_blockchain_data()
     elif name == "coindesk_headlines":
-        return fetch_coindesk_headlines()
+        return fetch_coindesk_headlines("2013-01-01")
     elif name == "tweets":
         return fetch_tweets()
+
+fetch_coindesk_headlines("2013-01-01")
