@@ -181,15 +181,17 @@ def fetch_coindesk_stats():
     filtered_headlines = [headline for headline in featured_headlines +
                           other_headlines if "bitcoin" in headline[0].lower() or "btc" in headline[0].lower()]
 
-    bad_bch_headlines = []
+    invalid_bch_headlines = []
 
     for headline in filtered_headlines:
         if "bitcoin cash" in headline[0].lower() or "bch" in headline[0].lower():
             if not any("bitcoin" in headline_splice or "btc" in headline_splice for headline_splice in headline[0].split("bitcoin cash")):
                 # then this is not a valid headline
-                bad_bch_headlines.append(headline)
+                invalid_bch_headlines.append(headline)
 
-    good_headlines = list(set(filtered_headlines) - set(bad_bch_headlines))
+    valid_headlines = set(filtered_headlines) - set(invalid_bch_headlines)
+    ordered_headlines = sorted(
+        valid_headlines, key=lambda h: moment.date(h[1]).format("M-D"), reverse=True)
 
     with open("../cache/data/headlines.json", 'w') as headlines_json:
         headlines_json.write(json.dumps({
@@ -198,7 +200,7 @@ def fetch_coindesk_stats():
                 headline[0].split("\n")[0],
                 str(round(TextBlob(headline[0]).sentiment.polarity, 2)),
                 headline[2]]
-                for headline in good_headlines]
+                for headline in ordered_headlines]
         }, indent=2))
 
     return True
