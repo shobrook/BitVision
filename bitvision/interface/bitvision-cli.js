@@ -7,7 +7,7 @@ let colors = require("colors");
 let openBrowser = require("opn");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
-let spawn = require('child-process-promise').spawn;
+let spawn = require("child-process-promise").spawn;
 
 // LOCAL IMPORTS
 // TODO: Restructure imports like this.
@@ -17,16 +17,14 @@ let login = require("./popups/login");
 let help = require("./popups/help");
 let transaction = require("./popups/transaction");
 let autotrading = require("./popups/autotrading");
-let VERSION = require("../package.json").version
+let VERSION = require("../package.json").version;
 
 // GLOBALS
-var helpActiveStatus = false
-var tradeEntryStatus = false
+var helpActiveStatus = false;
+var tradeEntryStatus = false;
 
 // Display version with CLI args
-cli
-  .version(VERSION, '-v, --version')
-  .parse(process.argv)
+cli.version(VERSION, "-v, --version").parse(process.argv);
 
 // ------------------
 // UTILITY FUNCTIONS
@@ -41,7 +39,7 @@ function readJsonFile(path) {
   while (!jsonFile) {
     jsonFile = fs.readFileSync(path, "utf8");
   }
-  return JSON.parse(jsonFile)
+  return JSON.parse(jsonFile);
 }
 
 /**
@@ -66,7 +64,8 @@ function executeShellCommand(command) {
   var promise = spawn(program, args);
   var childProcess = promise.childProcess;
 
-  promise.then(function() {
+  promise
+    .then(function() {
       // console.log('[spawn] done!');
     })
     .catch(function(err) {
@@ -82,8 +81,8 @@ function executeShellCommand(command) {
  */
 function executeTrade(amount, type) {
   let payload = {
-    "amount": amount,
-    "type": type
+    amount: amount,
+    type: type
   };
   let cmd = `${constants.commands.transaction}${payload}`;
   logs.log(`Executing: ${cmd}`);
@@ -101,7 +100,7 @@ function getTimeXHoursFromNow(hours) {
   futureTime.setHours(currentTime.getHours() + hours);
   // logs.log(`CurrentTime: ${currentTime.toJSON()}`)
   // logs.log(`FutureTime : ${futureTime.toJSON()}`)
-  return futureTime.toJSON()
+  return futureTime.toJSON();
 }
 
 // -------------------
@@ -116,7 +115,7 @@ function getConfig() {
 }
 
 function saveCredentials(newCreds) {
-  let cfg = getConfig()
+  let cfg = getConfig();
   cfg.credentials = newCreds;
   writeJsonFile(constants.paths.configPath, cfg);
 }
@@ -125,7 +124,7 @@ function saveCredentials(newCreds) {
  * Clear credentials by removing the dotfile.
  */
 function clearCredentials() {
-  fs.unlink(constants.paths.configPath, (err) => {
+  fs.unlink(constants.paths.configPath, err => {
     if (err) {
       throw err;
     }
@@ -149,7 +148,7 @@ function credentialsExist() {
 function createConfigIfNeeded() {
   // logs.log("CHECKING FOR DOTFILE");
   if (fs.existsSync(constants.paths.configPath)) {
-    return
+    return;
   } else {
     // logs.log("No dotfile found. Creating DEFAULT.");
     writeJsonFile(constants.paths.configPath, constants.baseConfig);
@@ -182,14 +181,14 @@ function createTable(alignment, isInteractive, padding) {
         selected: {
           fg: "black",
           bg: "light-yellow"
-        },
+        }
       },
       header: {
-        fg: 'red',
+        fg: "red",
         bold: true
-      },
+      }
     },
-    columnSpacing: 1,
+    columnSpacing: 1
   };
 }
 
@@ -198,7 +197,7 @@ function createTable(alignment, isInteractive, padding) {
  */
 function displayLoginScreen() {
   logs.log("DISPLAY LOGIN SCREEN");
-  login.createLoginScreen(screen, (creds) => {
+  login.createLoginScreen(screen, creds => {
     if (creds != null) {
       logs.log("New creds, saving.");
       saveCredentials(creds);
@@ -208,16 +207,18 @@ function displayLoginScreen() {
   });
 }
 
-
 function showAutotradingMenu() {
   logs.log("Autotrading Menu");
   autotrading.createToggleScreen(screen, function(isEnabling) {
-    let cfg = getConfig()
+    let cfg = getConfig();
     // logs.log(`Enabling: ${isEnabling}`)
     let isCurrentlyEnabled = cfg.autotrade.enabled;
 
     // Setting autotrading to the same state should do nothing.
-    if ((isEnabling && isCurrentlyEnabled) || (!isEnabling && !isCurrentlyEnabled)) {
+    if (
+      (isEnabling && isCurrentlyEnabled) ||
+      (!isEnabling && !isCurrentlyEnabled)
+    ) {
       logs.log("Redundant autotrading change.");
       return;
     }
@@ -271,12 +272,17 @@ function getDataFromJsonFiles() {
   // logs.log("getDataFromJson..");
   // TODO: Scale max headline length
   let maxHeadlineLength = 35;
-  let headlineData = trimHeadlines(readJsonFile(constants.paths.headlineDataPath).data, maxHeadlineLength);
+  let headlineData = trimHeadlines(
+    readJsonFile(constants.paths.headlineDataPath).data,
+    maxHeadlineLength
+  );
   URLs = extractUrlAndRemove(headlineData);
   let technicalData = readJsonFile(constants.paths.technicalDataPath).data;
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
-  let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
+  let priceData = reformatPriceData(
+    readJsonFile(constants.paths.priceDataPath).data
+  );
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -285,11 +291,23 @@ function getDataFromJsonFiles() {
     "Buy Accuracy",
     "Sell Accuracy",
     "Total Trades"
-  ]
-  let portfolioData = reformatPortfolioData(readJsonFile(constants.paths.portfolioDataPath).data, portfolioDataKeys)
-  let transactionsData = readJsonFile(constants.paths.transactionsDataPath).data
+  ];
+  let portfolioData = reformatPortfolioData(
+    readJsonFile(constants.paths.portfolioDataPath).data,
+    portfolioDataKeys
+  );
+  let transactionsData = readJsonFile(constants.paths.transactionsDataPath)
+    .data;
 
-  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData]
+  return [
+    headlineData,
+    technicalData,
+    gaugeData,
+    blockchainData,
+    priceData,
+    portfolioData,
+    transactionsData
+  ];
 }
 
 //--------------------------
@@ -302,14 +320,14 @@ function reformatPriceData(priceData) {
     ["Volume", String(priceData[0].volume)],
     ["24H Low", String(priceData[0].low)],
     ["24H High", String(priceData[0].high)],
-    ["Open Price", String(priceData[0].open)],
-  ]
+    ["Open Price", String(priceData[0].open)]
+  ];
 }
 
 function reformatPortfolioData(portfolioData, titles) {
   return titles.map((title, idx) => {
-    return [title, Object.values(portfolioData)[idx]]
-  })
+    return [title, Object.values(portfolioData)[idx]];
+  });
 }
 
 /**
@@ -341,9 +359,10 @@ function extractUrlAndRemove(listOfArticles) {
 function trimHeadlines(headlines, len) {
   let shortenedHeadlines = [];
   for (let idx = 0; idx < headlines.length; idx++) {
-    let article = headlines[idx]
-    let headline = article[1]
-    article[1] = headline.length > len ? headline.slice(0, len) + "..." : headline + "..."
+    let article = headlines[idx];
+    let headline = article[1];
+    article[1] =
+      headline.length > len ? headline.slice(0, len) + "..." : headline + "...";
     shortenedHeadlines.push(article);
   }
   // logs.log("SHORTENED", shortenedHeadlines);
@@ -357,7 +376,7 @@ function trimHeadlines(headlines, len) {
 function calculateGaugePercentages(technicalIndicators) {
   let totalBuy = 0;
   let totalSell = 0;
-  let total = technicalIndicators.length
+  let total = technicalIndicators.length;
 
   for (let idx = 0; idx < total; idx++) {
     let lower = technicalIndicators[idx][2].toLowerCase().trim();
@@ -368,8 +387,8 @@ function calculateGaugePercentages(technicalIndicators) {
     }
   }
 
-  let sellPercentage = totalSell / total * 100;
-  let buyPercentage = totalBuy / total * 100;
+  let sellPercentage = (totalSell / total) * 100;
+  let buyPercentage = (totalBuy / total) * 100;
   return [sellPercentage, buyPercentage];
 }
 
@@ -392,14 +411,13 @@ var exchangeRateChart = null;
 var transactionsTable = null;
 var menubar = null;
 var skipTrace = null;
-var URLs = null
+var URLs = null;
 
 /**
  * Replacing globals with blessed widgets.
  * @return {None}
  */
 function buildInterface() {
-
   screen = blessed.screen({
     smartCSR: true,
     title: "Bitvision",
@@ -415,27 +433,48 @@ function buildInterface() {
     rows: 36,
     cols: 36,
     screen: screen
-  })
+  });
 
   let padding = {
     left: 1,
     right: 1
-  }
+  };
 
   // Place 3 tables and a gauge on the left side of the screen, stacked vertically.
 
-  headlinesTable = grid.set(0, 0, 10, 13, blessed.ListTable, createTable("center", true, null));
+  headlinesTable = grid.set(
+    0,
+    0,
+    10,
+    13,
+    blessed.ListTable,
+    createTable("center", true, null)
+  );
   headlinesTable.focus();
-  technicalIndicatorsTable = grid.set(10, 0, 9, 13, blessed.ListTable, createTable("left", false, padding));
+  technicalIndicatorsTable = grid.set(
+    10,
+    0,
+    9,
+    13,
+    blessed.ListTable,
+    createTable("left", false, padding)
+  );
 
   technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
-    label: ' Buy/Sell Gauge '.bold.red,
+    label: " Buy/Sell Gauge ".bold.red,
     gaugeSpacing: 0,
     gaugeHeight: 1,
     showLabel: true
-  })
+  });
 
-  blockchainIndicatorsTable = grid.set(26, 0, 10, 13, blessed.ListTable, createTable("left", false, padding));
+  blockchainIndicatorsTable = grid.set(
+    26,
+    0,
+    10,
+    13,
+    blessed.ListTable,
+    createTable("left", false, padding)
+  );
 
   // Line chart on the right of the tables
 
@@ -454,22 +493,43 @@ function buildInterface() {
 
   // Price table and logs under chart.
 
-  priceTable = grid.set(19, 30, 6.5, 6, blessed.ListTable, createTable("left", false, padding));
+  priceTable = grid.set(
+    19,
+    30,
+    6.5,
+    6,
+    blessed.ListTable,
+    createTable("left", false, padding)
+  );
 
   // @Jon, skipTrace goes here
   // volumeSkipTrace = grid(18, 22, 7, 6,
 
-  portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable, createTable("left", false, padding));
+  portfolioTable = grid.set(
+    26,
+    13,
+    10,
+    6,
+    blessed.ListTable,
+    createTable("left", false, padding)
+  );
 
-  transactionsTable = grid.set(26, 19, 10, 8, blessed.ListTable, createTable("left", false, padding));
+  transactionsTable = grid.set(
+    26,
+    19,
+    10,
+    8,
+    blessed.ListTable,
+    createTable("left", false, padding)
+  );
 
   logs = grid.set(26, 29, 10, 7, contrib.log, {
     label: " DEBUGGING LOGS ".bold.red,
     top: 0,
     left: 0,
     height: "100%-1",
-    width: "100%",
-  })
+    width: "100%"
+  });
 
   menubar = blessed.listbar({
     parent: screen,
@@ -483,10 +543,10 @@ function buildInterface() {
       },
       selected: {
         fg: "yellow"
-      },
+      }
     },
     commands: {
-      "Autotrading": {
+      Autotrading: {
         keys: ["a"],
         callback: () => {
           if (credentialsExist) {
@@ -500,11 +560,11 @@ function buildInterface() {
       "Bitstamp Login": {
         keys: ["l"],
         callback: () => {
-          logs.log("Login")
+          logs.log("Login");
           displayLoginScreen();
         }
       },
-      "Logout": {
+      Logout: {
         keys: ["k"],
         callback: () => {
           clearCredentials();
@@ -518,7 +578,7 @@ function buildInterface() {
             tradeEntryStatus = true;
             transaction.createTransactionScreen(screen, function(amount, type) {
               // Pass order to backend
-              executeTrade(amount, type)
+              executeTrade(amount, type);
               tradeEntryStatus = false;
             });
           } else {
@@ -532,7 +592,7 @@ function buildInterface() {
       //     headlinesTable.focus();
       //   }
       // },
-      "Help": {
+      Help: {
         keys: ["h"],
         callback: () => {
           logs.log(`Help Menu Opened, HAS: ${helpActiveStatus}`);
@@ -542,16 +602,16 @@ function buildInterface() {
             help.createHelpScreen(screen, VERSION, () => {
               helpActiveStatus = false;
               logs.log(`HAS set to: ${helpActiveStatus}`);
-            })
+            });
           }
         }
       },
-      "Exit": {
+      Exit: {
         keys: ["C-c", "escape"],
         callback: () => process.exit(0)
       }
     }
-  })
+  });
 
   // Resizing
   screen.on("resize", function() {
@@ -569,8 +629,8 @@ function buildInterface() {
     if (!tradeEntryStatus) {
       let selectedArticleURL = URLs[headlinesTable.selected - 1];
       openBrowser(selectedArticleURL);
-    };
-  })
+    }
+  });
 
   // Quit
   screen.key(["escape", "C-c"], function(ch, key) {
@@ -585,7 +645,15 @@ function buildInterface() {
 /**
  * Set all tables with data.
  */
-function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio, transactions) {
+function setAllTables(
+  headlines,
+  technicals,
+  gaugeData,
+  blockchains,
+  prices,
+  portfolio,
+  transactions
+) {
   logs.log("SetAllTables");
 
   // Set headers for each table.
@@ -594,18 +662,21 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   blockchains.splice(0, 0, ["Blockchain Network", "Value"]);
   prices.splice(0, 0, ["Ticker Data", "Value"]);
   portfolio.splice(0, 0, ["Portfolio Stats", "Value"]);
-  transactions.splice(0, 0, ["Transaction", "Amount", "Date"])
+  transactions.splice(0, 0, ["Transaction", "Amount", "Date"]);
 
   // Set data
   headlinesTable.setData(headlines);
   technicalIndicatorsTable.setData(technicals);
-  technicalIndicatorsGauge.setStack([{
-    percent: gaugeData[0],
-    stroke: 'red',
-  }, {
-    percent: gaugeData[1],
-    stroke: 'green'
-  }]);
+  technicalIndicatorsGauge.setStack([
+    {
+      percent: gaugeData[0],
+      stroke: "red"
+    },
+    {
+      percent: gaugeData[1],
+      stroke: "green"
+    }
+  ]);
   blockchainIndicatorsTable.setData(blockchains);
   priceTable.setData(prices);
   portfolioTable.setData(portfolio);
@@ -623,7 +694,7 @@ function setLineData(lineData, chart) {
   for (var i = 0; i < lineData.length; i++) {
     var last = lineData[i].y[lineData[i].y.length - 1];
     lineData[i].y.shift();
-    var num = getRandomInteger(750, 800)
+    var num = getRandomInteger(750, 800);
     lineData[i].y.push(num);
   }
   chart.setData(lineData);
@@ -631,17 +702,33 @@ function setLineData(lineData, chart) {
 
 let exchangeRateSeries = {
   title: "Exchange Rate",
-  x: [...Array(700).keys()].map((key) => {
-    return String(key) + ":00"
+  x: [...Array(700).keys()].map(key => {
+    return String(key) + ":00";
   }),
-  y: [...Array(700).keys()].map((key) => {
-    return key * getRandomInteger(10, 14)
+  y: [...Array(700).keys()].map(key => {
+    return key * getRandomInteger(10, 14);
   })
-}
+};
 
 function refreshInterface() {
-  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData] = getDataFromJsonFiles();
-  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData);
+  let [
+    headlineData,
+    technicalData,
+    gaugeData,
+    blockchainData,
+    priceData,
+    portfolioData,
+    transactionsData
+  ] = getDataFromJsonFiles();
+  setAllTables(
+    headlineData,
+    technicalData,
+    gaugeData,
+    blockchainData,
+    priceData,
+    portfolioData,
+    transactionsData
+  );
   setLineData([exchangeRateSeries], exchangeRateChart);
 }
 
@@ -658,7 +745,8 @@ function splashScreen() {
 /**
  * Let's get this show on the road.
  */
-function doThings() { // nice function name
+function doThings() {
+  // nice function name
   splashScreen();
   createConfigIfNeeded();
 
@@ -668,16 +756,16 @@ function doThings() { // nice function name
 
   setInterval(function() {
     refreshData("NETWORK");
-  }, 15000) // 15 sec
+  }, 15000); // 15 sec
 
   setInterval(function() {
-    logs.log("HEADLINES REFRESH")
+    logs.log("HEADLINES REFRESH");
     refreshData("HEADLINES");
-  }, 900000) // 15 min
+  }, 900000); // 15 min
 
   setInterval(function() {
     refreshData("PRICE");
-  }, 2000)
+  }, 2000);
 
   // setInterval(function() {
   //   refreshData("PORTFOLIO");
@@ -697,10 +785,10 @@ function doThings() { // nice function name
 
     setInterval(function() {
       refreshInterface();
-    }, 3000)
+    }, 3000);
 
     // }, 5000)
-  }, 2000)
+  }, 2000);
 }
 
 doThings();
