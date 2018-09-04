@@ -263,10 +263,10 @@ function refreshData(type) {
     case "PORTFOLIO":
       executeShellCommand(constants.commands.refresh_portfolio);
       break;
-    // TODO: Decide if we need this.
+      // TODO: Decide if we need this.
     case "CHART":
-     executeShellCommand(constants.commands.refresh_price);
-     break;
+      executeShellCommand(constants.commands.refresh_price);
+      break;
   }
 }
 
@@ -391,9 +391,9 @@ function buildChartData(priceData) {
   let prices = lastTwoMonths.map(x => x.price);
 
   return {
-     title: "Exchange Rate",
-     x: convertedTimestamps,
-     y: prices
+    title: "Exchange Rate",
+    x: convertedTimestamps,
+    y: prices
   }
 }
 
@@ -415,7 +415,7 @@ var priceTable = null;
 var exchangeRateChart = null;
 var transactionsTable = null;
 var menubar = null;
-var skipTrace = null;
+var volumeSparkTrace = null;
 var URLs = null
 
 /**
@@ -480,8 +480,13 @@ function buildInterface() {
 
   priceTable = grid.set(19, 30, 6.5, 6, blessed.ListTable, createTable("left", false, padding));
 
-  // @Jon, skipTrace goes here
-  // volumeSkipTrace = grid(18, 22, 7, 6,
+  volumeSparkTrace = grid.set(18, 22, 7, 6, contrib.sparkline({
+    label: 'Trading Volume (bits/sec)',
+    tags: true,
+    style: {
+      fg: 'red'
+    }
+  }));
 
   portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable, createTable("left", false, padding));
 
@@ -619,6 +624,11 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   prices.splice(0, 0, ["Ticker Data", "Value"]);
   portfolio.splice(0, 0, ["Portfolio Stats", "Value"]);
   transactions.splice(0, 0, ["Transaction", "Amount", "Date"])
+
+  volumeSparkTrace.setData(
+  [ 'Sparkline1', 'Sparkline2'],
+  [ [10, 20, 30, 20]
+  , [40, 10, 40, 50]])
 
   // Set data
   headlinesTable.setData(headlines);
