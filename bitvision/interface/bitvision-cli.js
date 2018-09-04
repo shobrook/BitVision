@@ -93,7 +93,7 @@ function executeTrade(amount, type) {
 /**
  * Returns a Date object set with the current time + x hours.
  * @param  {Number} hours
- * @return {String} UTC Representation
+ * @return {String} Unix Representation
  */
 function getTimeXHoursFromNow(hours) {
   let currentTime = new Date();
@@ -196,12 +196,14 @@ function createTable(alignment, isInteractive, padding) {
 /**
  * Display login screen, allowing user to replace credentials.
  */
-function displayLoginScreen() {
+// TODO: Something with this callback to check if login successful
+function displayLoginScreen(callback) {
   logs.log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, (creds) => {
     if (creds != null) {
       logs.log("New creds, saving.");
       saveCredentials(creds);
+      executeShellCommand(constants.commands.check_login);
     } else {
       logs.log("No creds, abort.");
     }
@@ -261,6 +263,10 @@ function refreshData(type) {
     case "PORTFOLIO":
       executeShellCommand(constants.commands.refresh_portfolio);
       break;
+    // TODO: Decide if we need this.
+    case "CHART":
+     executeShellCommand(constants.commands.refresh_price);
+     break;
   }
 }
 
@@ -277,6 +283,7 @@ function getDataFromJsonFiles() {
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
   let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
+  let chartData = buildChartData(readJsonFile(constants.paths.graphDataPath).data);
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -288,8 +295,7 @@ function getDataFromJsonFiles() {
   ]
   let portfolioData = reformatPortfolioData(readJsonFile(constants.paths.portfolioDataPath).data, portfolioDataKeys)
   let transactionsData = readJsonFile(constants.paths.transactionsDataPath).data
-
-  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData]
+  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData]
 }
 
 //--------------------------
@@ -298,11 +304,11 @@ function getDataFromJsonFiles() {
 
 function reformatPriceData(priceData) {
   return [
-    ["Price", String(priceData[0].last)],
-    ["Volume", String(priceData[0].volume)],
-    ["24H Low", String(priceData[0].low)],
-    ["24H High", String(priceData[0].high)],
-    ["Open Price", String(priceData[0].open)],
+    ["Price", String(priceData.last)],
+    ["Volume", String(priceData.volume)],
+    ["24H Low", String(priceData.low)],
+    ["24H High", String(priceData.high)],
+    ["Open Price", String(priceData.open)],
   ]
 }
 
@@ -371,6 +377,24 @@ function calculateGaugePercentages(technicalIndicators) {
   let sellPercentage = totalSell / total * 100;
   let buyPercentage = totalBuy / total * 100;
   return [sellPercentage, buyPercentage];
+}
+
+
+/**
+ * Convert all UNIX timestamps to current timezone and put in this format:
+ * @param  {[type]} prices [description]
+ * @return {[type]}        [description]
+ */
+function buildChartData(priceData) {
+  let lastTwoMonths = priceData.slice(0, 60).reverse();
+  let convertedTimestamps = lastTwoMonths.map(x => x.date);
+  let prices = lastTwoMonths.map(x => x.price);
+
+  return {
+     title: "Exchange Rate",
+     x: convertedTimestamps,
+     y: prices
+  }
 }
 
 // ---------------------------------
@@ -489,7 +513,7 @@ function buildInterface() {
       "Autotrading": {
         keys: ["a"],
         callback: () => {
-          if (credentialsExist) {
+          if (credentialsExist()) {
             showAutotradingMenu();
           } else {
             displayLoginScreen();
@@ -514,7 +538,7 @@ function buildInterface() {
         keys: ["t"],
         callback: () => {
           logs.log("Buy/Sell BTC");
-          if (credentialsExist) {
+          if (credentialsExist()) {
             tradeEntryStatus = true;
             transaction.createTransactionScreen(screen, function(amount, type) {
               // Pass order to backend
@@ -613,36 +637,12 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   screen.render();
 }
 
-function getRandomInteger(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function setLineData(lineData, chart) {
-  for (var i = 0; i < lineData.length; i++) {
-    var last = lineData[i].y[lineData[i].y.length - 1];
-    lineData[i].y.shift();
-    var num = getRandomInteger(750, 800)
-    lineData[i].y.push(num);
-  }
-  chart.setData(lineData);
-}
-
-let exchangeRateSeries = {
-  title: "Exchange Rate",
-  x: [...Array(700).keys()].map((key) => {
-    return String(key) + ":00"
-  }),
-  y: [...Array(700).keys()].map((key) => {
-    return key * getRandomInteger(10, 14)
-  })
-}
 
 function refreshInterface() {
-  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData] = getDataFromJsonFiles();
+  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData] = getDataFromJsonFiles();
   setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData);
-  setLineData([exchangeRateSeries], exchangeRateChart);
+  // setLineData([chartData], exchangeRateChart);
+  exchangeRateChart.setData(chartData);
 }
 
 //------
