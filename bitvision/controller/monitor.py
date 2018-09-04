@@ -59,42 +59,53 @@ USER_AGENTS = [
 
 def fetch_price_data():
     with open("../cache/data/ticker.json", 'w') as price_data:
-        response = requests.get(
-            "https://www.bitstamp.net/api/ticker/").json()
+        try:
+            response = requests.get(
+                "https://www.bitstamp.net/api/ticker/").json()
 
-        price_data.write(json.dumps({
-            "error": False,
-            "data": {
-                "last": round(float(response["last"]), 2),
-                "high": round(float(response["high"]), 2),
-                "low": round(float(response["low"]), 2),
-                "open": round(float(response["open"]), 2),
-                "volume": round(float(response["volume"]), 2),
-            }
-        }, indent=2))
+            price_data.write(json.dumps({
+                "error": False,
+                "data": {
+                    "last": round(float(response["last"]), 2),
+                    "high": round(float(response["high"]), 2),
+                    "low": round(float(response["low"]), 2),
+                    "open": round(float(response["open"]), 2),
+                    "volume": round(float(response["volume"]), 2),
+                }
+            }, indent=2))
+        except:
+            price_data.write(json.dumps({
+                "error": True,
+                "data": json.loads(price_data)["data"]
+            }))
 
     with open("../cache/data/graph.json", 'w') as graph_data:
-        data = []
-        for index, row in dataset("price_data").iterrows():
-            data.append({
-                "date": row["Date"],
-                "price": row["Close"]
-            })
+        try:
+            data = []
+            for index, row in dataset("price_data").iterrows():
+                data.append({
+                    "date": row["Date"],
+                    "price": row["Close"],
+                    "volume": row["Volume (BTC)"]
+                })
 
-        graph_data.write(json.dumps({
-            "error": False,
-            "data": data
-        }, indent=2))
-
-    return True
+            graph_data.write(json.dumps({
+                "error": False,
+                "data": data
+            }, indent=2))
+        except:
+            graph_data.write(json.dumps({
+                "error": True,
+                "data": json.loads(graph_data)["data"]
+            }))
 
 
 def fetch_tech_indicators():
-    indicators = transformer("calculate_indicators")(dataset("price_data"))
-
     # TODO: Create a mapping between indicator values and signals
 
     with open("../cache/data/indicators.json", 'w') as indicators_json:
+        indicators = transformer("calculate_indicators")(dataset("price_data"))
+
         # "MACD": {}, # MACD, MACD (Signal), MACD (Historical)
         # "MOM (1)": {"value": indicators["MOM (1)"][0], "signal": ""},
         # "ADX (20)": {"value": indicators["ADX (20)"][0], "signal": ""},
@@ -123,10 +134,9 @@ def fetch_tech_indicators():
         ]
 
         indicators_json.write(json.dumps({
+            "error": False,
             "data": list(sorted(data, key=lambda i: len(i[0])))
         }, indent=2))
-
-    return True
 
 
 def fetch_blockchain_data():
@@ -176,22 +186,23 @@ def fetch_coindesk_stats():
     other_headlines = [(headline.find_all("a", class_="fade")[0].get_text().strip(), headline.find_all("time")[
         0]["datetime"], headline.find_all("a", class_="fade")[0]["href"]) for headline in soup.find_all("div", class_="post-info")]
 
-    # Strip out unrelated headlines
+    # filtered_headlines = [headline for headline in featured_headlines +
+    #                       other_headlines if "bitcoin" in headline[0].lower() or "btc" in headline[0].lower()]
+    #
+    # invalid_bch_headlines = []
+    #
+    # for headline in filtered_headlines:
+    #     if "bitcoin cash" in headline[0].lower() or "bch" in headline[0].lower():
+    #         if not any("bitcoin" in headline_splice or "btc" in headline_splice for headline_splice in headline[0].split("bitcoin cash")):
+    #             # then this is not a valid headline
+    #             invalid_bch_headlines.append(headline)
+    #
+    # valid_headlines = set(filtered_headlines) - set(invalid_bch_headlines)
+    # ordered_headlines = sorted(
+    #     valid_headlines, key=lambda h: moment.date(h[1]).format("M-D"), reverse=True)
 
-    filtered_headlines = [headline for headline in featured_headlines +
-                          other_headlines if "bitcoin" in headline[0].lower() or "btc" in headline[0].lower()]
-
-    invalid_bch_headlines = []
-
-    for headline in filtered_headlines:
-        if "bitcoin cash" in headline[0].lower() or "bch" in headline[0].lower():
-            if not any("bitcoin" in headline_splice or "btc" in headline_splice for headline_splice in headline[0].split("bitcoin cash")):
-                # then this is not a valid headline
-                invalid_bch_headlines.append(headline)
-
-    valid_headlines = set(filtered_headlines) - set(invalid_bch_headlines)
-    ordered_headlines = sorted(
-        valid_headlines, key=lambda h: moment.date(h[1]).format("M-D"), reverse=True)
+    ordered_headlines = sorted(featured_headlines + other_headlines,
+                               key=lambda h: moment.date(h[1]).format("M-D"), reverse=True)
 
     with open("../cache/data/headlines.json", 'w') as headlines_json:
         headlines_json.write(json.dumps({
