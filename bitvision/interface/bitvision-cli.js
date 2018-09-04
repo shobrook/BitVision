@@ -564,13 +564,10 @@ function buildInterface() {
       "Help": {
         keys: ["h"],
         callback: () => {
-          logs.log(`Help Menu Opened, HAS: ${helpActiveStatus}`);
           if (!helpActiveStatus) {
             helpActiveStatus = true;
-            logs.log(`HAS set to: ${helpActiveStatus}`);
             help.createHelpScreen(screen, VERSION, () => {
               helpActiveStatus = false;
-              logs.log(`HAS set to: ${helpActiveStatus}`);
             })
           }
         }
@@ -626,9 +623,10 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   transactions.splice(0, 0, ["Transaction", "Amount", "Date"])
 
   volumeSparkTrace.setData(
-  [ 'Sparkline1', 'Sparkline2'],
-  [ [10, 20, 30, 20]
-  , [40, 10, 40, 50]])
+    ['Sparkline1', 'Sparkline2'], [
+      [10, 20, 30, 20],
+      [40, 10, 40, 50]
+    ])
 
   // Set data
   headlinesTable.setData(headlines);
