@@ -13,7 +13,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from ftfy import ftfy
-from .transformers import transformer
+from transformers import transformer
 
 quandl_endpoints = {
     "conf_time": "https://www.quandl.com/api/v3/datasets/BCHAIN/ATRCT.csv?api_key=iKmHLdjz-ghzaWVKyEfw",
