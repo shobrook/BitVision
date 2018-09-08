@@ -257,15 +257,11 @@ function refreshData(type) {
     case "HEADLINES":
       executeShellCommand(constants.commands.refresh_headlines);
       break;
-    case "PRICE":
-      executeShellCommand(constants.commands.refresh_price);
+    case "TICKER":
+      executeShellCommand(constants.commands.refresh_ticker);
       break;
     case "PORTFOLIO":
       executeShellCommand(constants.commands.refresh_portfolio);
-      break;
-      // TODO: Decide if we need this.
-    case "CHART":
-      executeShellCommand(constants.commands.refresh_price);
       break;
   }
 }
@@ -283,7 +279,7 @@ function getDataFromJsonFiles() {
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
   let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
-  let chartData = buildChartData(readJsonFile(constants.paths.graphDataPath).data);
+  let chartData, volumeData = buildChartAndVolumeData(readJsonFile(constants.paths.graphDataPath).data);
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -381,20 +377,21 @@ function calculateGaugePercentages(technicalIndicators) {
 
 
 /**
- * Convert all UNIX timestamps to current timezone and put in this format:
- * @param  {[type]} prices [description]
- * @return {[type]}        [description]
+ * Returns a dictionary with chart data and a list with volume data.
  */
-function buildChartData(priceData) {
+function buildChartAndVolumeData(priceData) {
   let lastTwoMonths = priceData.slice(0, 60).reverse();
   let convertedTimestamps = lastTwoMonths.map(x => x.date);
   let prices = lastTwoMonths.map(x => x.price);
+  let volumes = lastTwoMonths.map(x => x.volume);
 
-  return {
+  let chart = {
     title: "Exchange Rate",
     x: convertedTimestamps,
     y: prices
   }
+
+  return chart, volumes
 }
 
 // ---------------------------------
@@ -480,13 +477,13 @@ function buildInterface() {
 
   priceTable = grid.set(19, 30, 6.5, 6, blessed.ListTable, createTable("left", false, padding));
 
-  volumeSparkTrace = grid.set(18, 22, 7, 6, contrib.sparkline({
-    label: 'Trading Volume (bits/sec)',
+  volumeSparkTrace = grid.set(19, 13, 7, 17, contrib.sparkline, {
+    label: ' Trading Volume (bits/sec) '.bold.red,
     tags: true,
     style: {
       fg: 'red'
     }
-  }));
+  });
 
   portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable, createTable("left", false, padding));
 
@@ -623,9 +620,8 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   transactions.splice(0, 0, ["Transaction", "Amount", "Date"])
 
   volumeSparkTrace.setData(
-    ['Sparkline1', 'Sparkline2'], [
+    [], [
       [10, 20, 30, 20],
-      [40, 10, 40, 50]
     ])
 
   // Set data
@@ -684,7 +680,7 @@ function doThings() { // nice function name
   }, 900000) // 15 min
 
   setInterval(function() {
-    refreshData("PRICE");
+    refreshData("TICKER");
   }, 2000)
 
   // setInterval(function() {
