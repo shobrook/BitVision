@@ -18,7 +18,7 @@ module.exports = {
     confirmLight: "light-blue",
     confirmDark: "blue",
     cancelLight: "light-red",
-    cancelDark: "red",
+    cancelDark: "red"
   },
   paths: {
     "configPath": path.join(cachePath, "config.json"),
@@ -40,24 +40,26 @@ module.exports = {
     "check_login": `python3 ${controllerPath} authenticate`,
   },
   baseConfig: {
-    "credentials": {
-      "key": "",
-      "secret": "",
-      "passphrase": ""
+    credentials: {
+      username: "",
+      key: "",
+      secret: ""
     },
-    "autotrade": {
-      "enabled": false,
-      "next-trade-timestamp-UTC": -1,
+    autotrade: {
+      enabled: false,
+      "next-trade-timestamp-UTC": -1
     }
   },
   splash: {
-    "logo": "\n    ██████╗ ██╗████████╗██╗   ██╗██╗███████╗██╗ ██████╗ ███╗   ██╗\n\
+    logo: "\n    ██████╗ ██╗████████╗██╗   ██╗██╗███████╗██╗ ██████╗ ███╗   ██╗\n\
     ██╔══██╗██║╚══██╔══╝██║   ██║██║██╔════╝██║██╔═══██╗████╗  ██║\n\
     ██████╔╝██║   ██║   ██║   ██║██║███████╗██║██║   ██║██╔██╗ ██║\n\
     ██╔══██╗██║   ██║   ╚██╗ ██╔╝██║╚════██║██║██║   ██║██║╚██╗██║\n\
     ██████╔╝██║   ██║    ╚████╔╝ ██║███████║██║╚██████╔╝██║ ╚████║\n\
-    ╚═════╝ ╚═╝   ╚═╝     ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n\n".blue.bold,
-    "authors": "Written by:\n - Jon Shobrook (@shobrook)\n - Aaron Lichtman (@alichtman)\n\n".red.bold,
-    "stalling": "Fetching data... \n(This may take a few seconds)\n\n".blue.bold
+    ╚═════╝ ╚═╝   ╚═╝     ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n\n"
+      .blue.bold,
+    authors: "Written by:\n - Jon Shobrook (@shobrook)\n - Aaron Lichtman (@alichtman)\n\n"
+      .red.bold,
+    stalling: "Fetching data... \n(This may take a few seconds)\n\n".blue.bold
   }
-}
+};

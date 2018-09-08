@@ -34,14 +34,7 @@ def train_and_predict():
     return model.predict(feature_vector.values)[0]
 
 
-def make_trade(payload):
-    # TODO: Pull credentials from dotfile
-    client = Trading(
-        username="test",
-        key="test",
-        secret="test"
-    )
-
+def make_trade(client, payload):
     amount = int(payload["amount"])
     response = client.buy_instant_order(
         amount) if payload["type"] == "BUY" else client.sell_instant_order(amount)
