@@ -279,7 +279,7 @@ function getDataFromJsonFiles() {
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
   let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
-  let chartData, volumeData = buildChartAndVolumeData(readJsonFile(constants.paths.graphDataPath).data);
+  let [chartData, volumeData] = buildChartAndVolumeData(readJsonFile(constants.paths.graphDataPath).data);
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -291,7 +291,7 @@ function getDataFromJsonFiles() {
   ]
   let portfolioData = reformatPortfolioData(readJsonFile(constants.paths.portfolioDataPath).data, portfolioDataKeys)
   let transactionsData = readJsonFile(constants.paths.transactionsDataPath).data
-  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData]
+  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData, volumeData]
 }
 
 //--------------------------
@@ -391,7 +391,7 @@ function buildChartAndVolumeData(priceData) {
     y: prices
   }
 
-  return chart, volumes
+  return [chart, volumes]
 }
 
 // ---------------------------------
@@ -608,7 +608,7 @@ function buildInterface() {
 /**
  * Set all tables with data.
  */
-function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio, transactions) {
+function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio, transactions, volumes) {
   logs.log("SetAllTables");
 
   // Set headers for each table.
@@ -619,10 +619,7 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   portfolio.splice(0, 0, ["Portfolio Stats", "Value"]);
   transactions.splice(0, 0, ["Transaction", "Amount", "Date"])
 
-  volumeSparkTrace.setData(
-    [], [
-      [10, 20, 30, 20],
-    ])
+  volumeSparkTrace.setData([], [volumes, ])
 
   // Set data
   headlinesTable.setData(headlines);
@@ -643,9 +640,8 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
 
 
 function refreshInterface() {
-  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData] = getDataFromJsonFiles();
-  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData);
-  // setLineData([chartData], exchangeRateChart);
+  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData, volumeData] = getDataFromJsonFiles();
+  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, volumeData);
   exchangeRateChart.setData(chartData);
 }
 
@@ -668,7 +664,7 @@ function doThings() { // nice function name
 
   refreshData("HEADLINES");
   refreshData("NETWORK");
-  refreshData("PRICE");
+  refreshData("TICKER");
 
   setInterval(function() {
     refreshData("NETWORK");
