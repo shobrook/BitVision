@@ -83,7 +83,7 @@ def fetch_price_data():
             data = []
             for index, row in dataset("price_data").iterrows():
                 data.append({
-                    "date": row["Date"],
+                    "date": moment.date(row["Date"]).format("MM/DD/YY"),
                     "price": row["Close"],
                     "volume": row["Volume (BTC)"]
                 })
