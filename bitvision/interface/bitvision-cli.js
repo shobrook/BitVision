@@ -448,23 +448,9 @@ function buildInterface() {
 
   // Place 3 tables and a gauge on the left side of the screen, stacked vertically.
 
-  headlinesTable = grid.set(
-    0,
-    0,
-    10,
-    13,
-    blessed.ListTable,
-    createTable("center", true, null)
-  );
+  headlinesTable = grid.set(0, 0, 10, 13, blessed.ListTable, createTable("center", true, null));
   headlinesTable.focus();
-  technicalIndicatorsTable = grid.set(
-    10,
-    0,
-    9,
-    13,
-    blessed.ListTable,
-    createTable("left", false, padding)
-  );
+  technicalIndicatorsTable = grid.set(10, 0, 9, 13, blessed.ListTable, createTable("left", false, padding));
 
   technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
     label: " Buy/Sell Gauge ".bold.red,
@@ -473,12 +459,7 @@ function buildInterface() {
     showLabel: true
   });
 
-  blockchainIndicatorsTable = grid.set(
-    26,
-    0,
-    10,
-    13,
-    blessed.ListTable,
+  blockchainIndicatorsTable = grid.set(26, 0, 10, 13, blessed.ListTable,
     createTable("left", false, padding)
   );
 
@@ -499,37 +480,21 @@ function buildInterface() {
 
   // Price table and logs under chart.
 
-  priceTable = grid.set(
-    19,
-    30,
-    6.5,
-    6,
-    blessed.ListTable,
-    createTable("left", false, padding)
-  );
+  priceTable = grid.set(19, 30, 6.5, 6, blessed.ListTable, createTable("left", false, padding));
 
-  volumeSparkTrace = grid.set(19, 13, 7, 17, contrib.sparkline, {
-    label: ' Trading Volume (bits/sec) '.bold.red,
+  volumeSparkTrace = grid.set(19, 13, 6, 17, contrib.sparkline, {
+    label: ' Trading Volume (BTC / Day) '.bold.red,
     tags: true,
     style: {
-      fg: 'red'
+      fg: 'blue'
     }
   });
 
-  portfolioTable = grid.set(
-    26,
-    13,
-    10,
-    6,
-    blessed.ListTable,
+  portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable,
     createTable("left", false, padding)
   );
 
-  transactionsTable = grid.set(
-    26,
-    19,
-    10,
-    8,
+  transactionsTable = grid.set(26, 19, 10, 8,
     blessed.ListTable,
     createTable("left", false, padding)
   );
@@ -597,12 +562,6 @@ function buildInterface() {
           }
         }
       },
-      // "Focus on Headlines": {
-      //   keys: ["f"],
-      //   callback: () => {
-      //     headlinesTable.focus();
-      //   }
-      // },
       Help: {
         keys: ["h"],
         callback: () => {
@@ -630,6 +589,7 @@ function buildInterface() {
     technicalIndicatorsGauge.emit("attach");
     priceTable.emit("attach");
     menubar.emit("attach");
+    volumeSparkTrace.emit("attach");
   });
 
   // Open article
@@ -664,13 +624,12 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   portfolio.splice(0, 0, ["Portfolio Stats", "Value"]);
   transactions.splice(0, 0, ["Transaction", "Amount", "Date"]);
 
-  volumeSparkTrace.setData([], [volumes, ])
+  volumeSparkTrace.setData([`Current: ${volumes[volumes.length - 1]} BTC`], [volumes]);
 
   // Set data
   headlinesTable.setData(headlines);
   technicalIndicatorsTable.setData(technicals);
-  technicalIndicatorsGauge.setStack([
-    {
+  technicalIndicatorsGauge.setStack([{
       percent: gaugeData[0],
       stroke: "red"
     },
