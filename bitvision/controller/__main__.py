@@ -31,7 +31,7 @@ def action(name):
         elif name == "monitor_opinions":  # Updates coindesk data
             refresh(["coindesk_stats"])
         elif name == "monitor_portfolio":  # Updates portfolio data
-            refresh(["portfolio_stats", "transactions"])
+            refresh(["portfolio_stats", "transactions"], client)
         elif name == "toggle_algo":  # Toggles algorithmic trading
             cron = CronTab(user=True)
             job = cron.new(command="python3 __main__.py make_algotrade")
