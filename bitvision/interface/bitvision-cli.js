@@ -85,7 +85,7 @@ function executeTrade(amount, type) {
     type: type
   };
   let cmd = `${constants.commands.transaction}${payload}`;
-  logs.log(`Executing: ${cmd}`);
+  // logs.log(`Executing: ${cmd}`);
   // executeShellCommand(cmd)
 }
 
@@ -128,7 +128,7 @@ function clearCredentials() {
     if (err) {
       throw err;
     }
-    logs.log("Login credentials cleared.");
+    // logs.log("Login credentials cleared.");
   });
 }
 
@@ -197,20 +197,20 @@ function createTable(alignment, isInteractive, padding) {
  */
 // TODO: Something with this callback to check if login successful
 function displayLoginScreen(callback) {
-  logs.log("DISPLAY LOGIN SCREEN");
+  // logs.log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, creds => {
     if (creds != null) {
-      logs.log("New creds, saving.");
+      // logs.log("New creds, saving.");
       saveCredentials(creds);
       executeShellCommand(constants.commands.check_login);
     } else {
-      logs.log("No creds, abort.");
+      // logs.log("No creds, abort.");
     }
   });
 }
 
 function showAutotradingMenu() {
-  logs.log("Autotrading Menu");
+  // logs.log("Autotrading Menu");
   autotrading.createToggleScreen(screen, function(isEnabling) {
     let cfg = getConfig();
     // logs.log(`Enabling: ${isEnabling}`)
@@ -221,18 +221,18 @@ function showAutotradingMenu() {
       (isEnabling && isCurrentlyEnabled) ||
       (!isEnabling && !isCurrentlyEnabled)
     ) {
-      logs.log("Redundant autotrading change.");
+      // logs.log("Redundant autotrading change.");
       return;
     }
 
     // Autotrading disabled, so reset all properties to default
     if (!isEnabling) {
-      logs.log("Disabling autotrading.");
+      // logs.log("Disabling autotrading.");
       cfg.autotrade.enabled = false;
       cfg.autotrade["next-trade-timestamp-UTC"] = 0;
     } else {
       // Autotrading enabled, so set next trade timestamp for +1 hr from now.
-      logs.log("Enabling autotrading.");
+      // logs.log("Enabling autotrading.");
       cfg.autotrade.enabled = true;
       cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(24);
     }
@@ -283,7 +283,7 @@ function getDataFromJsonFiles() {
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
   let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
-  let chartData = (readJsonFile(constants.paths.graphDataPath).data);
+  let chartData = buildChartData(readJsonFile(constants.paths.graphDataPath).data);
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -461,7 +461,7 @@ function buildInterface() {
 
   // Line chart on the right of the tables
 
-  exchangeRateChart = grid.set(0, 13, 19, 23, contrib.line, {
+  exchangeRateChart = grid.set(0, 13, 25, 23, contrib.line, {
     style: {
       line: "yellow",
       text: "green",
@@ -476,7 +476,7 @@ function buildInterface() {
 
   // Price table and logs under chart.
 
-  priceTable = grid.set(19, 30, 6.5, 6, blessed.ListTable, createTable("left", false, padding));
+  priceTable = grid.set(26, 29, 10, 7, blessed.ListTable, createTable("left", false, padding));
 
   portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable,
     createTable("left", false, padding)
@@ -487,13 +487,13 @@ function buildInterface() {
     createTable("left", false, padding)
   );
 
-  logs = grid.set(26, 29, 10, 7, contrib.log, {
-    label: " DEBUGGING LOGS ".bold.red,
-    top: 0,
-    left: 0,
-    height: "100%-1",
-    width: "100%"
-  });
+  // logs = grid.set(26, 29, 10, 7, contrib.log, {
+  //   label: " DEBUGGING LOGS ".bold.red,
+  //   top: 0,
+  //   left: 0,
+  //   height: "100%-1",
+  //   width: "100%"
+  // });
 
   menubar = blessed.listbar({
     parent: screen,
@@ -510,7 +510,14 @@ function buildInterface() {
       }
     },
     commands: {
-      Autotrading: {
+      "Login": {
+        keys: ["l"],
+        callback: () => {
+          // logs.log("Login");
+          displayLoginScreen();
+        }
+      },
+      "Toggle Autotrading": {
         keys: ["a"],
         callback: () => {
           if (credentialsExist()) {
@@ -521,23 +528,10 @@ function buildInterface() {
           }
         }
       },
-      "Bitstamp Login": {
-        keys: ["l"],
-        callback: () => {
-          logs.log("Login");
-          displayLoginScreen();
-        }
-      },
-      Logout: {
-        keys: ["k"],
-        callback: () => {
-          clearCredentials();
-        }
-      },
-      "Trade BTC": {
+      "Make a Trade": {
         keys: ["t"],
         callback: () => {
-          logs.log("Buy/Sell BTC");
+          // logs.log("Buy/Sell BTC");
           if (credentialsExist()) {
             tradeEntryStatus = true;
             transaction.createTransactionScreen(screen, function(amount, type) {
@@ -550,7 +544,7 @@ function buildInterface() {
           }
         }
       },
-      Help: {
+      "Help": {
         keys: ["h"],
         callback: () => {
           if (!helpActiveStatus) {
@@ -561,7 +555,13 @@ function buildInterface() {
           }
         }
       },
-      Exit: {
+      "Logout": {
+        keys: ["k"],
+        callback: () => {
+          clearCredentials();
+        }
+      },
+      "Exit": {
         keys: ["C-c", "escape"],
         callback: () => process.exit(0)
       }
@@ -601,7 +601,7 @@ function buildInterface() {
  * Set all tables with data.
  */
 function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio, transactions) {
-  logs.log("SetAllTables");
+  // logs.log("SetAllTables");
 
   // Set headers for each table.
   headlines.splice(0, 0, ["Date", "Headline", "Sentiment"]);
@@ -664,7 +664,7 @@ function doThings() {
   }, 15000); // 15 sec
 
   setInterval(function() {
-    logs.log("HEADLINES REFRESH");
+    // logs.log("HEADLINES REFRESH");
     refreshData("HEADLINES");
   }, 900000); // 15 min
 
