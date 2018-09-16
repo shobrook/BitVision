@@ -283,7 +283,7 @@ function getDataFromJsonFiles() {
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
   let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
-  let [chartData, volumeData] = buildChartAndVolumeData(readJsonFile(constants.paths.graphDataPath).data);
+  let chartData = (readJsonFile(constants.paths.graphDataPath).data);
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -295,7 +295,7 @@ function getDataFromJsonFiles() {
   ]
   let portfolioData = reformatPortfolioData(readJsonFile(constants.paths.portfolioDataPath).data, portfolioDataKeys)
   let transactionsData = readJsonFile(constants.paths.transactionsDataPath).data
-  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData, volumeData]
+  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData]
 }
 
 //--------------------------
@@ -381,21 +381,18 @@ function calculateGaugePercentages(technicalIndicators) {
 }
 
 /**
- * Returns a dictionary with chart data and a list with volume data.
+ * Returns a dictionary with chart data.
  */
-function buildChartAndVolumeData(priceData) {
+function buildChartData(priceData) {
   let lastTwoMonths = priceData.slice(0, 60).reverse();
   let convertedTimestamps = lastTwoMonths.map(x => x.date);
   let prices = lastTwoMonths.map(x => x.price);
-  let volumes = lastTwoMonths.map(x => x.volume);
 
-  let chart = {
+  return {
     title: "Exchange Rate",
     x: convertedTimestamps,
     y: prices
-  }
-
-  return [chart, volumes]
+  };
 }
 
 // ---------------------------------
@@ -416,7 +413,6 @@ var priceTable = null;
 var exchangeRateChart = null;
 var transactionsTable = null;
 var menubar = null;
-var volumeSparkTrace = null;
 var URLs = null
 
 /**
@@ -481,14 +477,6 @@ function buildInterface() {
   // Price table and logs under chart.
 
   priceTable = grid.set(19, 30, 6.5, 6, blessed.ListTable, createTable("left", false, padding));
-
-  volumeSparkTrace = grid.set(19, 13, 6, 17, contrib.sparkline, {
-    label: ' Trading Volume (BTC / Day) '.bold.red,
-    tags: true,
-    style: {
-      fg: 'blue'
-    }
-  });
 
   portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable,
     createTable("left", false, padding)
@@ -589,7 +577,6 @@ function buildInterface() {
     technicalIndicatorsGauge.emit("attach");
     priceTable.emit("attach");
     menubar.emit("attach");
-    volumeSparkTrace.emit("attach");
   });
 
   // Open article
@@ -613,7 +600,7 @@ function buildInterface() {
 /**
  * Set all tables with data.
  */
-function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio, transactions, volumes) {
+function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio, transactions) {
   logs.log("SetAllTables");
 
   // Set headers for each table.
@@ -623,8 +610,6 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   prices.splice(0, 0, ["Ticker Data", "Value"]);
   portfolio.splice(0, 0, ["Portfolio Stats", "Value"]);
   transactions.splice(0, 0, ["Transaction", "Amount", "Date"]);
-
-  volumeSparkTrace.setData([`Current: ${volumes[volumes.length - 1]} BTC`], [volumes]);
 
   // Set data
   headlinesTable.setData(headlines);
@@ -646,8 +631,9 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
 }
 
 function refreshInterface() {
-  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData, volumeData] = getDataFromJsonFiles();
-  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, volumeData);
+  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData] = getDataFromJsonFiles();
+  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData);
+  writeJsonFile("test.json", chartData);
   exchangeRateChart.setData(chartData);
 }
 
