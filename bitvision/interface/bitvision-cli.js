@@ -633,7 +633,6 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
 function refreshInterface() {
   let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData] = getDataFromJsonFiles();
   setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData);
-  writeJsonFile("test.json", chartData);
   exchangeRateChart.setData(chartData);
 }
 
