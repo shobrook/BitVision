@@ -482,8 +482,7 @@ function buildInterface() {
     createTable("left", false, padding)
   );
 
-  transactionsTable = grid.set(26, 19, 10, 8,
-    blessed.ListTable,
+  transactionsTable = grid.set(26, 19, 10, 10, blessed.ListTable,
     createTable("left", false, padding)
   );
 
@@ -626,6 +625,9 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   blockchainIndicatorsTable.setData(blockchains);
   priceTable.setData(prices);
   portfolioTable.setData(portfolio);
+  if (transactions.length == 1) {
+    transactions.splice(1, 0, ["NO", "TRANSACTION", "DATA"])
+  }
   transactionsTable.setData(transactions);
   screen.render();
 }
