@@ -69,7 +69,8 @@ def fetch_price_data():
                     "last": round(float(response["last"]), 2),
                     "high": round(float(response["high"]), 2),
                     "low": round(float(response["low"]), 2),
-                    "open": round(float(response["open"]), 2)
+                    "open": round(float(response["open"]), 2),
+                    "volume": round(float(response["volume"]), 2)
                 }
             }, indent=2))
         except:
