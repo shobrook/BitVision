@@ -23,6 +23,8 @@ let VERSION = require("../package.json").version;
 // GLOBALS
 var helpActiveStatus = false;
 var tradeEntryStatus = false;
+var loginEntryStatus = false;
+var errorEntryStatus = false;
 
 // Display version with CLI args
 cli.version(VERSION, "-v, --version").parse(process.argv);
@@ -204,7 +206,6 @@ function createTable(alignment, isInteractive, padding) {
 /**
  * Display login screen, allowing user to replace credentials.
  */
-// TODO: Something with this callback to check if login successful
 function displayLoginScreen(callback) {
   // console.log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, creds => {
@@ -212,6 +213,7 @@ function displayLoginScreen(callback) {
       // console.log("New creds, saving.");
       saveCredentials(creds);
       executeShellCommand(constants.commands.check_login);
+      callback();
     } else {
       // console.log("No creds, abort.");
     }
@@ -512,12 +514,18 @@ function buildInterface() {
       "Login": {
         keys: ["l"],
         callback: () => {
+          loginEntryStatus = true;
           // console.log("Login");
-          displayLoginScreen();
-          // TODO: Check for successful login
-          // if ! successful {
-          //   error.createErrorScreen(screen);
-          // }
+          displayLoginScreen(() => {
+            setTimeout(function() {
+              if (!getConfig().logged_in) {
+                errorEntryStatus = true;
+                error.createErrorScreen(screen);
+                errorEntryStatus = false;
+              }
+              loginEntryStatus = false;
+            }, 1000);
+          });
         }
       },
       "Toggle Autotrading": {
@@ -584,7 +592,7 @@ function buildInterface() {
 
   // Open article
   screen.key(["enter"], function(ch, key) {
-    if (!tradeEntryStatus) {
+    if (!tradeEntryStatus && !loginEntryStatus && !errorEntryStatus) {
       let selectedArticleURL = URLs[headlinesTable.selected - 1];
       openBrowser(selectedArticleURL);
     }

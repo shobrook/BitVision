@@ -3,7 +3,7 @@ let constants = require("../constants.js");
 
 let errorStrings =  {
     label: " {bold}{red-fg}Error{/bold}{/red-fg} ",
-    hint: " {bold}Check your internet connection.{/bold} "
+    hint: " {bold}Check your connection or credentials.{/bold} "
   }
 
 var errorForm = null;
@@ -45,9 +45,9 @@ module.exports = {
       parent: errorForm,
       top: 2,
       left: "center",
-      width: 32,
+      width: 38,
       height: 3,
-      shrink: false,
+      shrink: true,
       content: errorStrings.hint,
       style: {
         bg: constants.colors.background,
