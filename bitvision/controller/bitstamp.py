@@ -203,6 +203,28 @@ class Trading(Public):
         url = self._construct_url("balance/", base, quote)
         return self._post(url, return_json=True, version=2)
 
+    def user_transactions(self):
+        """
+        Returns descending list of transactions. Every transaction (dictionary)
+        contains::
+            {u'usd': u'-39.25',
+             u'datetime': u'2013-03-26 18:49:13',
+             u'fee': u'0.20',
+             u'btc': u'0.50000000',
+             u'type': 2,
+             u'id': 213642}
+        Instead of the keys btc and usd, it can contain other currency codes
+        """
+
+        data = {
+            'offset': 0,
+            'limit': 100,
+            #'sort': 'desc' if descending else 'asc',
+            'sort': 'desc'
+        }
+        url = self._construct_url("user_transactions/", None, None)
+        return self._post(url, data=data, return_json=True, version=2)
+
     def open_orders(self, base="btc", quote="usd"):
         """
         Returns JSON list of open orders. Each order is represented as a

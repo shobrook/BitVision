@@ -83,7 +83,7 @@ def fetch_price_data():
             data = []
             for index, row in dataset("price_data").iterrows():
                 data.append({
-                    "date": row["Date"],
+                    "date": moment.date(row["Date"]).format("MM/DD/YY"),
                     "price": row["Close"],
                     "volume": row["Volume (BTC)"]
                 })
@@ -235,20 +235,13 @@ def fetch_coindesk_stats():
             }, indent=2))
 
 
-def fetch_portfolio_stats():
-    # client = Trading(
-    #     username="test",
-    #     key="test",
-    #     secret="test"
-    # )  # TODO: Pull creds from dotfile
-
+def fetch_portfolio_stats(client):
     with open("../cache/data/portfolio.json", 'w') as portfolio_json:
         try:
             portfolio_json.write(json.dumps({
                 "error": False,
                 "data": {
-                    # ''.join(['$', str(client.account_balance()["usd_available"])]),
-                    "account_balance": "$0.00",
+                    "account_balance": ''.join(['$', str(client.account_balance()["usd_available"])]),
                     "returns": "0.00%",
                     "net_profit": "$0.00",
                     "sharpe_ratio": "0.00",
@@ -264,8 +257,18 @@ def fetch_portfolio_stats():
             }))
 
 
-def fetch_transaction_data():
-    pass
+def fetch_transaction_data(client):
+    with open("../cache/data/transactions.json", 'w') as transactions:
+        try:
+            transactions.write(json.dumps({
+                "error": False,
+                "data": [[txn["datetime"], txn["usd"], txn["btc"], txn["type"]] for txn in client.user_transactions()]
+            }, indent=2))
+        except:
+            transactions.write(json.dumps({
+                "error": True,
+                "data": []
+            }, indent=2))
 
 
 ######
@@ -273,7 +276,7 @@ def fetch_transaction_data():
 ######
 
 
-def refresh(names):
+def refresh(names, client=None):
     # TODO: Parallelize
     for name in names:
         if name == "price_data":
@@ -285,6 +288,6 @@ def refresh(names):
         elif name == "coindesk_stats":
             fetch_coindesk_stats()
         elif name == "portfolio_stats":
-            fetch_portfolio_stats()
+            fetch_portfolio_stats(client)
         elif name == "transactions":
-            fetch_transaction_data()
+            fetch_transaction_data(client)
