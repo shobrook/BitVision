@@ -17,6 +17,7 @@ let login = require("./popups/login");
 let help = require("./popups/help");
 let transaction = require("./popups/transaction");
 let autotrading = require("./popups/autotrading");
+let error = require("./popups/error");
 let VERSION = require("../package.json").version;
 
 // GLOBALS
@@ -513,6 +514,10 @@ function buildInterface() {
         callback: () => {
           // console.log("Login");
           displayLoginScreen();
+          // TODO: Check for successful login
+          // if ! successful {
+          //   error.createErrorScreen(screen);
+          // }
         }
       },
       "Toggle Autotrading": {
@@ -691,7 +696,7 @@ function doThings() {
     setInterval(function() {
       refreshInterface();
     }, 3000);
-  }, 5000);
+  }, 4000);
 }
 
 doThings();
