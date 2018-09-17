@@ -40,6 +40,7 @@ module.exports = {
     "check_login": `python3 ${controllerPath} authenticate`,
   },
   baseConfig: {
+    logged_in: false,
     credentials: {
       username: "",
       key: "",

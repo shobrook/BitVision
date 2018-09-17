@@ -8,14 +8,14 @@ let spacing = {
   left: 4,
   right: 5,
   top: 1,
-  apiKey: 4,
-  secret: 8,
-  passphrase: 12
+  apiKey: 8,
+  secret: 12,
+  username: 4
 };
 
 let loginStrings = {
+  username: " {bold}{blue-fg}Username{/bold}{/blue-fg} ",
   apiKey: " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
-  passphrase: " {bold}{blue-fg}Passphrase{/bold}{/blue-fg} ",
   secret: " {bold}{blue-fg}Secret{/bold}{/blue-fg} ",
   label: " Bitstamp Login ",
   hint: " Press tab to start entry. "
@@ -24,7 +24,7 @@ let loginStrings = {
 var enteredCreds = {
   "apiKey": "",
   "secret": "",
-  "passphrase": ""
+  "username": ""
 };
 
 //  FUNCTIONS
@@ -126,9 +126,11 @@ module.exports = {
     });
 
     // Input Boxes
+
     var keyEntryBox = createPromptBox(loginForm, "apiKey");
     var secretEntryBox = createPromptBox(loginForm, "secret");
-    var passphraseEntryBox = createPromptBox(loginForm, "passphrase");
+    var usernameEntryBox = createPromptBox(loginForm, "username");
+
 
     // Buttons
     var login = blessed.button({
@@ -197,7 +199,7 @@ module.exports = {
       // console.log("Login Pressed.");
       enteredCreds.apiKey = keyEntryBox.content;
       enteredCreds.secret = secretEntryBox.content;
-      enteredCreds.passphrase = passphraseEntryBox.content;
+      enteredCreds.username = usernameEntryBox.content;
 
       if (validateEnteredLoginCreds()) {
         callback(enteredCreds);
@@ -206,10 +208,10 @@ module.exports = {
         // console.log("Invalid input.");
         keyEntryBox.setValue("");
         secretEntryBox.setValue("");
-        passphraseEntryBox.setValue("");
+        usernameEntryBox.setValue("");
         keyEntryBox.style.border.fg = "red";
         secretEntryBox.style.border.fg = "red";
-        passphraseEntryBox.style.border.fg = "red";
+        usernameEntryBox.style.border.fg = "red";
       }
     });
 
