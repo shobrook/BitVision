@@ -31,90 +31,6 @@ quandl_endpoints = {
 }
 
 
-#########
-# HELPERS
-#########
-
-
-def page_config(tree):
-    """
-    Defines a config with XPATH selectors for each article's properties.
-    """
-
-    title = tree.find(".//title").text
-    not_found_filters = ["404", "Not Found", "Not found"]
-    if any(filter in title for filter in not_found_filters):
-        return False  # Checking for broken links
-
-    try:
-        return {
-            "title": tree.xpath("//h3[@class='article-top-title']")[0].text,
-            "date": dateParse(((tree.xpath("//span[@class='article-container-left-timestamp']/text()"))[1]).strip('\n')).strftime("%Y-%m-%d")
-        }
-    except:
-        return {"title": "N/A", "date": "N/A"}
-
-
-def results_config(current_page):
-    """
-    Returns a config for Coindesk's search results page.
-    """
-
-    return {
-        "page_url": ''.join(["https://www.coindesk.com/page/", str(current_page), "/?s=Bitcoin"]),
-        # XPATH for the search result item container
-        "item_XPATH": "//div[@class='post-info']",
-        # XPATH for url to full article, relative from item_XPATH
-        "url_XPATH": "./h3/a",
-        # Whether it's possible to collect datetime objects from the results page
-        "date_on_page": True,
-        "date_ordered": True,
-        "base_url": "https://coindesk.com",
-        "results_per_page": 10,
-        "date_XPATH": "./p[@class='timeauthor']/time" # XPATH for article date, will look for datetime object
-    }
-
-
-def parse_html(url):
-    """
-    Parses HTML into an LXML tree.
-    """
-
-    page = requests.get(url, headers={
-        "accept-encoding": "gzip, deflate, br",
-        "accept-language": "en-US,en;q=0.8",
-        "upgrade-insecure-requests": "1",
-        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        "cache-control": "max-age=0",
-        "authority": "news.bitcoin.com",
-        "cookie": "__cfduid=d784026513c887ec39604c0f35333bb231500736652; PHPSESSID=el5c5j7a26njfvoe2dh6fnrer3; _ga=GA1.2.552908756.1500736659; _gid=GA1.2.2050113212.1500736659"
-    })
-
-    return html.fromstring(page.content)
-
-
-def collect_articles(urls, end_date, filename):
-    """
-    Loops over all the URLs collected in the parent function.
-    """
-
-    for url in urls:
-        tree = parse_html(url)
-        config = page_config(tree)
-
-        try:
-            if end_date and dateParse(config["date"]) < dateParse(end_date):
-                break
-            else:
-                csv_writer = csv.writer(open(os.path.dirname(
-                    os.getcwd()) + "/../cache/" + filename, "a"))
-                csv_writer.writerow(
-                    [config["date"], ftfy.fix_text(config["title"]), url])
-        except:
-            pass
-
-
 #######
 # BUSES
 #######
@@ -159,45 +75,6 @@ def fetch_blockchain_data():
     return transformer("merge_datasets")(dfs[0], dfs[1:])
 
 
-def fetch_coindesk_headlines(end_date):
-    filename = "coindesk_headlines.csv"
-    urls, current_page = [], 1
-    has_next_page, out_of_range = True, False
-
-    while has_next_page and not out_of_range:
-        config = results_config(current_page)
-        tree = parse_html(config["page_url"])
-        items = tree.xpath(config["item_XPATH"])
-
-        for item in items:
-            if config["date_on_page"] and config["date_ordered"] and end_date:
-                date = (dateParse(item.xpath(config["date_XPATH"])[
-                        0].get("datetime"))).strftime("%Y-%m-%d")
-
-                if dateParse(date) <= dateParse(end_date):
-                    out_of_range = True
-
-            url = item.xpath(config["url_XPATH"])[0].get("href")
-
-            if "://" not in url:
-                url = results_config(current_page)["base_url"] + url
-
-            url_filters = ["/videos/", "/audio/",
-                           "/gadfly/", "/features/", "/press-releases/"]
-            if any(filter in url for filter in url_filters):
-                pass
-            else:
-                urls.append(url)
-
-        if len(items) < config["results_per_page"]:
-            has_next_page = False
-
-        collect_articles(urls, source, end_date, filename)
-
-        current_page += 1
-        urls = []
-
-
 def fetch_tweets():
     pass
 
@@ -234,9 +111,5 @@ def dataset(name):
         # return pd.read_csv(path, sep=',')
 
         return fetch_blockchain_data()
-    elif name == "coindesk_headlines":
-        return fetch_coindesk_headlines("2013-01-01")
     elif name == "tweets":
         return fetch_tweets()
-
-fetch_coindesk_headlines("2013-01-01")
