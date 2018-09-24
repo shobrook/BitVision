@@ -34,10 +34,22 @@ def action(name):
             refresh(["portfolio_stats", "transactions"], client)
         elif name == "toggle_algo":  # Toggles algorithmic trading
             cron = CronTab(user=True)
-            job = cron.new(command="python3 __main__.py make_algotrade")
-            job.hour.every(24)
+            job_killed = False
 
-            cron.write()
+            for job in cron:
+                if job.comment == "bitvision_algotrading_job": # Job is already running, kill it
+                    cron.remove(job)
+                    cron.write()
+
+                    job_killed = True
+
+                    break
+
+            if not job_killed: # Job doesn't exist, create it
+                job = cron.new(command="python3 __main__.py make_algotrade", comment="bitvision_algotrading_job")
+                job.hour.every(24)
+
+                cron.write()
         elif name == "make_algotrade":  # Makes a scheduled trade
             balance = client.account_balance()["usd_available"]
             # TODO: Figure out amount w/ the Kelly Criterion
