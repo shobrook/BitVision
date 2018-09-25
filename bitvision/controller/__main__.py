@@ -10,7 +10,7 @@ from bitstamp import Trading
 
 def action(name):
     with open("../cache/config.json") as config:
-        config_dict = json.loads(config)
+        config_dict = json.load(config)
         credentials = config_dict["credentials"]
         client = Trading(
             username=credentials["username"],
@@ -21,9 +21,11 @@ def action(name):
         if name == "authenticate":  # Authenticates Bitstamp credentials
             try:
                 client.account_balance()
-                config.write(json.dumps({**config_dict, **{"logged_in": True}}))
+                config.write(json.dumps(
+                    {**config_dict, **{"logged_in": True}}))
             except:
-                config.write(json.dumps({**config_dict, **{"logged_in": False}}))
+                config.write(json.dumps(
+                    {**config_dict, **{"logged_in": False}}))
         elif name == "monitor_price":  # Updates ticker and graph data
             refresh(["price_data"])
         elif name == "monitor_network":  # Updates technical indicators and blockchain data
@@ -37,21 +39,24 @@ def action(name):
             job_killed = False
 
             for job in cron:
-                if job.comment == "bitvision_algotrading_job": # Job is already running, kill it
+                if job.comment == "bitvision_algotrading_job":  # Job is already running, kill it
                     cron.remove(job)
                     cron.write()
 
                     job_killed = True
-                    config.write(json.dumps({**config_dict, **{"autotrade": {"next-trade-timestamp-UTC": -1, "enabled": False}}}))
+                    config.write(json.dumps(
+                        {**config_dict, **{"autotrade": {"next-trade-timestamp-UTC": -1, "enabled": False}}}))
 
                     break
 
-            if not job_killed: # Job doesn't exist, create it
-                job = cron.new(command="python3 __main__.py make_algotrade", comment="bitvision_algotrading_job")
+            if not job_killed:  # Job doesn't exist, create it
+                job = cron.new(command="python3 __main__.py make_algotrade",
+                               comment="bitvision_algotrading_job")
                 job.hour.every(23)
 
                 cron.write()
-                config.write(json.dumps({**config_dict, **{"autotrade": {"next-trade-timestamp-UTC": str(datetime.utcnow() + timedelta(hours=23)), "enabled": False}}}))
+                config.write(json.dumps({**config_dict, **{"autotrade": {"next-trade-timestamp-UTC": str(
+                    datetime.utcnow() + timedelta(hours=23)), "enabled": False}}}))
         elif name == "make_algotrade":  # Makes a scheduled trade
             balance = client.account_balance()["usd_available"]
             # TODO: Figure out amount w/ the Kelly Criterion
