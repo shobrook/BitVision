@@ -38,7 +38,6 @@ cli.version(VERSION, "-v, --version").parse(process.argv);
  */
 function readJsonFile(path) {
   // console.log("Reading " + path);
-  // TODO: Test this waiting function
   if (!fs.existsSync(path)) {
     setTimeout(function () {
       readJsonFile(path);
@@ -315,11 +314,11 @@ function getDataFromJsonFiles() {
 
 function reformatPriceData(priceData) {
   return [
-    ["Price", String(priceData.last)],
+    ["Price ($)", String(priceData.last)],
     ["Volume", String(priceData.volume)],
-    ["24H Low", String(priceData.low)],
-    ["24H High", String(priceData.high)],
-    ["Open Price", String(priceData.open)]
+    ["24H Low ($)", String(priceData.low)],
+    ["24H High ($)", String(priceData.high)],
+    ["Open Price ($)", String(priceData.open)]
   ];
 }
 
@@ -419,7 +418,7 @@ function buildChartData(priceData) {
 // ** Bless up -> 3x preach emoji **
 // ---------------------------------
 
-// Placeholders
+// Globals
 var screen = null;
 var grid = null;
 var headlinesTable = null;
@@ -523,7 +522,6 @@ function buildInterface() {
         keys: ["l"],
         callback: () => {
           loginEntryStatus = true;
-          // console.log("Login");
           displayLoginScreen(() => {
             setTimeout(function () {
               if (!getConfig().logged_in) {
@@ -550,7 +548,6 @@ function buildInterface() {
       "Make a Trade": {
         keys: ["t"],
         callback: () => {
-          // console.log("Buy/Sell BTC");
           if (credentialsExist()) {
             tradeEntryStatus = true;
             transaction.createTransactionScreen(screen, function (amount, type) {
@@ -705,14 +702,14 @@ function doThings() {
   //   refreshData("CHART");
   // }, 3000)
 
-  // call the rest of the code and have it execute after 5 seconds
+  // call the rest of the code and have it execute after 8 seconds
   setTimeout(function () {
     buildInterface();
 
     setInterval(function () {
       refreshInterface();
     }, 3000);
-  }, 4000);
+  }, 8000);
 }
 
 doThings();
