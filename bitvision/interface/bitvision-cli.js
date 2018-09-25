@@ -7,7 +7,7 @@ let colors = require("colors");
 let openBrowser = require("opn");
 let blessed = require("blessed");
 let contrib = require("blessed-contrib");
-let spawn = require("child-process-promise").spawn;
+let { spawn } = require("child-process-promise");
 
 // LOCAL IMPORTS
 // TODO: Restructure imports like this.
@@ -39,7 +39,7 @@ cli.version(VERSION, "-v, --version").parse(process.argv);
 function readJsonFile(path) {
   // console.log("Reading " + path);
   if (!fs.existsSync(path)) {
-    setTimeout(function () {
+    setTimeout(function() {
       readJsonFile(path);
     }, 2000);
   } else {
@@ -68,18 +68,14 @@ function executeShellCommand(command) {
   let args = command.split(" ");
   let program = args.splice(0, 1)[0];
 
-  // console.log(args);
-  // console.log(program);
-  var promise = spawn(program, args);
-  var childProcess = promise.childProcess;
-
-  promise
-    .then(function () {
-      // console.log('[spawn] done!');
-    })
-    .catch(function (err) {
-      // console.log('[spawn] ERROR: ', err);
-    });
+  let spawnedProcess = spawn(program, args, { detached: true });
+  spawnedProcess.then(() => {}).catch(err => {
+    if (screen) {
+      errorEntryStatus = true;
+      error.createErrorScreen(screen);
+      errorEntryStatus = false;
+    }
+  });
 }
 
 /**
@@ -221,7 +217,7 @@ function displayLoginScreen(callback) {
 
 function showAutotradingMenu() {
   // console.log("Autotrading Menu");
-  autotrading.createToggleScreen(screen, function (isEnabling) {
+  autotrading.createToggleScreen(screen, function(isEnabling) {
     let cfg = getConfig();
     // console.log(`Enabling: ${isEnabling}`)
     let isCurrentlyEnabled = cfg.autotrade.enabled;
@@ -292,8 +288,12 @@ function getDataFromJsonFiles() {
   let technicalData = readJsonFile(constants.paths.technicalDataPath).data;
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
-  let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
-  let chartData = buildChartData(readJsonFile(constants.paths.graphDataPath).data);
+  let priceData = reformatPriceData(
+    readJsonFile(constants.paths.priceDataPath).data
+  );
+  let chartData = buildChartData(
+    readJsonFile(constants.paths.graphDataPath).data
+  );
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -302,10 +302,23 @@ function getDataFromJsonFiles() {
     "Buy Accuracy",
     "Sell Accuracy",
     "Total Trades"
-  ]
-  let portfolioData = reformatPortfolioData(readJsonFile(constants.paths.portfolioDataPath).data, portfolioDataKeys)
-  let transactionsData = readJsonFile(constants.paths.transactionsDataPath).data
-  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData]
+  ];
+  let portfolioData = reformatPortfolioData(
+    readJsonFile(constants.paths.portfolioDataPath).data,
+    portfolioDataKeys
+  );
+  let transactionsData = readJsonFile(constants.paths.transactionsDataPath)
+    .data;
+  return [
+    headlineData,
+    technicalData,
+    gaugeData,
+    blockchainData,
+    priceData,
+    portfolioData,
+    transactionsData,
+    chartData
+  ];
 }
 
 //--------------------------
@@ -430,7 +443,7 @@ var priceTable = null;
 var exchangeRateChart = null;
 var transactionsTable = null;
 var menubar = null;
-var URLs = null
+var URLs = null;
 
 /**
  * Replacing globals with blessed widgets.
@@ -461,9 +474,23 @@ function buildInterface() {
 
   // Place 3 tables and a gauge on the left side of the screen, stacked vertically.
 
-  headlinesTable = grid.set(0, 0, 10, 13, blessed.ListTable, createTable("center", true, null));
+  headlinesTable = grid.set(
+    0,
+    0,
+    10,
+    13,
+    blessed.ListTable,
+    createTable("center", true, null)
+  );
   headlinesTable.focus();
-  technicalIndicatorsTable = grid.set(10, 0, 9, 13, blessed.ListTable, createTable("left", false, padding));
+  technicalIndicatorsTable = grid.set(
+    10,
+    0,
+    9,
+    13,
+    blessed.ListTable,
+    createTable("left", false, padding)
+  );
 
   technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
     label: " Buy/Sell Gauge ".bold.red,
@@ -472,7 +499,12 @@ function buildInterface() {
     showLabel: true
   });
 
-  blockchainIndicatorsTable = grid.set(26, 0, 10, 13, blessed.ListTable,
+  blockchainIndicatorsTable = grid.set(
+    26,
+    0,
+    10,
+    13,
+    blessed.ListTable,
     createTable("left", false, padding)
   );
 
@@ -493,13 +525,30 @@ function buildInterface() {
 
   // Price table and console under chart.
 
-  priceTable = grid.set(26, 29, 10, 7, blessed.ListTable, createTable("left", false, padding));
-
-  portfolioTable = grid.set(26, 13, 10, 7, blessed.ListTable,
+  priceTable = grid.set(
+    26,
+    29,
+    10,
+    7,
+    blessed.ListTable,
     createTable("left", false, padding)
   );
 
-  transactionsTable = grid.set(26, 20, 10, 9, blessed.ListTable,
+  portfolioTable = grid.set(
+    26,
+    13,
+    10,
+    7,
+    blessed.ListTable,
+    createTable("left", false, padding)
+  );
+
+  transactionsTable = grid.set(
+    26,
+    20,
+    10,
+    9,
+    blessed.ListTable,
     createTable("left", false, padding)
   );
 
@@ -518,12 +567,12 @@ function buildInterface() {
       }
     },
     commands: {
-      "Login": {
+      Login: {
         keys: ["l"],
         callback: () => {
           loginEntryStatus = true;
           displayLoginScreen(() => {
-            setTimeout(function () {
+            setTimeout(function() {
               if (!getConfig().logged_in) {
                 errorEntryStatus = true;
                 error.createErrorScreen(screen);
@@ -550,7 +599,7 @@ function buildInterface() {
         callback: () => {
           if (credentialsExist()) {
             tradeEntryStatus = true;
-            transaction.createTransactionScreen(screen, function (amount, type) {
+            transaction.createTransactionScreen(screen, function(amount, type) {
               // Pass order to backend
               executeTrade(amount, type);
               tradeEntryStatus = false;
@@ -560,24 +609,24 @@ function buildInterface() {
           }
         }
       },
-      "Help": {
+      Help: {
         keys: ["h"],
         callback: () => {
           if (!helpActiveStatus) {
             helpActiveStatus = true;
             help.createHelpScreen(screen, VERSION, () => {
               helpActiveStatus = false;
-            })
+            });
           }
         }
       },
-      "Logout": {
+      Logout: {
         keys: ["k"],
         callback: () => {
           clearCredentials();
         }
       },
-      "Exit": {
+      Exit: {
         keys: ["C-c", "escape"],
         callback: () => process.exit(0)
       }
@@ -585,7 +634,7 @@ function buildInterface() {
   });
 
   // Resizing
-  screen.on("resize", function () {
+  screen.on("resize", function() {
     technicalIndicatorsTable.emit("attach");
     blockchainIndicatorsTable.emit("attach");
     headlinesTable.emit("attach");
@@ -596,7 +645,7 @@ function buildInterface() {
   });
 
   // Open article
-  screen.key(["enter"], function (ch, key) {
+  screen.key(["enter"], function(ch, key) {
     if (!tradeEntryStatus && !loginEntryStatus && !errorEntryStatus) {
       let selectedArticleURL = URLs[headlinesTable.selected - 1];
       openBrowser(selectedArticleURL);
@@ -604,7 +653,7 @@ function buildInterface() {
   });
 
   // Quit
-  screen.key(["escape", "C-c"], function (ch, key) {
+  screen.key(["escape", "C-c"], function(ch, key) {
     return process.exit(0);
   });
 }
@@ -616,7 +665,15 @@ function buildInterface() {
 /**
  * Set all tables with data.
  */
-function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio, transactions) {
+function setAllTables(
+  headlines,
+  technicals,
+  gaugeData,
+  blockchains,
+  prices,
+  portfolio,
+  transactions
+) {
   // console.log("SetAllTables");
 
   // Set headers for each table.
@@ -630,28 +687,46 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   // Set data
   headlinesTable.setData(headlines);
   technicalIndicatorsTable.setData(technicals);
-  technicalIndicatorsGauge.setStack([{
-    percent: gaugeData[0],
-    stroke: "red"
-  },
-  {
-    percent: gaugeData[1],
-    stroke: "green"
-  }
+  technicalIndicatorsGauge.setStack([
+    {
+      percent: gaugeData[0],
+      stroke: "red"
+    },
+    {
+      percent: gaugeData[1],
+      stroke: "green"
+    }
   ]);
   blockchainIndicatorsTable.setData(blockchains);
   priceTable.setData(prices);
   portfolioTable.setData(portfolio);
   if (transactions.length == 1) {
-    transactions.splice(1, 0, ["NO", "TRANSACTION", "DATA"])
+    transactions.splice(1, 0, ["NO", "TRANSACTION", "DATA"]);
   }
   transactionsTable.setData(transactions);
   screen.render();
 }
 
 function refreshInterface() {
-  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData] = getDataFromJsonFiles();
-  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData);
+  let [
+    headlineData,
+    technicalData,
+    gaugeData,
+    blockchainData,
+    priceData,
+    portfolioData,
+    transactionsData,
+    chartData
+  ] = getDataFromJsonFiles();
+  setAllTables(
+    headlineData,
+    technicalData,
+    gaugeData,
+    blockchainData,
+    priceData,
+    portfolioData,
+    transactionsData
+  );
   exchangeRateChart.setData(chartData);
 }
 
@@ -677,18 +752,18 @@ function doThings() {
   refreshData("NETWORK");
   refreshData("TICKER");
 
-  setInterval(function () {
+  setInterval(function() {
     refreshData("NETWORK");
   }, 15000); // 15 sec
 
-  setInterval(function () {
+  setInterval(function() {
     // console.log("HEADLINES REFRESH");
     refreshData("HEADLINES");
   }, 900000); // 15 min
 
-  setInterval(function () {
+  setInterval(function() {
     refreshData("TICKER");
-  }, 2000)
+  }, 2000);
 
   // setInterval(function() {
   //   refreshData("PORTFOLIO");
@@ -703,10 +778,10 @@ function doThings() {
   // }, 3000)
 
   // call the rest of the code and have it execute after 8 seconds
-  setTimeout(function () {
+  setTimeout(function() {
     buildInterface();
 
-    setInterval(function () {
+    setInterval(function() {
       refreshInterface();
     }, 3000);
   }, 8000);
