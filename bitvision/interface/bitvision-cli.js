@@ -40,7 +40,7 @@ function readJsonFile(path) {
   // console.log("Reading " + path);
   // TODO: Test this waiting function
   if (!fs.existsSync(path)) {
-    setTimeout(function() {
+    setTimeout(function () {
       readJsonFile(path);
     }, 2000);
   } else {
@@ -75,10 +75,10 @@ function executeShellCommand(command) {
   var childProcess = promise.childProcess;
 
   promise
-    .then(function() {
+    .then(function () {
       // console.log('[spawn] done!');
     })
-    .catch(function(err) {
+    .catch(function (err) {
       // console.log('[spawn] ERROR: ', err);
     });
 }
@@ -222,7 +222,7 @@ function displayLoginScreen(callback) {
 
 function showAutotradingMenu() {
   // console.log("Autotrading Menu");
-  autotrading.createToggleScreen(screen, function(isEnabling) {
+  autotrading.createToggleScreen(screen, function (isEnabling) {
     let cfg = getConfig();
     // console.log(`Enabling: ${isEnabling}`)
     let isCurrentlyEnabled = cfg.autotrade.enabled;
@@ -324,9 +324,17 @@ function reformatPriceData(priceData) {
 }
 
 function reformatPortfolioData(portfolioData, titles) {
-  return titles.map((title, idx) => {
+  let formattedData = titles.map((title, idx) => {
     return [title, Object.values(portfolioData)[idx]];
   });
+
+  let autotrading_cfg = getConfig().autotrade;
+  let enabled = ["Autotrading Enabled", autotrading_cfg.enabled];
+  // BUG: idk why this doesn't ever seem to work.
+  let nextTradeTime = ["Next Trade Time", autotrading_cfg.nextTradeTime];
+  formattedData.push(enabled);
+  formattedData.push(nextTradeTime);
+  return formattedData;
 }
 
 /**
@@ -488,11 +496,11 @@ function buildInterface() {
 
   priceTable = grid.set(26, 29, 10, 7, blessed.ListTable, createTable("left", false, padding));
 
-  portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable,
+  portfolioTable = grid.set(26, 13, 10, 7, blessed.ListTable,
     createTable("left", false, padding)
   );
 
-  transactionsTable = grid.set(26, 19, 10, 10, blessed.ListTable,
+  transactionsTable = grid.set(26, 20, 10, 9, blessed.ListTable,
     createTable("left", false, padding)
   );
 
@@ -517,7 +525,7 @@ function buildInterface() {
           loginEntryStatus = true;
           // console.log("Login");
           displayLoginScreen(() => {
-            setTimeout(function() {
+            setTimeout(function () {
               if (!getConfig().logged_in) {
                 errorEntryStatus = true;
                 error.createErrorScreen(screen);
@@ -545,7 +553,7 @@ function buildInterface() {
           // console.log("Buy/Sell BTC");
           if (credentialsExist()) {
             tradeEntryStatus = true;
-            transaction.createTransactionScreen(screen, function(amount, type) {
+            transaction.createTransactionScreen(screen, function (amount, type) {
               // Pass order to backend
               executeTrade(amount, type);
               tradeEntryStatus = false;
@@ -580,7 +588,7 @@ function buildInterface() {
   });
 
   // Resizing
-  screen.on("resize", function() {
+  screen.on("resize", function () {
     technicalIndicatorsTable.emit("attach");
     blockchainIndicatorsTable.emit("attach");
     headlinesTable.emit("attach");
@@ -591,7 +599,7 @@ function buildInterface() {
   });
 
   // Open article
-  screen.key(["enter"], function(ch, key) {
+  screen.key(["enter"], function (ch, key) {
     if (!tradeEntryStatus && !loginEntryStatus && !errorEntryStatus) {
       let selectedArticleURL = URLs[headlinesTable.selected - 1];
       openBrowser(selectedArticleURL);
@@ -599,7 +607,7 @@ function buildInterface() {
   });
 
   // Quit
-  screen.key(["escape", "C-c"], function(ch, key) {
+  screen.key(["escape", "C-c"], function (ch, key) {
     return process.exit(0);
   });
 }
@@ -626,13 +634,13 @@ function setAllTables(headlines, technicals, gaugeData, blockchains, prices, por
   headlinesTable.setData(headlines);
   technicalIndicatorsTable.setData(technicals);
   technicalIndicatorsGauge.setStack([{
-      percent: gaugeData[0],
-      stroke: "red"
-    },
-    {
-      percent: gaugeData[1],
-      stroke: "green"
-    }
+    percent: gaugeData[0],
+    stroke: "red"
+  },
+  {
+    percent: gaugeData[1],
+    stroke: "green"
+  }
   ]);
   blockchainIndicatorsTable.setData(blockchains);
   priceTable.setData(prices);
@@ -672,16 +680,16 @@ function doThings() {
   refreshData("NETWORK");
   refreshData("TICKER");
 
-  setInterval(function() {
+  setInterval(function () {
     refreshData("NETWORK");
   }, 15000); // 15 sec
 
-  setInterval(function() {
+  setInterval(function () {
     // console.log("HEADLINES REFRESH");
     refreshData("HEADLINES");
   }, 900000); // 15 min
 
-  setInterval(function() {
+  setInterval(function () {
     refreshData("TICKER");
   }, 2000)
 
@@ -698,10 +706,10 @@ function doThings() {
   // }, 3000)
 
   // call the rest of the code and have it execute after 5 seconds
-  setTimeout(function() {
+  setTimeout(function () {
     buildInterface();
 
-    setInterval(function() {
+    setInterval(function () {
       refreshInterface();
     }, 3000);
   }, 4000);
