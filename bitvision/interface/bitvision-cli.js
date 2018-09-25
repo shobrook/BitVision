@@ -95,7 +95,7 @@ function executeTrade(amount, type) {
   };
   let cmd = `${constants.commands.transaction}${payload}`;
   // console.log(`Executing: ${cmd}`);
-  // // TODO: Uncomment
+  // TODO: Uncomment
   // executeShellCommand(cmd)
 }
 
@@ -219,37 +219,20 @@ function displayLoginScreen(callback) {
   });
 }
 
-function showAutotradingMenu() {
+function autotradingToggle() {
   // console.log("Autotrading Menu");
-  autotrading.createToggleScreen(screen, function (isEnabling) {
-    let cfg = getConfig();
-    // console.log(`Enabling: ${isEnabling}`)
-    let isCurrentlyEnabled = cfg.autotrade.enabled;
+  let cfg = getConfig();
+  cfg.autotrade.enabled = !cfg.autotrade.enabled
+  if (cfg.autotrade.enabled) {
+    // console.log("Enabling autotrading.");
+    cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(1);
+  }
+  else {
+    cfg.autotrade["next-trade-timestamp-UTC"] = 0;
+  }
 
-    // Setting autotrading to the same state should do nothing.
-    if (
-      (isEnabling && isCurrentlyEnabled) ||
-      (!isEnabling && !isCurrentlyEnabled)
-    ) {
-      // console.log("Redundant autotrading change.");
-      return;
-    }
-
-    // Autotrading disabled, so reset all properties to default
-    if (!isEnabling) {
-      // console.log("Disabling autotrading.");
-      cfg.autotrade.enabled = false;
-      cfg.autotrade["next-trade-timestamp-UTC"] = 0;
-    } else {
-      // Autotrading enabled, so set next trade timestamp for +1 hr from now.
-      // console.log("Enabling autotrading.");
-      cfg.autotrade.enabled = true;
-      cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(24);
-    }
-
-    // Store updated configuration
-    writeJsonFile(constants.paths.configPath, cfg);
-  });
+  // Store updated configuration
+  writeJsonFile(constants.paths.configPath, cfg);
 }
 
 //--------------------------
@@ -413,6 +396,100 @@ function buildChartData(priceData) {
   };
 }
 
+function buildMenu() {
+  let login = {
+    "Login": {
+      keys: ["l"],
+      callback: () => {
+        loginEntryStatus = true;
+        displayLoginScreen(() => {
+          setTimeout(function () {
+            if (!getConfig().logged_in) {
+              errorEntryStatus = true;
+              error.createErrorScreen(screen);
+              errorEntryStatus = false;
+            }
+            loginEntryStatus = false;
+          }, 1000);
+        });
+      }
+    }
+  }
+
+  let logout = {
+    "Logout": {
+      keys: ["k"],
+      callback: () => {
+        clearCredentials();
+      }
+    }
+  }
+
+  let cmds = {
+    "Make a Trade": {
+      keys: ["t"],
+      callback: () => {
+        if (credentialsExist()) {
+          tradeEntryStatus = true;
+          transaction.createTransactionScreen(screen, function (amount, type) {
+            // Pass order to backend
+            executeTrade(amount, type);
+            tradeEntryStatus = false;
+          });
+        } else {
+          displayLoginScreen();
+        }
+      }
+    },
+    "Help": {
+      keys: ["h"],
+      callback: () => {
+        if (!helpActiveStatus) {
+          helpActiveStatus = true;
+          help.createHelpScreen(screen, VERSION, () => {
+            helpActiveStatus = false;
+          })
+        }
+      }
+    },
+    "Exit": {
+      keys: ["C-c", "escape"],
+      callback: () => process.exit(0)
+    }
+  }
+
+  let cfg = getConfig()
+  let autotrading = {}
+  if (!cfg.autotrade.enabled) {
+    autotrading = {
+      "Toggle Autotrading: (OFF)": {
+        keys: ["a"],
+        callback: () => {
+          autotradingToggle();
+        }
+      }
+    }
+  } else if (cfg.logged_in) {
+    autotrading = {
+      "Toggle Autotrading: (ON)": {
+        keys: ["a"],
+        callback: () => {
+          autotradingToggle();
+        }
+      }
+    }
+  }
+
+  // Store updated configuration
+  writeJsonFile(constants.paths.configPath, cfg);
+
+  if (cfg.logged_in) {
+    return cmds = { ...cmds, ...autotrading, ...logout };
+  } else {
+    return cmds = { ...login, ...autotrading, ...cmds };
+  }
+}
+
 // ---------------------------------
 // BUILDING BLESSED INTERFACE
 // ** Bless up -> 3x preach emoji **
@@ -517,71 +594,7 @@ function buildInterface() {
         fg: "yellow"
       }
     },
-    commands: {
-      "Login": {
-        keys: ["l"],
-        callback: () => {
-          loginEntryStatus = true;
-          displayLoginScreen(() => {
-            setTimeout(function () {
-              if (!getConfig().logged_in) {
-                errorEntryStatus = true;
-                error.createErrorScreen(screen);
-                errorEntryStatus = false;
-              }
-              loginEntryStatus = false;
-            }, 1000);
-          });
-        }
-      },
-      "Toggle Autotrading": {
-        keys: ["a"],
-        callback: () => {
-          if (credentialsExist()) {
-            showAutotradingMenu();
-          } else {
-            displayLoginScreen();
-            showAutotradingMenu();
-          }
-        }
-      },
-      "Make a Trade": {
-        keys: ["t"],
-        callback: () => {
-          if (credentialsExist()) {
-            tradeEntryStatus = true;
-            transaction.createTransactionScreen(screen, function (amount, type) {
-              // Pass order to backend
-              executeTrade(amount, type);
-              tradeEntryStatus = false;
-            });
-          } else {
-            displayLoginScreen();
-          }
-        }
-      },
-      "Help": {
-        keys: ["h"],
-        callback: () => {
-          if (!helpActiveStatus) {
-            helpActiveStatus = true;
-            help.createHelpScreen(screen, VERSION, () => {
-              helpActiveStatus = false;
-            })
-          }
-        }
-      },
-      "Logout": {
-        keys: ["k"],
-        callback: () => {
-          clearCredentials();
-        }
-      },
-      "Exit": {
-        keys: ["C-c", "escape"],
-        callback: () => process.exit(0)
-      }
-    }
+    commands: buildMenu()
   });
 
   // Resizing
