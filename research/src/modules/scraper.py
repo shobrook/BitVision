@@ -61,33 +61,20 @@ def fetch_price_data():
 # News Headlines #
 
 
-def page_config(source, tree):
+def page_config(tree):
     """Defines a config with XPATH selectors for each article's properties."""
     title = tree.find(".//title").text
     not_found_filters = ["404", "Not Found", "Not found"]
     if any(filter in title for filter in not_found_filters):
         return False  # Checking for broken links
 
-    if source == "news_bitcoin":
-        try:
-            config = {
-                "title": tree.xpath('//h1[@class="entry-title"]')[0].text,
-                "date": dateParse(tree.xpath('//meta[@property="article:published_time"]')[0].get("content")).strftime("%Y-%m-%d")
-            }
-        except:
-            config = {"title": "N/A", "date": "N/A"}
-    elif source == "coindesk":
-        try:
-            config = {
-                "title": tree.xpath('//h3[@class="article-top-title"]')[0].text,
-                "date": dateParse(((tree.xpath('//span[@class="article-container-left-timestamp"]/text()'))[1]).strip("\n")).strftime("%Y-%m-%d")
-            }
-        except:
-            config = {"title": "N/A", "date": "N/A"}
-    else:
+    try:
+        config = {
+            "title": tree.xpath('//h3[@class="article-top-title"]')[0].text,
+            "date": dateParse(((tree.xpath('//span[@class="article-container-left-timestamp"]/text()'))[1]).strip("\n")).strftime("%Y-%m-%d")
+        }
+    except:
         config = {"title": "N/A", "date": "N/A"}
-
-    print(config)
 
     return config
 
@@ -133,14 +120,12 @@ def parse_html(url):
     return html.fromstring(page.content)
 
 
-def collect_articles(urls, source, end_date, filename):
+def collect_articles(urls, end_date, filename):
     """Loops over all the URLs collected in the parent function."""
-
-    print(urls)
 
     for url in urls:
         tree = parse_html(url)
-        config = page_config(source, tree)
+        config = page_config(tree)
 
         try:
             if end_date and dateParse(config["date"]) < dateParse(end_date):
@@ -153,29 +138,29 @@ def collect_articles(urls, source, end_date, filename):
             pass
 
 
-def get_article_urls(source, end_date):
+def get_article_urls(end_date):
     """Main function."""
-    filename = source.lower() + "_headlines.csv"
+    filename = "coindesk_headlines.csv"
     urls, current_page = [], 1
     has_next_page, out_of_range = True, False
 
     while has_next_page and not out_of_range:
         config = results_config(current_page)
-        tree = parse_html(config[source]["page_url"])
-        items = tree.xpath(config[source]["item_XPATH"])
+        tree = parse_html(config["coindesk"]["page_url"])
+        items = tree.xpath(config["coindesk"]["item_XPATH"])
 
         for item in items:
-            if config[source]["date_on_page"] and config[source]["date_ordered"] and end_date:
-                date = (dateParse(item.xpath(config[source]["date_XPATH"])[
+            if config["coindesk"]["date_on_page"] and config["coindesk"]["date_ordered"] and end_date:
+                date = (dateParse(item.xpath(config["coindesk"]["date_XPATH"])[
                         0].get("datetime"))).strftime("%Y-%m-%d")
 
                 if dateParse(date) <= dateParse(end_date):
                     out_of_range = True
 
-            url = item.xpath(config[source]["url_XPATH"])[0].get("href")
+            url = item.xpath(config["coindesk"]["url_XPATH"])[0].get("href")
 
             if "://" not in url:
-                url = results_config(current_page)[source]["base_url"] + url
+                url = results_config(current_page)["coindesk"]["base_url"] + url
 
             url_filters = ["/videos/", "/audio/", "/gadfly/", "/features/", "/press-releases/"]
             if any(filter in url for filter in url_filters):
@@ -183,21 +168,17 @@ def get_article_urls(source, end_date):
             else:
                 urls.append(url)
 
-        if len(items) < config[source]["results_per_page"]:
+        if len(items) < config["coindesk"]["results_per_page"]:
             has_next_page = False
 
-        collect_articles(urls, source, end_date, filename)
+        collect_articles(urls, end_date, filename)
 
         current_page += 1
         urls = []
 
 
-def scrape_headlines(end_date):
-    for source in ["news_bitcoin", "coindesk"]:
-        get_article_urls(source, end_date)
-        #process = multiprocessing.Process(target=get_article_urls, args=(source, end_date))
-        # process.start()
-    return 0
+def scrape_headlines(end_date): # TODO: Remove this
+    get_article_urls(end_date)
 
 
 # Fetching and Caching #

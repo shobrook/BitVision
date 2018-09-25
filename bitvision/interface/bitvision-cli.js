@@ -17,11 +17,14 @@ let login = require("./popups/login");
 let help = require("./popups/help");
 let transaction = require("./popups/transaction");
 let autotrading = require("./popups/autotrading");
+let error = require("./popups/error");
 let VERSION = require("../package.json").version;
 
 // GLOBALS
 var helpActiveStatus = false;
 var tradeEntryStatus = false;
+var loginEntryStatus = false;
+var errorEntryStatus = false;
 
 // Display version with CLI args
 cli.version(VERSION, "-v, --version").parse(process.argv);
@@ -34,19 +37,26 @@ cli.version(VERSION, "-v, --version").parse(process.argv);
  * Read JSON file and return the data if it exists, false otherwise
  */
 function readJsonFile(path) {
-  // logs.log("Reading " + path);
-  let jsonFile = fs.readFileSync(path, "utf8");
-  while (!jsonFile) {
-    jsonFile = fs.readFileSync(path, "utf8");
+  // console.log("Reading " + path);
+  // TODO: Test this waiting function
+  if (!fs.existsSync(path)) {
+    setTimeout(function() {
+      readJsonFile(path);
+    }, 2000);
+  } else {
+    let jsonFile = fs.readFileSync(path, "utf8");
+    while (!jsonFile) {
+      jsonFile = fs.readFileSync(path, "utf8");
+    }
+    return JSON.parse(jsonFile);
   }
-  return JSON.parse(jsonFile);
 }
 
 /**
  * Writes data to file at path.
  */
 function writeJsonFile(path, data) {
-  // logs.log(`WRITING: at ${path}`);
+  // console.log(`WRITING: at ${path}`);
   fs.writeFileSync(path, JSON.stringify(data, null, 2), "utf8");
 }
 
@@ -59,7 +69,7 @@ function executeShellCommand(command) {
   let args = command.split(" ");
   let program = args.splice(0, 1)[0];
 
-  // logs.log(args);
+  // console.log(args);
   // console.log(program);
   var promise = spawn(program, args);
   var childProcess = promise.childProcess;
@@ -85,7 +95,8 @@ function executeTrade(amount, type) {
     type: type
   };
   let cmd = `${constants.commands.transaction}${payload}`;
-  logs.log(`Executing: ${cmd}`);
+  // console.log(`Executing: ${cmd}`);
+  // // TODO: Uncomment
   // executeShellCommand(cmd)
 }
 
@@ -98,8 +109,8 @@ function getTimeXHoursFromNow(hours) {
   let currentTime = new Date();
   let futureTime = new Date(currentTime);
   futureTime.setHours(currentTime.getHours() + hours);
-  // logs.log(`CurrentTime: ${currentTime.toJSON()}`)
-  // logs.log(`FutureTime : ${futureTime.toJSON()}`)
+  // console.log(`CurrentTime: ${currentTime.toJSON()}`)
+  // console.log(`FutureTime : ${futureTime.toJSON()}`)
   return futureTime.toJSON();
 }
 
@@ -128,7 +139,7 @@ function clearCredentials() {
     if (err) {
       throw err;
     }
-    logs.log("Login credentials cleared.");
+    // console.log("Login credentials cleared.");
   });
 }
 
@@ -137,7 +148,7 @@ function clearCredentials() {
  * @return {Bool} Returns true if all creds exist, false otherwise.
  */
 function credentialsExist() {
-  // logs.log("Checking for credentials in config...");
+  // console.log("Checking for credentials in config...");
   let creds = getConfig().credentials;
   return !(creds.key === "" || creds.secret !== "" || creds.passphrase !== "");
 }
@@ -146,11 +157,11 @@ function credentialsExist() {
  * Creates dotfile with default values if it doesn't exist.
  */
 function createConfigIfNeeded() {
-  // logs.log("CHECKING FOR DOTFILE");
+  // console.log("CHECKING FOR DOTFILE");
   if (fs.existsSync(constants.paths.configPath)) {
     return;
   } else {
-    // logs.log("No dotfile found. Creating DEFAULT.");
+    // console.log("No dotfile found. Creating DEFAULT.");
     writeJsonFile(constants.paths.configPath, constants.baseConfig);
   }
 }
@@ -195,25 +206,25 @@ function createTable(alignment, isInteractive, padding) {
 /**
  * Display login screen, allowing user to replace credentials.
  */
-// TODO: Something with this callback to check if login successful
 function displayLoginScreen(callback) {
-  logs.log("DISPLAY LOGIN SCREEN");
+  // console.log("DISPLAY LOGIN SCREEN");
   login.createLoginScreen(screen, creds => {
     if (creds != null) {
-      logs.log("New creds, saving.");
+      // console.log("New creds, saving.");
       saveCredentials(creds);
       executeShellCommand(constants.commands.check_login);
+      callback();
     } else {
-      logs.log("No creds, abort.");
+      // console.log("No creds, abort.");
     }
   });
 }
 
 function showAutotradingMenu() {
-  logs.log("Autotrading Menu");
+  // console.log("Autotrading Menu");
   autotrading.createToggleScreen(screen, function(isEnabling) {
     let cfg = getConfig();
-    // logs.log(`Enabling: ${isEnabling}`)
+    // console.log(`Enabling: ${isEnabling}`)
     let isCurrentlyEnabled = cfg.autotrade.enabled;
 
     // Setting autotrading to the same state should do nothing.
@@ -221,18 +232,18 @@ function showAutotradingMenu() {
       (isEnabling && isCurrentlyEnabled) ||
       (!isEnabling && !isCurrentlyEnabled)
     ) {
-      logs.log("Redundant autotrading change.");
+      // console.log("Redundant autotrading change.");
       return;
     }
 
     // Autotrading disabled, so reset all properties to default
     if (!isEnabling) {
-      logs.log("Disabling autotrading.");
+      // console.log("Disabling autotrading.");
       cfg.autotrade.enabled = false;
       cfg.autotrade["next-trade-timestamp-UTC"] = 0;
     } else {
       // Autotrading enabled, so set next trade timestamp for +1 hr from now.
-      logs.log("Enabling autotrading.");
+      // console.log("Enabling autotrading.");
       cfg.autotrade.enabled = true;
       cfg.autotrade["next-trade-timestamp-UTC"] = getTimeXHoursFromNow(24);
     }
@@ -258,15 +269,11 @@ function refreshData(type) {
     case "HEADLINES":
       executeShellCommand(constants.commands.refresh_headlines);
       break;
-    case "PRICE":
-      executeShellCommand(constants.commands.refresh_price);
+    case "TICKER":
+      executeShellCommand(constants.commands.refresh_ticker);
       break;
     case "PORTFOLIO":
       executeShellCommand(constants.commands.refresh_portfolio);
-      break;
-    // TODO: Decide if we need this.
-    case "CHART":
-      executeShellCommand(constants.commands.refresh_price);
       break;
   }
 }
@@ -275,7 +282,7 @@ function refreshData(type) {
  * Gets updated data for blockchain, technical indicators, headlines and price.
  */
 function getDataFromJsonFiles() {
-  // logs.log("getDataFromJson..");
+  // console.log("getDataFromJson..");
   // TODO: Scale max headline length
   let maxHeadlineLength = 35;
   let headlineData = trimHeadlines(
@@ -286,12 +293,8 @@ function getDataFromJsonFiles() {
   let technicalData = readJsonFile(constants.paths.technicalDataPath).data;
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = readJsonFile(constants.paths.blockchainDataPath).data;
-  let priceData = reformatPriceData(
-    readJsonFile(constants.paths.priceDataPath).data
-  );
-  let chartData = buildChartData(
-    readJsonFile(constants.paths.graphDataPath).data
-  );
+  let priceData = reformatPriceData(readJsonFile(constants.paths.priceDataPath).data);
+  let chartData = buildChartData(readJsonFile(constants.paths.graphDataPath).data);
   let portfolioDataKeys = [
     "Account Balance",
     "Returns",
@@ -300,23 +303,10 @@ function getDataFromJsonFiles() {
     "Buy Accuracy",
     "Sell Accuracy",
     "Total Trades"
-  ];
-  let portfolioData = reformatPortfolioData(
-    readJsonFile(constants.paths.portfolioDataPath).data,
-    portfolioDataKeys
-  );
-  let transactionsData = readJsonFile(constants.paths.transactionsDataPath)
-    .data;
-  return [
-    headlineData,
-    technicalData,
-    gaugeData,
-    blockchainData,
-    priceData,
-    portfolioData,
-    transactionsData,
-    chartData
-  ];
+  ]
+  let portfolioData = reformatPortfolioData(readJsonFile(constants.paths.portfolioDataPath).data, portfolioDataKeys)
+  let transactionsData = readJsonFile(constants.paths.transactionsDataPath).data
+  return [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData]
 }
 
 //--------------------------
@@ -348,7 +338,7 @@ function reformatPortfolioData(portfolioData, titles) {
  *  [!,@,#]]
  */
 function extractUrlAndRemove(listOfArticles) {
-  // logs.log(listOfArticles)
+  // console.log(listOfArticles)
   let urls = [];
   let index = 3;
   for (var i = 0; i < listOfArticles.length; i++) {
@@ -374,7 +364,7 @@ function trimHeadlines(headlines, len) {
       headline.length > len ? headline.slice(0, len) + "..." : headline + "...";
     shortenedHeadlines.push(article);
   }
-  // logs.log("SHORTENED", shortenedHeadlines);
+  // console.log("SHORTENED", shortenedHeadlines);
   return shortenedHeadlines;
 }
 
@@ -402,9 +392,7 @@ function calculateGaugePercentages(technicalIndicators) {
 }
 
 /**
- * Convert all UNIX timestamps to current timezone and put in this format:
- * @param  {[type]} prices [description]
- * @return {[type]}        [description]
+ * Returns a dictionary with chart data.
  */
 function buildChartData(priceData) {
   let lastTwoMonths = priceData.slice(0, 60).reverse();
@@ -426,7 +414,6 @@ function buildChartData(priceData) {
 // Placeholders
 var screen = null;
 var grid = null;
-var logs = null;
 var headlinesTable = null;
 var technicalIndicatorsTable = null;
 var technicalIndicatorsGauge = null;
@@ -436,8 +423,7 @@ var priceTable = null;
 var exchangeRateChart = null;
 var transactionsTable = null;
 var menubar = null;
-var skipTrace = null;
-var URLs = null;
+var URLs = null
 
 /**
  * Replacing globals with blessed widgets.
@@ -468,23 +454,9 @@ function buildInterface() {
 
   // Place 3 tables and a gauge on the left side of the screen, stacked vertically.
 
-  headlinesTable = grid.set(
-    0,
-    0,
-    10,
-    13,
-    blessed.ListTable,
-    createTable("center", true, null)
-  );
+  headlinesTable = grid.set(0, 0, 10, 13, blessed.ListTable, createTable("center", true, null));
   headlinesTable.focus();
-  technicalIndicatorsTable = grid.set(
-    10,
-    0,
-    9,
-    13,
-    blessed.ListTable,
-    createTable("left", false, padding)
-  );
+  technicalIndicatorsTable = grid.set(10, 0, 9, 13, blessed.ListTable, createTable("left", false, padding));
 
   technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
     label: " Buy/Sell Gauge ".bold.red,
@@ -493,18 +465,13 @@ function buildInterface() {
     showLabel: true
   });
 
-  blockchainIndicatorsTable = grid.set(
-    26,
-    0,
-    10,
-    13,
-    blessed.ListTable,
+  blockchainIndicatorsTable = grid.set(26, 0, 10, 13, blessed.ListTable,
     createTable("left", false, padding)
   );
 
   // Line chart on the right of the tables
 
-  exchangeRateChart = grid.set(0, 13, 19, 23, contrib.line, {
+  exchangeRateChart = grid.set(0, 13, 25, 23, contrib.line, {
     style: {
       line: "yellow",
       text: "green",
@@ -517,45 +484,17 @@ function buildInterface() {
     label: " Exchange Rate ".bold.red
   });
 
-  // Price table and logs under chart.
+  // Price table and console under chart.
 
-  priceTable = grid.set(
-    19,
-    30,
-    6.5,
-    6,
-    blessed.ListTable,
+  priceTable = grid.set(26, 29, 10, 7, blessed.ListTable, createTable("left", false, padding));
+
+  portfolioTable = grid.set(26, 13, 10, 6, blessed.ListTable,
     createTable("left", false, padding)
   );
 
-  // @Jon, skipTrace goes here
-  // volumeSkipTrace = grid(18, 22, 7, 6,
-
-  portfolioTable = grid.set(
-    26,
-    13,
-    10,
-    6,
-    blessed.ListTable,
+  transactionsTable = grid.set(26, 19, 10, 10, blessed.ListTable,
     createTable("left", false, padding)
   );
-
-  transactionsTable = grid.set(
-    26,
-    19,
-    10,
-    8,
-    blessed.ListTable,
-    createTable("left", false, padding)
-  );
-
-  logs = grid.set(26, 29, 10, 7, contrib.log, {
-    label: " DEBUGGING LOGS ".bold.red,
-    top: 0,
-    left: 0,
-    height: "100%-1",
-    width: "100%"
-  });
 
   menubar = blessed.listbar({
     parent: screen,
@@ -572,7 +511,24 @@ function buildInterface() {
       }
     },
     commands: {
-      Autotrading: {
+      "Login": {
+        keys: ["l"],
+        callback: () => {
+          loginEntryStatus = true;
+          // console.log("Login");
+          displayLoginScreen(() => {
+            setTimeout(function() {
+              if (!getConfig().logged_in) {
+                errorEntryStatus = true;
+                error.createErrorScreen(screen);
+                errorEntryStatus = false;
+              }
+              loginEntryStatus = false;
+            }, 1000);
+          });
+        }
+      },
+      "Toggle Autotrading": {
         keys: ["a"],
         callback: () => {
           if (credentialsExist()) {
@@ -583,23 +539,10 @@ function buildInterface() {
           }
         }
       },
-      "Bitstamp Login": {
-        keys: ["l"],
-        callback: () => {
-          logs.log("Login");
-          displayLoginScreen();
-        }
-      },
-      Logout: {
-        keys: ["k"],
-        callback: () => {
-          clearCredentials();
-        }
-      },
-      "Trade BTC": {
+      "Make a Trade": {
         keys: ["t"],
         callback: () => {
-          logs.log("Buy/Sell BTC");
+          // console.log("Buy/Sell BTC");
           if (credentialsExist()) {
             tradeEntryStatus = true;
             transaction.createTransactionScreen(screen, function(amount, type) {
@@ -612,27 +555,24 @@ function buildInterface() {
           }
         }
       },
-      // "Focus on Headlines": {
-      //   keys: ["f"],
-      //   callback: () => {
-      //     headlinesTable.focus();
-      //   }
-      // },
-      Help: {
+      "Help": {
         keys: ["h"],
         callback: () => {
-          logs.log(`Help Menu Opened, HAS: ${helpActiveStatus}`);
           if (!helpActiveStatus) {
             helpActiveStatus = true;
-            logs.log(`HAS set to: ${helpActiveStatus}`);
             help.createHelpScreen(screen, VERSION, () => {
               helpActiveStatus = false;
-              logs.log(`HAS set to: ${helpActiveStatus}`);
-            });
+            })
           }
         }
       },
-      Exit: {
+      "Logout": {
+        keys: ["k"],
+        callback: () => {
+          clearCredentials();
+        }
+      },
+      "Exit": {
         keys: ["C-c", "escape"],
         callback: () => process.exit(0)
       }
@@ -652,7 +592,7 @@ function buildInterface() {
 
   // Open article
   screen.key(["enter"], function(ch, key) {
-    if (!tradeEntryStatus) {
+    if (!tradeEntryStatus && !loginEntryStatus && !errorEntryStatus) {
       let selectedArticleURL = URLs[headlinesTable.selected - 1];
       openBrowser(selectedArticleURL);
     }
@@ -671,16 +611,8 @@ function buildInterface() {
 /**
  * Set all tables with data.
  */
-function setAllTables(
-  headlines,
-  technicals,
-  gaugeData,
-  blockchains,
-  prices,
-  portfolio,
-  transactions
-) {
-  logs.log("SetAllTables");
+function setAllTables(headlines, technicals, gaugeData, blockchains, prices, portfolio, transactions) {
+  // console.log("SetAllTables");
 
   // Set headers for each table.
   headlines.splice(0, 0, ["Date", "Headline", "Sentiment"]);
@@ -693,8 +625,7 @@ function setAllTables(
   // Set data
   headlinesTable.setData(headlines);
   technicalIndicatorsTable.setData(technicals);
-  technicalIndicatorsGauge.setStack([
-    {
+  technicalIndicatorsGauge.setStack([{
       percent: gaugeData[0],
       stroke: "red"
     },
@@ -706,31 +637,16 @@ function setAllTables(
   blockchainIndicatorsTable.setData(blockchains);
   priceTable.setData(prices);
   portfolioTable.setData(portfolio);
+  if (transactions.length == 1) {
+    transactions.splice(1, 0, ["NO", "TRANSACTION", "DATA"])
+  }
   transactionsTable.setData(transactions);
   screen.render();
 }
 
 function refreshInterface() {
-  let [
-    headlineData,
-    technicalData,
-    gaugeData,
-    blockchainData,
-    priceData,
-    portfolioData,
-    transactionsData,
-    chartData
-  ] = getDataFromJsonFiles();
-  setAllTables(
-    headlineData,
-    technicalData,
-    gaugeData,
-    blockchainData,
-    priceData,
-    portfolioData,
-    transactionsData
-  );
-  // setLineData([chartData], exchangeRateChart);
+  let [headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData, chartData] = getDataFromJsonFiles();
+  setAllTables(headlineData, technicalData, gaugeData, blockchainData, priceData, portfolioData, transactionsData);
   exchangeRateChart.setData(chartData);
 }
 
@@ -754,20 +670,20 @@ function doThings() {
 
   refreshData("HEADLINES");
   refreshData("NETWORK");
-  refreshData("PRICE");
+  refreshData("TICKER");
 
   setInterval(function() {
     refreshData("NETWORK");
   }, 15000); // 15 sec
 
   setInterval(function() {
-    logs.log("HEADLINES REFRESH");
+    // console.log("HEADLINES REFRESH");
     refreshData("HEADLINES");
   }, 900000); // 15 min
 
   setInterval(function() {
-    refreshData("PRICE");
-  }, 2000);
+    refreshData("TICKER");
+  }, 2000)
 
   // setInterval(function() {
   //   refreshData("PORTFOLIO");
@@ -788,9 +704,7 @@ function doThings() {
     setInterval(function() {
       refreshInterface();
     }, 3000);
-
-    // }, 5000)
-  }, 2000);
+  }, 4000);
 }
 
 doThings();
