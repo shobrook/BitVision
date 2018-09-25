@@ -68,13 +68,13 @@ function executeShellCommand(command) {
   let args = command.split(" ");
   let program = args.splice(0, 1)[0];
 
-  let spawnedProcess = spawn(program, args, { detached: true });
+  let spawnedProcess = spawn(program, args); // { detached: true }
   spawnedProcess.then(() => {}).catch(err => {
-    if (screen) {
-      errorEntryStatus = true;
-      error.createErrorScreen(screen);
-      errorEntryStatus = false;
-    }
+    // if (screen) {
+    //   errorEntryStatus = true;
+    //   error.createErrorScreen(screen);
+    //   errorEntryStatus = false;
+    // }
   });
 }
 
