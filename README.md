@@ -1,4 +1,4 @@
-<img src="img/logo.png" width="30%" />
+<img src="img/logo.png" width="40%" />
 
 [![npm](https://img.shields.io/npm/v/:package.svg)](https://www.npmjs.com/package/bitvision)
 ![node (scoped)](https://img.shields.io/node/v/@stdlib/stdlib.svg)
