@@ -1,10 +1,19 @@
-# BitVision
+<img src="img/logo.png" width="30%" />
+
+[![npm](https://img.shields.io/npm/v/:package.svg)](https://www.npmjs.com/package/bitvision)
+![node (scoped)](https://img.shields.io/node/v/@stdlib/stdlib.svg)
+[![Scikit-Learn](https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg)](http://scikit-learn.org/stable/)
 
 BitVision is a real-time charting and trading platform for Bitstamp that lives entirely in the terminal. It comes with an automated trading algorithm that uses machine learning to forecast price movements and place risk-adjusted daily trades.
 
 <p align="center"><img src="img/demo.png" width="90%" /></p>
 
-BitVision also provides real-time monitoring of Bitcoin-related news, technical indicators, and blockchain data (i.e. hash rate, avg. block size, etc.). And once you start making trades, either manually or automatically, BitVision will monitor your transaction history in real-time and calculate important portfolio statistics, such as your sharpe ratio, buy and sell accuracy, net profit, and returns. Think CryptoWatch but as a CLI.
+Besides autotrading, BitVision's key features are:
+
+- Real-time monitoring of Bitcoin-related news, technical indicators, and blockchain data (i.e. hash rate, avg. block size, etc.)
+- Log of previous transactions and current account balance
+- Portfolio metrics, including your sharpe ratio, buy and sell accuracy, net profit, and returns
+- Easy toggling of autotrading and ability to manually make trades
 
 Unlike other systems, there's no need to run BitVision on localhost or host a database – simply install and run `$ bitvision` to get started.
 
