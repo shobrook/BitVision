@@ -1,9 +1,7 @@
-<p align="center">
+<h1 align="center">
   <img src="img/logo.png" width="40%" />
   <br />
-</p>
-
----
+</h1>
 
 [![npm](https://img.shields.io/npm/v/:package.svg)](https://www.npmjs.com/package/bitvision)
 ![node (scoped)](https://img.shields.io/node/v/@stdlib/stdlib.svg)
