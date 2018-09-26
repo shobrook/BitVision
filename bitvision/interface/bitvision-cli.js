@@ -39,7 +39,7 @@ cli.version(VERSION, "-v, --version").parse(process.argv);
 function readJsonFile(path) {
   // console.log("Reading " + path);
   if (!fs.existsSync(path)) {
-    setTimeout(function() {
+    setTimeout(function () {
       readJsonFile(path);
     }, 2000);
   } else {
@@ -69,7 +69,7 @@ function executeShellCommand(command) {
   let program = args.splice(0, 1)[0];
 
   let spawnedProcess = spawn(program, args); // { detached: true }
-  spawnedProcess.then(() => {}).catch(err => {
+  spawnedProcess.then(() => { }).catch(err => {
     // if (screen) {
     //   errorEntryStatus = true;
     //   error.createErrorScreen(screen);
@@ -217,7 +217,7 @@ function displayLoginScreen(callback) {
 
 function showAutotradingMenu() {
   // console.log("Autotrading Menu");
-  autotrading.createToggleScreen(screen, function(isEnabling) {
+  autotrading.createToggleScreen(screen, function (isEnabling) {
     let cfg = getConfig();
     // console.log(`Enabling: ${isEnabling}`)
     let isCurrentlyEnabled = cfg.autotrade.enabled;
@@ -572,7 +572,7 @@ function buildInterface() {
         callback: () => {
           loginEntryStatus = true;
           displayLoginScreen(() => {
-            setTimeout(function() {
+            setTimeout(function () {
               if (!getConfig().logged_in) {
                 errorEntryStatus = true;
                 error.createErrorScreen(screen);
@@ -599,7 +599,7 @@ function buildInterface() {
         callback: () => {
           if (credentialsExist()) {
             tradeEntryStatus = true;
-            transaction.createTransactionScreen(screen, function(amount, type) {
+            transaction.createTransactionScreen(screen, function (amount, type) {
               // Pass order to backend
               executeTrade(amount, type);
               tradeEntryStatus = false;
@@ -634,7 +634,7 @@ function buildInterface() {
   });
 
   // Resizing
-  screen.on("resize", function() {
+  screen.on("resize", function () {
     technicalIndicatorsTable.emit("attach");
     blockchainIndicatorsTable.emit("attach");
     headlinesTable.emit("attach");
@@ -645,7 +645,7 @@ function buildInterface() {
   });
 
   // Open article
-  screen.key(["enter"], function(ch, key) {
+  screen.key(["enter"], function (ch, key) {
     if (!tradeEntryStatus && !loginEntryStatus && !errorEntryStatus) {
       let selectedArticleURL = URLs[headlinesTable.selected - 1];
       openBrowser(selectedArticleURL);
@@ -653,7 +653,7 @@ function buildInterface() {
   });
 
   // Quit
-  screen.key(["escape", "C-c"], function(ch, key) {
+  screen.key(["escape", "C-c"], function (ch, key) {
     return process.exit(0);
   });
 }
@@ -752,36 +752,28 @@ function doThings() {
   refreshData("NETWORK");
   refreshData("TICKER");
 
-  setInterval(function() {
+  setInterval(function () {
     refreshData("NETWORK");
   }, 15000); // 15 sec
 
-  setInterval(function() {
+  setInterval(function () {
     // console.log("HEADLINES REFRESH");
     refreshData("HEADLINES");
   }, 900000); // 15 min
 
-  setInterval(function() {
+  setInterval(function () {
     refreshData("TICKER");
   }, 2000);
 
-  // setInterval(function() {
-  //   refreshData("PORTFOLIO");
-  // }, 3000)
-
-  // setInterval(function() {
-  //   refreshData("TRANSACTIONS");
-  // }, 3000)
-
-  // setInterval(function() {
-  //   refreshData("CHART");
-  // }, 3000)
+  setInterval(function () {
+    refreshData("PORTFOLIO");
+  }, 3000)
 
   // call the rest of the code and have it execute after 8 seconds
-  setTimeout(function() {
+  setTimeout(function () {
     buildInterface();
 
-    setInterval(function() {
+    setInterval(function () {
       refreshInterface();
     }, 3000);
   }, 8000);
