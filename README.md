@@ -6,8 +6,6 @@
   <img src="https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg" />
 </p>
 
----
-
 BitVision is a real-time charting and trading platform for Bitstamp that lives entirely in the terminal. It comes with an automated trading algorithm that uses machine learning to forecast price movements and place risk-adjusted daily trades.
 
 <p align="center"><img src="img/demo.png" width="90%" /></p>
