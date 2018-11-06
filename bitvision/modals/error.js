@@ -1,10 +1,10 @@
 let blessed = require("blessed");
-let constants = require("../constants.js");
+let { colorScheme } = require("../constants.js");
 
-let errorStrings =  {
-    label: " {bold}{red-fg}Error{/bold}{/red-fg} ",
-    hint: " {bold}Check your connection or credentials.{/bold} "
-  }
+let errorStrings = {
+  label: " {bold}{red-fg}Error{/bold}{/red-fg} ",
+  hint: " {bold}Check your connection or credentials.{/bold} "
+};
 
 var errorForm = null;
 
@@ -22,8 +22,8 @@ module.exports = {
       left: "center",
       width: 45,
       height: 8,
-      bg: constants.colors.background,
-      color: "white",
+      bg: colorScheme.background,
+      color: "white"
     });
 
     let label = blessed.box({
@@ -34,7 +34,7 @@ module.exports = {
       height: 1,
       content: errorStrings.label,
       style: {
-        bg: constants.colors.background,
+        bg: colorScheme.background,
         fg: "white",
         bold: true
       },
@@ -50,8 +50,8 @@ module.exports = {
       shrink: true,
       content: errorStrings.hint,
       style: {
-        bg: constants.colors.background,
-        fg: "black",
+        bg: colorScheme.background,
+        fg: "black"
       },
       tags: true
     });
@@ -73,14 +73,14 @@ module.exports = {
       name: "okay",
       content: "okay",
       style: {
-        bg: constants.colors.confirmLight,
+        bg: colorScheme.confirmLight,
         fg: "black",
         focus: {
-          bg: constants.colors.confirmDark,
+          bg: colorScheme.confirmDark,
           fg: "black"
         },
         hover: {
-          bg: constants.colors.confirmDark,
+          bg: colorScheme.confirmDark,
           fg: "black"
         }
       }
@@ -97,4 +97,4 @@ module.exports = {
     okayButton.focus();
     screen.render();
   }
-}
+};

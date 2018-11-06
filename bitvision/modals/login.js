@@ -1,5 +1,5 @@
 let blessed = require("blessed");
-let constants = require("../constants.js");
+let { colorScheme } = require("../constants.js");
 
 // CONSTANTS
 let spacing = {
@@ -64,11 +64,11 @@ function createPromptBox(form, key) {
     style: {
       focus: {
         border: {
-          fg: constants.colors.textFieldBorderFocused
+          fg: colorScheme.textFieldBorderFocused
         }
       },
       border: {
-        fg: constants.colors.textFieldBorderUnfocused
+        fg: colorScheme.textFieldBorderUnfocused
       }
     }
   });
@@ -90,7 +90,7 @@ module.exports.createLoginScreen = function(screen, callback) {
     left: "center",
     width: 45,
     height: 20,
-    bg: constants.colors.background,
+    bg: colorScheme.background,
     color: "white"
   });
 
@@ -102,7 +102,7 @@ module.exports.createLoginScreen = function(screen, callback) {
     height: 1,
     content: loginStrings.label,
     style: {
-      bg: constants.colors.background,
+      bg: colorScheme.background,
       fg: "white",
       bold: true
     },
@@ -118,7 +118,7 @@ module.exports.createLoginScreen = function(screen, callback) {
     shrink: true,
     content: loginStrings.hint,
     style: {
-      bg: constants.colors.background,
+      bg: colorScheme.background,
       fg: "white"
     },
     tags: true
@@ -154,14 +154,14 @@ module.exports.createLoginScreen = function(screen, callback) {
     name: "login",
     content: "login",
     style: {
-      bg: constants.colors.confirmLight,
+      bg: colorScheme.confirmLight,
       fg: "black",
       focus: {
-        bg: constants.colors.confirmDark,
+        bg: colorScheme.confirmDark,
         fg: "black"
       },
       hover: {
-        bg: constants.colors.confirmDark,
+        bg: colorScheme.confirmDark,
         fg: "black"
       }
     }
@@ -183,14 +183,14 @@ module.exports.createLoginScreen = function(screen, callback) {
     name: "cancel",
     content: "cancel",
     style: {
-      bg: constants.colors.cancelLight,
+      bg: colorScheme.cancelLight,
       fg: "black",
       focus: {
-        bg: constants.colors.cancelDark,
+        bg: colorScheme.cancelDark,
         fg: "black"
       },
       hover: {
-        bg: constants.colors.cancelDark,
+        bg: colorScheme.cancelDark,
         fg: "black"
       }
     }

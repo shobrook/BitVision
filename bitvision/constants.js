@@ -1,8 +1,8 @@
 const path = require("path");
 const colors = require("colors");
 
-let cachePath = String.raw`${path.join(__dirname, "..", "cache")}`;
-let controllerPath = String.raw`${path.join(__dirname, "..", "controller")}`;
+let cachePath = String.raw`${path.join(__dirname, "cache")}`;
+let controllerPath = String.raw`${path.join(__dirname, "controller")}`;
 
 module.exports = {
   colorScheme: {

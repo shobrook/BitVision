@@ -1,16 +1,16 @@
 var blessed = require("blessed");
-let constants = require("../constants");
+let { colorScheme } = require("../constants");
 
 // CONSTANTS
 let spacing = {
   side: 4,
-  top: 5,
+  top: 5
 };
 
 let transactionStrings = {
   label: "Trade BTC",
   hint: "Select an option and enter an amount."
-}
+};
 
 //  FUNCTIONS
 
@@ -46,8 +46,8 @@ module.exports = {
       left: "center",
       width: 45,
       height: 14,
-      bg: constants.colors.background,
-      color: "white",
+      bg: cheme.background,
+      color: "white"
     });
 
     let label = blessed.box({
@@ -58,7 +58,7 @@ module.exports = {
       height: 1,
       content: transactionStrings.label,
       style: {
-        bg: constants.colors.background,
+        bg: colorScheme.background,
         fg: "white",
         bold: true
       },
@@ -74,8 +74,8 @@ module.exports = {
       shrink: true,
       content: transactionStrings.hint,
       style: {
-        bg: constants.colors.background,
-        fg: "white",
+        bg: colorScheme.background,
+        fg: "white"
       },
       tags: true
     });
@@ -89,7 +89,7 @@ module.exports = {
       shrink: true,
       padding: 1,
       style: {
-        bg: constants.colors.background,
+        bg: colorScheme.background
         // fg: 'red'
       }
     });
@@ -100,13 +100,13 @@ module.exports = {
       keys: true,
       shrink: true,
       style: {
-        bg: constants.colors.background
+        bg: colorScheme.background
       },
       height: 1,
       left: 0,
       top: 0,
-      name: 'Buy BTC',
-      content: 'Buy BTC'
+      name: "Buy BTC",
+      content: "Buy BTC"
     });
 
     var sellRadio = blessed.radiobutton({
@@ -115,13 +115,13 @@ module.exports = {
       keys: true,
       shrink: true,
       style: {
-        bg: constants.colors.background
+        bg: colorScheme.background
       },
       height: 1,
       left: 14,
       top: 0,
-      name: 'Sell BTC',
-      content: 'Sell BTC'
+      name: "Sell BTC",
+      content: "Sell BTC"
     });
 
     // Input Box
@@ -141,12 +141,12 @@ module.exports = {
       style: {
         focus: {
           border: {
-            fg: constants.colors.textFieldBorderFocused,
-          },
+            fg: colorScheme.textFieldBorderFocused
+          }
         },
         border: {
-          fg: constants.colors.textFieldBorderUnfocused
-        },
+          fg: colorScheme.textFieldBorderUnfocused
+        }
       }
     });
 
@@ -167,14 +167,14 @@ module.exports = {
       name: "submit",
       content: "submit",
       style: {
-        bg: constants.colors.confirmLight,
+        bg: colorScheme.confirmLight,
         fg: "black",
         focus: {
-          bg: constants.colors.confirmDark,
+          bg: colorScheme.confirmDark,
           fg: "black"
         },
         hover: {
-          bg: constants.colors.confirmDark,
+          bg: colorScheme.confirmDark,
           fg: "black"
         }
       }
@@ -196,22 +196,22 @@ module.exports = {
       name: "cancel",
       content: "cancel",
       style: {
-        bg: constants.colors.cancelLight,
+        bg: colorScheme.cancelLight,
         fg: "black",
         focus: {
-          bg: constants.colors.cancelDark,
+          bg: colorScheme.cancelDark,
           fg: "black"
         },
         hover: {
-          bg: constants.colors.cancelDark,
+          bg: colorScheme.cancelDark,
           fg: "black"
         }
       }
     });
 
-    screen.on("tab", (text) => {
+    screen.on("tab", text => {
       transactionForm.focusNext();
-    })
+    });
 
     submit.on("press", function() {
       // console.log("Submit Pressed.");
@@ -240,4 +240,4 @@ module.exports = {
     transactionForm.focus();
     screen.render();
   }
-}
+};

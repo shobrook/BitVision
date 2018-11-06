@@ -1,5 +1,5 @@
 const blessed = require("blessed");
-const constants = require("../constants");
+const { colorScheme } = require("../constants");
 
 var toggleForm = null; // QUESTION: Why is this null and why is it global?
 
@@ -15,7 +15,7 @@ module.exports.createToggleScreen = function(screen, callback) {
     left: "center",
     width: 35,
     height: 5,
-    bg: constants.colors.background,
+    bg: colorScheme.background,
     color: "white"
   });
 
@@ -27,7 +27,7 @@ module.exports.createToggleScreen = function(screen, callback) {
     height: 1,
     content: " Set automatic trading status. ",
     style: {
-      bg: constants.colors.background,
+      bg: colorScheme.background,
       fg: "white",
       bold: true
     },
@@ -49,13 +49,13 @@ module.exports.createToggleScreen = function(screen, callback) {
     name: "enable",
     content: "enable",
     style: {
-      bg: constants.colors.confirmLight,
+      bg: colorScheme.confirmLight,
       focus: {
-        bg: constants.colors.confirmDark,
+        bg: colorScheme.confirmDark,
         fg: "black"
       },
       hover: {
-        bg: constants.colors.confirmDark,
+        bg: colorScheme.confirmDark,
         fg: "black"
       }
     }
@@ -75,13 +75,13 @@ module.exports.createToggleScreen = function(screen, callback) {
     name: "disable",
     content: "disable",
     style: {
-      bg: constants.colors.cancelLight,
+      bg: colorScheme.cancelLight,
       focus: {
-        bg: constants.colors.cancelDark,
+        bg: colorScheme.cancelDark,
         fg: "black"
       },
       hover: {
-        bg: constants.colors.cancelDark,
+        bg: colorScheme.cancelDark,
         fg: "black"
       }
     }
