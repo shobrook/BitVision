@@ -1,18 +1,18 @@
-let path = require("path");
-let colors = require("colors");
+const path = require("path");
+const colors = require("colors");
 
-let cachePath = path.join(__dirname, "..", "cache");
-let controllerPath = path.join(__dirname, "..", "controller");
+let cachePath = String.raw`${path.join(__dirname, "..", "cache")}`;
+let controllerPath = String.raw`${path.join(__dirname, "..", "controller")}`;
 
 module.exports = {
-  colors: {
+  colorScheme: {
     // Main
     border: "cyan",
     tableText: "light-blue",
     tableHeader: "red",
     background: "#54757c",
 
-    // Popups
+    // Modals
     textFieldBorderFocused: "green",
     textFieldBorderUnfocused: "#f0f0f0",
     confirmLight: "light-blue",
@@ -20,24 +20,24 @@ module.exports = {
     cancelLight: "light-red",
     cancelDark: "red"
   },
-  paths: {
-    "configPath": path.join(cachePath, "config.json"),
-    "blockchainDataPath": path.join(cachePath, "data", "blockchain.json"),
-    "headlineDataPath": path.join(cachePath, "data", "headlines.json"),
-    "technicalDataPath": path.join(cachePath, "data", "indicators.json"),
-    "priceDataPath": path.join(cachePath, "data", "ticker.json"),
-    "graphDataPath": path.join(cachePath, "data", "graph.json"),
-    "portfolioDataPath": path.join(cachePath, "data", "portfolio.json"),
-    "transactionsDataPath": path.join(cachePath, "data", "transactions.json"),
+  filePaths: {
+    configPath: path.join(cachePath, "config.json"),
+    blockchainDataPath: path.join(cachePath, "data", "blockchain.json"),
+    headlineDataPath: path.join(cachePath, "data", "headlines.json"),
+    technicalDataPath: path.join(cachePath, "data", "indicators.json"),
+    priceDataPath: path.join(cachePath, "data", "ticker.json"),
+    graphDataPath: path.join(cachePath, "data", "graph.json"),
+    portfolioDataPath: path.join(cachePath, "data", "portfolio.json"),
+    transactionsDataPath: path.join(cachePath, "data", "transactions.json")
   },
-  commands: {
-    "transaction": `python3 ${controllerPath} `,
-    "refresh_network": `python3 ${controllerPath} monitor_network`,
-    "refresh_ticker": `python3 ${controllerPath} monitor_price`,
-    "refresh_headlines": `python3 ${controllerPath} monitor_opinions`,
-    "refresh_portfolio": `python3 ${controllerPath} monitor_portfolio`,
-    // "retrain_model": `python3 ${controllerPath} retrain_model`
-    "check_login": `python3 ${controllerPath} authenticate`,
+  pyCommands: {
+    makeTrade: ["python3", [controllerPath, "make_trade", "&"]],
+    refreshNetwork: ["python3", [controllerPath, "monitor_network", "&"]],
+    refreshTicker: ["python3", [controllerPath, "monitor_price", "&"]],
+    refreshHeadlines: ["python3", [controllerPath, "monitor_opinions", "&"]],
+    refreshPortfolio: ["python3", [controllerPath, "monitor_portfolio", "&"]],
+    // "retrain_model": ["python3", [controllerPath, "retrain_model", "&"]]
+    checkLogin: ["python3", [controllerPath, "authenticate", "&"]]
   },
   baseConfig: {
     logged_in: false,
@@ -59,8 +59,8 @@ module.exports = {
     ██████╔╝██║   ██║    ╚████╔╝ ██║███████║██║╚██████╔╝██║ ╚████║\n\
     ╚═════╝ ╚═╝   ╚═╝     ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n\n"
       .blue.bold,
-    authors: "Written by:\n - Jon Shobrook (@shobrook)\n - Aaron Lichtman (@alichtman)\n\n"
+    description: "    Real-time charting and algorithmic trading for Bitstamp.\n"
       .red.bold,
-    stalling: "Fetching data... \n(This may take a few seconds)\n\n".blue.bold
+    fetchingData: data => `    Fetching ${data}...`.blue
   }
 };
