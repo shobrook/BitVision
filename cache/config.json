@@ -1,9 +1,9 @@
 {
   "logged_in": false,
   "credentials": {
-    "username": "",
-    "key": "",
-    "secret": ""
+    "key": "peels",
+    "secret": "secret",
+    "username": "orange"
   },
   "autotrade": {
     "enabled": false,

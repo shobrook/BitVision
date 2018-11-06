@@ -1,9 +1,5 @@
 // GLOBALS //
 
-// "use strict"
-
-// const os = require("os");
-// const cli = require("commander");
 const fs = require("fs");
 const colors = require("colors");
 const openBrowser = require("opn");
@@ -20,8 +16,8 @@ const {
   splash
 } = require("./constants");
 const { createLoginScreen } = require("./modals/login");
-const help = require("./modals/help");
-const transaction = require("./modals/transaction");
+const { createHelpScreen } = require("./modals/help");
+const { createTransactionScreen } = require("./modals/transaction");
 const { createToggleScreen } = require("./modals/autotrading");
 const error = require("./modals/error");
 
@@ -72,7 +68,7 @@ function execShellCommand(command) {
 // CONFIG HELPERS //
 
 function getConfig() {
-  // QUESTION: How many times does this need to be called?
+  // QUESTION: Can this be called once and made a global?
   return readJSONFile(filePaths.configPath);
 }
 
@@ -441,7 +437,7 @@ function buildInterface() {
         callback: () => {
           if (isLoggedIn()) {
             tradeEntryStatus = true;
-            transaction.createTransactionScreen(screen, function(amount, type) {
+            createTransactionScreen(screen, function(amount, type) {
               let makeTradeCommand = Array.from(pyCommands.makeTrade);
               makeTradeCommand[1].push(`${{ amount, type }}`);
 
@@ -458,7 +454,7 @@ function buildInterface() {
         callback: () => {
           if (!helpActiveStatus) {
             helpActiveStatus = true;
-            help.createHelpScreen(screen, VERSION, () => {
+            createHelpScreen(screen, VERSION, () => {
               helpActiveStatus = false;
             });
           }
