@@ -1,7 +1,5 @@
 node_modules/*
-bitvision/node_modules/*
 .DS_Store
-.bitvision.json
 *.pyc
 venv/
 .idea/BitVision.iml
