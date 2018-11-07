@@ -392,7 +392,7 @@ function createInterface() {
         }
       },
       Logout: {
-        keys: ["k", "K"],
+        keys: ["o", "O"],
         callback: () => clearCredentials()
       },
       Exit: {
@@ -469,7 +469,7 @@ function refreshInterface() {
   transactionData.splice(0, 0, ["Transaction", "Amount", "Date"]);
 
   if (transactionData.length == 1) {
-    transactionData.splice(1, 0, ["NO", "TRANSACTION", "DATA"]);
+    transactionData.splice(1, 0, ["–", "–", "–"]);
   }
 
   headlinesTable.setData(headlineData);
