@@ -9,20 +9,20 @@ const spacing = {
   left: 4,
   right: 5,
   top: 1,
-  apiKey: 8,
+  key: 8,
   secret: 12,
   username: 4
 };
 
 const loginStrings = {
   username: " {bold}{blue-fg}Username{/bold}{/blue-fg} ",
-  apiKey: " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
+  key: " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
   secret: " {bold}{blue-fg}Secret{/bold}{/blue-fg} ",
   label: " Bitstamp Login ",
   hint: " Press tab to start entry. "
 };
 
-var enteredCreds = { apiKey: "", secret: "", username: "" };
+var enteredCreds = { key: "", secret: "", username: "" };
 
 // UTILITIES //
 
@@ -101,7 +101,7 @@ module.exports.createLoginScreen = (screen, callback) => {
   // Input Boxes
 
   let usernameEntryBox = createPromptBox(loginForm, "username");
-  let keyEntryBox = createPromptBox(loginForm, "apiKey");
+  let keyEntryBox = createPromptBox(loginForm, "key");
   let secretEntryBox = createPromptBox(loginForm, "secret");
 
   function destroyModal() {
@@ -159,7 +159,7 @@ module.exports.createLoginScreen = (screen, callback) => {
 
   login.on("press", () => {
     enteredCreds = {
-      apiKey: keyEntryBox.content,
+      key: keyEntryBox.content,
       secret: secretEntryBox.content,
       username: usernameEntryBox.content
     };
