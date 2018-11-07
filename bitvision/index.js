@@ -6,7 +6,7 @@ const openBrowser = require("opn");
 const blessed = require("blessed");
 const contrib = require("blessed-contrib");
 // const spawn = require("child-process-promise").spawn;
-const { spawn, spawnSync, fork, exec } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 
 const {
   colorScheme,
@@ -49,7 +49,12 @@ function writeJSONFile(path, data) {
 }
 
 function execShellCommand(command) {
-  spawn(command[0], command[1], { stdio: "ignore", detached: true });
+  let spawnedProcess = spawnSync(command[0], command[1], {
+    stdio: "ignore",
+    detached: true
+  });
+
+  // spawnedProcess.unref();
 }
 
 // CONFIG HELPERS //
@@ -69,6 +74,7 @@ function saveCredentials(newCreds) {
 function clearCredentials() {
   // BUG: This shouldn't remove the dotfile, it should just reset it
   fs.unlinkSync(filePaths.configPath);
+  createConfig();
 }
 
 function isLoggedIn() {
@@ -403,14 +409,14 @@ function buildInterface() {
     },
     commands: {
       Login: {
-        keys: ["l"],
+        keys: ["l", "L"],
         callback: () => {
           loginEntryStatus = true;
           displayLoginScreen();
         }
       },
       "Toggle Autotrading": {
-        keys: ["a"],
+        keys: ["a", "A"],
         callback: () => {
           if (isLoggedIn()) {
             showAutotradingMenu();
@@ -420,7 +426,7 @@ function buildInterface() {
         }
       },
       "Make a Trade": {
-        keys: ["t"],
+        keys: ["t", "T"],
         callback: () => {
           if (isLoggedIn()) {
             tradeEntryStatus = true;
@@ -437,7 +443,7 @@ function buildInterface() {
         }
       },
       Help: {
-        keys: ["h"],
+        keys: ["h", "H"],
         callback: () => {
           if (!helpActiveStatus) {
             helpActiveStatus = true;
@@ -448,7 +454,7 @@ function buildInterface() {
         }
       },
       Logout: {
-        keys: ["k"],
+        keys: ["k", "K"],
         callback: () => {
           clearCredentials();
         }
@@ -557,9 +563,7 @@ function refreshInterface() {
   screen.render();
 }
 
-//------
-// MAIN
-//------
+// MAIN //
 
 /**
  * Let's get this show on the road.
@@ -583,31 +587,28 @@ function main() {
   console.log(splash.fetchingData("transaction history from Bitstamp"));
   updateData("PORTFOLIO");
 
-  setInterval(function() {
-    updateData("NETWORK");
-  }, 15000); // 15 sec
+  buildInterface();
+  refreshInterface();
 
   setInterval(function() {
-    // console.log("HEADLINES REFRESH");
-    updateData("HEADLINES");
-  }, 900000); // 15 min
+    refreshInterface();
+  }, 12000);
 
   setInterval(function() {
     updateData("TICKER");
-  }, 2000);
+  }, 120000);
 
   setInterval(function() {
     updateData("PORTFOLIO");
-  }, 3000);
+  }, 120000);
 
-  // call the rest of the code and have it execute after 8 seconds
-  setTimeout(function() {
-    buildInterface();
+  setInterval(function() {
+    updateData("NETWORK");
+  }, 120000);
 
-    setInterval(function() {
-      refreshInterface();
-    }, 3000);
-  }, 8000);
+  setInterval(function() {
+    updateData("HEADLINES");
+  }, 900000);
 }
 
 main();
