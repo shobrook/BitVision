@@ -71,7 +71,6 @@ function saveCredentials(newCreds) {
 }
 
 function clearCredentials() {
-  // BUG: This shouldn't remove the dotfile, it should just reset it
   fs.unlinkSync(filePaths.configPath);
   createConfig();
 }
@@ -448,6 +447,7 @@ function refreshInterface() {
   let blockchainData = blockchainJSON.data;
   let tickerData = reformatPriceData(tickerJSON.data);
   let chartData = buildChartData(graphJSON.data);
+  let transactionData = transactionsJSON.data;
   let portfolioData = reformatPortfolioData(portfolioJSON.data, [
     "Account Balance",
     "Returns",
@@ -457,7 +457,6 @@ function refreshInterface() {
     "Sell Accuracy",
     "Total Trades"
   ]);
-  let transactionData = transactionsJSON.data;
 
   URLs = extractAndRemoveUrls(headlineData);
 
