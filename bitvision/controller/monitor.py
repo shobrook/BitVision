@@ -197,39 +197,40 @@ def fetch_coindesk_stats():
             })
             soup = BeautifulSoup(html.text, "html.parser")
 
-            featured_headline_containers = [feature.find_all('a', class_="fade")[
-                0] for feature in soup.find_all("div", class_="article article-featured")]
-            featured_headlines = [(headline.get_text().strip(), headline.find_all("time")[
-                0]["datetime"], headline["href"]) for headline in featured_headline_containers]
-            other_headlines = [(headline.find_all("a", class_="fade")[0].get_text().strip(), headline.find_all("time")[
-                0]["datetime"], headline.find_all("a", class_="fade")[0]["href"]) for headline in soup.find_all("div", class_="post-info")]
+            featured_containers = soup.find_all("div", class_="article article-featured")
+            other_containers = soup.find_all("div", class_="post-info")
 
-            # filtered_headlines = [headline for headline in featured_headlines +
-            #                       other_headlines if "bitcoin" in headline[0].lower() or "btc" in headline[0].lower()]
-            #
-            # invalid_bch_headlines = []
-            #
-            # for headline in filtered_headlines:
-            #     if "bitcoin cash" in headline[0].lower() or "bch" in headline[0].lower():
-            #         if not any("bitcoin" in headline_splice or "btc" in headline_splice for headline_splice in headline[0].split("bitcoin cash")):
-            #             # then this is not a valid headline
-            #             invalid_bch_headlines.append(headline)
-            #
-            # valid_headlines = set(filtered_headlines) - set(invalid_bch_headlines)
-            # ordered_headlines = sorted(
-            #     valid_headlines, key=lambda h: moment.date(h[1]).format("M-D"), reverse=True)
+            headlines = []
+            for article in featured_containers + other_containers:
+                date_container = article.find("time")["datetime"]
+                article = article.find('a', class_="fade")
 
-            ordered_headlines = sorted(featured_headlines + other_headlines,
-                                       key=lambda h: moment.date(h[1]).format("M-D"), reverse=True)
+                headline = article.get_text().strip()
+                date_published = moment.date(date_container).format("M-D")
+                url = article["href"]
+
+                headlines.append((headline, date_published, url))
+
+            ordered_headlines = sorted(headlines, key=lambda h: h[1], reverse=True)
+            processed_headlines = []
+            for headline in ordered_headlines:
+                headline_str = headline[0].split('\n')[0]
+                date_published = headline[1]
+                sentiment = TextBlob(headline_str).sentiment.polarity
+                url = headline[2]
+
+                if sentiment > 0:
+                    sentiment = "POS"
+                elif int(sentiment) == 0:
+                    sentiment = "NEUT"
+                else:
+                    sentiment = "NEG"
+
+                processed_headlines += [date_published, headline_str, sentiment, url]
 
             headlines_json.write(json.dumps({
                 "error": False,
-                "data": [[
-                    moment.date(headline[1]).format("M-D"),
-                    headline[0].split("\n")[0],
-                    str(round(TextBlob(headline[0]).sentiment.polarity, 2)),
-                    headline[2]]
-                    for headline in ordered_headlines]
+                "data": processed_headlines
             }, indent=2))
         except:
             headlines_json.write(json.dumps({
