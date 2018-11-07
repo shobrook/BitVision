@@ -64,7 +64,7 @@ Who ever said it works?
 
 ## Authors
 
-The BitVision interface was built by [@alichtman](http://github.com/alichtman), and runs on the `Blessed.js` library. The "backend" was built by [@shobrook](http://github.com/shobrook), and runs on the `SciPy` stack.
+The BitVision interface was built by [@alichtman](http://github.com/alichtman), and runs on the `Blessed.js` library. The backend was built by [@shobrook](http://github.com/shobrook), and runs on the `SciPy` stack.
 
 If you happen to make any money using BitVision, please consider donating a small portion of your earnings to our poor souls so we can continue making cool stuff:
 
