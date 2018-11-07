@@ -22,29 +22,25 @@ const loginStrings = {
   hint: " Press tab to start entry. "
 };
 
-const enteredCreds = { apiKey: "", secret: "", username: "" };
+var enteredCreds = { apiKey: "", secret: "", username: "" };
 
-// FUNCTIONS
+// UTILITIES //
 
-/**
- * Checks enteredCreds for DEFAULT or "" values.
- * @return {Bool}   Returns true if all values have been changed, false if invalid.
- */
-function validateEnteredLoginCreds() {
-  for (var key in enteredCreds) {
+function nonEmptyLoginCreds() {
+  for (let key in enteredCreds) {
     if (enteredCreds.hasOwnProperty(key)) {
-      if (enteredCreds[key] === "") {
+      // Checks for empty values
+      if (!enteredCreds[key]) {
         return false;
       }
     }
   }
+
   return true;
 }
 
-/**
- * Takes key for loginStrings dict and returns the respective prompt box.
- */
 function createPromptBox(form, key) {
+  // Creates input field for a given key of loginStrings
   return blessed.textbox({
     parent: form,
     label: loginStrings[key],
@@ -53,33 +49,21 @@ function createPromptBox(form, key) {
     inputOnFocus: true,
     left: spacing.left,
     top: spacing[key],
-    border: {
-      type: "line"
-    },
+    border: { type: "line" },
     width: spacing.width,
     height: spacing.height,
     style: {
-      focus: {
-        border: {
-          fg: colorScheme.textFieldBorderFocused
-        }
-      },
-      border: {
-        fg: colorScheme.textFieldBorderUnfocused
-      }
+      focus: { border: { fg: colorScheme.textFieldBorderFocused } },
+      border: { fg: colorScheme.textFieldBorderUnfocused }
     }
   });
 }
 
-var loginForm = null;
+// MAIN //
 
-/**
- * Creates a login screen. Returns dict of creds, or null if no creds entered.
- * @param  {[type]} screen Parent screen
- * @return {Dict}        Dict of creds, or null if no creds entered
- */
-module.exports.createLoginScreen = function(screen, callback) {
-  var loginForm = blessed.form({
+module.exports.createLoginScreen = (screen, callback) => {
+  let loginForm = null;
+  loginForm = blessed.form({
     parent: screen,
     keys: true,
     type: "overlay",
@@ -98,11 +82,7 @@ module.exports.createLoginScreen = function(screen, callback) {
     width: 16,
     height: 1,
     content: loginStrings.label,
-    style: {
-      bg: colorScheme.background,
-      fg: "white",
-      bold: true
-    },
+    style: { bg: colorScheme.background, fg: "white", bold: true },
     tags: true
   });
 
@@ -114,18 +94,15 @@ module.exports.createLoginScreen = function(screen, callback) {
     height: 1,
     shrink: true,
     content: loginStrings.hint,
-    style: {
-      bg: colorScheme.background,
-      fg: "white"
-    },
+    style: { bg: colorScheme.background, fg: "white" },
     tags: true
   });
 
   // Input Boxes
 
-  var usernameEntryBox = createPromptBox(loginForm, "username");
-  var keyEntryBox = createPromptBox(loginForm, "apiKey");
-  var secretEntryBox = createPromptBox(loginForm, "secret");
+  let usernameEntryBox = createPromptBox(loginForm, "username");
+  let keyEntryBox = createPromptBox(loginForm, "apiKey");
+  let secretEntryBox = createPromptBox(loginForm, "secret");
 
   function destroyModal() {
     keyEntryBox.destroy();
@@ -135,92 +112,62 @@ module.exports.createLoginScreen = function(screen, callback) {
   }
 
   // Buttons
-  var login = blessed.button({
+  let login = blessed.button({
     parent: loginForm,
     mouse: true,
     keys: true,
     shrink: true,
     right: spacing.right,
     bottom: 1,
-    padding: {
-      left: 4,
-      right: 4,
-      top: 1,
-      bottom: 1
-    },
+    padding: { left: 4, right: 4, top: 1, bottom: 1 },
     name: "login",
     content: "login",
     style: {
       bg: colorScheme.confirmLight,
       fg: "black",
-      focus: {
-        bg: colorScheme.confirmDark,
-        fg: "black"
-      },
-      hover: {
-        bg: colorScheme.confirmDark,
-        fg: "black"
-      }
+      focus: { bg: colorScheme.confirmDark, fg: "black" },
+      hover: { bg: colorScheme.confirmDark, fg: "black" }
     }
   });
 
-  var cancel = blessed.button({
+  let cancel = blessed.button({
     parent: loginForm,
     mouse: true,
     keys: true,
     shrink: true,
     left: spacing.left,
     bottom: 1,
-    padding: {
-      left: 4,
-      right: 4,
-      top: 1,
-      bottom: 1
-    },
+    padding: { left: 4, right: 4, top: 1, bottom: 1 },
     name: "cancel",
     content: "cancel",
     style: {
       bg: colorScheme.cancelLight,
       fg: "black",
-      focus: {
-        bg: colorScheme.cancelDark,
-        fg: "black"
-      },
-      hover: {
-        bg: colorScheme.cancelDark,
-        fg: "black"
-      }
+      focus: { bg: colorScheme.cancelDark, fg: "black" },
+      hover: { bg: colorScheme.cancelDark, fg: "black" }
     }
   });
 
-  screen.on("tab", text => {
-    loginForm.focusNext();
-  });
+  screen.on("tab", text => loginForm.focusNext());
 
   // keyEntryBox.on("click", function(data) {
   //   secretEntryBox.unfocus;
   //   keyEntryBox.focus();
   // });
-  //
-  // secretEntryBox.on("click", function(data) {
-  //   secretEntryBox.focus();
-  // });
-  //
-  // usernameEntryBox.on("click", function(data) {
-  //   usernameEntryBox.focus();
-  // });
+  // secretEntryBox.on("click", data => secretEntryBox.focus());
+  // usernameEntryBox.on("click", data => usernameEntryBox.focus());
 
-  login.on("press", function() {
-    // console.log("Login Pressed.");
-    enteredCreds.apiKey = keyEntryBox.content;
-    enteredCreds.secret = secretEntryBox.content;
-    enteredCreds.username = usernameEntryBox.content;
+  login.on("press", () => {
+    enteredCreds = {
+      apiKey: keyEntryBox.content,
+      secret: secretEntryBox.content,
+      username: usernameEntryBox.content
+    };
 
-    if (validateEnteredLoginCreds()) {
+    if (nonEmptyLoginCreds()) {
       callback(enteredCreds);
       destroyModal();
     } else {
-      // console.log("Invalid input.");
       keyEntryBox.setValue("");
       secretEntryBox.setValue("");
       usernameEntryBox.setValue("");
@@ -231,7 +178,6 @@ module.exports.createLoginScreen = function(screen, callback) {
   });
 
   cancel.on("press", () => destroyModal());
-
   screen.key(["q", "ESC", "Q"], () => destroyModal());
 
   loginForm.focus();
