@@ -5,8 +5,7 @@ const colors = require("colors");
 const openBrowser = require("opn");
 const blessed = require("blessed");
 const contrib = require("blessed-contrib");
-// const spawn = require("child-process-promise").spawn;
-const { spawn, spawnSync } = require("child_process");
+const { spawnSync } = require("child_process");
 
 const {
   colorScheme,
@@ -17,7 +16,7 @@ const {
 } = require("./constants");
 const { createLoginScreen } = require("./modals/login");
 const { createHelpScreen } = require("./modals/help");
-const { createTransactionScreen } = require("./modals/transaction");
+const { createOrderScreen } = require("./modals/order");
 const { createToggleScreen } = require("./modals/autotrading");
 const error = require("./modals/error");
 
@@ -101,19 +100,9 @@ function createListTable(alignment, padding, isInteractive = false) {
     padding: padding,
     style: {
       fg: colorScheme.tableText,
-      border: {
-        fg: colorScheme.border
-      },
-      cell: {
-        selected: {
-          fg: "black",
-          bg: "light-yellow"
-        }
-      },
-      header: {
-        fg: "red",
-        bold: true
-      }
+      border: { fg: colorScheme.border },
+      cell: { selected: { fg: "black", bg: "light-yellow" } },
+      header: { fg: "red", bold: true }
     },
     columnSpacing: 1
   };
@@ -142,7 +131,7 @@ function displayLoginScreen() {
 }
 
 function showAutotradingMenu() {
-  createToggleScreen(screen, function(isEnabling) {
+  createToggleScreen(screen, isEnabling => {
     let config = getConfig();
     let isAutotradingEnabled = config.autotrade.enabled;
 
@@ -189,7 +178,6 @@ function updateData(type) {
       break;
     case "PORTFOLIO":
       execShellCommand(pyCommands.refreshPortfolio);
-      break;
   }
 }
 
@@ -254,11 +242,7 @@ function buildChartData(priceData) {
   let convertedTimestamps = lastTwoMonths.map(x => x.date);
   let prices = lastTwoMonths.map(x => x.price);
 
-  return {
-    title: "Exchange Rate",
-    x: convertedTimestamps,
-    y: prices
-  };
+  return { title: "Exchange Rate", x: convertedTimestamps, y: prices };
 }
 
 // BLESSED INTERFACE HELPERS //
@@ -283,12 +267,7 @@ function createInterface() {
   screen = blessed.screen({
     smartCSR: true,
     title: "BitVision",
-    cursor: {
-      artificial: true,
-      shape: "line",
-      blink: true,
-      color: "red"
-    }
+    cursor: { artificial: true, shape: "line", blink: true, color: "red" }
   });
 
   grid = new contrib.grid({ rows: 36, cols: 36, screen: screen });
@@ -325,11 +304,7 @@ function createInterface() {
     createListTable("left", padding)
   );
   exchangeRateChart = grid.set(0, 13, 25, 23, contrib.line, {
-    style: {
-      line: "yellow",
-      text: "green",
-      baseline: "black"
-    },
+    style: { line: "yellow", text: "green", baseline: "black" },
     xLabelPadding: 3,
     xPadding: 5,
     // showLegend: true,
@@ -394,7 +369,7 @@ function createInterface() {
         callback: () => {
           if (isLoggedIn()) {
             tradeEntryStatus = true;
-            createTransactionScreen(screen, (amount, type) => {
+            createOrderScreen(screen, (amount, type) => {
               let makeTradeCommand = Array.from(pyCommands.makeTrade);
               makeTradeCommand[1].push(`${{ amount, type }}`);
 
@@ -501,14 +476,8 @@ function refreshInterface() {
   headlinesTable.setData(headlineData);
   technicalIndicatorsTable.setData(technicalData);
   technicalIndicatorsGauge.setStack([
-    {
-      percent: gaugeData[0],
-      stroke: "red"
-    },
-    {
-      percent: gaugeData[1],
-      stroke: "green"
-    }
+    { percent: gaugeData[0], stroke: "red" },
+    { percent: gaugeData[1], stroke: "green" }
   ]);
   blockchainAttributesTable.setData(blockchainData);
   priceTable.setData(tickerData);
