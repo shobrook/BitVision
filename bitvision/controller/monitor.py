@@ -2,6 +2,7 @@
 # GLOBALS
 #########
 
+
 import re
 import sys
 import json
@@ -13,6 +14,7 @@ from bs4 import BeautifulSoup
 from typing import Dict
 from textblob import TextBlob
 
+# Local
 from engine import dataset
 from engine import transformer
 from bitstamp import Trading
@@ -58,7 +60,7 @@ USER_AGENTS = [
 
 
 def fetch_price_data():
-    with open("../cache/data/ticker.json", 'w') as price_data:
+    with open("./cache/data/ticker.json", 'w') as price_data:
         try:
             response = requests.get(
                 "https://www.bitstamp.net/api/ticker/").json()
@@ -79,7 +81,7 @@ def fetch_price_data():
                 "data": json.loads(price_data)["data"]
             }))
 
-    with open("../cache/data/graph.json", 'w') as graph_data:
+    with open("./cache/data/graph.json", 'w') as graph_data:
         try:
             data = []
             for index, row in dataset("price_data").iterrows():
@@ -103,7 +105,7 @@ def fetch_price_data():
 def fetch_tech_indicators():
     # TODO: Create a mapping between indicator values and signals
 
-    with open("../cache/data/indicators.json", 'w') as indicators_json:
+    with open("./cache/data/indicators.json", 'w') as indicators_json:
         try:
             indicators = transformer("calculate_indicators")(
                 dataset("price_data"))
@@ -147,7 +149,7 @@ def fetch_tech_indicators():
 
 
 def fetch_blockchain_data():
-    with open("../cache/data/blockchain.json", 'w') as blockchain_data_json:
+    with open("./cache/data/blockchain.json", 'w') as blockchain_data_json:
         try:
             blockchain_data = dataset("blockchain_data")
 
@@ -188,7 +190,7 @@ def fetch_blockchain_data():
 
 
 def fetch_coindesk_stats():
-    with open("../cache/data/headlines.json", 'w') as headlines_json:
+    with open("./cache/data/headlines.json", 'w') as headlines_json:
         try:
             html = requests.get("https://www.coindesk.com/", headers={
                 "User-Agent": random.choice(USER_AGENTS)
@@ -237,7 +239,7 @@ def fetch_coindesk_stats():
 
 
 def fetch_portfolio_stats(client):
-    with open("../cache/data/portfolio.json", 'w') as portfolio_json:
+    with open("./cache/data/portfolio.json", 'w') as portfolio_json:
         try:
             portfolio_json.write(json.dumps({
                 "error": False,
@@ -259,7 +261,7 @@ def fetch_portfolio_stats(client):
 
 
 def fetch_transaction_data(client):
-    with open("../cache/data/transactions.json", 'w') as transactions:
+    with open("./cache/data/transactions.json", 'w') as transactions:
         try:
             transactions.write(json.dumps({
                 "error": False,
