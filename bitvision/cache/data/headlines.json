@@ -1,89 +1,61 @@
 {
   "error": false,
   "data": [
-    [
-      "11-06",
-      "15 Banks Join DTCC Post-Trade Blockchain as Project Enters Testing",
-      "0.0",
-      "https://www.coindesk.com/15-banks-join-dtcc-post-trade-blockchain-as-project-enters-testing/"
-    ],
-    [
-      "11-06",
-      "Shrem Denies Stealing 5K Bitcoins in Court Filing",
-      "0.0",
-      "https://www.coindesk.com/charlie-shrem-says-he-never-owned-bitcoin-claimed-stolen-by-winklevosses/"
-    ],
-    [
-      "11-06",
-      "Blockchain to Airdrop $125 Million in Stellar Token",
-      "0.25",
-      "https://www.coindesk.com/wallet-firm-blockchain-to-airdrop-125-million-in-stellar-to-users/"
-    ],
-    [
-      "11-06",
-      "US Election Pushes Total Augur Bets Over $2 Million",
-      "0.0",
-      "https://www.coindesk.com/us-election-pushes-total-augur-bets-over-2-million/"
-    ],
-    [
-      "11-06",
-      "Bitmain to Begin Selling New Bitcoin Miners Later This Week",
-      "0.07",
-      "https://www.coindesk.com/bitmain-to-begin-selling-new-bitcoin-miners-later-this-week/"
-    ],
-    [
-      "11-06",
-      "The Number of Bitcoin Short Positions Just Hit a 3-Month Low",
-      "0.0",
-      "https://www.coindesk.com/the-number-of-bitcoin-short-positions-hits-3-month-low/"
-    ],
-    [
-      "11-06",
-      "Crypto Mining Tech Firm Bitfury Closes $80 Million Funding Round",
-      "-0.2",
-      "https://www.coindesk.com/crypto-mining-tech-firm-bitfury-closes-80-million-funding-round/"
-    ],
-    [
-      "11-06",
-      "This Bitcoin Price Chart May Give Early Warning of Next Bull Reversal",
-      "0.05",
-      "https://www.coindesk.com/this-bitcoin-price-chart-may-give-early-warning-of-next-bull-reversal/"
-    ],
-    [
-      "11-06",
-      "'Off the Chain' Crypto Podcast Apparently Blocked on Apple iTunes",
-      "0.05",
-      "https://www.coindesk.com/off-the-chain-crypto-podcast-apparently-blocked-on-apple-itunes/"
-    ],
-    [
-      "11-06",
-      "Crypto Exchange BTCC Is Closing Its Mining Pool Business",
-      "0.0",
-      "https://www.coindesk.com/crypto-exchange-btcc-is-closing-its-mining-pool-business-indefinitely/"
-    ],
-    [
-      "11-06",
-      "PwC Is Advising (Not Auditing) Another Stablecoin Project",
-      "0.0",
-      "https://www.coindesk.com/pwc-is-advising-not-auditing-another-stablecoin-project/"
-    ],
-    [
-      "11-06",
-      "XRP Nears 50 Cents as Price Rises to One-Month Highs",
-      "0.0",
-      "https://www.coindesk.com/xrp-nears-50-cents-as-price-rises-to-one-month-highs/"
-    ],
-    [
-      "11-05",
-      "Crypto Exchange Bitstamp Aims to Get Faster with Tech Upgrade",
-      "0.0",
-      "https://www.coindesk.com/crypto-exchange-bitstamp-aims-to-get-1250-times-faster-with-tech-upgrade/"
-    ],
-    [
-      "11-05",
-      "Musk Impostors Hack Lawmaker, Publisher Accounts in New Crypto Scams",
-      "0.14",
-      "https://www.coindesk.com/elon-musk-impostors-hack-us-lawmaker-book-publisher-in-twitter-scams/"
-    ]
+    "11-07",
+    "As 'Plasma' Stalls, SNARKs Become New Hope for Scaling Ethereum Now",
+    "POS",
+    "https://www.coindesk.com/as-plasma-stalls-snarks-become-new-hope-for-scaling-ethereum-now/",
+    "11-07",
+    "Crypto Exchanges Vow to Support Bitcoin Cash Fork",
+    "NEUT",
+    "https://www.coindesk.com/crypto-exchanges-line-up-to-support-bitcoin-cashs-hard-fork/",
+    "11-07",
+    "Up $100: Bitcoin Is Growing Increasingly Bullish",
+    "NEUT",
+    "https://www.coindesk.com/up-100-bitcoin-price-indicators-grow-increasingly-bullish/",
+    "11-07",
+    "A Lack of Shorts May Be Propping Up Crypto Prices",
+    "NEUT",
+    "https://www.coindesk.com/its-hard-to-short-crypto-and-thats-propping-up-prices-study-finds/",
+    "11-07",
+    "CFTC Chair Says Distributed Ledger Tech Can Aid Market Watchdogs",
+    "NEUT",
+    "https://www.coindesk.com/cftc-chair-says-distributed-ledger-tech-can-aid-market-watchdogs/",
+    "11-07",
+    "US Election Sees Crypto-Friendly Politicians Win Governor Races",
+    "POS",
+    "https://www.coindesk.com/crypto-friendly-governors-won-big-in-yesterdays-us-midterm-election/",
+    "11-07",
+    "Hackers Breach Popular Web Analytics Site to Target Crypto Exchange",
+    "POS",
+    "https://www.coindesk.com/hackers-breach-popular-web-analytics-site-to-target-crypto-exchange/",
+    "11-07",
+    "Salesforce Wins Patent Tackling Email Spam With Blockchain",
+    "POS",
+    "https://www.coindesk.com/salesforce-wins-patent-tackling-email-spam-with-blockchain/",
+    "11-07",
+    "BBVA Puts $150 Million Syndicated Loan on Ethereum Blockchain",
+    "NEUT",
+    "https://www.coindesk.com/bbva-puts-150-million-syndicated-loan-on-ethereum-blockchain/",
+    "11-07",
+    "Coinbase Offers $5k Egg-Freezing Benefit in Bid to Retain Talent",
+    "POS",
+    "https://www.coindesk.com/coinbase-offers-5k-egg-freezing-benefit-in-bid-to-retain-talent/",
+    "11-06",
+    "Bitcoin Cash Price Climbs 11% to Hit 2-Month High",
+    "POS",
+    "https://www.coindesk.com/bitcoin-cash-price-climbs-11-percent-to-hit-2-month-high/",
+    "11-06",
+    "Texas Regulators Enter Emergency Stop Against Crypto Mining Firm",
+    "NEUT",
+    "https://www.coindesk.com/texas-securities-regulators-enter-emergency-stop-against-crypto-mining-firm/",
+    "11-06",
+    "Charlie Shrem Says He Never Owned Bitcoin Claimed Stolen By Winklevosses",
+    "NEUT",
+    "https://www.coindesk.com/charlie-shrem-says-he-never-owned-bitcoin-claimed-stolen-by-winklevosses/",
+    "11-06",
+    "Bitmain to Begin Selling New Bitcoin Miners Later This Week",
+    "POS",
+    "https://www.coindesk.com/bitmain-to-begin-selling-new-bitcoin-miners-later-this-week/"
   ]
 }
