@@ -126,9 +126,9 @@ module.exports.createLoginScreen = function(screen, callback) {
 
   // Input Boxes
 
+  var usernameEntryBox = createPromptBox(loginForm, "username");
   var keyEntryBox = createPromptBox(loginForm, "apiKey");
   var secretEntryBox = createPromptBox(loginForm, "secret");
-  var usernameEntryBox = createPromptBox(loginForm, "username");
 
   function destroyModal() {
     keyEntryBox.destroy();
@@ -200,6 +200,19 @@ module.exports.createLoginScreen = function(screen, callback) {
     loginForm.focusNext();
   });
 
+  // keyEntryBox.on("click", function(data) {
+  //   secretEntryBox.unfocus;
+  //   keyEntryBox.focus();
+  // });
+  //
+  // secretEntryBox.on("click", function(data) {
+  //   secretEntryBox.focus();
+  // });
+  //
+  // usernameEntryBox.on("click", function(data) {
+  //   usernameEntryBox.focus();
+  // });
+
   login.on("press", function() {
     // console.log("Login Pressed.");
     enteredCreds.apiKey = keyEntryBox.content;
@@ -222,7 +235,7 @@ module.exports.createLoginScreen = function(screen, callback) {
 
   cancel.on("press", () => destroyModal());
 
-  screen.key(["q"], () => destroyModal());
+  screen.key(["q", "ESC", "Q"], () => destroyModal());
 
   loginForm.focus();
   screen.render();
