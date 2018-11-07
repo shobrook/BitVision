@@ -9,7 +9,7 @@ from bitstamp import Trading
 
 
 def action(name):
-    with open("../cache/config.json") as config:
+    with open("./cache/config.json") as config:
         config_dict = json.load(config)
         credentials = config_dict["credentials"]
         client = Trading(
