@@ -1,100 +1,74 @@
-let blessed = require("blessed");
-let { colorScheme } = require("../constants.js");
+// GLOBALS //
 
-let errorStrings = {
+const blessed = require("blessed");
+const { colorScheme } = require("../constants");
+
+const errorStrings = {
   label: " {bold}{red-fg}Error{/bold}{/red-fg} ",
   hint: " {bold}Check your connection or credentials.{/bold} "
 };
 
-var errorForm = null;
+// MAIN //
 
-module.exports = {
-  /**
-   * Creates error screen.
-   * @param  {[type]} screen Parent screen
-   */
-  createErrorScreen: function(screen) {
-    var errorForm = blessed.form({
-      parent: screen,
-      keys: true,
-      type: "overlay",
-      top: "center",
-      left: "center",
-      width: 45,
-      height: 8,
-      bg: colorScheme.background,
-      color: "white"
-    });
+module.exports.createErrorScreen = screen => {
+  let errorForm = null;
+  errorForm = blessed.form({
+    parent: screen,
+    keys: true,
+    type: "overlay",
+    top: "center",
+    left: "center",
+    width: 45,
+    height: 8,
+    bg: colorScheme.background,
+    color: "white"
+  });
 
-    let label = blessed.box({
-      parent: errorForm,
-      top: 1,
-      left: "center",
-      width: 6,
-      height: 1,
-      content: errorStrings.label,
-      style: {
-        bg: colorScheme.background,
-        fg: "white",
-        bold: true
-      },
-      tags: true
-    });
+  let label = blessed.box({
+    parent: errorForm,
+    top: 1,
+    left: "center",
+    width: 6,
+    height: 1,
+    content: errorStrings.label,
+    style: { bg: colorScheme.background, fg: "white", bold: true },
+    tags: true
+  });
 
-    let hint = blessed.box({
-      parent: errorForm,
-      top: 2,
-      left: "center",
-      width: 38,
-      height: 3,
-      shrink: true,
-      content: errorStrings.hint,
-      style: {
-        bg: colorScheme.background,
-        fg: "black"
-      },
-      tags: true
-    });
+  let hint = blessed.box({
+    parent: errorForm,
+    top: 2,
+    left: "center",
+    width: 38,
+    height: 3,
+    shrink: true,
+    content: errorStrings.hint,
+    style: { bg: colorScheme.background, fg: "black" },
+    tags: true
+  });
 
-    // Buttons
-    var okayButton = blessed.button({
-      parent: errorForm,
-      mouse: true,
-      keys: true,
-      shrink: true,
-      right: 5,
-      bottom: 1,
-      padding: {
-        left: 4,
-        right: 4,
-        top: 1,
-        bottom: 1
-      },
-      name: "okay",
-      content: "okay",
-      style: {
-        bg: colorScheme.confirmLight,
-        fg: "black",
-        focus: {
-          bg: colorScheme.confirmDark,
-          fg: "black"
-        },
-        hover: {
-          bg: colorScheme.confirmDark,
-          fg: "black"
-        }
-      }
-    });
+  // Buttons
+  let okayButton = blessed.button({
+    parent: errorForm,
+    mouse: true,
+    keys: true,
+    shrink: true,
+    right: 5,
+    bottom: 1,
+    padding: { left: 4, right: 4, top: 1, bottom: 1 },
+    name: "okay",
+    content: "okay",
+    style: {
+      bg: colorScheme.confirmLight,
+      fg: "black",
+      focus: { bg: colorScheme.confirmDark, fg: "black" },
+      hover: { bg: colorScheme.confirmDark, fg: "black" }
+    }
+  });
 
-    okayButton.on("press", function() {
-      errorForm.destroy();
-    });
+  okayButton.on("press", () => errorForm.destroy());
+  screen.key(["q", "Q"], (ch, key) => errorForm.destroy());
 
-    screen.key(["q"], function(ch, key) {
-      errorForm.destroy();
-    });
-
-    okayButton.focus();
-    screen.render();
-  }
+  okayButton.focus();
+  screen.render();
 };

@@ -1,12 +1,12 @@
+// GLOBALS //
+
 const blessed = require("blessed");
 const { colorScheme } = require("../constants");
 
-var toggleForm = null; // QUESTION: Why is this null and why is it global?
+// MAIN //
 
-/**
- * Creates a toggle settings screen for enabling or disabling trading.
- */
-module.exports.createToggleScreen = function(screen, callback) {
+module.exports.createToggleScreen = (screen, callback) => {
+  let toggleForm = null;
   var toggleForm = blessed.form({
     parent: screen,
     keys: true,
@@ -26,86 +26,58 @@ module.exports.createToggleScreen = function(screen, callback) {
     width: 33,
     height: 1,
     content: " Set automatic trading status. ",
-    style: {
-      bg: colorScheme.background,
-      fg: "white",
-      bold: true
-    },
+    style: { bg: colorScheme.background, fg: "white", bold: true },
     tags: true
   });
 
   // Buttons
-  var enable = blessed.button({
+  let enable = blessed.button({
     parent: toggleForm,
     mouse: true,
     keys: true,
     shrink: true,
     right: 3,
     bottom: 1,
-    padding: {
-      left: 2,
-      right: 2
-    },
+    padding: { left: 2, right: 2 },
     name: "enable",
     content: "enable",
     style: {
       bg: colorScheme.confirmLight,
-      focus: {
-        bg: colorScheme.confirmDark,
-        fg: "black"
-      },
-      hover: {
-        bg: colorScheme.confirmDark,
-        fg: "black"
-      }
+      focus: { bg: colorScheme.confirmDark, fg: "black" },
+      hover: { bg: colorScheme.confirmDark, fg: "black" }
     }
   });
 
-  var disable = blessed.button({
+  let disable = blessed.button({
     parent: toggleForm,
     mouse: true,
     keys: true,
     shrink: true,
     left: 3,
     bottom: 1,
-    padding: {
-      left: 2,
-      right: 2
-    },
+    padding: { left: 2, right: 2 },
     name: "disable",
     content: "disable",
     style: {
       bg: colorScheme.cancelLight,
-      focus: {
-        bg: colorScheme.cancelDark,
-        fg: "black"
-      },
-      hover: {
-        bg: colorScheme.cancelDark,
-        fg: "black"
-      }
+      focus: { bg: colorScheme.cancelDark, fg: "black" },
+      hover: { bg: colorScheme.cancelDark, fg: "black" }
     }
   });
 
-  screen.on("tab", text => {
-    toggleForm.focusNext();
-  });
+  screen.on("tab", text => toggleForm.focusNext());
 
-  enable.on("press", function() {
-    console.log("Trading enabled.");
+  enable.on("press", () => {
     callback(true);
     toggleForm.destroy();
   });
 
-  disable.on("press", function() {
-    console.log("Trading disabled.");
+  disable.on("press", () => {
     callback(false);
     toggleForm.destroy();
   });
 
-  screen.key(["q", "Q"], function(ch, key) {
-    toggleForm.destroy();
-  });
+  screen.key(["q", "Q"], (ch, key) => toggleForm.destroy());
 
   toggleForm.focus();
   screen.render();

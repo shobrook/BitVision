@@ -1,8 +1,9 @@
-let blessed = require("blessed");
-let { colorScheme } = require("../constants.js");
+// GLOBALS //
 
-// CONSTANTS
-let spacing = {
+const blessed = require("blessed");
+const { colorScheme } = require("../constants");
+
+const spacing = {
   height: 3,
   width: 36,
   left: 4,
@@ -13,7 +14,7 @@ let spacing = {
   username: 4
 };
 
-let loginStrings = {
+const loginStrings = {
   username: " {bold}{blue-fg}Username{/bold}{/blue-fg} ",
   apiKey: " {bold}{blue-fg}API Key{/bold}{/blue-fg} ",
   secret: " {bold}{blue-fg}Secret{/bold}{/blue-fg} ",
@@ -21,13 +22,9 @@ let loginStrings = {
   hint: " Press tab to start entry. "
 };
 
-var enteredCreds = {
-  apiKey: "",
-  secret: "",
-  username: ""
-};
+const enteredCreds = { apiKey: "", secret: "", username: "" };
 
-//  FUNCTIONS
+// FUNCTIONS
 
 /**
  * Checks enteredCreds for DEFAULT or "" values.
