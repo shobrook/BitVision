@@ -229,10 +229,6 @@ function extractAndRemoveUrls(listOfArticles) {
   return urls;
 }
 
-/**
- * Returns an array with 2 elements, [0] -> Sell Indicator %, [1] -> Buy Indicator %
- * Must be done without headers in the technicalIndicators structure.
- */
 function calculateGaugePercentages(technicalIndicators) {
   let totalBuy = 0;
   let totalSell = 0;
@@ -249,12 +245,10 @@ function calculateGaugePercentages(technicalIndicators) {
 
   let sellPercentage = (totalSell / total) * 100;
   let buyPercentage = (totalBuy / total) * 100;
+
   return [sellPercentage, buyPercentage];
 }
 
-/**
- * Returns a dictionary with chart data.
- */
 function buildChartData(priceData) {
   let lastTwoMonths = priceData.slice(0, 60).reverse();
   let convertedTimestamps = lastTwoMonths.map(x => x.date);
@@ -267,12 +261,9 @@ function buildChartData(priceData) {
   };
 }
 
-// ---------------------------------
-// BUILDING BLESSED INTERFACE
-// [insert obligatory "bless up" reference]
-// ---------------------------------
+// BLESSED INTERFACE HELPERS //
+/* [insert obligatory "bless up" reference] */
 
-// Globals
 var screen = null;
 var grid = null;
 var headlinesTable = null;
@@ -286,11 +277,9 @@ var transactionsTable = null;
 var menubar = null;
 var URLs = null;
 
-/**
- * Replacing globals with blessed widgets.
- * @return {None}
- */
-function buildInterface() {
+function createInterface() {
+  let padding = { left: 1, right: 1 };
+
   screen = blessed.screen({
     smartCSR: true,
     title: "BitVision",
@@ -302,19 +291,9 @@ function buildInterface() {
     }
   });
 
-  grid = new contrib.grid({
-    rows: 36,
-    cols: 36,
-    screen: screen
-  });
+  grid = new contrib.grid({ rows: 36, cols: 36, screen: screen });
 
-  let padding = {
-    left: 1,
-    right: 1
-  };
-
-  // Place 3 tables and a gauge on the left side of the screen, stacked vertically
-
+  // Create dashboard widgets
   headlinesTable = grid.set(
     0,
     0,
@@ -323,7 +302,6 @@ function buildInterface() {
     blessed.ListTable,
     createListTable("center", null, true)
   );
-  headlinesTable.focus();
   technicalIndicatorsTable = grid.set(
     10,
     0,
@@ -332,15 +310,13 @@ function buildInterface() {
     blessed.ListTable,
     createListTable("left", padding)
   );
-
   technicalIndicatorsGauge = grid.set(19, 0, 6.5, 13, contrib.gauge, {
     label: " Buy/Sell Gauge ".bold.red,
     gaugeSpacing: 0,
     gaugeHeight: 1,
     showLabel: true
   });
-
-  blockchainIndicatorsTable = grid.set(
+  blockchainAttributesTable = grid.set(
     26,
     0,
     10,
@@ -348,9 +324,6 @@ function buildInterface() {
     blessed.ListTable,
     createListTable("left", padding)
   );
-
-  // Line chart on the right of the tables
-
   exchangeRateChart = grid.set(0, 13, 25, 23, contrib.line, {
     style: {
       line: "yellow",
@@ -363,9 +336,6 @@ function buildInterface() {
     wholeNumbersOnly: true,
     label: " Exchange Rate ".bold.red
   });
-
-  // Price table and console under chart.
-
   priceTable = grid.set(
     26,
     29,
@@ -374,7 +344,6 @@ function buildInterface() {
     blessed.ListTable,
     createListTable("left", padding)
   );
-
   portfolioTable = grid.set(
     26,
     13,
@@ -383,7 +352,6 @@ function buildInterface() {
     blessed.ListTable,
     createListTable("left", padding)
   );
-
   transactionsTable = grid.set(
     26,
     20,
@@ -393,20 +361,16 @@ function buildInterface() {
     createListTable("left", padding)
   );
 
+  headlinesTable.focus();
+
+  // Create menu
   menubar = blessed.listbar({
     parent: screen,
     keys: true,
     bottom: 0,
     left: 0,
     height: 1,
-    style: {
-      item: {
-        fg: "yellow"
-      },
-      selected: {
-        fg: "yellow"
-      }
-    },
+    style: { item: { fg: "yellow" }, selected: { fg: "yellow" } },
     commands: {
       Login: {
         keys: ["l", "L"],
@@ -430,7 +394,7 @@ function buildInterface() {
         callback: () => {
           if (isLoggedIn()) {
             tradeEntryStatus = true;
-            createTransactionScreen(screen, function(amount, type) {
+            createTransactionScreen(screen, (amount, type) => {
               let makeTradeCommand = Array.from(pyCommands.makeTrade);
               makeTradeCommand[1].push(`${{ amount, type }}`);
 
@@ -455,9 +419,7 @@ function buildInterface() {
       },
       Logout: {
         keys: ["k", "K"],
-        callback: () => {
-          clearCredentials();
-        }
+        callback: () => clearCredentials()
       },
       Exit: {
         keys: ["C-c", "escape"],
@@ -467,9 +429,9 @@ function buildInterface() {
   });
 
   // Resizing
-  screen.on("resize", function() {
+  screen.on("resize", () => {
     technicalIndicatorsTable.emit("attach");
-    blockchainIndicatorsTable.emit("attach");
+    blockchainAttributesTable.emit("attach");
     headlinesTable.emit("attach");
     exchangeRateChart.emit("attach");
     technicalIndicatorsGauge.emit("attach");
@@ -478,7 +440,7 @@ function buildInterface() {
   });
 
   // Open article
-  screen.key(["enter"], function(ch, key) {
+  screen.key(["enter"], (ch, key) => {
     if (!tradeEntryStatus && !loginEntryStatus && !errorEntryStatus) {
       let selectedArticleURL = URLs[headlinesTable.selected - 1];
       openBrowser(selectedArticleURL);
@@ -486,14 +448,8 @@ function buildInterface() {
   });
 
   // Quit
-  screen.key(["escape", "C-c"], function(ch, key) {
-    return process.exit(0);
-  });
+  screen.key(["escape", "C-c"], (ch, key) => process.exit(0));
 }
-
-// ------------------------------
-// BLESSED DATA SETTING FUNCTIONS
-// ------------------------------
 
 function refreshInterface() {
   const headlinesJSON = readJSONFile(filePaths.headlineDataPath);
@@ -554,7 +510,7 @@ function refreshInterface() {
       stroke: "green"
     }
   ]);
-  blockchainIndicatorsTable.setData(blockchainData);
+  blockchainAttributesTable.setData(blockchainData);
   priceTable.setData(tickerData);
   portfolioTable.setData(portfolioData);
   transactionsTable.setData(transactionData);
@@ -563,13 +519,7 @@ function refreshInterface() {
   screen.render();
 }
 
-// MAIN //
-
-/**
- * Let's get this show on the road.
- */
-function main() {
-  // Display splash screen
+function loadSplashScreen() {
   console.log(splash.logo);
   console.log(splash.description);
 
@@ -586,29 +536,20 @@ function main() {
 
   console.log(splash.fetchingData("transaction history from Bitstamp"));
   updateData("PORTFOLIO");
+}
 
-  buildInterface();
+// MAIN //
+
+function main(refreshRate = 120000) {
+  loadSplashScreen();
+  createInterface();
   refreshInterface();
 
-  setInterval(function() {
-    refreshInterface();
-  }, 12000);
-
-  setInterval(function() {
-    updateData("TICKER");
-  }, 120000);
-
-  setInterval(function() {
-    updateData("PORTFOLIO");
-  }, 120000);
-
-  setInterval(function() {
-    updateData("NETWORK");
-  }, 120000);
-
-  setInterval(function() {
-    updateData("HEADLINES");
-  }, 900000);
+  setInterval(() => refreshInterface(), refreshRate);
+  setInterval(() => updateData("TICKER"), refreshRate);
+  setInterval(() => updateData("PORTFOLIO"), refreshRate);
+  setInterval(() => updateData("NETWORK"), refreshRate);
+  setInterval(() => updateData("HEADLINES"), refreshRate);
 }
 
 main();
