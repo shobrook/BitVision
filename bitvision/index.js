@@ -49,20 +49,7 @@ function writeJSONFile(path, data) {
 }
 
 function execShellCommand(command) {
-  let spawnedProcess = spawn(command[0], command[1], {
-    stdio: ["inherit", "ignore", "ignore"],
-    detached: true
-  });
-  spawnedProcess.unref();
-
-  // let spawnedProcess = spawn(command[0], command[1], { stdio: "ignore" }); // { detached: true }
-  // spawnedProcess.then(() => {}).catch(err => {
-  // if (screen) {
-  //   errorEntryStatus = true;
-  //   error.createErrorScreen(screen);
-  //   errorEntryStatus = false;
-  // }
-  // });
+  spawn(command[0], command[1], { stdio: "ignore", detached: true });
 }
 
 // CONFIG HELPERS //
