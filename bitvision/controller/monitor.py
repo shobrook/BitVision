@@ -226,7 +226,7 @@ def fetch_coindesk_stats():
                 else:
                     sentiment = "NEG"
 
-                processed_headlines += [date_published, headline_str, sentiment, url]
+                processed_headlines += [[date_published, headline_str, sentiment, url]]
 
             headlines_json.write(json.dumps({
                 "error": False,
