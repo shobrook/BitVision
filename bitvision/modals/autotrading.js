@@ -7,7 +7,7 @@ const { colorScheme } = require("../constants");
 
 module.exports.createToggleScreen = (screen, callback) => {
   let toggleForm = null;
-  var toggleForm = blessed.form({
+  toggleForm = blessed.form({
     parent: screen,
     keys: true,
     type: "overlay",
