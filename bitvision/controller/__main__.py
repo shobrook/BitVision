@@ -19,13 +19,15 @@ def action(name):
         )
 
         if name == "authenticate":  # Authenticates Bitstamp credentials
-            try:
-                client.account_balance()
-                config.write(json.dumps(
-                    {**config_dict, **{"logged_in": True}}))
-            except:
-                config.write(json.dumps(
-                    {**config_dict, **{"logged_in": False}}))
+            with open("./cache/config.json", 'w') as new_config:
+                try:
+                    client.account_balance()
+                    logged_in = True
+                except:
+                    logged_in = False
+
+                config_dict["logged_in"] = logged_in
+                new_config.write(json.dumps(config_dict))
         elif name == "monitor_price":  # Updates ticker and graph data
             refresh(["price_data"])
         elif name == "monitor_network":  # Updates technical indicators and blockchain data
