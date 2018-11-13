@@ -101,41 +101,38 @@ def fetch_price_data():
                 "data": json.loads(graph_data)["data"]
             }))
 
-
 def fetch_tech_indicators():
-    # TODO: Create a mapping between indicator values and signals
-
     with open("./cache/data/indicators.json", 'w') as indicators_json:
         try:
-            indicators = transformer("calculate_indicators")(
-                dataset("price_data"))
-
-            # "MACD": {}, # MACD, MACD (Signal), MACD (Historical)
-            # "MOM (1)": {"value": indicators["MOM (1)"][0], "signal": ""},
-            # "ADX (20)": {"value": indicators["ADX (20)"][0], "signal": ""},
-            # "RSI (12)": {"value": indicators["RSI (12)"][0], "signal": ""},
-            # "ATR (14)": {"value": indicators["ATR (14)"][0], "signal": ""},
-            # "OBV": {"value": indicators["OBV"][0], "signal": ""},
-            # "TRIX (20)": {"value": indicators["TRIX (20)"][0], "signal": ""},
-            # "EMA (6)": {"value": indicators["EMA (6)"][0], "signal": "NONE"},
-
-            data = [
-                ["MOM (3-period)",
-                 str(round(indicators["MOM (1)"][0], 2)), "SELL"],
-                ["ADX (14-period)",
-                 str(round(indicators["ADX (14)"][0], 2)), "SELL"],
-                ["WILLR", str(round(indicators["WILLR"][0], 2)), "SELL"],
-                ["RSI (6-period)",
-                 str(round(indicators["RSI (6)"][0], 2)), "SELL"],
-                ["ATR (14-period)",
-                 str(round(indicators["ATR (14)"][0], 2)), "SELL"],
-                ["OBV",
-                    str(round(indicators["OBV"][0], 2)), "BUY"],
-                ["TRIX (20-period)",
-                 str(round(indicators["TRIX (20)"][0], 2)), "BUY"],
-                ["EMA (6-period)",
-                 str(round(indicators["EMA (6)"][0], 2)), "BUY"]
+            price_data = dataset("price_data")
+            indicators = transformer("calculate_indicators")(price_data)
+            valid_indicators = [
+                "MOM (1)",
+                "ADX (14)",
+                "WILLR",
+                "RSI (6)",
+                "ATR (14)",
+                "OBV",
+                "TRIX (20)",
+                "EMA (6)"
             ]
+
+            get_val = lambda symb: round(indicators[symb][0], 2)
+            get_signal = {
+                "MOM (1)": lambda v: "BUY" if v >= 0 else "SELL",
+                "ADX (14)": lambda v: "BUY" if v >= 25 else "SELL", # Not sure about this
+                "WILLR": lambda v: "SELL" if v <= -50 else "BUY",
+                "RSI (6)": lambda v: "SELL" if v >= 50 else "BUY",
+                "ATR (14)": lambda v: "N/A",
+                "OBV": lambda v: "N/A",
+                "TRIX (20)": lambda v: "N/A",
+                "EMA (6)": lambda v: "N/A"
+            }
+
+            data = []
+            for symb in valid_indicators:
+                val = get_val(symb)
+                data.append([symb, str(val), get_signal[symb](val)])
 
             indicators_json.write(json.dumps({
                 "error": False,
@@ -146,7 +143,6 @@ def fetch_tech_indicators():
                 "error": True,
                 "data": []
             }, indent=2))
-
 
 def fetch_blockchain_data():
     with open("./cache/data/blockchain.json", 'w') as blockchain_data_json:
@@ -188,7 +184,6 @@ def fetch_blockchain_data():
                 "data": []
             }, indent=2))
 
-
 def fetch_coindesk_stats():
     with open("./cache/data/headlines.json", 'w') as headlines_json:
         try:
@@ -207,9 +202,8 @@ def fetch_coindesk_stats():
 
                 headline = article.get_text().strip()
                 date_published = moment.date(date_container).format("M-D")
-                url = article["href"]
 
-                headlines.append((headline, date_published, url))
+                headlines.append((headline, date_published, article["href"]))
 
             ordered_headlines = sorted(headlines, key=lambda h: h[1], reverse=True)
             processed_headlines = []
@@ -217,7 +211,6 @@ def fetch_coindesk_stats():
                 headline_str = headline[0].split('\n')[0]
                 date_published = headline[1]
                 sentiment = TextBlob(headline_str).sentiment.polarity
-                url = headline[2]
 
                 if sentiment > 0:
                     sentiment = "POS"
@@ -226,7 +219,12 @@ def fetch_coindesk_stats():
                 else:
                     sentiment = "NEG"
 
-                processed_headlines += [[date_published, headline_str, sentiment, url]]
+                processed_headlines += [[
+                    date_published,
+                    headline_str,
+                    sentiment,
+                    headline[2]
+                ]]
 
             headlines_json.write(json.dumps({
                 "error": False,
@@ -237,7 +235,6 @@ def fetch_coindesk_stats():
                 "error": True,
                 "data": []
             }, indent=2))
-
 
 def fetch_portfolio_stats(client):
     with open("./cache/data/portfolio.json", 'w') as portfolio_json:
@@ -259,7 +256,6 @@ def fetch_portfolio_stats(client):
                 "error": True,
                 "data": {}
             }))
-
 
 def fetch_transaction_data(client):
     with open("./cache/data/transactions.json", 'w') as transactions:
