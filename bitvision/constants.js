@@ -31,13 +31,14 @@ module.exports = {
     transactionsDataPath: path.join(cachePath, "data", "transactions.json")
   },
   pyCommands: {
+    checkLogin: ["python3", [controllerPath, "authenticate"]],
+    toggleAlgo: ["python3", [controllerPath, "toggle_algo"]],
     makeTrade: ["python3", [controllerPath, "make_trade"]],
-    refreshNetwork: ["python3", [controllerPath, "monitor_network"]],
-    refreshTicker: ["python3", [controllerPath, "monitor_price"]],
-    refreshHeadlines: ["python3", [controllerPath, "monitor_opinions"]],
-    refreshPortfolio: ["python3", [controllerPath, "monitor_portfolio"]],
-    // "retrain_model": ["python3", [controllerPath, "retrain_model"]]
-    checkLogin: ["python3", [controllerPath, "authenticate"]]
+    // withdraw: ["python3", [controllerPath, "withdraw"]],
+    refreshNetwork: ["python3", [controllerPath, "retrieve_network_data"]],
+    refreshTicker: ["python3", [controllerPath, "retrieve_price_data"]],
+    refreshHeadlines: ["python3", [controllerPath, "retrieve_headline_data"]],
+    refreshPortfolio: ["python3", [controllerPath, "retrieve_portfolio_stats"]]
   },
   baseConfig: {
     logged_in: false,
