@@ -34,7 +34,7 @@ module.exports.createOrderScreen = (screen, callback) => {
     left: "center",
     width: 45,
     height: 14,
-    bg: cheme.background,
+    bg: colorScheme.background,
     color: "white"
   });
 
