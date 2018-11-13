@@ -217,25 +217,25 @@ function extractAndRemoveUrls(listOfArticles) {
 }
 
 function calculateGaugePercentages(technicalIndicators) {
-  let totalBuy = 0;
-  let totalSell = 0;
-  let total = technicalIndicators.length;
+  let totalBuy = 0.0;
+  let totalSell = 0.0;
+  let ignoreCount = 0.0;
 
-  for (let idx = 0; idx < total; idx++) {
-    let lower = technicalIndicators[idx][2].toLowerCase().trim();
-    if (lower === "buy") {
+  technicalIndicators.forEach(indicator => {
+    let signal = indicator[2].toLowerCase().trim();
+    if (signal === "buy") {
       totalBuy++;
-    } else if (lower === "sell") {
+    } else if (signal === "sell") {
       totalSell++;
     } else {
-      total--;
+      ignoreCount++;
     }
-  }
+  });
 
-  let sellPercentage = (totalSell / total) * 100;
-  let buyPercentage = (totalBuy / total) * 100;
+  let sellPerc = (totalSell / (technicalIndicators.length - ignoreCount)) * 100;
+  let buyPerc = (totalBuy / (technicalIndicators.length - ignoreCount)) * 100;
 
-  return [sellPercentage, buyPercentage];
+  return [Number(sellPerc.toFixed(2)), Number(buyPerc.toFixed(2))];
 }
 
 function buildChartData(priceData) {
