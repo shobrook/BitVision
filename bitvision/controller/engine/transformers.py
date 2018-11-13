@@ -3,9 +3,9 @@
 #########
 
 
-from itertools import islice
 import pandas as pd
 import dateutil.parser as dp
+from itertools import islice
 from scipy.stats import boxcox
 from realtime_talib import Indicator
 #from nltk import word_tokenize
@@ -103,7 +103,6 @@ def calculate_indicators(ohlcv_df):
 
     return ohlcv_df
 
-
 def merge_datasets(origin_df, other_sets):
     merged = origin_df
     for set in other_sets:
@@ -111,13 +110,11 @@ def merge_datasets(origin_df, other_sets):
 
     return merged
 
-
 def fix_null_vals(df):
     if not df.isnull().any().any():
         return df
     else:
         return df.fillna(method="ffill")
-
 
 def add_lag_vars(df, lag=3):
     new_df_dict = {}
@@ -132,14 +129,12 @@ def add_lag_vars(df, lag=3):
 
     return new_df.dropna()
 
-
 def power_transform(df):
     for header in df.drop("Date", axis=1).columns:
         if not any(df[header] < 0) and not any(df[header] == 0):
             df[header] = boxcox(df[header])[0]
 
     return df
-
 
 def binarize_labels(df):
     trends = [None]
@@ -156,7 +151,6 @@ def binarize_labels(df):
 
     return df
 
-
 def recursive_feature_elim(df):
     return df
 
@@ -166,7 +160,98 @@ def recursive_feature_elim(df):
 ####################
 
 
-# TODO: All yours, @alichtman
+# def remove_special_chars(headline_list):
+# 	"""
+# 	Returns list of headlines with all non-alphabetical characters removed.
+# 	"""
+# 	rm_spec_chars = [re.sub('[^ A-Za-z]+', "", headline) for headline in headline_list]
+# 	return rm_spec_chars
+#
+# def tokenize(headline_list):
+# 	"""
+# 	Takes list of headlines as input and returns a list of lists of tokens.
+# 	"""
+# 	tokenized = []
+# 	for headline in headline_list:
+# 		tokens = word_tokenize(headline)
+# 		tokenized.append(tokens)
+#
+# 	return tokenized
+#
+# def remove_stop_words(tokenized_headline_list):
+# 	"""
+# 	Takes list of lists of tokens as input and removes all stop words.
+# 	"""
+# 	filtered_tokens = []
+# 	for token_list in tokenized_headline_list:
+# 		filtered_tokens.append([token for token in token_list if token not in set(stopwords.words('english'))])
+# 	# print("stop words")
+# 	# pprint(filtered_tokens)
+# 	return filtered_tokens
+#
+# def stem(token_list_of_lists):
+# 	"""
+# 	Takes list of lists of tokens as input and stems every token.
+# 	Returns a list of lists of stems.
+# 	"""
+# 	stemmer = PorterStemmer()
+# 	stemmed = []
+# 	for token_list in token_list_of_lists:
+# 		# print(token_list)
+# 		stemmed.append([stemmer.stem(token) for token in token_list])
+# 	# print("stem")
+# 	# pprint(stemmed)
+# 	return stemmed
+#
+#
+# def make_bag_of_words(df, stemmed):
+# 	"""
+# 	Create bag of words model.
+# 	"""
+# 	print("\tCreating Bag of Words Model...")
+#
+# 	very_pos = set()
+# 	slightly_pos = set()
+# 	neutral = set()
+# 	slightly_neg = set()
+# 	very_neg = set()
+#
+# 	# Create sets that hold words in headlines categorized as "slightly_neg" or "slightly_pos" or etc
+#
+# 	for stems, sentiment in zip(stemmed, df["Sentiment"].tolist()):
+# 		if sentiment == -2:
+# 			very_neg.update(stems)
+# 		elif sentiment == -1:
+# 			slightly_neg.update(stems)
+# 		elif sentiment == 0:
+# 			neutral.update(stems)
+# 		elif sentiment == 1:
+# 			slightly_pos.update(stems)
+# 		elif sentiment == 2:
+# 			very_pos.update(stems)
+#
+# 	# Count number of words in each headline in each of the sets and encode it as a list of counts for each headline.
+#
+# 	bag_count = []
+# 	for x in stemmed:
+# 		x = set(x)
+# 		bag_count.append(list((len(x & very_neg), len(x & slightly_neg), len(x & neutral), len(x & slightly_pos), len(x & very_pos))))
+#
+# 	df["sentiment_class_count"] = bag_count
+# 	return df
+#
+# def sentiment_preprocessing(df):
+# 	"""
+# 	Takes a dataframe, removes special characters, tokenizes
+# 	the headlines, removes stop-tokens, and stems the remaining tokens.
+# 	"""
+#
+# 	specials_removed = remove_special_chars(df["Headline"].tolist())
+# 	tokenized = tokenize(specials_removed)
+# 	tokenized_filtered = remove_stop_words(tokenized)
+# 	stemmed = stem(tokenized_filtered)
+#
+# 	return df, stemmed
 
 
 ######
