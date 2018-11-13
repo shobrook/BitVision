@@ -225,8 +225,10 @@ function calculateGaugePercentages(technicalIndicators) {
     let lower = technicalIndicators[idx][2].toLowerCase().trim();
     if (lower === "buy") {
       totalBuy++;
-    } else {
+    } else if (lower === "sell") {
       totalSell++;
+    } else {
+      total--;
     }
   }
 
