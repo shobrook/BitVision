@@ -2,7 +2,7 @@ const path = require("path");
 const colors = require("colors");
 
 let cachePath = String.raw`${path.join(__dirname, "cache")}`;
-let controllerPath = String.raw`${path.join(__dirname, "controller")}`;
+let servicesPath = String.raw`${path.join(__dirname, "services")}`;
 
 module.exports = {
   colorScheme: {
@@ -31,14 +31,14 @@ module.exports = {
     transactionsDataPath: path.join(cachePath, "data", "transactions.json")
   },
   pyCommands: {
-    checkLogin: ["python3", [controllerPath, "authenticate"]],
-    toggleAlgo: ["python3", [controllerPath, "toggle_algo"]],
-    makeTrade: ["python3", [controllerPath, "make_trade"]],
-    // withdraw: ["python3", [controllerPath, "withdraw"]],
-    refreshNetwork: ["python3", [controllerPath, "retrieve_network_data"]],
-    refreshTicker: ["python3", [controllerPath, "retrieve_price_data"]],
-    refreshHeadlines: ["python3", [controllerPath, "retrieve_headline_data"]],
-    refreshPortfolio: ["python3", [controllerPath, "retrieve_portfolio_stats"]]
+    checkLogin: ["python3", [servicesPath, "authenticate"]],
+    toggleAlgo: ["python3", [servicesPath, "toggle_algo"]],
+    makeTrade: ["python3", [servicesPath, "make_trade"]],
+    // withdraw: ["python3", [servicesPath, "withdraw"]],
+    refreshNetwork: ["python3", [servicesPath, "retrieve_network_data"]],
+    refreshTicker: ["python3", [servicesPath, "retrieve_price_data"]],
+    refreshHeadlines: ["python3", [servicesPath, "retrieve_headline_data"]],
+    refreshPortfolio: ["python3", [servicesPath, "retrieve_portfolio_stats"]]
   },
   baseConfig: {
     logged_in: false,
