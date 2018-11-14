@@ -12,9 +12,9 @@ import requests
 from engine import dataset, transformer, Model
 
 
-##################
-# TRADING WRAPPERS
-##################
+###################
+# TRADING UTILITIES
+###################
 
 
 def make_prediction():
@@ -57,6 +57,9 @@ def make_trade(client, order):
 
         with open("../cache/data/trading_log.json", 'w') as trading_log:
             trading_log.write(json.dumps(new_log, indent=2))
+
+def allocate_funds(account_balance):
+    return 0 # TODO: Implement Kelly Criterion
 
 
 #################
