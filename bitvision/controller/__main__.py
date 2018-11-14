@@ -12,7 +12,7 @@ from crontab import CronTab
 
 # Local
 from retriever import retrieve
-from trader import make_prediction, make_trade, TradingClient
+from trader import make_prediction, make_trade, allocate_funds, TradingClient
 
 
 ######
@@ -87,10 +87,10 @@ def action(name):
                 }))
         elif name == "make_algotrade": # Makes a scheduled trade
             balance = client.account_balance()["usd_available"]
-
-            # TODO: Figure out amount w/ the Kelly Criterion
-
-            make_trade(client, {"type": make_prediction(), "amount": 0})
+            make_trade(client, {
+                "type": make_prediction(),
+                "amount": allocate_funds(balance)
+            })
         elif name == "make_trade": # Makes a user-defined trade
             make_trade(client, dict(sys.argv[2]))
         elif name == "withdraw": # Withdraws money from user account
