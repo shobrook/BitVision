@@ -41,6 +41,7 @@ module.exports = {
     refreshPortfolio: ["python3", [servicesPath, "retrieve_portfolio_stats"]]
   },
   baseConfig: {
+    deps_installed: false,
     logged_in: false,
     credentials: {
       username: "",

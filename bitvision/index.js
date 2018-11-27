@@ -5,6 +5,7 @@ const colors = require("colors");
 const openBrowser = require("opn");
 const blessed = require("blessed");
 const contrib = require("blessed-contrib");
+const inquirer = require('inquirer');
 const { spawnSync } = require("child_process");
 
 const {
@@ -83,6 +84,34 @@ function createConfig() {
   // NOTE: Kinda redundant since only used once...
   if (!fs.existsSync(filePaths.configPath)) {
     writeJSONFile(filePaths.configPath, baseConfig);
+  }
+}
+
+function checkDeps() {
+  let config = getConfig();
+  if (!config.deps_installed) {
+    inquirer.prompt([
+        {
+          type: 'list',
+          name: 'deps',
+          message: 'Would you like to install the Python deps automatically?',
+          choices: [
+            'Yes',
+            'No',
+          ]
+        }
+      ])
+      .then(answers => {
+        if (answers == "Yes") {
+          execShellCommand("./install_python_deps.sh")
+          return true;
+        } else {
+          console.log("ERROR: MUST INSTALL DEPENDENCIES.")
+          process.exit(0)
+        }
+    });
+  } else {
+    return true;
   }
 }
 
@@ -494,6 +523,9 @@ function loadSplashScreen() {
   console.log(splash.description);
 
   createConfig();
+  if (!checkDeps()) {
+    process.exit(0);
+  }
 
   console.log(splash.fetchingData("price data from Bitstamp"));
   updateData("TICKER");
