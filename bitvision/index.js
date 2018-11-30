@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const colors = require("colors");
+const figures = require('figures');
 const openBrowser = require("opn");
 const blessed = require("blessed");
 const contrib = require("blessed-contrib");
@@ -444,9 +445,9 @@ function refreshInterface() {
 		// Color sentiment labels
 		let sentiment = article[2].toLowerCase().trim();
 		if (sentiment == "pos") {
-			article[2] = article[2].green;
+			article[2] = `${article[2]} ${figures.tick}`.green;
 		} else if (sentiment == "neg") {
-			article[2] = article[2].red;
+			article[2] = `${article[2]} ${figures.cross}`.red;
 		} else {
 			article[2] = article[2].yellow;
 		}
@@ -457,9 +458,9 @@ function refreshInterface() {
 		// Color signal labels
     let signal = indicator[2].toLowerCase().trim();
 		if (signal == "buy") {
-			indicator[2] = indicator[2].green;
+			indicator[2] = `${indicator[2]} ${figures.tick}`.green;
 		} else if (signal == "sell") {
-			indicator[2] = indicator[2].red;
+			indicator[2] = `${indicator[2]} ${figures.cross}`.red;
 		} else {
 			indicator[2] = indicator[2].yellow;
 		}
