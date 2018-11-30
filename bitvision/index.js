@@ -7,7 +7,6 @@ const blessed = require("blessed");
 const contrib = require("blessed-contrib");
 const inquirer = require('inquirer');
 const { spawnSync } = require("child_process");
-const exec = require('child_process').exec
 
 const {
   colorScheme,
@@ -49,9 +48,10 @@ function writeJSONFile(path, data) {
   fs.writeFileSync(path, JSON.stringify(data, null, 2), "utf8");
 }
 
-function execShellCommand(command) {
+function execShellCommand(command, inclStdout = false) {
   let spawnedProcess = spawnSync(command[0], command[1], {
     stdio: "ignore",
+		// TODO: @shobrook
     detached: true
   });
 
@@ -500,7 +500,8 @@ function loadSplashScreen() {
 	// Run "pip3 list" and search output for all needed deps. If they're not there, prompt to install them.
 	let python_deps = [ "pandas",	"scipy",	"numpy", "realtime_talib", "nltk", "sklearn", "selenium", "requests", "bs4", "ftfy" ]
 	console.log("Checking deps");
-	exec("pip3 list", function(err, stdout, stderr) {
+	execSync("git config --global user.name", (err, stdout, stderr) => console.log(stdout))
+	execSync("pip3 list", function(err, stdout, stderr) {
 			console.log(stdout)
 			for (x in python_deps) {
 				if (!stdout.includes(x)) {
@@ -517,7 +518,7 @@ function loadSplashScreen() {
 			      ])
 			      .then(answers => {
 			        if (answers == "Yes") {
-			          execShellCommand(`pip3 install ${x}`)
+			          execSync(`pip3 install ${x}`)
 			        } else {
 			          console.log("ERROR: MUST INSTALL DEPENDENCIES.")
 			          process.exit(0)
