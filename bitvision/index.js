@@ -223,9 +223,9 @@ function calculateGaugePercentages(technicalIndicators) {
 
   technicalIndicators.forEach(indicator => {
     let signal = indicator[2].toLowerCase().trim();
-    if (signal === "buy") {
+    if (signal.includes("buy")) {
       totalBuy++;
-    } else if (signal === "sell") {
+    } else if (signal.includes("sell")) {
       totalSell++;
     } else {
       ignoreCount++;
@@ -439,12 +439,33 @@ function refreshInterface() {
   let headlineData = headlinesJSON.data.map(article => {
     // Truncates each headline by 35 characters
     let headline = article[1];
-    article[1] =
-      headline.length > 35 ? headline.slice(0, 35) + "..." : headline + "...";
+    article[1] = headline.length > 35 ? headline.slice(0, 35) + "..." : headline + "...";
 
+		// Color sentiment labels
+		let sentiment = article[2].toLowerCase().trim();
+		if (sentiment == "pos") {
+			article[2] = article[2].green;
+		} else if (sentiment == "neg") {
+			article[2] = article[2].red;
+		} else {
+			article[2] = article[2].yellow;
+		}
     return article;
   });
-  let technicalData = technicalIndicatorJSON.data;
+
+  let technicalData = technicalIndicatorJSON.data.map(indicator => {
+		// Color signal labels
+    let signal = indicator[2].toLowerCase().trim();
+		if (signal == "buy") {
+			indicator[2] = indicator[2].green;
+		} else if (signal == "sell") {
+			indicator[2] = indicator[2].red;
+		} else {
+			indicator[2] = indicator[2].yellow;
+		}
+    return indicator;
+  });
+
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = blockchainJSON.data;
   let tickerData = reformatPriceData(tickerJSON.data);
