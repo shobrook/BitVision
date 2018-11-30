@@ -256,6 +256,7 @@ var headlinesTable = null;
 var technicalIndicatorsTable = null;
 var technicalIndicatorsGauge = null;
 var blockchainIndicatorsTable = null;
+var constructionLabel = null;
 var portfolioTable = null;
 var priceTable = null;
 var exchangeRateChart = null;
@@ -313,6 +314,7 @@ function createInterface() {
     wholeNumbersOnly: true,
     label: " Exchange Rate ".bold.red
   });
+
   priceTable = grid.set(
     26,
     29,
@@ -321,6 +323,7 @@ function createInterface() {
     blessed.ListTable,
     createListTable("left", padding)
   );
+
   portfolioTable = grid.set(
     26,
     13,
@@ -337,6 +340,21 @@ function createInterface() {
     blessed.ListTable,
     createListTable("left", padding)
   );
+
+	constructionLabel = grid.set(28, 16, 7, 9, blessed.box, {
+		parent: screen,
+    keys: true,
+    align: "center",
+    selectedFg: "white",
+    selectedBg: "blue",
+    padding: {
+			top: 2,
+			bottom: 3,
+		},
+    content: "Panels under construction.",
+    style: { fg: "yellow", bold: true },
+    tags: true
+  });
 
   headlinesTable.focus();
 
@@ -412,6 +430,7 @@ function createInterface() {
     headlinesTable.emit("attach");
     exchangeRateChart.emit("attach");
     technicalIndicatorsGauge.emit("attach");
+		constructionLabel.emit("attach");
     priceTable.emit("attach");
     menubar.emit("attach");
   });
