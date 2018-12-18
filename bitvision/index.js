@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const colors = require("colors");
+const figures = require('figures');
 const openBrowser = require("opn");
 const blessed = require("blessed");
 const contrib = require("blessed-contrib");
@@ -225,9 +226,9 @@ function calculateGaugePercentages(technicalIndicators) {
 
   technicalIndicators.forEach(indicator => {
     let signal = indicator[2].toLowerCase().trim();
-    if (signal === "buy") {
+    if (signal.includes("buy")) {
       totalBuy++;
-    } else if (signal === "sell") {
+    } else if (signal.includes("sell")) {
       totalSell++;
     } else {
       ignoreCount++;
@@ -257,6 +258,7 @@ var headlinesTable = null;
 var technicalIndicatorsTable = null;
 var technicalIndicatorsGauge = null;
 var blockchainIndicatorsTable = null;
+var constructionLabel = null;
 var portfolioTable = null;
 var priceTable = null;
 var exchangeRateChart = null;
@@ -314,6 +316,7 @@ function createInterface() {
     wholeNumbersOnly: true,
     label: " Exchange Rate ".bold.red
   });
+
   priceTable = grid.set(
     26,
     29,
@@ -322,6 +325,7 @@ function createInterface() {
     blessed.ListTable,
     createListTable("left", padding)
   );
+
   portfolioTable = grid.set(
     26,
     13,
@@ -338,6 +342,21 @@ function createInterface() {
     blessed.ListTable,
     createListTable("left", padding)
   );
+
+	constructionLabel = grid.set(28, 16, 7, 9, blessed.box, {
+		parent: screen,
+    keys: true,
+    align: "center",
+    selectedFg: "white",
+    selectedBg: "blue",
+    padding: {
+			top: 2,
+			bottom: 3,
+		},
+    content: "Panels under construction.",
+    style: { fg: "yellow", bold: true },
+    tags: true
+  });
 
   headlinesTable.focus();
 
@@ -413,6 +432,7 @@ function createInterface() {
     headlinesTable.emit("attach");
     exchangeRateChart.emit("attach");
     technicalIndicatorsGauge.emit("attach");
+		constructionLabel.emit("attach");
     priceTable.emit("attach");
     menubar.emit("attach");
   });
@@ -441,12 +461,33 @@ function refreshInterface() {
   let headlineData = headlinesJSON.data.map(article => {
     // Truncates each headline by 35 characters
     let headline = article[1];
-    article[1] =
-      headline.length > 35 ? headline.slice(0, 35) + "..." : headline + "...";
+    article[1] = headline.length > 35 ? headline.slice(0, 35) + "..." : headline + "...";
 
+		// Color sentiment labels
+		let sentiment = article[2].toLowerCase().trim();
+		if (sentiment == "pos") {
+			article[2] = `${article[2]} ${figures.tick}`.green;
+		} else if (sentiment == "neg") {
+			article[2] = `${article[2]} ${figures.cross}`.red;
+		} else {
+			article[2] = article[2].yellow;
+		}
     return article;
   });
-  let technicalData = technicalIndicatorJSON.data;
+
+  let technicalData = technicalIndicatorJSON.data.map(indicator => {
+		// Color signal labels
+    let signal = indicator[2].toLowerCase().trim();
+		if (signal == "buy") {
+			indicator[2] = `${indicator[2]} ${figures.tick}`.green;
+		} else if (signal == "sell") {
+			indicator[2] = `${indicator[2]} ${figures.cross}`.red;
+		} else {
+			indicator[2] = indicator[2].yellow;
+		}
+    return indicator;
+  });
+
   let gaugeData = calculateGaugePercentages(technicalData);
   let blockchainData = blockchainJSON.data;
   let tickerData = reformatPriceData(tickerJSON.data);
