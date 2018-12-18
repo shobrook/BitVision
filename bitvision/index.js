@@ -540,33 +540,43 @@ function loadSplashScreen() {
 
 	// Run "pip3 list" and search output for all needed deps. If they're not there, prompt to install them.
 	let python_deps = [ "pandas",	"scipy",	"numpy", "realtime_talib", "nltk", "sklearn", "selenium", "requests", "bs4", "ftfy", "crontab" ]
-	console.log("Checking deps");
-	execSync("pip3 list", function(err, stdout, stderr) {
-			console.log(stdout)
-			for (x in python_deps) {
-				if (!stdout.includes(x)) {
-					inquirer.prompt([
-			        {
-			          type: 'list',
-			          name: 'deps',
-			          message: `Would you like to install the missing Python dependency: ${x}?`,
-			          choices: [
-			            'Yes',
-			            'No',
-			          ]
-			        }
-			      ])
-			      .then(answers => {
-			        if (answers == "Yes") {
-			          execSync(`pip3 install ${x}`)
-			        } else {
-			          console.log("ERROR: MUST INSTALL DEPENDENCIES.")
-			          process.exit(0)
-			        }
-			    })
-				}
-			}
-	})
+	console.log("Checking dependencies...");
+
+	let installed = execSync("pip3 list").toString();
+	// console.log(installed)
+	for (let i = 0; i < python_deps.length; i++) {
+		dep = python_deps[i];
+		console.log(dep)
+
+		if (!installed.includes(dep)) {
+			console.log(`Missing ${dep}`);
+			let promise = inquirer.prompt([
+	        {
+	          type: 'list',
+	          name: 'deps',
+	          message: `Would you like to install the missing Python dependency: ${dep}?`,
+	          choices: [
+	            'Yes',
+	            'No',
+	          ]
+	        }
+      ])
+			promise.then(answers => {
+	        if (answers == "Yes") {
+	          execSync(`pip3 install ${dep}`)
+						install_complete = true;
+	        } else {
+	          console.log("ERROR: MUST INSTALL DEPENDENCIES.")
+	          process.exit(0)
+	        }
+	    })
+		} else {
+			install_complete = true;
+			console.log(`Have ${dep}`);
+		}
+	}
+
+
 
   console.log(splash.fetchingData("price data from Bitstamp"));
   updateData("TICKER");
