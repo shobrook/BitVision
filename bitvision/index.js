@@ -532,53 +532,57 @@ function refreshInterface() {
   screen.render();
 }
 
-function loadSplashScreen() {
+/**
+ * Loads splash screen and checks dependencies. Prompts for installation
+ * if needed.
+ */
+function loadSplashScreen(callback) {
   console.log(splash.logo);
   console.log(splash.description);
 
   createConfig();
 
-	// Run "pip3 list" and search output for all needed deps. If they're not there, prompt to install them.
-	let python_deps = [ "pandas",	"scipy",	"numpy", "realtime_talib", "nltk", "sklearn", "selenium", "requests", "bs4", "ftfy", "crontab" ]
-	console.log("Checking dependencies...");
-
+	// Run "pip3 list" and search output for needed deps.
+	let python_deps = [ "pandas",	"scipy",	"numpy", "realtime-talib", "nltk",
+	"sklearn", "selenium", "requests", "bs4", "ftfy", "crontab" ]
+	console.log("    Checking dependencies...".blue);
 	let installed = execSync("pip3 list").toString();
-	// console.log(installed)
+	let questions = [];
 	for (let i = 0; i < python_deps.length; i++) {
 		dep = python_deps[i];
-		console.log(dep)
-
 		if (!installed.includes(dep)) {
-			console.log(`Missing ${dep}`);
-			let promise = inquirer.prompt([
-	        {
-	          type: 'list',
-	          name: 'deps',
-	          message: `Would you like to install the missing Python dependency: ${dep}?`,
-	          choices: [
-	            'Yes',
-	            'No',
-	          ]
-	        }
-      ])
-			promise.then(answers => {
-	        if (answers == "Yes") {
-	          execSync(`pip3 install ${dep}`)
-						install_complete = true;
-	        } else {
-	          console.log("ERROR: MUST INSTALL DEPENDENCIES.")
-	          process.exit(0)
-	        }
-	    })
-		} else {
-			install_complete = true;
-			console.log(`Have ${dep}`);
+			questions.push({
+				type: 'list',
+				name: `${dep}`,
+				message: `Would you like to install the missing Python dependency: ${dep}?`,
+				choices: [
+					'Yes',
+					'No',
+				]
+			});
 		}
 	}
 
+	if (questions != []) {
+		inquirer.prompt(questions).then(answers => {
+			for (let [key, value] of Object.entries(answers)) {
+				if (value == "Yes") {
+					console.log(`    Installing ${key}.`.green)
+					execSync(`pip3 install ${key}`)
+				} else {
+					console.log(`ERROR: Must install ${key}.`.red)
+					process.exit(0)
+				}
+			}
+			callback();
+		})
+	} else {
+		callback();
+	}
+}
 
-
-  console.log(splash.fetchingData("price data from Bitstamp"));
+function fetchIntialData() {
+	console.log(splash.fetchingData("price data from Bitstamp"));
   updateData("TICKER");
 
   console.log(splash.fetchingData("blockchain network attributes"));
@@ -594,15 +598,17 @@ function loadSplashScreen() {
 // MAIN //
 
 function main(refreshRate = 120000) {
-  loadSplashScreen();
-  createInterface();
-  refreshInterface();
+  loadSplashScreen(() => {
+		fetchIntialData();
+	  createInterface();
+	  refreshInterface();
 
-  setInterval(() => refreshInterface(), refreshRate);
-  setInterval(() => updateData("TICKER"), refreshRate);
-  setInterval(() => updateData("PORTFOLIO"), refreshRate);
-  setInterval(() => updateData("NETWORK"), refreshRate);
-  setInterval(() => updateData("HEADLINES"), refreshRate);
+	  setInterval(() => refreshInterface(), refreshRate);
+	  setInterval(() => updateData("TICKER"), refreshRate);
+	  setInterval(() => updateData("PORTFOLIO"), refreshRate);
+	  setInterval(() => updateData("NETWORK"), refreshRate);
+	  setInterval(() => updateData("HEADLINES"), refreshRate);
+	});
 }
 
 main();
