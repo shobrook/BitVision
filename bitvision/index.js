@@ -6,7 +6,8 @@ const figures = require('figures');
 const openBrowser = require("opn");
 const blessed = require("blessed");
 const contrib = require("blessed-contrib");
-const { spawnSync } = require("child_process");
+const inquirer = require('inquirer');
+const { spawnSync, execSync } = require("child_process");
 
 const {
   colorScheme,
@@ -48,9 +49,10 @@ function writeJSONFile(path, data) {
   fs.writeFileSync(path, JSON.stringify(data, null, 2), "utf8");
 }
 
-function execShellCommand(command) {
+function execShellCommand(command, inclStdout = false) {
   let spawnedProcess = spawnSync(command[0], command[1], {
     stdio: "ignore",
+		// TODO: @shobrook
     detached: true
   });
 
@@ -530,13 +532,57 @@ function refreshInterface() {
   screen.render();
 }
 
-function loadSplashScreen() {
+/**
+ * Loads splash screen and checks dependencies. Prompts for installation
+ * if needed.
+ */
+function loadSplashScreen(callback) {
   console.log(splash.logo);
   console.log(splash.description);
 
   createConfig();
 
-  console.log(splash.fetchingData("price data from Bitstamp"));
+	// Run "pip3 list" and search output for needed deps.
+	let python_deps = [ "pandas",	"scipy",	"numpy", "realtime-talib", "nltk",
+	"sklearn", "selenium", "requests", "bs4", "ftfy", "crontab" ]
+	console.log("    Checking dependencies...".blue);
+	let installed = execSync("pip3 list").toString();
+	let questions = [];
+	for (let i = 0; i < python_deps.length; i++) {
+		dep = python_deps[i];
+		if (!installed.includes(dep)) {
+			questions.push({
+				type: 'list',
+				name: `${dep}`,
+				message: `Would you like to install the missing Python dependency: ${dep}?`,
+				choices: [
+					'Yes',
+					'No',
+				]
+			});
+		}
+	}
+
+	if (questions != []) {
+		inquirer.prompt(questions).then(answers => {
+			for (let [key, value] of Object.entries(answers)) {
+				if (value == "Yes") {
+					console.log(`    Installing ${key}.`.green)
+					execSync(`pip3 install ${key}`)
+				} else {
+					console.log(`ERROR: Must install ${key}.`.red)
+					process.exit(0)
+				}
+			}
+			callback();
+		})
+	} else {
+		callback();
+	}
+}
+
+function fetchIntialData() {
+	console.log(splash.fetchingData("price data from Bitstamp"));
   updateData("TICKER");
 
   console.log(splash.fetchingData("blockchain network attributes"));
@@ -552,15 +598,17 @@ function loadSplashScreen() {
 // MAIN //
 
 function main(refreshRate = 120000) {
-  loadSplashScreen();
-  createInterface();
-  refreshInterface();
+  loadSplashScreen(() => {
+		fetchIntialData();
+	  createInterface();
+	  refreshInterface();
 
-  setInterval(() => refreshInterface(), refreshRate);
-  setInterval(() => updateData("TICKER"), refreshRate);
-  setInterval(() => updateData("PORTFOLIO"), refreshRate);
-  setInterval(() => updateData("NETWORK"), refreshRate);
-  setInterval(() => updateData("HEADLINES"), refreshRate);
+	  setInterval(() => refreshInterface(), refreshRate);
+	  setInterval(() => updateData("TICKER"), refreshRate);
+	  setInterval(() => updateData("PORTFOLIO"), refreshRate);
+	  setInterval(() => updateData("NETWORK"), refreshRate);
+	  setInterval(() => updateData("HEADLINES"), refreshRate);
+	});
 }
 
 main();
