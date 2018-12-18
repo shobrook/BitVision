@@ -294,6 +294,90 @@ var transactionsTable = null;
 var menubar = null;
 var URLs = null;
 
+/**
+ * Create commands dict for bottom menu bar.
+ **/
+function buildMenuCommands() {
+  let login = {
+		Login: {
+			keys: ["l", "L"],
+			callback: () => {
+				loginEntryStatus = true;
+				displayLoginScreen();
+			}
+		},
+  }
+  let logout = {
+		Logout: {
+			keys: ["o", "O"],
+			callback: () => clearCredentials()
+		},
+  }
+  let cmds = {
+		"Make a Trade": {
+			keys: ["t", "T"],
+			callback: () => {
+				if (isLoggedIn()) {
+					tradeEntryStatus = true;
+					createOrderScreen(screen, (amount, type) => {
+						let makeTradeCommand = Array.from(pyCommands.makeTrade);
+						makeTradeCommand[1].push(`${{ amount, type }}`);
+						execShellCommand(makeTradeCommand);
+						tradeEntryStatus = false;
+					});
+				} else {
+					displayLoginScreen();
+				}
+			}
+		},
+		Help: {
+			keys: ["h", "H"],
+			callback: () => {
+				if (!helpActiveStatus) {
+					helpActiveStatus = true;
+					createHelpScreen(screen, VERSION, () => {
+						helpActiveStatus = false;
+					});
+				}
+			}
+		},
+    "Exit": {
+      keys: ["C-c", "escape"],
+      callback: () => process.exit(0)
+    }
+  }
+  let cfg = getConfig()
+  let autotrading = {}
+  if (!cfg.autotrade.enabled) {
+    autotrading = {
+      "Toggle Autotrading: (OFF)": {
+        keys: ["a"],
+        callback: () => {
+          showAutotradingMenu();
+        }
+      }
+    }
+  } else if (cfg.logged_in) {
+    autotrading = {
+      "Toggle Autotrading: (ON)": {
+        keys: ["a"],
+        callback: () => {
+          showAutotradingMenu();
+        }
+      }
+    }
+  }
+  // Store updated configuration
+	writeJSONFile(filePaths.configPath, cfg);
+  if (cfg.logged_in) {
+    cmds = { ...cmds, ...autotrading, ...logout };
+  } else {
+    cmds = { ...login, ...autotrading, ...cmds };
+  }
+	return cmds;
+}
+
+
 function createInterface() {
 	let padding = {
 		left: 1,
@@ -408,6 +492,7 @@ function createInterface() {
 	headlinesTable.focus();
 
 	// Create menu
+	let menu_cmds = buildMenuCommands();
 	menubar = blessed.listbar({
 		parent: screen,
 		keys: true,
@@ -422,62 +507,7 @@ function createInterface() {
 				fg: "yellow"
 			}
 		},
-		commands: {
-			Login: {
-				keys: ["l", "L"],
-				callback: () => {
-					loginEntryStatus = true;
-					displayLoginScreen();
-				}
-			},
-			"Toggle Autotrading": {
-				keys: ["a", "A"],
-				callback: () => {
-					if (isLoggedIn()) {
-						showAutotradingMenu();
-					} else {
-						displayLoginScreen();
-					}
-				}
-			},
-			"Make a Trade": {
-				keys: ["t", "T"],
-				callback: () => {
-					if (isLoggedIn()) {
-						tradeEntryStatus = true;
-						createOrderScreen(screen, (amount, type) => {
-							let makeTradeCommand = Array.from(pyCommands.makeTrade);
-							makeTradeCommand[1].push(`${{ amount, type }}`);
-
-							execShellCommand(makeTradeCommand);
-							tradeEntryStatus = false;
-						});
-					} else {
-						displayLoginScreen();
-					}
-				}
-			},
-			Help: {
-				keys: ["h", "H"],
-				callback: () => {
-					if (!helpActiveStatus) {
-						helpActiveStatus = true;
-						createHelpScreen(screen, VERSION, () => {
-							helpActiveStatus = false;
-						});
-					}
-				}
-			},
-			Logout: {
-				keys: ["o", "O"],
-				callback: () => clearCredentials()
-			},
-			Exit: {
-				keys: ["C-c", "escape"],
-				callback: () => process.exit(0)
-			}
-		}
-	});
+		commands: menu_cmds});
 
 	// Resizing
 	screen.on("resize", () => {
