@@ -182,9 +182,22 @@ function updateData(type) {
 }
 
 function reformatPriceData(priceData) {
+	let price_str = null;
+	if (priceData.last_incr) {
+		price_str = `${String(priceData.last)} ${figures.arrowUp.green}`;
+	} else {
+		price_str = `${String(priceData.last)} ${figures.arrowDown.red}`;
+	}
+	let vol_str = null;
+	if (priceData.vol_incr) {
+		vol_str = `${String(priceData.volume)} ${figures.arrowUp.green}`;
+	} else {
+		vol_str = `${String(priceData.volume)} ${figures.arrowDown.red}`;
+	}
+
   return [
-    ["Price ($)", String(priceData.last)],
-    ["Volume", String(priceData.volume)],
+    ["Price ($)", price_str],
+    ["Volume", vol_str],
     ["24H Low ($)", String(priceData.low)],
     ["24H High ($)", String(priceData.high)],
     ["Open Price ($)", String(priceData.open)]
