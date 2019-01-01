@@ -54,18 +54,30 @@ USER_AGENTS = [
 
 
 def fetch_price_data():
-    with open("./cache/data/ticker.json", 'w') as price_data:
+    with open("./cache/data/ticker.json", 'rw') as price_data:
         try:
             response = requests.get("https://www.bitstamp.net/api/ticker/").json()
+
+            old_data = json.load(price_data)
+            # If ticker.json has data already, calculate changes for vol and price
+            # TODO: This will not work properly if the user has stale data.
+            if len(old_data["data"]) > 2:
+				new_last = round(float(response["last"]), 2)
+                last_incr = new_last > old_data["data"]["last"]
+
+				new_vol = round(float(response["volume"]), 2)
+				vol_incr = new_vol > old_data["data"]["volume"]
 
             price_data.write(json.dumps({
                 "error": False,
                 "data": {
-                    "last": round(float(response["last"]), 2),
+                    "last": new_last,
+					"last_incr": last_incr,
                     "high": round(float(response["high"]), 2),
                     "low": round(float(response["low"]), 2),
                     "open": round(float(response["open"]), 2),
-                    "volume": round(float(response["volume"]), 2)
+                    "volume": new_vol,
+					"volume_incr": vol_incr
                 }
             }, indent=2))
         except:
@@ -94,6 +106,7 @@ def fetch_price_data():
                 "data": json.loads(graph_data)["data"]
             }))
 
+
 def fetch_tech_indicators():
     with open("./cache/data/indicators.json", 'w') as indicators_json:
         try:
@@ -110,10 +123,10 @@ def fetch_tech_indicators():
                 "EMA (6)"
             ]
 
-            get_val = lambda symb: round(indicators[symb][0], 2)
+            def get_val(symb): return round(indicators[symb][0], 2)
             get_signal = {
                 "MOM (1)": lambda v: "BUY" if v >= 0 else "SELL",
-                "ADX (14)": lambda v: "BUY" if v >= 25 else "SELL", # Not sure about this
+                "ADX (14)": lambda v: "BUY" if v >= 25 else "SELL",  # Not sure about this
                 "WILLR": lambda v: "SELL" if v <= -50 else "BUY",
                 "RSI (6)": lambda v: "SELL" if v >= 50 else "BUY",
                 "ATR (14)": lambda v: "N/A",
@@ -136,6 +149,7 @@ def fetch_tech_indicators():
                 "error": True,
                 "data": []
             }, indent=2))
+
 
 def fetch_blockchain_data():
     with open("./cache/data/blockchain.json", 'w') as blockchain_data_json:
@@ -176,6 +190,7 @@ def fetch_blockchain_data():
                 "error": True,
                 "data": []
             }, indent=2))
+
 
 def fetch_coindesk_stats():
     with open("./cache/data/headlines.json", 'w') as headlines_json:
@@ -229,6 +244,7 @@ def fetch_coindesk_stats():
                 "data": []
             }, indent=2))
 
+
 def fetch_portfolio_stats(client):
     with open("./cache/data/portfolio.json", 'w') as portfolio_json:
         try:
@@ -250,6 +266,7 @@ def fetch_portfolio_stats(client):
                 "data": {}
             }))
 
+
 def fetch_transaction_data(client):
     with open("./cache/data/transactions.json", 'w') as transactions:
         try:
@@ -270,7 +287,7 @@ def fetch_transaction_data(client):
 
 
 def retrieve(names, client=None):
-    for name in names: # TODO: Parallelize
+    for name in names:  # TODO: Parallelize
         if name == "price_data":
             fetch_price_data()
         elif name == "tech_indicators":
