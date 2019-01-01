@@ -1,5 +1,3 @@
-# TODO: Rename "controller" to "services"
-
 #########
 # GLOBALS
 #########
@@ -32,7 +30,7 @@ def action(name):
 
         if name == "authenticate": # Authenticates Bitstamp credentials
             with open("./cache/config.json", 'w') as new_config:
-                try:
+                try: # Tries to pull account balance; if fails, then invalid creds
                     client.account_balance()
                     logged_in = True
                 except:
