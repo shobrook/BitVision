@@ -3,15 +3,11 @@
 #########
 
 
-import re
-import sys
 import json
 import random
 import requests
 import moment
-import pandas as pd
 from bs4 import BeautifulSoup
-from typing import Dict
 from textblob import TextBlob
 
 # Local
