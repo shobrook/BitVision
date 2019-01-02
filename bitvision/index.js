@@ -173,7 +173,6 @@ function reformatPriceData(priceData) {
 
 function reformatPortfolioData(portfolioData, titles) {
   let autotradingConfig = getConfig().autotrade;
-  let enabled = ["Autotrading Enabled", autotradingConfig.enabled];
   // BUG: idk why this doesn't ever seem to work
   let nextTradeTime = ["Next Trade Time", autotradingConfig.nextTradeTime];
 
@@ -181,7 +180,6 @@ function reformatPortfolioData(portfolioData, titles) {
     return [title, Object.values(portfolioData)[idx]];
   });
 
-  formattedData.push(enabled);
   formattedData.push(nextTradeTime);
 
   return formattedData;
@@ -232,7 +230,7 @@ function buildChartData(priceData) {
 }
 
 // BLESSED INTERFACE HELPERS //
-/* [insert obligatory "bless up" reference] */
+/* [insert obligatory "bless up" comment] */
 
 var screen = null;
 var grid = null;
@@ -248,9 +246,6 @@ var transactionsTable = null;
 var menubar = null;
 var URLs = null;
 
-/**
- * Create commands dict for bottom menu bar.
- **/
 function buildMenuCommands() {
   let login = {
     " Login": {
@@ -583,11 +578,7 @@ function refreshInterface() {
   screen.render();
 }
 
-/**
- * Loads splash screen and checks dependencies. Prompts for installation
- * if needed.
- */
-function loadSplashScreen(callback) {
+function checkDependencies(callback) {
   let uninstalledDeps = [];
   let requirements = fs.readFileSync("./cache/requirements.txt", "utf8");
   let currDeps = spawnSync("pip3", ["list"], {
@@ -656,7 +647,7 @@ function fetchIntialData() {
 // MAIN //
 
 function main(refreshRate = 120000) {
-  loadSplashScreen(() => {
+  checkDependencies(() => {
     console.log(splash.logo);
     console.log(splash.description);
 
