@@ -315,7 +315,7 @@ function createInterface() {
     10,
     13,
     blessed.ListTable,
-    createListTable("center", null, true)
+    createListTable("left", null, true)
   );
   technicalIndicatorsTable = grid.set(
     10,
@@ -512,9 +512,9 @@ function refreshInterface() {
     // Color sentiment labels
     let sentiment = article[2].toLowerCase().trim();
     if (sentiment == "pos") {
-      article[2] = `${article[2]} ${figures.tick}`.green;
+      article[2] = `${article[2]}`.green;
     } else if (sentiment == "neg") {
-      article[2] = `${article[2]} ${figures.cross}`.red;
+      article[2] = `${article[2]}`.red;
     } else {
       article[2] = article[2].yellow;
     }
