@@ -54,30 +54,18 @@ USER_AGENTS = [
 
 
 def fetch_price_data():
-    with open("./cache/data/ticker.json", 'rw') as price_data:
+    with open("./cache/data/ticker.json", 'w') as price_data:
         try:
             response = requests.get("https://www.bitstamp.net/api/ticker/").json()
-
-            old_data = json.load(price_data)
-            # If ticker.json has data already, calculate changes for vol and price
-            # TODO: This will not work properly if the user has stale data.
-            if len(old_data["data"]) > 2:
-				new_last = round(float(response["last"]), 2)
-                last_incr = new_last > old_data["data"]["last"]
-
-				new_vol = round(float(response["volume"]), 2)
-				vol_incr = new_vol > old_data["data"]["volume"]
 
             price_data.write(json.dumps({
                 "error": False,
                 "data": {
-                    "last": new_last,
-					"last_incr": last_incr,
+                    "last": round(float(response["last"]), 2),
                     "high": round(float(response["high"]), 2),
                     "low": round(float(response["low"]), 2),
                     "open": round(float(response["open"]), 2),
-                    "volume": new_vol,
-					"volume_incr": vol_incr
+                    "volume": round(float(response["volume"]), 2)
                 }
             }, indent=2))
         except:
