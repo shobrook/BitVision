@@ -33,7 +33,7 @@ module.exports = {
   pyCommands: {
     checkLogin: ["python3", [servicesPath, "authenticate"]],
     toggleAlgo: ["python3", [servicesPath, "toggle_algo"]],
-    makeTrade: ["python3", [servicesPath, "make_trade"]],
+    makeTrade: payload => ["python3", [servicesPath, "make_trade", payload]],
     // withdraw: ["python3", [servicesPath, "withdraw"]],
     refreshNetwork: ["python3", [servicesPath, "retrieve_network_data"]],
     refreshTicker: ["python3", [servicesPath, "retrieve_price_data"]],
