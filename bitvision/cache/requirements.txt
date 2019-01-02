@@ -1,0 +1,26 @@
+arrow==0.12.1
+beautifulsoup4==4.6.3
+bs4==0.0.1
+certifi==2018.8.24
+chardet==3.0.4
+crontab==0.22.2
+dateparser==0.7.0
+ftfy==5.4.1
+idna==2.7
+moment==0.8.2
+numpy==1.15.1; python_version != '3.0.*'
+pandas==0.23.4
+python-dateutil==2.7.3
+pytz==2018.5
+realtime-talib==0.25
+regex==2018.8.29
+requests==2.19.1
+scikit-learn==0.19.2
+scipy==1.1.0
+six==1.11.0
+sklearn==0.0
+textblob==0.15.1
+times==0.7
+tzlocal==1.5.1
+urllib3==1.23; python_version != '3.0.*'
+wcwidth==0.1.7
