@@ -111,7 +111,6 @@ def fetch_tech_indicators():
                 "EMA (6)"
             ]
 
-            def get_val(symb): return round(indicators[symb][0], 2)
             get_signal = {
                 "MOM (1)": lambda v: "BUY" if v >= 0 else "SELL",
                 "ADX (14)": lambda v: "BUY" if v >= 25 else "SELL",  # Not sure about this
@@ -125,7 +124,7 @@ def fetch_tech_indicators():
 
             data = []
             for symb in valid_indicators:
-                val = get_val(symb)
+                val = round(indicators[symb][0], 2)
                 data.append([symb, str(val), get_signal[symb](val)])
 
             indicators_json.write(json.dumps({
@@ -188,16 +187,17 @@ def fetch_coindesk_stats():
             })
             soup = BeautifulSoup(html.text, "html.parser")
 
-            featured_containers = soup.find_all("div", class_="article article-featured")
-            other_containers = soup.find_all("div", class_="post-info")
+            top_container = soup.find('a', class_="top-article")
+            featured_containers = soup.find_all('a', class_="feature")
+            other_containers = soup.find_all('a', class_="stream-article")
 
             headlines = []
-            for article in featured_containers + other_containers:
+            for article in [top_container] + featured_containers + other_containers:
                 date_container = article.find("time")["datetime"]
-                article = article.find('a', class_="fade")
+                headline_container = article.find("h3") if article.find("h3") else article.find("h1")
 
-                headline = article.get_text().strip()
                 date_published = moment.date(date_container).format("M-D")
+                headline = headline_container.get_text().strip()
 
                 headlines.append((headline, date_published, article["href"]))
 
