@@ -19,7 +19,6 @@ const {
 const { createLoginScreen } = require("./modals/login");
 const { createHelpScreen } = require("./modals/help");
 const { createOrderScreen } = require("./modals/order");
-const { createToggleScreen } = require("./modals/autotrading");
 const error = require("./modals/error");
 
 const VERSION = "1.0.0";
@@ -141,42 +140,6 @@ function displayLoginScreen() {
   });
 }
 
-function showAutotradingMenu() {
-  createToggleScreen(screen, isEnabling => {
-    let config = getConfig();
-    let isAutotradingEnabled = config.autotrade.enabled;
-
-    // Setting autotrading to the same state should do nothing
-    if (
-      (isEnabling && isAutotradingEnabled) ||
-      (!isEnabling && !isAutotradingEnabled)
-    ) {
-      return;
-    }
-
-    // Autotrading disabled, so reset all properties to default
-    if (!isEnabling) {
-      config.autotrade = {
-        enabled: false,
-        "next-trade-timestamp-UTC": 0
-      };
-    } else {
-      // Autotrading enabled, so set next trade timestamp for +1 hr from now
-      let currentTime = new Date();
-      let futureTime = new Date(currentTime);
-      futureTime.setHours(currentTime.getHours() + 24);
-
-      config.autotrade = {
-        enabled: true,
-        "next-trade-timestamp-UTC": futureTime.toJSON()
-      };
-    }
-
-    // Store updated configuration
-    writeJSONFile(filePaths.configPath, config);
-  });
-}
-
 // DATA RETRIEVAL AND FORMATTING HELPERS //
 
 function updateData(type) {
@@ -284,6 +247,96 @@ var exchangeRateChart = null;
 var transactionsTable = null;
 var menubar = null;
 var URLs = null;
+
+/**
+ * Create commands dict for bottom menu bar.
+ **/
+function buildMenuCommands() {
+  let login = {
+    " Login": {
+      keys: ["l", "L"],
+      callback: () => {
+        loginEntryStatus = true;
+        displayLoginScreen();
+      }
+    }
+  };
+  let logout = {
+    " Logout": {
+      keys: ["o", "O"],
+      callback: () => clearCredentials()
+    }
+  };
+  let cmds = {
+    " Place an Order": {
+      keys: ["t", "T"],
+      callback: () => {
+        if (isLoggedIn()) {
+          tradeEntryStatus = true;
+          createOrderScreen(screen, (amount, type) => {
+            execShellCommand(pyCommands.makeTrade(`${{ amount, type }}`));
+            tradeEntryStatus = false;
+          });
+        } else {
+          displayLoginScreen();
+        }
+      }
+    },
+    " Help": {
+      keys: ["h", "H"],
+      callback: () => {
+        if (!helpActiveStatus) {
+          helpActiveStatus = true;
+          createHelpScreen(screen, VERSION, () => {
+            helpActiveStatus = false;
+          });
+        }
+      }
+    },
+    " Exit": {
+      keys: ["C-c", "escape"],
+      callback: () => process.exit(0)
+    }
+  };
+
+  let cfg = getConfig();
+  let autotrading = cfg.logged_in
+    ? {
+        [` Autotrading ${
+          cfg.autotrade.enabled ? "(ON)".green : "(OFF)".red
+        }`]: {
+          keys: ["a"],
+          callback: () => {
+            execShellCommand(pyCommands.toggleAlgo);
+            // menubar = blessed.listbar({
+            //   parent: screen,
+            //   keys: true,
+            //   bottom: 0,
+            //   left: 0,
+            //   height: 1,
+            //   style: {
+            //     item: {
+            //       fg: "yellow"
+            //     },
+            //     selected: {
+            //       fg: "yellow"
+            //     }
+            //   },
+            //   commands: buildMenuCommands()
+            // });
+          }
+        }
+      }
+    : {};
+
+  // Store updated configuration
+  writeJSONFile(filePaths.configPath, cfg);
+  cmds = cfg.logged_in
+    ? { ...cmds, ...autotrading, ...logout }
+    : { ...login, ...autotrading, ...cmds };
+
+  return cmds;
+}
 
 function createInterface() {
   let padding = {
@@ -413,61 +466,7 @@ function createInterface() {
         fg: "yellow"
       }
     },
-    commands: {
-      Login: {
-        keys: ["l", "L"],
-        callback: () => {
-          loginEntryStatus = true;
-          displayLoginScreen();
-        }
-      },
-      "Toggle Autotrading": {
-        keys: ["a", "A"],
-        callback: () => {
-          if (isLoggedIn()) {
-            showAutotradingMenu();
-          } else {
-            displayLoginScreen();
-          }
-        }
-      },
-      "Make a Trade": {
-        keys: ["t", "T"],
-        callback: () => {
-          if (isLoggedIn()) {
-            tradeEntryStatus = true;
-            createOrderScreen(screen, (amount, type) => {
-              let makeTradeCommand = Array.from(pyCommands.makeTrade);
-              makeTradeCommand[1].push(`${{ amount, type }}`);
-
-              execShellCommand(makeTradeCommand);
-              tradeEntryStatus = false;
-            });
-          } else {
-            displayLoginScreen();
-          }
-        }
-      },
-      Help: {
-        keys: ["h", "H"],
-        callback: () => {
-          if (!helpActiveStatus) {
-            helpActiveStatus = true;
-            createHelpScreen(screen, VERSION, () => {
-              helpActiveStatus = false;
-            });
-          }
-        }
-      },
-      Logout: {
-        keys: ["o", "O"],
-        callback: () => clearCredentials()
-      },
-      Exit: {
-        keys: ["C-c", "escape"],
-        callback: () => process.exit(0)
-      }
-    }
+    commands: buildMenuCommands()
   });
 
   // Resizing
@@ -525,9 +524,9 @@ function refreshInterface() {
     // Color signal labels
     let signal = indicator[2].toLowerCase().trim();
     if (signal == "buy") {
-      indicator[2] = `${indicator[2]} ${figures.tick}`.green;
+      indicator[2] = `${indicator[2]}`.green; // ${figures.tick}
     } else if (signal == "sell") {
-      indicator[2] = `${indicator[2]} ${figures.cross}`.red;
+      indicator[2] = `${indicator[2]}`.red; // ${figures.cross}
     } else {
       indicator[2] = indicator[2].yellow;
     }
