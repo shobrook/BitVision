@@ -12,9 +12,11 @@
 
 Unlike other systems, there's no need to host a server or <!--spin up a Docker container-->create tedious setup files. After installing, simply run `$ bitvision` to start using the dashboard.
 
-<p align="center"><img src="demo.png" width="95%" /></p>
-<p align="center"><img src="demo.gif" width="95%" /></p>
+<!--<p align="center"><img src="demo.png" width="95%" /></p>-->
+<p align="center"><img src="demo.gif" width="65%" /></p>
 <p align="center"><i>You can download the color profile in this demo <a href="https://github.com/shobrook/BitVision/raw/master/img/BitVision-terminal-profile.terminal">here.</a></i></p>
+
+<p align="center"><img src="demo.gif" width="80%" /></p>
 
 Besides automated trading, BitVision's key features are:
 
