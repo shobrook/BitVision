@@ -37,23 +37,23 @@ $ npm install bitvision
 
 And run `$ bitvision` to boot up the dashboard.
 
-<p align="center"><img src="demo.gif" width="60%" /></p>
-
 If you want to enable trading, follow these instructions to acquire a Bitstamp API key and secret:
 
 1.  Login to your Bitstamp account
 2.  Click on Security -> API Access
 3.  Select the following permissions for your access key:
-  * Account Balance
-  * User Transactions
-  * Open Orders
-  * Buy Limit Order
-  * Sell Limit Order
+    * Account Balance
+    * User Transactions
+    * Open Orders
+    * Buy Limit Order
+    * Sell Limit Order
 4.  Click on the Generate Key button and make sure to store your secret in a secure place
 5.  Click Activate
 6.  Go to your email and click on link sent by Bitstamp to activate the API key
 
 Once activated, just press `L` in the dashboard and a modal will pop-up asking you for your username, API key, and secret. **These will be stored locally on your machine, so make sure to keep them safe.**
+
+<p align="left"><img src="demo.gif" width="60%" /></p>
 
 ## How it Works
 
