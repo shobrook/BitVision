@@ -44,11 +44,11 @@ If you want to enable trading, follow these instructions to acquire a Bitstamp A
 1.  Login to your Bitstamp account
 2.  Click on Security -> API Access
 3.  Select the following permissions for your access key:
-  - Account Balance
-  - User Transactions
-  - Open Orders
-  - Buy Limit Order
-  - Sell Limit Order
+  * Account Balance
+  * User Transactions
+  * Open Orders
+  * Buy Limit Order
+  * Sell Limit Order
 4.  Click on the Generate Key button and make sure to store your secret in a secure place
 5.  Click Activate
 6.  Go to your email and click on link sent by Bitstamp to activate the API key
