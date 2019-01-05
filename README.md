@@ -10,10 +10,9 @@
 
 `BitVision` is a real-time charting and trading dashboard for Bitstamp that works entirely in the terminal. It comes with an automated trading bot that uses machine learning to forecast price movements and place risk-adjusted daily trades.
 
-Unlike other systems, there's no need to host a server or <!--spin up a Docker container-->create tedious setup files. After installing with `npm`, simply run `$ bitvision` to start using the dashboard.
+Unlike other systems, there's no need to host a server or <!--spin up a Docker container-->edit tedious setup files. After installing with `npm`, simply run `$ bitvision` to start using the dashboard.
 
 <p align="center"><img src="demo.png" width="95%" /></p>
-<p align="center"><i>You can download the color profile in this demo <a href="https://github.com/shobrook/BitVision/raw/master/img/BitVision-terminal-profile.terminal">here.</a></i></p>
 
 Besides automated trading, BitVision's key features are:
 
@@ -23,7 +22,7 @@ Besides automated trading, BitVision's key features are:
 - Portfolio metrics, including your Sharpe Ratio, buy and sell accuracy, net profit, and returns [UNDER CONSTRUCTION]
 - Easy toggling of automated trading and the ability to manually place orders
 
-**DISCLAIMER:** BitVision is still in alpha, and some features are buggy and not fully tested. See all known bugs here. Use at your own risk!
+**Disclaimer:** BitVision is still in alpha. Some of the trading features are buggy and not fully tested (see all known bugs here). Use at your own risk.
 
 ## Usage
 
@@ -53,26 +52,14 @@ If you want to enable trading, follow these instructions to acquire a Bitstamp A
 
 Once activated, just press `L` in the dashboard and a modal will pop-up asking you for your username, API key, and secret. **These will be stored locally on your machine, so make sure to keep them safe.**
 
-<p align="center"><img src="demo.gif" width="75%" /></p>
+<p align="center"><img src="demo.gif" width="80%" /></p>
+<p align="center"><i>You can download the color profile used in this demo <a href="https://github.com/shobrook/BitVision/raw/master/img/BitVision-terminal-profile.terminal">here.</a></i></p>
 
 ## How it Works
 
-`BitVision` is split into two main components.
+The command-line interface (built by [@alichtman](http://github.com/alichtman)) runs on the Blessed.js library. The trading and charting architecture (built by [@shobrook](http://github.com/shobrook)) runs on the SciPy stack. An overview of the BitVision architecture is shown below:
 
-1. The **backend** is reponsible for all the data retrieval and processing. It's written in `Python` and leverages the `SciPy` stack.
-2. The **frontend** displays all the data passed to it by the backend. To build a graphical interface in the terminal, we used `Node.js` with the `Blessed.js` library.
+<!--### Automated Trading
 
-<!-- TODO: Add information about how the trading works. -->
-
-**Machine Learning Pipeline**
-
-The Machine Learning pipeline is a part of the backend. It informs decisions about what BTC trades to make based on a combination of technical indicators, network data and headline sentiment trends.
-
-<h1 align="center">
-  <img src="img/flowchart.png" width="100%" />
-  <br />
-</h1>
-
-## Authors
-
-`BitVision` was built by [@alichtman](http://github.com/alichtman) and [@shobrook](http://github.com/shobrook).
+1. Dashboard Architecture (incl. tech stack)
+2. Automated Trading Architecture (incl. data sources, evaluation of the algorithm, etc.)-->
