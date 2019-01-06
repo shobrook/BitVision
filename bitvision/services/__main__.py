@@ -91,9 +91,6 @@ def action(name):
             })
         elif name == "make_trade": # Makes a user-defined trade
             make_trade(client, dict(sys.argv[2]))
-        elif name == "withdraw": # Withdraws money from user account
-            client.bitcoin_withdrawal(int(sys.argv[2]), sys.argv[3])
-
 
 if __name__ == "__main__":
     action(sys.argv[1])
