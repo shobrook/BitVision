@@ -52,6 +52,7 @@ If you want to enable trading, follow these instructions to acquire a Bitstamp A
 
 Once activated, just press `L` in the dashboard and a modal will pop-up asking you for your username, API key, and secret. **These will be stored locally on your machine, so make sure to keep them safe.**
 
+<br />
 <p align="center"><img src="demo.gif" width="80%" /></p>
 <p align="center"><i>You can download the color profile used in this demo <a href="https://github.com/shobrook/BitVision/raw/master/img/BitVision-terminal-profile.terminal">here.</a></i></p>
 
