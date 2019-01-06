@@ -59,6 +59,8 @@ Once activated, just press `L` in the dashboard and a modal will pop-up asking y
 
 The command-line interface (built by [@alichtman](http://github.com/alichtman)) runs on the Blessed.js library. The trading and charting architecture (built by [@shobrook](http://github.com/shobrook)) runs on the SciPy stack. An overview of the BitVision architecture is shown below:
 
+<p align="center"><img src="architecture.png" width="80%" /></p>
+
 <!--### Automated Trading
 
 1. Dashboard Architecture (incl. tech stack)
