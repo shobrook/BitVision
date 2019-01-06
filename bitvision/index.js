@@ -579,7 +579,7 @@ function refreshInterface() {
 
 function checkDependencies(callback) {
   let uninstalledDeps = [];
-  let requirements = fs.readFileSync("./cache/requirements.txt", "utf8");
+  let requirements = fs.readFileSync("./store/requirements.txt", "utf8");
   let currDeps = spawnSync("pip3", ["list"], {
     cwd: process.cwd(),
     env: process.env,
@@ -612,7 +612,7 @@ function checkDependencies(callback) {
             console.log("    Installing dependencies...".blue);
             execShellCommand([
               "pip3",
-              ["install", "-r", "./cache/requirements.txt"]
+              ["install", "-r", "./store/requirements.txt"]
             ]);
             callback();
             break;
@@ -656,10 +656,10 @@ function main(refreshRate = 120000) {
     refreshInterface();
 
     setInterval(() => refreshInterface(), refreshRate);
-    setInterval(() => updateData("TICKER"), refreshRate);
-    setInterval(() => updateData("PORTFOLIO"), refreshRate);
-    setInterval(() => updateData("NETWORK"), refreshRate);
-    setInterval(() => updateData("HEADLINES"), refreshRate);
+    setInterval(() => updateData("TICKER"), refreshRate + 1000);
+    setInterval(() => updateData("PORTFOLIO"), refreshRate + 10000);
+    setInterval(() => updateData("NETWORK"), refreshRate) + 1000;
+    setInterval(() => updateData("HEADLINES"), refreshRate + 10000);
   });
 }
 

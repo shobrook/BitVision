@@ -1,9 +1,9 @@
 {
-  "logged_in": false,
+  "logged_in": true,
   "credentials": {
-    "key": "",
-    "secret": "",
-    "username": ""
+    "key": "MYKEY",
+    "secret": "MYSECRET",
+    "username": "SHOBROOK"
   },
   "autotrade": {
     "enabled": false,

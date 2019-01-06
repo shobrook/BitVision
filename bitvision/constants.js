@@ -1,7 +1,7 @@
 const path = require("path");
 const colors = require("colors");
 
-let cachePath = String.raw`${path.join(__dirname, "cache")}`;
+let storePath = String.raw`${path.join(__dirname, "store")}`;
 let servicesPath = String.raw`${path.join(__dirname, "services")}`;
 
 module.exports = {
@@ -21,20 +21,19 @@ module.exports = {
     cancelDark: "red"
   },
   filePaths: {
-    configPath: path.join(cachePath, "config.json"),
-    blockchainDataPath: path.join(cachePath, "data", "blockchain.json"),
-    headlineDataPath: path.join(cachePath, "data", "headlines.json"),
-    technicalDataPath: path.join(cachePath, "data", "indicators.json"),
-    priceDataPath: path.join(cachePath, "data", "ticker.json"),
-    graphDataPath: path.join(cachePath, "data", "graph.json"),
-    portfolioDataPath: path.join(cachePath, "data", "portfolio.json"),
-    transactionsDataPath: path.join(cachePath, "data", "transactions.json")
+    configPath: path.join(storePath, "config.json"),
+    blockchainDataPath: path.join(storePath, "cache", "blockchain.json"),
+    headlineDataPath: path.join(storePath, "cache", "headlines.json"),
+    technicalDataPath: path.join(storePath, "cache", "indicators.json"),
+    priceDataPath: path.join(storePath, "cache", "ticker.json"),
+    graphDataPath: path.join(storePath, "cache", "graph.json"),
+    portfolioDataPath: path.join(storePath, "cache", "portfolio.json"),
+    transactionsDataPath: path.join(storePath, "cache", "transactions.json")
   },
   pyCommands: {
     checkLogin: ["python3", [servicesPath, "authenticate"]],
     toggleAlgo: ["python3", [servicesPath, "toggle_algo"]],
     makeTrade: payload => ["python3", [servicesPath, "make_trade", payload]],
-    // withdraw: ["python3", [servicesPath, "withdraw"]],
     refreshNetwork: ["python3", [servicesPath, "retrieve_network_data"]],
     refreshTicker: ["python3", [servicesPath, "retrieve_price_data"]],
     refreshHeadlines: ["python3", [servicesPath, "retrieve_headline_data"]],
