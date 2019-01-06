@@ -10,7 +10,7 @@
 
 `BitVision` is a real-time charting and trading dashboard for Bitstamp that works entirely in the terminal. It comes with an automated trading bot that uses machine learning to forecast price movements and place risk-adjusted daily trades.
 
-Unlike other systems, there's no need to host a server or <!--spin up a Docker container-->edit tedious setup files. After installing with `npm`, simply run `$ bitvision` to start using the dashboard.
+Unlike other systems, there's no need to host a server or <!--spin up a Docker container-->edit tedious setup files. After installing, simply run `$ bitvision` to start using the dashboard.
 
 <p align="center"><img src="resources/demo.png" width="95%" /></p>
 
