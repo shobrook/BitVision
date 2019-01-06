@@ -62,8 +62,9 @@ The command-line interface runs on the Blessed.js library. The trading and chart
 
 <br />
 <p align="center"><img src="resources/architecture.png" width="65%" /></p>
+<br />
 
-(Explain the function of each module and the data flow here. Explain difficulties of building the services in Python and the interface in Node.js. Explain features you'd like to see in the future.)
+*(Explain the function of each module and the data flow here. Explain difficulties of building the services in Python and the interface in Node.js. Explain features you'd like to see in the future.)*
 
 (Insert diagram of the machine learning pipeline used in the autotrading engine.)
 
