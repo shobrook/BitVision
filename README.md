@@ -12,7 +12,7 @@
 
 Unlike other systems, there's no need to host a server or <!--spin up a Docker container-->edit tedious setup files. After installing with `npm`, simply run `$ bitvision` to start using the dashboard.
 
-<p align="center"><img src="demo.png" width="95%" /></p>
+<p align="center"><img src="resources/demo.png" width="95%" /></p>
 
 Besides automated trading, BitVision's key features are:
 
@@ -22,7 +22,7 @@ Besides automated trading, BitVision's key features are:
 - Portfolio metrics, including your Sharpe Ratio, buy and sell accuracy, net profit, and returns [UNDER CONSTRUCTION]
 - Easy toggling of automated trading and the ability to manually place orders
 
-**Disclaimer:** BitVision is still in alpha. Some of the trading features are buggy and not fully tested (see all known bugs here). Use at your own risk.
+**Disclaimer:** BitVision is still in alpha. Some of the trading features are buggy and not fully tested; see all known bugs [here.](http://github.com/shobrook/BitVision/issues) Use at your own risk!
 
 ## Usage
 
@@ -53,8 +53,8 @@ If you want to enable trading, follow these instructions to acquire a Bitstamp A
 Once activated, just press `L` in the dashboard and a modal will pop-up asking you for your username, API key, and secret. **These will be stored locally on your machine, so make sure to keep them safe.**
 
 <br />
-<p align="center"><img src="demo.gif" width="80%" /></p>
-<p align="center"><i>You can download the color profile used in this demo <a href="https://github.com/shobrook/BitVision/raw/master/img/BitVision-terminal-profile.terminal">here.</a></i></p>
+<p align="center"><img src="resources/demo.gif" width="80%" /></p>
+<p align="center"><i>You can download the color profile used in this demo <a href="https://github.com/shobrook/BitVision/raw/master/resources/BitVision-terminal-profile.terminal">here.</a></i></p>
 
 ## How it Works
 
@@ -62,3 +62,13 @@ The command-line interface runs on the Blessed.js library. The trading and chart
 
 <br />
 <p align="center"><img src="architecture.png" width="65%" /></p>
+
+(Explain the function of each module and the data flow here. Explain difficulties of building the services in Python and the interface in Node.js. Explain features you'd like to see in the future.)
+
+(Insert diagram of the machine learning pipeline used in the autotrading engine.)
+
+<!--## An Obligatory Note
+
+Please, don't lose all of your money. A trading algorithm may outperform a random coin-toss in an experimental setting, but there's no proof that this will generalize to the real world.
+
+![An Engineer's Syllogism](resources/syllogism.png)-->
