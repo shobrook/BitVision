@@ -199,7 +199,8 @@ def fetch_coindesk_stats():
                 date_published = moment.date(date_container).format("M-D")
                 headline = headline_container.get_text().strip()
 
-                headlines.append((headline, date_published, article["href"]))
+                if re.search(r'[Bb]itcoin|BTC|btc', headline):
+                    headlines.append((headline, date_published, article["href"]))
 
             ordered_headlines = sorted(headlines, key=lambda h: h[1], reverse=True)
             processed_headlines = []
