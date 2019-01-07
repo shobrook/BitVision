@@ -19,7 +19,7 @@ from trader import make_prediction, make_trade, allocate_funds, TradingClient
 
 
 def action(name):
-    with open("./cache/config.json") as config:
+    with open("./store/config.json") as config:
         config_dict = json.load(config)
         credentials = config_dict["credentials"]
         client = TradingClient(
@@ -29,7 +29,7 @@ def action(name):
         )
 
         if name == "authenticate": # Authenticates Bitstamp credentials
-            with open("./cache/config.json", 'w') as new_config:
+            with open("./store/config.json", 'w') as new_config:
                 try: # Tries to pull account balance; if fails, then invalid creds
                     client.account_balance()
                     logged_in = True
