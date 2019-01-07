@@ -579,7 +579,7 @@ function refreshInterface() {
 
 function checkDependencies(callback) {
   let uninstalledDeps = [];
-  let requirements = fs.readFileSync("./store/requirements.txt", "utf8");
+  let requirements = fs.readFileSync(filePaths.requirementsPath, "utf8");
   let currDeps = spawnSync("pip3", ["list"], {
     cwd: process.cwd(),
     env: process.env,
@@ -612,7 +612,7 @@ function checkDependencies(callback) {
             console.log("    Installing dependencies...".blue);
             execShellCommand([
               "pip3",
-              ["install", "-r", "./store/requirements.txt"]
+              ["install", "-r", filePaths.requirementsPath]
             ]);
             callback();
             break;
@@ -633,7 +633,7 @@ function fetchIntialData() {
   console.log(splash.fetchingData("price data from Bitstamp"));
   updateData("TICKER");
 
-  console.log(splash.fetchingData("blockchain network attributes"));
+  console.log(splash.fetchingData("blockchain network data"));
   updateData("NETWORK");
 
   console.log(splash.fetchingData("Bitcoin-related headlines"));
