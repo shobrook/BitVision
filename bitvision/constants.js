@@ -21,14 +21,15 @@ module.exports = {
     cancelDark: "red"
   },
   filePaths: {
+    requirementsPath: path.join(storePath, "requirements.txt"),
     configPath: path.join(storePath, "config.json"),
-    blockchainDataPath: path.join(storePath, "cache", "blockchain.json"),
-    headlineDataPath: path.join(storePath, "cache", "headlines.json"),
-    technicalDataPath: path.join(storePath, "cache", "indicators.json"),
-    priceDataPath: path.join(storePath, "cache", "ticker.json"),
-    graphDataPath: path.join(storePath, "cache", "graph.json"),
-    portfolioDataPath: path.join(storePath, "cache", "portfolio.json"),
-    transactionsDataPath: path.join(storePath, "cache", "transactions.json")
+    blockchainDataPath: path.join(storePath, "blockchain.json"),
+    headlineDataPath: path.join(storePath, "headlines.json"),
+    technicalDataPath: path.join(storePath, "indicators.json"),
+    priceDataPath: path.join(storePath, "ticker.json"),
+    graphDataPath: path.join(storePath, "graph.json"),
+    portfolioDataPath: path.join(storePath, "portfolio.json"),
+    transactionsDataPath: path.join(storePath, "transactions.json")
   },
   pyCommands: {
     checkLogin: ["python3", [servicesPath, "authenticate"]],
@@ -58,9 +59,9 @@ module.exports = {
     ██╔══██╗██║   ██║   ╚██╗ ██╔╝██║╚════██║██║██║   ██║██║╚██╗██║\n\
     ██████╔╝██║   ██║    ╚████╔╝ ██║███████║██║╚██████╔╝██║ ╚████║\n\
     ╚═════╝ ╚═╝   ╚═╝     ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n\n"
-      .blue.bold,
+      .yellow.bold,
     description: "    Real-time charting and algorithmic trading for Bitstamp.\n"
       .red.bold,
-    fetchingData: data => `    Fetching ${data}...`.blue
+    fetchingData: data => `    Fetching ${data}...`.yellow
   }
 };
