@@ -19,7 +19,7 @@ Besides automated trading, BitVision's key features are:
 - An exchange rate graph
 - Real-time monitoring of Bitcoin-related news, technical indicators, and blockchain network data
 - Logging of previous transactions and your current account balance
-- Portfolio metrics, including your Sharpe Ratio, buy and sell accuracy, net profit, and returns [UNDER CONSTRUCTION]
+- Portfolio metrics, including your Sharpe Ratio, buy and sell accuracy, net profit, and returns *[UNDER CONSTRUCTION]*
 - Easy toggling of automated trading and the ability to manually place orders
 
 **Disclaimer:** BitVision is still in alpha. Some of the trading features are buggy and not fully tested; see all known bugs [here.](http://github.com/shobrook/BitVision/issues) Use at your own risk!
