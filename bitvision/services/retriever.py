@@ -220,23 +220,27 @@ def fetch_coindesk_stats():
 
 def fetch_portfolio_stats(client):
     with open("./store/portfolio.json", 'w') as portfolio_json:
+        default_data = {
+            "account_balance": "$0.00",
+            "returns": "0.00%",
+            "net_profit": "$0.00",
+            "sharpe_ratio": "0.00",
+            "buy_accuracy": "0.00%",
+            "sell_accuracy": "0.00%",
+            "total_trades": "0"
+        }
+
         try:
             portfolio_json.write(json.dumps({
                 "error": False,
-                "data": {
-                    "account_balance": ''.join(['$', str(client.account_balance()["usd_available"])]),
-                    "returns": "0.00%",
-                    "net_profit": "$0.00",
-                    "sharpe_ratio": "0.00",
-                    "buy_accuracy": "0.00%",
-                    "sell_accuracy": "0.00%",
-                    "total_trades": "0"
-                }
+                "data": {**default_data, **{
+                    "account_balance": ''.join(['$', str(client.account_balance()["usd_available"])])
+                }}
             }, indent=2))
         except:
             portfolio_json.write(json.dumps({
                 "error": True,
-                "data": {}
+                "data": default_data
             }))
 
 def fetch_transaction_data(client):
