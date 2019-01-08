@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="img/logo.png" width="40%" />
+  <img src="resources/logo.png" width="40%" />
   <br />
 </h1>
 
@@ -58,21 +58,23 @@ Once activated, just press `L` in the dashboard and a modal will pop-up asking y
 
 ## How it Works
 
-The command-line interface runs on the Blessed.js library. The trading and charting architecture runs on the SciPy stack. An overview of the BitVision architecture is shown below:
+The command-line interface runs on the Blessed.js library. The trading and charting architecture runs on the SciPy stack. An overview of the BitVision setup is shown below:
 
 <br />
 <p align="center"><img src="resources/architecture.png" width="65%" /></p>
 <br />
 
-The BitVision architecture revolves around the *Store*, which is a local directory containing JSON files that hold information about the application state (Bitstamp credentials, autotrading status, etc.) and data to be displayed on the dashboard. When a user triggers an event, like making a trade or refreshing the charts, a child process is spawned to execute the appropriate service (a Python module), which then updates the store with new data or an error flag.
+The BitVision architecture revolves around the *Store*, which is a local directory of JSON files used to achieve persistence of the application state (Bitstamp credentials, autotrading status, etc.) and data to be displayed on the dashboard. When a user triggers an event, like placing an order or refreshing the charts, a child process is spawned to execute the appropriate service (a Python module), which then updates the store with new data or an error flag.
 
-Services are organized into three modules: the retriever, trader, and automated trading engine. The retriever fetches ticker data from Bitstamp, blockchain network data (hash rate, difficulty, etc.) from Blockchain.info, and
+Services are organized into three modules: the *retriever*, *trader*, and *automated trading engine*. The retriever fetches ticker and portfolio data from Bitstamp, blockchain network data (hash rate, difficulty, etc.) from Quandl, and Bitcoin-related headlines from Coindesk. The trader wraps the Bitstamp REST API and serves to authenticate the user's credentials, fetch portfolio data and transaction history, place buy or sell limit orders, and toggle autotrading.
+
+The automated trading engine is a little more complicated. 
 
 (Insert diagram of the machine learning pipeline used in the autotrading engine.)
 
 - Predicts the next-day directional change of Bitcoin price
 - In the future, an LSTM is the preferred model
-- Wanted features:
+- Wanted features: Kelly Criterion for risk-management, LSTM, tweets, Bitcoin Core Github activity, predictions made by popular Bitcoin forecasting websites or influencers
 
 ## An Obligatory Disclaimer
 
@@ -80,4 +82,5 @@ Please don't lose all of your money. A trading algorithm may outperform a random
 
 <!--According  to  market  efficiency  theory,US  stock  market  is  semi-strong  efficientmarket, which meansall public information is calculated into a stock's current share price,meaning that neither fundamental nor technical analysis can be used to achieve superiorgainsin a short-term (a day or aweek). The best description of this I've heard is by Julia Galef: "You can't predict the stock market because the stock market is a prediction."-->
 
+<br />
 ![An Engineer's Syllogism](resources/syllogism.png)
