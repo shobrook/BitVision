@@ -21,7 +21,7 @@ module.exports = {
     cancelDark: "red"
   },
   filePaths: {
-    requirementsPath: path.join(storePath, "requirements.txt"),
+    requirementsPath: path.join(storePath, "../requirements.txt"),
     configPath: path.join(storePath, "config.json"),
     blockchainDataPath: path.join(storePath, "blockchain.json"),
     headlineDataPath: path.join(storePath, "headlines.json"),
