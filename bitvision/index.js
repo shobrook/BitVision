@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // GLOBALS //
 
 const fs = require("fs");
