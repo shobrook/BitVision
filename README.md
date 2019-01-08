@@ -50,7 +50,7 @@ If you want to enable trading, follow these instructions to acquire a Bitstamp A
 5.  Click Activate
 6.  Go to your email and click on link sent by Bitstamp to activate the API key
 
-Once activated, just press `L` in the dashboard and a modal will pop-up asking you for your username, API key, and secret. **These will be stored locally on your machine, so make sure to keep them safe.**
+Once activated, just press `L` in the dashboard and a modal will pop-up asking you for your username, API key, and secret. **These will be stored locally on your machine, so be sure to keep them safe.**
 
 <br />
 <p align="center"><img src="resources/demo.gif" width="80%" /></p>
@@ -68,19 +68,9 @@ The BitVision architecture revolves around the *Store*, which is a local directo
 
 Services are organized into three modules: the *retriever*, *trader*, and *automated trading engine*. The retriever fetches ticker and portfolio data from Bitstamp, blockchain network data (hash rate, difficulty, etc.) from Quandl, and Bitcoin-related headlines from Coindesk. The trader wraps the Bitstamp REST API and serves to authenticate the user's credentials, fetch portfolio data and transaction history, place buy or sell limit orders, and toggle autotrading.
 
-The automated trading engine is a little more complicated. 
+The automated trading engine is a little more complicated. [Explain]
 
-(Insert diagram of the machine learning pipeline used in the autotrading engine.)
+<!--Predicts the next-day directional change of Bitcoin price.-->
 
-- Predicts the next-day directional change of Bitcoin price
-- In the future, an LSTM is the preferred model
-- Wanted features: Kelly Criterion for risk-management, LSTM, tweets, Bitcoin Core Github activity, predictions made by popular Bitcoin forecasting websites or influencers
-
-## An Obligatory Disclaimer
-
-Please don't lose all of your money. A trading algorithm may outperform a random coin-toss in an experimental setting, but don't assume that it generalizes to the real world.
-
-<!--According  to  market  efficiency  theory,US  stock  market  is  semi-strong  efficientmarket, which meansall public information is calculated into a stock's current share price,meaning that neither fundamental nor technical analysis can be used to achieve superiorgainsin a short-term (a day or aweek). The best description of this I've heard is by Julia Galef: "You can't predict the stock market because the stock market is a prediction."-->
-
-<br />
-![An Engineer's Syllogism](resources/syllogism.png)
+Wanted features:
+- Kelly Criterion for risk-management, LSTM instead of Random Forest, add Bitcoin Core Github activity + predictions made by popular Bitcoin forecasting websites + tweet sentiment + headline sentiment as input features
