@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // GLOBALS //
 
 const fs = require("fs");
@@ -180,7 +182,7 @@ function reformatPortfolioData(portfolioData, titles) {
     return [title, Object.values(portfolioData)[idx]];
   });
 
-  formattedData.push(nextTradeTime);
+  // formattedData.push(nextTradeTime);
 
   return formattedData;
 }
@@ -245,6 +247,18 @@ var exchangeRateChart = null;
 var transactionsTable = null;
 var menubar = null;
 var URLs = null;
+
+function colorize(row) {
+  let label = row[2].toLowerCase().trim();
+
+  if (label == "pos" || label == "buy") {
+    return `${row[2]}`.green;
+  } else if (label == "neg" || label == "sell") {
+    return `${row[2]}`.red;
+  }
+
+  return row[2].yellow;
+}
 
 function buildMenuCommands() {
   let login = {
@@ -502,29 +516,13 @@ function refreshInterface() {
     let headline = article[1];
     article[1] =
       headline.length > 35 ? headline.slice(0, 35) + "..." : headline + "...";
+    article[2] = colorize(article);
 
-    // Color sentiment labels
-    let sentiment = article[2].toLowerCase().trim();
-    if (sentiment == "pos") {
-      article[2] = `${article[2]}`.green;
-    } else if (sentiment == "neg") {
-      article[2] = `${article[2]}`.red;
-    } else {
-      article[2] = article[2].yellow;
-    }
     return article;
   });
 
   let technicalData = technicalIndicatorJSON.data.map(indicator => {
-    // Color signal labels
-    let signal = indicator[2].toLowerCase().trim();
-    if (signal == "buy") {
-      indicator[2] = `${indicator[2]}`.green; // ${figures.tick}
-    } else if (signal == "sell") {
-      indicator[2] = `${indicator[2]}`.red; // ${figures.cross}
-    } else {
-      indicator[2] = indicator[2].yellow;
-    }
+    indicator[2] = colorize(indicator)
     return indicator;
   });
 
@@ -532,7 +530,10 @@ function refreshInterface() {
   let blockchainData = blockchainJSON.data;
   let tickerData = reformatPriceData(tickerJSON.data);
   let chartData = buildChartData(graphJSON.data);
-  let transactionData = transactionsJSON.data;
+  let transactionData = transactionsJSON.data.map(txn => {
+    txn[2] = colorize(txn)
+    return txn;
+  })
   let portfolioData = reformatPortfolioData(portfolioJSON.data, [
     "Account Balance",
     "Returns",
@@ -551,7 +552,7 @@ function refreshInterface() {
   blockchainData.splice(0, 0, ["Blockchain Network", "Value"]);
   tickerData.splice(0, 0, ["Ticker Data", "Value"]);
   portfolioData.splice(0, 0, ["Portfolio Stats", "Value"]);
-  transactionData.splice(0, 0, ["Transaction", "Amount", "Date"]);
+  transactionData.splice(0, 0, ["Date", "Amount", "Type"]);
 
   if (transactionData.length == 1) {
     transactionData.splice(1, 0, ["–", "–", "–"]);
@@ -561,12 +562,12 @@ function refreshInterface() {
   technicalIndicatorsTable.setData(technicalData);
   technicalIndicatorsGauge.setStack([
     {
-      percent: gaugeData[0],
-      stroke: "red"
-    },
-    {
       percent: gaugeData[1],
       stroke: "green"
+    },
+    {
+      percent: gaugeData[0],
+      stroke: "red"
     }
   ]);
   blockchainAttributesTable.setData(blockchainData);
@@ -580,7 +581,7 @@ function refreshInterface() {
 
 function checkDependencies(callback) {
   let uninstalledDeps = [];
-  let requirements = fs.readFileSync("./cache/requirements.txt", "utf8");
+  let requirements = fs.readFileSync(filePaths.requirementsPath, "utf8");
   let currDeps = spawnSync("pip3", ["list"], {
     cwd: process.cwd(),
     env: process.env,
@@ -613,7 +614,7 @@ function checkDependencies(callback) {
             console.log("    Installing dependencies...".blue);
             execShellCommand([
               "pip3",
-              ["install", "-r", "./cache/requirements.txt"]
+              ["install", "-r", filePaths.requirementsPath]
             ]);
             callback();
             break;
@@ -634,7 +635,7 @@ function fetchIntialData() {
   console.log(splash.fetchingData("price data from Bitstamp"));
   updateData("TICKER");
 
-  console.log(splash.fetchingData("blockchain network attributes"));
+  console.log(splash.fetchingData("blockchain network data"));
   updateData("NETWORK");
 
   console.log(splash.fetchingData("Bitcoin-related headlines"));
@@ -657,10 +658,10 @@ function main(refreshRate = 120000) {
     refreshInterface();
 
     setInterval(() => refreshInterface(), refreshRate);
-    setInterval(() => updateData("TICKER"), refreshRate);
-    setInterval(() => updateData("PORTFOLIO"), refreshRate);
-    setInterval(() => updateData("NETWORK"), refreshRate);
-    setInterval(() => updateData("HEADLINES"), refreshRate);
+    setInterval(() => updateData("TICKER"), refreshRate + 1000);
+    setInterval(() => updateData("PORTFOLIO"), refreshRate + 10000);
+    setInterval(() => updateData("NETWORK"), refreshRate) + 1000;
+    setInterval(() => updateData("HEADLINES"), refreshRate + 10000);
   });
 }
 

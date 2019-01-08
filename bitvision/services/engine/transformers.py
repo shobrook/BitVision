@@ -254,6 +254,97 @@ def recursive_feature_elim(df):
 # 	return df, stemmed
 
 
+#########
+# HELPERS
+#########
+
+
+def sliding_window(seq, n=2):
+	"""
+	Returns a sliding window (of width n) over data from the iterable. https://stackoverflow.com/a/6822773/8740440
+	"""
+	"s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ..."
+	it = iter(seq)
+	result = tuple(islice(it, n))
+	if len(result) == n:
+		yield result
+	for elem in it:
+		result = result[1:] + (elem,)
+		yield result
+
+def integrate(avg_daily_sentiment, interval):
+	"""
+	Takes a list of average daily sentiment scores and returns a list of definite integral estimations calculated
+	with Simpson's method. Each integral interval is determined by the `interval` variable. Shows accumulated sentiment.
+	"""
+
+	# Split into sliding window list of lists
+	sentiment_windows = sliding_window(avg_daily_sentiment, interval)
+
+	integral_simpson_est = []
+
+	# https://stackoverflow.com/a/13323861/8740440
+	for x in sentiment_windows:
+		# Estimate area using composite Simpson's rule. dx indicates the spacing of the data on the x-axis.
+		integral_simpson_est.append(simps(x, dx=1))
+
+	dead_values = list([None] * interval)
+	dead_values.extend(integral_simpson_est)
+	dead_values.reverse()
+
+	return dead_values
+
+def random_undersampling(dataset):
+	"""
+	Randomly deleting rows that contain the majority class until the number
+	in the majority class is equal with the number in the minority class.
+	"""
+
+	minority_set = dataset[dataset.Trend == -1.0]
+	majority_set = dataset[dataset.Trend == 1.0]
+
+	# print(dataset.Trend.value_counts())
+
+	# If minority set larger than majority set, swap
+	if len(minority_set) > len(majority_set):
+		minority_set, majority_set = majority_set, minority_set
+
+	# Downsample majority class
+	majority_downsampled = resample(majority_set,
+	                                replace=False,  # sample without replacement
+	                                n_samples=len(minority_set),  # to match minority class
+	                                random_state=123)  # reproducible results
+
+	# Combine minority class with downsampled majority class
+	return pd.concat([majority_downsampled, minority_set])
+
+def get_popularity(headlines):
+	# TODO: Randomize user-agents OR figure out how to handle popups
+	if "Tweets" not in headlines.columns:
+		counts = []
+		driver = webdriver.Chrome()
+
+		for index, row in headlines.iterrows():
+			try:
+				driver.get(row["URL"])
+				time.sleep(3)
+
+				twitter_containers = driver.find_elements_by_xpath("//li[@class='twitter']")
+				count = twitter_containers[0].find_elements_by_xpath("//span[@class='count']")
+
+				if count[0].text == "":
+					counts.append(1)
+				else:
+					counts.append(int(count[0].text))
+			except:
+				counts.append(1)  # QUESTION: Should it be None?
+
+		headlines["Tweets"] = (pd.Series(counts)).values
+		print(counts)
+
+	return headlines
+
+
 ######
 # MAIN
 ######

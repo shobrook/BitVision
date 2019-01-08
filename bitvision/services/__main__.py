@@ -19,7 +19,7 @@ from trader import make_prediction, make_trade, allocate_funds, TradingClient
 
 
 def action(name):
-    with open("./cache/config.json") as config:
+    with open("./store/config.json") as config:
         config_dict = json.load(config)
         credentials = config_dict["credentials"]
         client = TradingClient(
@@ -29,7 +29,7 @@ def action(name):
         )
 
         if name == "authenticate": # Authenticates Bitstamp credentials
-            with open("./cache/config.json", 'w') as new_config:
+            with open("./store/config.json", 'w') as new_config:
                 try: # Tries to pull account balance; if fails, then invalid creds
                     client.account_balance()
                     logged_in = True
@@ -91,9 +91,6 @@ def action(name):
             })
         elif name == "make_trade": # Makes a user-defined trade
             make_trade(client, dict(sys.argv[2]))
-        elif name == "withdraw": # Withdraws money from user account
-            client.bitcoin_withdrawal(int(sys.argv[2]), sys.argv[3])
-
 
 if __name__ == "__main__":
     action(sys.argv[1])

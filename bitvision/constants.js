@@ -1,7 +1,7 @@
 const path = require("path");
 const colors = require("colors");
 
-let cachePath = String.raw`${path.join(__dirname, "cache")}`;
+let storePath = String.raw`${path.join(__dirname, "store")}`;
 let servicesPath = String.raw`${path.join(__dirname, "services")}`;
 
 module.exports = {
@@ -21,20 +21,20 @@ module.exports = {
     cancelDark: "red"
   },
   filePaths: {
-    configPath: path.join(cachePath, "config.json"),
-    blockchainDataPath: path.join(cachePath, "data", "blockchain.json"),
-    headlineDataPath: path.join(cachePath, "data", "headlines.json"),
-    technicalDataPath: path.join(cachePath, "data", "indicators.json"),
-    priceDataPath: path.join(cachePath, "data", "ticker.json"),
-    graphDataPath: path.join(cachePath, "data", "graph.json"),
-    portfolioDataPath: path.join(cachePath, "data", "portfolio.json"),
-    transactionsDataPath: path.join(cachePath, "data", "transactions.json")
+    requirementsPath: path.join(storePath, "../requirements.txt"),
+    configPath: path.join(storePath, "config.json"),
+    blockchainDataPath: path.join(storePath, "blockchain.json"),
+    headlineDataPath: path.join(storePath, "headlines.json"),
+    technicalDataPath: path.join(storePath, "indicators.json"),
+    priceDataPath: path.join(storePath, "ticker.json"),
+    graphDataPath: path.join(storePath, "graph.json"),
+    portfolioDataPath: path.join(storePath, "portfolio.json"),
+    transactionsDataPath: path.join(storePath, "transactions.json")
   },
   pyCommands: {
     checkLogin: ["python3", [servicesPath, "authenticate"]],
     toggleAlgo: ["python3", [servicesPath, "toggle_algo"]],
     makeTrade: payload => ["python3", [servicesPath, "make_trade", payload]],
-    // withdraw: ["python3", [servicesPath, "withdraw"]],
     refreshNetwork: ["python3", [servicesPath, "retrieve_network_data"]],
     refreshTicker: ["python3", [servicesPath, "retrieve_price_data"]],
     refreshHeadlines: ["python3", [servicesPath, "retrieve_headline_data"]],
@@ -59,9 +59,9 @@ module.exports = {
     ██╔══██╗██║   ██║   ╚██╗ ██╔╝██║╚════██║██║██║   ██║██║╚██╗██║\n\
     ██████╔╝██║   ██║    ╚████╔╝ ██║███████║██║╚██████╔╝██║ ╚████║\n\
     ╚═════╝ ╚═╝   ╚═╝     ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n\n"
-      .blue.bold,
+      .yellow.bold,
     description: "    Real-time charting and algorithmic trading for Bitstamp.\n"
       .red.bold,
-    fetchingData: data => `    Fetching ${data}...`.blue
+    fetchingData: data => `    Fetching ${data}...`.yellow
   }
 };

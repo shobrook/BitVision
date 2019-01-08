@@ -45,18 +45,18 @@ def make_trade(client, order):
     else:
         response = client.sell_instant_order(amount)
 
-    with open("./cache/data/trading_log.json") as old_trading_log:
-        new_log = {
-            "trades": [{
-                "id": response["id"],
-                "datetime": response["datetime"],
-                "type": "SELL" if response["type"] else "BUY",
-                "amount": response["amount"]
-            }] + json.load(old_trading_log)["trades"]
-        }
-
-        with open("../cache/data/trading_log.json", 'w') as trading_log:
-            trading_log.write(json.dumps(new_log, indent=2))
+    # with open("./store/trading_log.json") as old_trading_log:
+    #     new_log = {
+    #         "trades": [{
+    #             "id": response["id"],
+    #             "datetime": response["datetime"],
+    #             "type": "SELL" if response["type"] else "BUY",
+    #             "amount": response["amount"]
+    #         }] + json.load(old_trading_log)["trades"]
+    #     }
+    #
+    #     with open("./store/trading_log.json", 'w') as trading_log:
+    #         trading_log.write(json.dumps(new_log, indent=2))
 
 def allocate_funds(account_balance):
     return 0 # TODO: Implement Kelly Criterion
@@ -283,38 +283,6 @@ class TradingClient(BaseClient):
         url = self._construct_url("open_orders/", base, quote)
         return self._post(url, return_json=True, version=2)
 
-    def order_status(self, order_id):
-        """
-        Returns dictionary.
-        - status: 'Finished'
-          or      'In Queue'
-          or      'Open'
-        - transactions: list of transactions
-          Each transaction is a dictionary with the following keys:
-              btc, usd, price, type, fee, datetime, tid
-          or  btc, eur, ....
-          or  eur, usd, ....
-        """
-
-        data = {'id': order_id}
-        return self._post("order_status/", data=data, return_json=True,
-                          version=1)
-
-    # def cancel_order(self, order_id, version=1):
-    #     """
-    #     Cancel the order specified by order_id.
-    #     Version 1 (default for backwards compatibility reasons):
-    #     Returns True if order was successfully canceled, otherwise
-    #     raise a BitstampError.
-    #     Version 2:
-    #     Returns dictionary of the canceled order, containing the keys:
-    #     id, type, price, amount
-    #     """
-    #
-    #     data = {'id': order_id}
-    #     return self._post("cancel_order/", data=data, return_json=True,
-    #                       version=version)
-
     def cancel_all_orders(self):
         """
         Cancel all open orders.
@@ -341,44 +309,3 @@ class TradingClient(BaseClient):
         data = {'amount': amount}
         url = self._construct_url("sell/instant/", base, quote)
         return self._post(url, data=data, return_json=True, version=2)
-
-    # def withdrawal_requests(self, timedelta=86400):
-    #     """
-    #     Returns list of withdrawal requests.
-    #     Each request is represented as a dictionary.
-    #     By default, the last 24 hours (86400 seconds) are returned.
-    #     """
-    #
-    #     data = {'timedelta': timedelta}
-    #     return self._post("withdrawal_requests/", return_json=True, version=1, data=data)
-
-    def bitcoin_withdrawal(self, amount, address):
-        """
-        Send bitcoins to another bitcoin wallet specified by address.
-        """
-
-        data = {'amount': amount, 'address': address}
-        return self._post("bitcoin_withdrawal/", data=data, return_json=True,
-                          version=1)
-
-    def bitcoin_deposit_address(self):
-        """
-        Returns bitcoin deposit address as unicode string
-        """
-
-        return self._post("bitcoin_deposit_address/", return_json=True,
-                          version=1)
-
-    def unconfirmed_bitcoin_deposits(self):
-        """
-        Returns JSON list of unconfirmed bitcoin transactions.
-        Each transaction is represented as dictionary:
-        amount
-          bitcoin amount
-        address
-          deposit address used
-        confirmations
-          number of confirmations
-        """
-
-        return self._post("unconfirmed_btc/", return_json=True, version=1)

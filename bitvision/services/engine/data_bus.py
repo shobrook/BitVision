@@ -39,7 +39,6 @@ quandl_endpoints = {
 def fetch_price_data():
     return pd.read_csv("https://www.quandl.com/api/v3/datasets/BCHARTS/BITSTAMPUSD.csv?api_key=iKmHLdjz-ghzaWVKyEfw", sep=',')
 
-
 def fetch_blockchain_data():
     # Loads datasets from Quandl
     conf_time = pd.read_csv(quandl_endpoints["conf_time"], sep=',')
@@ -74,7 +73,6 @@ def fetch_blockchain_data():
 
     return transformer("merge_datasets")(dfs[0], dfs[1:])
 
-
 def fetch_tweets():
     pass
 
@@ -99,17 +97,6 @@ def dataset(name):
 
         return fetch_price_data()
     elif name == "blockchain_data":
-        # path = "../../cache/features/blockchain_data.csv"
-        #
-        # # Fetches from Quandl if local dataset is out of date or corrupted
-        # if not os.path.isfile(path) or int(time.time() - os.path.getmtime(path)) > 86400:
-        #     blockchain_data = fetch_blockchain_data()
-        #     blockchain_data.to_csv(path, sep=',', index=False)
-        #
-        #     return blockchain_data
-        #
-        # return pd.read_csv(path, sep=',')
-
         return fetch_blockchain_data()
     elif name == "tweets":
         return fetch_tweets()

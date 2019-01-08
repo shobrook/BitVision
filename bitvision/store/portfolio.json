@@ -1,0 +1,12 @@
+{
+  "error": false,
+  "data": {
+    "account_balance": "$0.00",
+    "returns": "0.00%",
+    "net_profit": "$0.00",
+    "sharpe_ratio": "0.00",
+    "buy_accuracy": "0.00%",
+    "sell_accuracy": "0.00%",
+    "total_trades": "0"
+  }
+}

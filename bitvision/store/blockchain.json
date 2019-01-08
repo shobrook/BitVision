@@ -1,0 +1,53 @@
+{
+  "error": false,
+  "data": [
+    [
+      "Block Size",
+      "1.05"
+    ],
+    [
+      "Difficulty",
+      "5949437371610.0"
+    ],
+    [
+      "Total Bitcoin",
+      "17194350.0"
+    ],
+    [
+      "Miners Revenue",
+      "11517945.75"
+    ],
+    [
+      "Transaction Cost",
+      "53.26"
+    ],
+    [
+      "Hash Rate (GH/s)",
+      "38743005.8"
+    ],
+    [
+      "Unique Addresses",
+      "452409.0"
+    ],
+    [
+      "Transaction Fees",
+      "124854.43"
+    ],
+    [
+      "Confirmation Time",
+      "14.45"
+    ],
+    [
+      "Transactions per Day",
+      "218607.0"
+    ],
+    [
+      "Market Capitalization",
+      "120942650691.0"
+    ],
+    [
+      "Transactions per Block",
+      "1668.76"
+    ]
+  ]
+}
