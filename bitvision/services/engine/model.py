@@ -5,7 +5,6 @@
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
-# from sklearn.externals import joblib
 
 
 ######
@@ -46,37 +45,27 @@ class Model(object):
 
         return rand_forest
 
-    def _holdout_test(self):
-        pass
+    def _random_undersampling(dataset):
+    	"""
+    	Randomly deleting rows that contain the majority class until the number
+    	in the majority class is equal with the number in the minority class.
+    	"""
 
-    # def __rolling_window_test(self, data, window_size, test_size, step=1):
-	# 	print("\t\tRolling Window Validation Results:")
-    #
-	# 	windows = [data.loc[idx * step:(idx * step) + round(window_size * len(data))] for idx in
-	# 			   range(int((len(data) - round(window_size * len(data))) / step))]
-	# 	decoupled_windows = [pp.split(window, test_size=test_size, balanced=False) for window in
-	# 						 windows]  # TODO: Do a nonrandom split to respect the temporal order of observations
-    #
-	# 	results = {"accuracy": [], "precision": [], "specificity": [], "sensitivity": []}
-	# 	for feature_set in decoupled_windows:
-	# 		self.x_train, self.x_test, self.y_train, self.y_test = feature_set
-    #
-	# 		self.scaler = StandardScaler()
-	# 		self.scaler.fit(self.x_train)
-    #
-	# 		self.__fit_model()
-    #
-	# 		self.y_pred = self.model.predict(self.scaler.transform(self.x_test))
-    #
-	# 		results["accuracy"].append(analysis.accuracy(self.y_pred, self.y_test))
-	# 		results["precision"].append(analysis.precision(self.y_pred, self.y_test))
-	# 		results["specificity"].append(analysis.specificity(self.y_pred, self.y_test))
-	# 		results["recall"].append(analysis.recall(self.y_pred, self.y_test))
-    #
-	# 	print("\t\t\tAccuracy: ", str(sum(results["accuracy"]) / float(len(results["accuracy"]))))
-	# 	print("\t\t\tPrecision: ", str(sum(results["precision"]) / float(len(results["precision"]))))
-	# 	print("\t\t\tSpecificity: ", str(sum(results["specificity"]) / float(len(results["specificity"]))))
-	# 	print("\t\t\tRecall: ", str(sum(results["recall"]) / float(len(results["recall"]))))
+    	minority_set = dataset[dataset.Trend == -1.0]
+    	majority_set = dataset[dataset.Trend == 1.0]
+
+    	# If minority set larger than majority set, swap
+    	if len(minority_set) > len(majority_set):
+    		minority_set, majority_set = majority_set, minority_set
+
+    	# Downsample majority class
+    	majority_downsampled = resample(majority_set,
+    	                                replace=False,  # sample without replacement
+    	                                n_samples=len(minority_set),  # to match minority class
+    	                                random_state=123)  # reproducible results
+
+    	# Combine minority class with downsampled majority class
+    	return pd.concat([majority_downsampled, minority_set])
 
     ## Public Methods ##
 

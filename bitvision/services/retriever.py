@@ -28,12 +28,7 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
     "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
     "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
 ]
 
 
@@ -88,17 +83,6 @@ def fetch_tech_indicators():
         try:
             price_data = dataset("price_data")
             indicators = transformer("calculate_indicators")(price_data)
-            valid_indicators = [
-                "MOM (1)",
-                "ADX (14)",
-                "WILLR",
-                "RSI (6)",
-                "ATR (14)",
-                "OBV",
-                "TRIX (20)",
-                "EMA (6)"
-            ]
-
             get_signal = {
                 "MOM (1)": lambda v: "BUY" if v >= 0 else "SELL",
                 "ADX (14)": lambda v: "BUY" if v >= 25 else "SELL",  # Not sure about this
@@ -111,9 +95,9 @@ def fetch_tech_indicators():
             }
 
             data = []
-            for symb in valid_indicators:
-                val = round(indicators[symb][0], 2)
-                data.append([symb, str(val), get_signal[symb](val)])
+            for indicator, signal in get_signal.items():
+                val = round(indicators[indicator][0], 2)
+                data.append([indicator, str(val), signal(val)])
 
             indicators_json.write(json.dumps({
                 "error": False,

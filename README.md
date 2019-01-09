@@ -44,8 +44,8 @@ If you want to enable trading, follow these instructions to acquire a Bitstamp A
     * Account Balance
     * User Transactions
     * Open Orders
-    * Buy Limit Order
-    * Sell Limit Order
+    * Buy Instant/Limit Order
+    * Sell Instant/Limit Order
 4.  Click on the Generate Key button and make sure to store your secret in a secure place
 5.  Click Activate
 6.  Go to your email and click on link sent by Bitstamp to activate the API key
@@ -66,11 +66,21 @@ The command-line interface runs on the Blessed.js library. The trading and chart
 
 The BitVision architecture revolves around the *Store*, which is a local directory of JSON files used to achieve persistence of the application state (Bitstamp credentials, autotrading status, etc.) and data to be displayed on the dashboard. When a user triggers an event, like placing an order or refreshing the charts, a child process is spawned to execute the appropriate service (a Python module), which then updates the store with new data or an error flag.
 
-Services are organized into three modules: the *retriever*, *trader*, and *automated trading engine*. The retriever fetches ticker and portfolio data from Bitstamp, blockchain network data (hash rate, difficulty, etc.) from Quandl, and Bitcoin-related headlines from Coindesk. The trader wraps the Bitstamp REST API and serves to authenticate the user's credentials, fetch portfolio data and transaction history, place buy or sell limit orders, and toggle autotrading.
+Services are organized into three modules: the retriever, trader, and automated trading engine. The *retriever* fetches ticker and portfolio data from Bitstamp, blockchain network data (hash rate, difficulty, etc.) from Quandl, and Bitcoin-related headlines from Coindesk. The *trader* wraps the Bitstamp REST API and serves to authenticate the user's credentials, fetch portfolio data and transaction history, place buy or sell orders, and toggle autotrading. The *automated trading engine* is a little more complicated.
 
-The automated trading engine is a little more complicated. [Explain]
+### Automated Trading Engine
+
+- Machine learning pipeline
+- Pulls data from following sources:
+- Extract technical indicators
+- Preprocessing steps: ...
+- Model choice and hyperparameter tuning
+- Evaluation
+- Placing risk-adjusted trades with the Kelly Criterion
 
 <!--Predicts the next-day directional change of Bitcoin price.-->
+
+## Contributing
 
 Wanted features:
 - Kelly Criterion for risk-management, LSTM instead of Random Forest, add Bitcoin Core Github activity + predictions made by popular Bitcoin forecasting websites + tweet sentiment + headline sentiment as input features

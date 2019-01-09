@@ -20,8 +20,6 @@ from engine import dataset, transformer, Model
 def make_prediction():
     price_data = dataset("price_data")
     blockchain_data = dataset("blockchain_data")
-    # coindesk_headlines = dataset("coindesk_headlines")
-    # tweets = dataset("tweets")
 
     processed_data = (
         price_data.pipe(transformer("calculate_indicators"))
@@ -244,9 +242,6 @@ class TradingClient(BaseClient):
              u'btceur_fee': u'0.25',
              u'eurusd_fee': u'0.20',
              }
-            There could be reasons to set base and quote to None (or False),
-            because the result then will contain the fees for all currency pairs
-            For backwards compatibility this can not be the default however.
         """
 
         url = self._construct_url("balance/", base, quote)
@@ -273,24 +268,6 @@ class TradingClient(BaseClient):
         }
         url = self._construct_url("user_transactions/", None, None)
         return self._post(url, data=data, return_json=True, version=2)
-
-    def open_orders(self, base="btc", quote="usd"):
-        """
-        Returns JSON list of open orders. Each order is represented as a
-        dictionary.
-        """
-
-        url = self._construct_url("open_orders/", base, quote)
-        return self._post(url, return_json=True, version=2)
-
-    def cancel_all_orders(self):
-        """
-        Cancel all open orders.
-        Returns True if it was successful, otherwise raises a
-        BitstampError.
-        """
-
-        return self._post("cancel_all_orders/", return_json=True, version=1)
 
     def buy_instant_order(self, amount, base="btc", quote="usd"):
         """

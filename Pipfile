@@ -4,16 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-ftfy = "*"
-requests = "*"
+python-crontab = "*"
 moment = "*"
-pandas = "*"
 "bs4" = "*"
+textblob = "*"
+pandas = "*"
 scipy = "*"
 realtime-talib = "*"
 sklearn = "*"
-textblob = "*"
-crontab = "*"
+requests = "*"
 
 [dev-packages]
 
