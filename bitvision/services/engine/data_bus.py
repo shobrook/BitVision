@@ -3,16 +3,12 @@
 #########
 
 
-import csv
-import html
 import os
 import random
 import time
-import moment
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-from ftfy import ftfy
 from .transformers import transformer
 
 

@@ -5,7 +5,6 @@
 
 import pandas as pd
 import dateutil.parser as dp
-from itertools import islice
 from scipy.stats import boxcox
 from realtime_talib import Indicator
 
