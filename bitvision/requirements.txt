@@ -5,5 +5,5 @@ bs4
 textblob
 pandas
 scipy
-realtime_talib
+realtime-talib
 sklearn
