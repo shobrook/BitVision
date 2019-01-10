@@ -23,8 +23,6 @@ const { createHelpScreen } = require("./modals/help");
 const { createOrderScreen } = require("./modals/order");
 const error = require("./modals/error");
 
-const VERSION = "1.0.0";
-
 var helpActiveStatus = false;
 var tradeEntryStatus = false;
 var loginEntryStatus = false;
@@ -161,8 +159,11 @@ function updateData(type) {
 }
 
 function reformatPriceData(priceData) {
-  let price = `${String(priceData.last)} ${figures.arrowUp.green}`; // TEMP
-  let volume = `${String(priceData.volume)} ${figures.arrowUp.green}`; // TEMP
+  // let price = `${String(priceData.last)} ${figures.arrowUp.green}`;
+  // let volume = `${String(priceData.volume)} ${figures.arrowUp.green}`;
+
+  let price = `${String(priceData.last)}`;
+  let volume = `${String(priceData.volume)}`;
 
   return [
     ["Price ($)", price],
@@ -263,7 +264,7 @@ function colorize(row) {
 function buildMenuCommands() {
   let login = {
     " Login": {
-      keys: ["l", "L"],
+      keys: ["L-l", "L", "l"],
       callback: () => {
         loginEntryStatus = true;
         displayLoginScreen();
@@ -272,13 +273,13 @@ function buildMenuCommands() {
   };
   let logout = {
     " Logout": {
-      keys: ["o", "O"],
+      keys: ["O-o", "O", "o"],
       callback: () => clearCredentials()
     }
   };
-  let cmds = {
+  let makeTrade = {
     " Place an Order": {
-      keys: ["t", "T"],
+      keys: ["P-p", "P", "p"],
       callback: () => {
         if (isLoggedIn()) {
           tradeEntryStatus = true;
@@ -290,9 +291,12 @@ function buildMenuCommands() {
           displayLoginScreen();
         }
       }
-    },
+    }
+  }
+
+  let defaultCmds = {
     " Help": {
-      keys: ["h", "H"],
+      keys: ["H-h", "H", "h"],
       callback: () => {
         if (!helpActiveStatus) {
           helpActiveStatus = true;
@@ -303,7 +307,7 @@ function buildMenuCommands() {
       }
     },
     " Exit": {
-      keys: ["C-c", "escape"],
+      keys: ["E-e", "E", "e", "escape"],
       callback: () => process.exit(0)
     }
   };
@@ -314,7 +318,7 @@ function buildMenuCommands() {
         [` Autotrading ${
           cfg.autotrade.enabled ? "(ON)".green : "(OFF)".red
         }`]: {
-          keys: ["a"],
+          keys: ["A-a", "A", "a"],
           callback: () => {
             execShellCommand(pyCommands.toggleAlgo);
             // menubar = blessed.listbar({
@@ -341,8 +345,8 @@ function buildMenuCommands() {
   // Store updated configuration
   writeJSONFile(filePaths.configPath, cfg);
   cmds = cfg.logged_in
-    ? { ...cmds, ...autotrading, ...logout }
-    : { ...login, ...autotrading, ...cmds };
+    ? {...logout, ...makeTrade, ...autotrading, ...defaultCmds}
+    : {...login, ...defaultCmds}
 
   return cmds;
 }
