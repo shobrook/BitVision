@@ -75,6 +75,8 @@ A supervised learning algorithm (a Random Forest classifier) is trained on histo
 
 Technical indicators were chosen as a feature set because they help reduce noise in candlestick data and may improve an model's ability to learn price patterns, if any exist. The particular indicators used were chosen to give insight into price momentum, volatility, trends, and potential buy/sell signals.
 
+In a perfectly efficient market, the future price of a publicly traded asset is not statistically dependent on past prices; in other words, the price follows a "random walk," and it's impossible to reliably leverage technical analysis to beat the market. Now, efficient market theory suggests that the U.S. stock market is a semi-efficient market, and so we still consider this feature set because many traders utilize technical analysis in their trading strategies, and there may exist a relationship between signals from indicators and executed trades, regardless of whether the signals themselves are accurate.
+
 #### Blockchain Charts
 
 Unlike other publicly traded assets, all Bitcoin-related fundamental data is available online, in the form of currency statistics, block details, mining information, network activity, and wallet activity. The following Blockchain variables are considered:
@@ -107,20 +109,16 @@ And lastly, a grid search is performed to find optimal hyperparameter values for
 
 #### Evaluation
 
-To-Do.
+![Confusion Matrix](resources/cnf_matrix.png)
 
-## An Obligatory Note
+To-do: Give performance metrics. Mention that the system isn't backtested.
+
+## Contributing
 
 > "The reason the stock market is hard to predict is because it is a prediction." – Andrew Critch, *ex Algorithmic Trader at Jane Street*
 
-In a perfectly efficient market, the future price of a publicly traded asset is not statistically dependent on past prices; in other words, the price follows a "random walk," and it's impossible to reliably leverage technical analysis to beat the market. Now, efficient market theory suggests that the U.S. stock market is a semi-efficient market, and so we still consider this feature set because many traders utilize technical analysis in their trading strategies, and there may exist a relationship between buy/sell signals from indicators and executed trades, regardless of their actual effectiveness.
-
-Nevertheless, this trading engine serves as a proof of concept, and I wouldn't recommend trusting it to make money. <!--It needs to be backtested-->I personally think an interesting avenue of research is in text analysis of Bitcoin-related news, tweets, and Reddit activity. I have yet to see a system that combines these features.
-
-A number of other improvements should be made to the trading system before it's used:
-1. The Kelly Criterion should be used to allocate a percentage of the user's capital to each trade so as to adjust for risk
-2. An LSTM network should be used instead of a Random Forest. Price prediction is fundamentally a sequence learning task, which LSTMs are designed for. LSTMs have what's called memory cells, which can store information that lies dozens of time-steps in the past. This is important because, in the market, cause and effect can be quite far apart.
-3. [Better features]
+This trading engine serves as a proof of concept, and I wouldn't recommend trusting it to make money. In general, it's pretty unlikely that any open-source market maker is going to outperform a team of Physics PhDs at Jane Street. Nevertheless, there are a number of interesting improvements that could be made to the system:
+1. The Kelly Criterion should be used to allocate a risk-adjusted portion of the user's capital to each trade.
+2. An LSTM network should be used instead of a Random Forest classifier. Price prediction is fundamentally a sequence learning task, which LSTMs are designed for. LSTMs have what's called memory cells, which can store information that lies dozens of time-steps in the past. This is important because, in the market, cause and effect can be quite far apart.
+3. The following features should be explored: text analysis of Bitcoin-related news, tweets, and Reddit activity, Github activity for the Bitcoin core, and predictions made by popular Bitcoin forecasting websites or influencers (it's possible that a non-trivial number of traders use those predictions to inform trades).
 4. [Feature elimination / dimensionality reduction]
-
-<!--In general, I think it's very unlikely that any open-source market maker is going to outperform a group of Physics PhDs at Jane Street.-->
