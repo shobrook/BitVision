@@ -7,7 +7,6 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/94e2435117de4078b0d8974eea4b6cf1)](https://www.codacy.com/app/alichtman/BitVision?utm_source=github.com&utm_medium=referral&utm_content=shobrook/BitVision&utm_campaign=Badge_Grade)
 ![node (scoped)](https://img.shields.io/node/v/@stdlib/stdlib.svg)
 [![Scikit-Learn](https://img.shields.io/badge/Sklearn-0.19.1-yellow.svg)](http://scikit-learn.org/stable/)
-
 `BitVision` is a real-time charting and trading dashboard for Bitstamp that works entirely in the terminal. It comes with an automated trading bot that uses machine learning to forecast price movements and place risk-adjusted daily trades.
 
 Unlike other systems, there's no need to host a server or <!--spin up a Docker container-->edit tedious setup files. After installing, simply run `$ bitvision` to start using the dashboard.
@@ -66,19 +65,19 @@ The command-line interface runs on the Blessed.js library. The trading and chart
 
 The BitVision architecture revolves around the *Store*, which is a local directory of JSON files used to achieve persistence of the application state (Bitstamp credentials, autotrading status, etc.) and data to be displayed on the dashboard. When a user triggers an event, like placing an order or refreshing the charts, a child process is spawned to execute the appropriate service (a Python module), which then updates the store with new data or an error flag.
 
-Services are organized into three modules: the retriever, trader, and automated trading engine. The *retriever* fetches ticker and portfolio data from Bitstamp, blockchain network data (hash rate, difficulty, etc.) from Quandl, and Bitcoin-related headlines from Coindesk. The *trader* wraps the Bitstamp REST API and serves to authenticate the user's credentials, fetch portfolio data and transaction history, place buy or sell orders, and toggle autotrading. The *automated trading engine* is a little more complicated.
+Services are organized into three modules: the retriever, trader, and automated trading engine. The *retriever* fetches ticker and portfolio data from Bitstamp, blockchain network data (hash rate, difficulty, etc.) from Quandl, and Bitcoin-related headlines from Coindesk. The *trader* wraps the Bitstamp REST API and serves to authenticate the user's credentials, fetch portfolio data and transaction history, place buy or sell orders, and toggle automated trading. Lastly, the *automated trading engine* is a machine learning system that attempts to predict the next-day directional change of Bitcoin price and place trades accordingly.
 
 ### Automated Trading Engine
 
-BitVision has a built-in trading bot that uses a Random Forest classifier to predict the next-day directional change of Bitcoin price. The model is trained on historical candlestick data, technical indicators, and blockchain network data. When the engine is toggled on, a daily cron job is scheduled that generates a price change prediction and places a buy or sell order accordingly. <!--Kelly Criterion for risk-adjustment.-->
+A supervised learning algorithm (a Random Forest classifier) is trained on historical candlestick data, technical indicators, and blockchain network data. When the engine is toggled on, a daily cron job is scheduled that will generate a price change prediction and place a risk-adjusted buy or sell order, depending on the prediction.
 
 #### Technical Indicators
 
-Technical indicators were chosen as a feature set because they help reduce noise in candlestick data and may improve an model's ability to learn price patterns, if any exist. The particular indicators used are chosen to give insight into price momentum, volatility, trends, and potential buy/sell signals.
+Technical indicators were chosen as a feature set because they help reduce noise in candlestick data and may improve an model's ability to learn price patterns, if any exist. The particular indicators used were chosen to give insight into price momentum, volatility, trends, and potential buy/sell signals.
 
-#### Blockchain Data
+#### Blockchain Charts
 
-Unlike other publicly traded assets, all Bitcoin-related fundamental data is available online. The following Blockchain network attributes are considered:
+Unlike other publicly traded assets, all Bitcoin-related fundamental data is available online, in the form of currency statistics, block details, mining information, network activity, and wallet activity. The following Blockchain variables are considered:
 
 | Feature                  | Description                                                                                     |
 | ------------------------ | ----------------------------------------------------------------------------------------------- |
@@ -98,25 +97,32 @@ Unlike other publicly traded assets, all Bitcoin-related fundamental data is ava
 
 A number of standard preprocessing steps are taken before training the model:
 
-1. The Last Observation Carried Forward (LOCF) method is used to fill missing values in the dataset
+1. The Last Observation Carried Forward (LOCF) method is used to fill missing values in the training set
 2. Lag variables (spanning back three days) are created for each feature
 3. A power transform is applied to each feature to convert it into something which more closely resembles a normal distribution
 
-Additionally, as the price of Bitcoin has generally increased over time, the training set is balanced (using the random undersampling method) to ensure the model doesn't learn a bias towards positive predictions, and so that the classification accuracy can be benchmarked against a random coin toss.
+Additionally, as the price of Bitcoin has generally increased over time, the training set is balanced (using the random undersampling method) to ensure the model doesn't learn a bias towards positive predictions, and so that the classification can be benchmarked against a random coin toss strategy.
 
-Lastly, during training, a grid search is performed to find optimal hyperparameter values for the Random Forest.
+And lastly, a grid search is performed to find optimal hyperparameter values for the Random Forest.
 
 #### Evaluation
 
+To-Do.
 
 ## An Obligatory Note
 
-> "The reason the stock market is hard to predict is because it is a prediction." – Andrew Critch, *Research Scientist at UC Berkeley*
+> "The reason the stock market is hard to predict is because it is a prediction."
+<br />
+> – Andrew Critch, *ex Algorithmic Trader at Jane Street*
 
-In a perfectly efficient market, the future price of a publicly traded asset is not statistically dependent on past prices; in other words, the price follows a "random walk," and it's impossible to reliably leverage technical analysis to beat the market. Now, efficient market theory suggests that the stock market is a semi-efficient market, and so we still consider this feature set because many traders utilize technical analysis in their trading strategies, and there may exist a relationship between buy/sell signals from indicators and executed trades, regardless of their actual effectiveness.
+In a perfectly efficient market, the future price of a publicly traded asset is not statistically dependent on past prices; in other words, the price follows a "random walk," and it's impossible to reliably leverage technical analysis to beat the market. Now, efficient market theory suggests that the U.S. stock market is a semi-efficient market, and so we still consider this feature set because many traders utilize technical analysis in their trading strategies, and there may exist a relationship between buy/sell signals from indicators and executed trades, regardless of their actual effectiveness.
 
-Nevertheless, this trading engine serves more as a proof of concept rather than something you should trust to make money. <!--It needs to be backtested-->I personally think an interesting avenue of research is in text analysis of Bitcoin-related news, tweets, and Reddit activity. I have yet to see a system that combines these features.
+Nevertheless, this trading engine serves as a proof of concept, and I wouldn't recommend trusting it to make money. <!--It needs to be backtested-->I personally think an interesting avenue of research is in text analysis of Bitcoin-related news, tweets, and Reddit activity. I have yet to see a system that combines these features.
 
 A number of other improvements should be made to the trading system before it's used:
-1. Trades should be adjusted for risk using the Kelly Criterion.
+1. The Kelly Criterion should be used to allocate a percentage of the user's capital to each trade so as to adjust for risk
 2. An LSTM network should be used instead of a Random Forest. Price prediction is fundamentally a sequence learning task, which LSTMs are designed for. LSTMs have what's called memory cells, which can store information that lies dozens of time-steps in the past. This is important because, in the market, cause and effect can be quite far apart.
+3. [Better features]
+4. [Feature elimination / dimensionality reduction]
+
+<!--In general, I think it's very unlikely that any open-source market maker is going to outperform a group of Physics PhDs at Jane Street.-->
