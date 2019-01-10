@@ -111,9 +111,7 @@ To-Do.
 
 ## An Obligatory Note
 
-> "The reason the stock market is hard to predict is because it is a prediction."
-<br />
-> – Andrew Critch, *ex Algorithmic Trader at Jane Street*
+> "The reason the stock market is hard to predict is because it is a prediction." – Andrew Critch, *ex Algorithmic Trader at Jane Street*
 
 In a perfectly efficient market, the future price of a publicly traded asset is not statistically dependent on past prices; in other words, the price follows a "random walk," and it's impossible to reliably leverage technical analysis to beat the market. Now, efficient market theory suggests that the U.S. stock market is a semi-efficient market, and so we still consider this feature set because many traders utilize technical analysis in their trading strategies, and there may exist a relationship between buy/sell signals from indicators and executed trades, regardless of their actual effectiveness.
 
