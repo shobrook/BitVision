@@ -70,17 +70,53 @@ Services are organized into three modules: the retriever, trader, and automated 
 
 ### Automated Trading Engine
 
-- Machine learning pipeline
-- Pulls data from following sources:
-- Extract technical indicators
-- Preprocessing steps: ...
-- Model choice and hyperparameter tuning
-- Evaluation
-- Placing risk-adjusted trades with the Kelly Criterion
+BitVision has a built-in trading bot that uses a Random Forest classifier to predict the next-day directional change of Bitcoin price. The model is trained on historical candlestick data, technical indicators, and blockchain network data. When the engine is toggled on, a daily cron job is scheduled that generates a price change prediction and places a buy or sell order accordingly. <!--Kelly Criterion for risk-adjustment.-->
 
-<!--Predicts the next-day directional change of Bitcoin price.-->
+#### Technical Indicators
 
-## Contributing
+Technical indicators were chosen as a feature set because they help reduce noise in candlestick data and may improve an model's ability to learn price patterns, if any exist. The particular indicators used are chosen to give insight into price momentum, volatility, trends, and potential buy/sell signals.
 
-Wanted features:
-- Kelly Criterion for risk-management, LSTM instead of Random Forest, add Bitcoin Core Github activity + predictions made by popular Bitcoin forecasting websites + tweet sentiment + headline sentiment as input features
+#### Blockchain Data
+
+Unlike other publicly traded assets, all Bitcoin-related fundamental data is available online. The following Blockchain network attributes are considered:
+
+| Feature                  | Description                                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------------------------- |
+| Confirmation Time        | Median time for a transaction to be accepted into a mined block and added to the public ledger. |
+| Block Size               | Average block size in MB.                                                                       |
+| Average Transaction Cost | Total miner revenue divided by number of transactions.                                          |
+| Difficulty               | How difficult it is to find a new block.                                       |
+| Transaction Value        | Total estimated value of transactions on the blockchain.                                        |
+| Hash Rate                | Estimated number of giga-hashes per second the BTC network is performing.                       |
+| Transactions per Block   | Average number of transactions per block.                                                       |
+| Unique Addresses         | Total number of unique addresses used on the blockchain.                                        |
+| Total BTC                | Total number of Bitcoins that have already been mined.                                          |
+| Transaction Fees         | Total value of all transaction fees paid to miners.                                             |
+| Transactions per Day     | Total number of unique Bitcoin transactions per day.                                            |
+
+#### Preprocessing
+
+A number of standard preprocessing steps are taken before training the model:
+
+1. The Last Observation Carried Forward (LOCF) method is used to fill missing values in the dataset
+2. Lag variables (spanning back three days) are created for each feature
+3. A power transform is applied to each feature to convert it into something which more closely resembles a normal distribution
+
+Additionally, as the price of Bitcoin has generally increased over time, the training set is balanced (using the random undersampling method) to ensure the model doesn't learn a bias towards positive predictions, and so that the classification accuracy can be benchmarked against a random coin toss.
+
+Lastly, during training, a grid search is performed to find optimal hyperparameter values for the Random Forest.
+
+#### Evaluation
+
+
+## An Obligatory Note
+
+> "The reason the stock market is hard to predict is because it is a prediction." – Andrew Critch, *Research Scientist at UC Berkeley*
+
+In a perfectly efficient market, the future price of a publicly traded asset is not statistically dependent on past prices; in other words, the price follows a "random walk," and it's impossible to reliably leverage technical analysis to beat the market. Now, efficient market theory suggests that the stock market is a semi-efficient market, and so we still consider this feature set because many traders utilize technical analysis in their trading strategies, and there may exist a relationship between buy/sell signals from indicators and executed trades, regardless of their actual effectiveness.
+
+Nevertheless, this trading engine serves more as a proof of concept rather than something you should trust to make money. <!--It needs to be backtested-->I personally think an interesting avenue of research is in text analysis of Bitcoin-related news, tweets, and Reddit activity. I have yet to see a system that combines these features.
+
+A number of other improvements should be made to the trading system before it's used:
+1. Trades should be adjusted for risk using the Kelly Criterion.
+2. An LSTM network should be used instead of a Random Forest. Price prediction is fundamentally a sequence learning task, which LSTMs are designed for. LSTMs have what's called memory cells, which can store information that lies dozens of time-steps in the past. This is important because, in the market, cause and effect can be quite far apart.
