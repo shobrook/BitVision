@@ -56,8 +56,9 @@ def make_trade(client, order):
     #     with open("./store/trading_log.json", 'w') as trading_log:
     #         trading_log.write(json.dumps(new_log, indent=2))
 
-def allocate_funds(account_balance):
-    return 0 # TODO: Implement Kelly Criterion
+def allocate_funds(buying_power):
+    risk = 0.3
+    return buying_power * 0.3 # TODO: Implement Kelly Criterion
 
 
 #################
