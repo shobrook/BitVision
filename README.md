@@ -30,7 +30,7 @@ BitVision's key features are:
 Install `bitvision` with `npm`:
 
 ```bash
-$ npm install bitvision
+$ npm install -g bitvision
 ```
 
 ## Usage
