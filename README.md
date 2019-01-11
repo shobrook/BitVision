@@ -119,12 +119,9 @@ A number of standard preprocessing steps are taken before training the model:
 Additionally, as the price of Bitcoin has generally increased over time, the training set is balanced (using the random undersampling method) to ensure the model doesn't learn a bias towards positive predictions, and so that the model can be evaluated against a random coin toss strategy.
 
 And lastly, a grid search is performed to find optimal hyper-parameter values for the Random Forest.
+<!--#### Evaluation-->
 
-#### Evaluation
-
-<!--The model performs...-->
-
-To-do: Give performance metrics. And a confusion matrix. Mention that the system isn't backtested.
+<!--To-do: Give performance metrics. And a confusion matrix. Mention that the system isn't backtested.-->
 
 ## Contributing
 
