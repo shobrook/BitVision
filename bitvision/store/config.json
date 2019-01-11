@@ -6,7 +6,7 @@
     "username": ""
   },
   "autotrade": {
-    "enabled": false,
-    "next-trade-timestamp-UTC": 0
+    "next-trade-timestamp-UTC": -1,
+    "enabled": false
   }
 }
