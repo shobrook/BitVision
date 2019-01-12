@@ -615,7 +615,7 @@ function checkDependencies(callback) {
       .then(answers => {
         for (let [key, val] of Object.entries(answers)) {
           if (val == "Yes") {
-            console.log("    Installing dependencies...".blue);
+            console.log("    Installing dependencies... (this may take a while)".blue);
             execShellCommand([
               "pip3",
               ["install", "-r", filePaths.requirementsPath]
