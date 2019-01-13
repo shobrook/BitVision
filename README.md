@@ -127,24 +127,25 @@ And lastly, a grid search is performed to find optimal hyper-parameter values fo
 
 #### Evaluation
 
-Three models were trained and tested. The results:
+Three models were trained on 80% of the dataset and tested on 20% before deciding on the Logistic Regression. The results:
 
-| Model                     | Accuracy | Precision (PPV) | Specificity (TNR) | Sensitivity (TPR) |
-| ------------------------- | -------- | --------------- | ----------------- | ----------------- |
-| Logistic Regression       | 56.7%    | 56%             | 51.2%             | 62.2%             |
-| Gradient Boosting Machine | 53.8%    | 53.9%           | 54.5%             | 53.1%             |
-| Random Forest Classifier  | 50.5%    | 50.5%           | 52.6%             | 48.3%             |
+| Model                     | Accuracy | Precision (PPV) | Specificity (TNR) | Recall (TPR) |
+| ------------------------- | -------- | --------------- | ----------------- | ------------ |
+| Logistic Regression       | 56.7%    | 56%             | 51.2%             | 62.2%        |
+| Gradient Boosting Machine | 53.8%    | 53.9%           | 54.5%             | 53.1%        |
+| Random Forest Classifier  | 50.5%    | 50.5%           | 52.6%             | 48.3%        |
 
-The Logistic Regression had the highest accuracy, but also the highest sensitivity, and may have learned a bias for uptrends from the lag variables. We went with this model regardless. In the future, a rolling window cross-validation needs to be performed instead of a holdout test. And, of course, the entire system should be backtested at some point.
+As can be seen, the Logistic Regression had the highest overall accuracy, and highest accuracy in predicting uptrends, but also the lowest accuracy in predicting downtrends.
 
 ## Contributing
 
 <!--"The reason the stock market is hard to predict is because it is a prediction." – Andrew Critch, *Algorithmic Trader at Jane Street*-->
 
-The trading engine is a proof of concept, not something you should trust to make money. Nevertheless, there are a number of interesting improvements that could be made to the system:
+The trading engine is a proof of concept, not something you should trust to make money. Nevertheless, a number of interesting improvements could be made to the system:
 
 1. The Kelly Criterion should be used to allocate a risk-adjusted portion of the user's capital to each trade.
 2. An LSTM network should be used instead of a Logistic Regression model. Price prediction is fundamentally a sequence learning task, which LSTMs are designed for. LSTMs have what's called memory cells, which can store information that lies dozens of time-steps in the past. This is important because, in the market, cause and effect can be quite far apart.
-3. The following features should be tried out: text analysis of Bitcoin-related news, tweets, and Reddit activity, Github activity for the Bitcoin core, and predictions made by popular Bitcoin forecasting websites or influencers (unfortunately, it's possible that a non-trivial number of traders base their trades on those predictions).
+3. The following should be investigated as potential features: Bitcoin core Github activity, text analysis of Bitcoin-related news, tweets, and Reddit activity, and predictions made by popular Bitcoin forecasting websites or influencers (sadly, it's possible a non-trival number of people base their trades on these forecasts).
+4. Backtesting! And rolling window cross-validation should be tried out, not just holdout.
 
 Aside from the trading engine, there are several improvements that can be made to the BitVision architecture. One long-term goal is to rewrite all the services in Node.js instead of Python, to avoid all the complications that come with cross-language execution. But if you're looking for a smaller issue to help with, plenty can be found [here.](http://github.com/shobrook/BitVision/issues)
