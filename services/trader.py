@@ -43,19 +43,6 @@ def make_trade(client, order):
     else:
         response = client.sell_instant_order(amount)
 
-    # with open("./store/trading_log.json") as old_trading_log:
-    #     new_log = {
-    #         "trades": [{
-    #             "id": response["id"],
-    #             "datetime": response["datetime"],
-    #             "type": "SELL" if response["type"] else "BUY",
-    #             "amount": response["amount"]
-    #         }] + json.load(old_trading_log)["trades"]
-    #     }
-    #
-    #     with open("./store/trading_log.json", 'w') as trading_log:
-    #         trading_log.write(json.dumps(new_log, indent=2))
-
 def allocate_funds(buying_power):
     risk = 0.3
     return buying_power * 0.3 # TODO: Implement Kelly Criterion
@@ -106,17 +93,10 @@ class BaseClient(object):
         Make a POST request.
         """
 
-        data = self._default_data()
+        data = {}
         data.update(kwargs.get('data') or {})
         kwargs['data'] = data
         return self._request(requests.post, *args, **kwargs)
-
-    def _default_data(self):
-        """
-        Default data for a POST request.
-        """
-
-        return {}
 
     def _construct_url(self, url, base, quote):
         """
