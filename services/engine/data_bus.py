@@ -62,17 +62,6 @@ def fetch_blockchain_data():
 
 def dataset(name):
     if name == "price_data":
-        # path = "../../cache/features/price_data.csv"
-        #
-        # # Fetches from Quandl if local dataset is out of date or corrupted
-        # if not os.path.isfile(path) or int(time.time() - os.path.getmtime(path)) > 86400:
-        #     price_data = fetch_price_data()
-        #     price_data.to_csv(path, sep=',', index=False)
-        #
-        #     return price_data
-        #
-        # return pd.read_csv(path, sep=',')
-
         return fetch_price_data()
     elif name == "blockchain_data":
         return fetch_blockchain_data()
