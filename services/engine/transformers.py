@@ -140,93 +140,46 @@ def binarize_labels(df):
 
     return df
 
+def random_undersampling(dataset):
+	minority_set = dataset[dataset.Trend == -1.0]
+	majority_set = dataset[dataset.Trend == 1.0]
 
-####################
-# TEXT PREPROCESSORS
-####################
+	# print(dataset.Trend.value_counts())
 
+	# If minority set larger than majority set, swap
+	if len(minority_set) > len(majority_set):
+		minority_set, majority_set = majority_set, minority_set
 
-def remove_special_chars(headline_list):
-	"""
-	Returns list of headlines with all non-alphabetical characters removed.
-	"""
-	rm_spec_chars = [re.sub('[^ A-Za-z]+', "", headline) for headline in headline_list]
-	return rm_spec_chars
+	# Downsample majority class
+	majority_downsampled = resample(majority_set,
+	                                replace=False,  # sample without replacement
+	                                n_samples=len(minority_set),  # to match minority class
+	                                random_state=123)  # reproducible results
 
-def tokenize(headline_list):
-	"""
-	Takes list of headlines as input and returns a list of lists of tokens.
-	"""
-	tokenized = []
-	for headline in headline_list:
-		tokens = word_tokenize(headline)
-		tokenized.append(tokens)
+	# Combine minority class with downsampled majority class
+	return pd.concat([majority_downsampled, minority_set])
 
-	return tokenized
+def balanced_split(dataset, test_size):
+	x_train, x_test, y_train, y_test = train_test_split(dataset.drop(["Date", "Trend"], axis=1).values, dataset["Trend"].values, test_size=test_size, random_state=RANDOM_STATE)
 
-def remove_stop_words(tokenized_headline_list):
-	"""
-	Takes list of lists of tokens as input and removes all stop words.
-	"""
-	filtered_tokens = []
-	for token_list in tokenized_headline_list:
-		filtered_tokens.append([token for token in token_list if token not in set(stopwords.words('english'))])
+	# Combine x_train and y_train into a single df, with column labels
+	train = pd.DataFrame(data=x_train, columns=dataset.columns[1:-1])
+	train["Trend"] = pd.Series(y_train)
 
-	return filtered_tokens
+	# Do the same for x_test and y_test
+	test = pd.DataFrame(data=x_test, columns=dataset.columns[1:-1])
+	test["Trend"] = pd.Series(y_test)
 
-def stem(token_list_of_lists):
-	"""
-	Takes list of lists of tokens as input and stems every token.
-	Returns a list of lists of stems.
-	"""
-	stemmer = PorterStemmer()
-	stemmed = []
-	for token_list in token_list_of_lists:
-		stemmed.append([stemmer.stem(token) for token in token_list])
+	# Apply random undersampling to both data frames
+	train_downsampled = random_undersampling(train)
+	test_downsampled = random_undersampling(test)
 
-	return stemmed
+	train_trend = train_downsampled["Trend"].values
+	test_trend = test_downsampled["Trend"].values
+	train_trimmed = train_downsampled.drop(["Trend"], axis=1).values
+	test_trimmed = test_downsampled.drop(["Trend"], axis=1).values
 
-def make_bag_of_words(df, stemmed):
-	very_pos = set()
-	slightly_pos = set()
-	neutral = set()
-	slightly_neg = set()
-	very_neg = set()
-
-	# Create sets that hold words in headlines categorized as "slightly_neg" or "slightly_pos" or etc
-	for stems, sentiment in zip(stemmed, df["Sentiment"].tolist()):
-		if sentiment == -2:
-			very_neg.update(stems)
-		elif sentiment == -1:
-			slightly_neg.update(stems)
-		elif sentiment == 0:
-			neutral.update(stems)
-		elif sentiment == 1:
-			slightly_pos.update(stems)
-		elif sentiment == 2:
-			very_pos.update(stems)
-
-	# Count number of words in each headline in each of the sets and encode it as a list of counts for each headline.
-	bag_count = []
-	for x in stemmed:
-		x = set(x)
-		bag_count.append(list((len(x & very_neg), len(x & slightly_neg), len(x & neutral), len(x & slightly_pos), len(x & very_pos))))
-
-	df["sentiment_class_count"] = bag_count
-	return df
-
-def sentiment_preprocessing(df):
-	"""
-	Takes a dataframe, removes special characters, tokenizes
-	the headlines, removes stop-tokens, and stems the remaining tokens.
-	"""
-
-	specials_removed = remove_special_chars(df["Headline"].tolist())
-	tokenized = tokenize(specials_removed)
-	tokenized_filtered = remove_stop_words(tokenized)
-	stemmed = stem(tokenized_filtered)
-
-	return df, stemmed
+	return train_trimmed, test_trimmed, train_trend, test_trend
 
 
 ######
