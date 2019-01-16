@@ -1,1 +1,5 @@
-{"logged_in": false, "credentials": {"key": "yo", "secret": "test", "username": "help"}, "autotrade": {"next-trade-timestamp-UTC": -1, "enabled": false}}
+{
+  "logged_in": false,
+  "credentials": { "key": "", "secret": "", "username": "" },
+  "autotrade": { "next-trade-timestamp-UTC": -1, "enabled": false }
+}
