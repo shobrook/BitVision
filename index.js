@@ -326,7 +326,7 @@ function buildMenuCommands() {
       callback: () => {
         if (!helpActiveStatus) {
           helpActiveStatus = true;
-          createHelpScreen(screen, VERSION, () => {
+          createHelpScreen(screen, "1.1.5", () => {
             helpActiveStatus = false;
           });
         }
