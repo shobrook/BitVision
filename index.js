@@ -292,7 +292,7 @@ function buildMenuCommands() {
         }
       }
     }
-  }
+  };
 
   let defaultCmds = {
     " Help": {
@@ -345,8 +345,8 @@ function buildMenuCommands() {
   // Store updated configuration
   writeJSONFile(filePaths.configPath, cfg);
   cmds = cfg.logged_in
-    ? {...logout, ...makeTrade, ...autotrading, ...defaultCmds}
-    : {...login, ...defaultCmds}
+    ? { ...logout, ...makeTrade, ...autotrading, ...defaultCmds }
+    : { ...login, ...defaultCmds };
 
   return cmds;
 }
@@ -526,7 +526,7 @@ function refreshInterface() {
   });
 
   let technicalData = technicalIndicatorJSON.data.map(indicator => {
-    indicator[2] = colorize(indicator)
+    indicator[2] = colorize(indicator);
     return indicator;
   });
 
@@ -535,9 +535,9 @@ function refreshInterface() {
   let tickerData = reformatPriceData(tickerJSON.data);
   let chartData = buildChartData(graphJSON.data);
   let transactionData = transactionsJSON.data.map(txn => {
-    txn[2] = colorize(txn)
+    txn[2] = colorize(txn);
     return txn;
-  })
+  });
   let portfolioData = reformatPortfolioData(portfolioJSON.data, [
     "Account Balance",
     "Returns",
@@ -615,7 +615,9 @@ function checkDependencies(callback) {
       .then(answers => {
         for (let [key, val] of Object.entries(answers)) {
           if (val == "Yes") {
-            console.log("    Installing dependencies... (this may take a while)".blue);
+            console.log(
+              "    Installing dependencies... (this may take a while)".blue
+            );
             execShellCommand([
               "pip3",
               ["install", "-r", filePaths.requirementsPath]
