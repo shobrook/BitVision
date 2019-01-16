@@ -1,7 +1,7 @@
 {
   "name": "bitvision",
-  "version": "1.1.4",
-  "description": "Bitcoin forecasting and charting software that lives entirely in the terminal",
+  "version": "1.1.6",
+  "description": "Bitcoin trading and charting software that works entirely in the terminal",
   "main": "index.js",
   "repository": "https://github.com/shobrook/BitVision",
   "author": "Jonathan Shobrook, Aaron Lichtman",
