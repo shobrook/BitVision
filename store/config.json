@@ -1,5 +1,12 @@
 {
   "logged_in": false,
-  "credentials": { "key": "", "secret": "", "username": "" },
-  "autotrade": { "next-trade-timestamp-UTC": -1, "enabled": false }
+  "credentials": {
+    "key": "",
+    "secret": "",
+    "username": ""
+  },
+  "autotrade": {
+    "next-trade-timestamp-UTC": -1,
+    "enabled": false
+  }
 }
