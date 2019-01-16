@@ -28,7 +28,7 @@ module.exports.createNotificationModal = (
     parent: notification,
     top: 1,
     left: "center",
-    width: 6,
+    width: 14,
     height: 1,
     content: displayText.label,
     style: { bg: colorScheme.background, fg: "white", bold: true },
@@ -39,7 +39,7 @@ module.exports.createNotificationModal = (
     parent: notification,
     top: 2,
     left: "center",
-    width: 38,
+    width: 34,
     height: 3,
     shrink: true,
     content: displayText.hint,
@@ -68,11 +68,12 @@ module.exports.createNotificationModal = (
     });
 
     okayButton.on("press", () => notification.destroy());
-    screen.key(["q", "Q"], (ch, key) => notification.destroy());
+    screen.key(["escape"], (ch, key) => notification.destroy());
 
     okayButton.focus();
   }
 
+  notification.focus();
   screen.render();
-  callback(notification);
+  setTimeout(() => callback(notification), 2000);
 };

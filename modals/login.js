@@ -178,7 +178,7 @@ module.exports.createLoginScreen = (screen, callback) => {
   });
 
   cancel.on("press", () => destroyModal());
-  screen.key(["q", "ESC", "Q"], () => destroyModal());
+  screen.key(["escape"], () => destroyModal());
 
   loginForm.focus();
   screen.render();

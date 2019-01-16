@@ -83,7 +83,7 @@ module.exports.createHelpScreen = (screen, version, callback) => {
       helpStrings["source"]
   });
 
-  screen.key(["q", "Q"], (ch, key) => {
+  screen.key(["escape"], (ch, key) => {
     helpMenuLayout.destroy();
     callback();
   });

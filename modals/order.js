@@ -175,7 +175,7 @@ module.exports.createOrderScreen = (screen, callback) => {
 
   cancel.on("press", () => transactionForm.destroy());
   screen.on("tab", text => transactionForm.focusNext());
-  screen.key(["q", "Q"], (ch, key) => transactionForm.destroy());
+  screen.key(["escape"], (ch, key) => transactionForm.destroy());
 
   buyRadio.check();
   transactionForm.focus();
