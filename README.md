@@ -3,7 +3,7 @@
   <br />
 </h1>
 
-[![npm](https://img.shields.io/npm/v/:package.svg)](https://www.npmjs.com/package/bitvision)
+[![npm](https://img.shields.io/npm/v/bitvision.svg)](https://www.npmjs.com/package/bitvision)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/94e2435117de4078b0d8974eea4b6cf1)](https://www.codacy.com/app/alichtman/BitVision?utm_source=github.com&utm_medium=referral&utm_content=shobrook/BitVision&utm_campaign=Badge_Grade)
 ![node (scoped)](https://img.shields.io/node/v/@stdlib/stdlib.svg)
 
