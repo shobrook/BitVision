@@ -295,6 +295,16 @@ function buildMenuCommands() {
   };
 
   let defaultCmds = {
+    " Refresh": {
+      keys: ["R-r", "R", "r"],
+      callback: () => {
+        updateData("TICKER");
+        updateData("PORTFOLIO");
+        updateData("NETWORK");
+        updateData("HEADLINES");
+        refreshInterface();
+      }
+    },
     " Help": {
       keys: ["H-h", "H", "h"],
       callback: () => {
