@@ -21,7 +21,7 @@ const {
 const { createLoginScreen } = require("./modals/login");
 const { createHelpScreen } = require("./modals/help");
 const { createOrderScreen } = require("./modals/order");
-const error = require("./modals/error");
+const { createNotificationModal } = require("./modals/notification");
 
 var helpActiveStatus = false;
 var tradeEntryStatus = false;
@@ -130,7 +130,10 @@ function displayLoginScreen() {
       setTimeout(() => {
         if (!getConfig().logged_in) {
           errorEntryStatus = true;
-          error.createErrorScreen(screen);
+          createNotificationModal(screen, {
+            label: " {bold}{red-fg}Error{/bold}{/red-fg} ",
+            hint: " {bold}Check your connection or credentials.{/bold} "
+          });
           errorEntryStatus = false;
         }
 
@@ -298,11 +301,24 @@ function buildMenuCommands() {
     " Refresh": {
       keys: ["R-r", "R", "r"],
       callback: () => {
-        updateData("TICKER");
-        updateData("PORTFOLIO");
-        updateData("NETWORK");
-        updateData("HEADLINES");
-        refreshInterface();
+        createNotificationModal(
+          screen,
+          {
+            label: " {bold}{red-fg}Refreshing...{/bold}{/red-fg} ",
+            hint: " {bold}This may take a couple seconds.{/bold} "
+          },
+          false,
+          notification => {
+            updateData("TICKER");
+            updateData("PORTFOLIO");
+            updateData("NETWORK");
+            updateData("HEADLINES");
+
+            notification.destroy();
+
+            refreshInterface();
+          }
+        );
       }
     },
     " Help": {
