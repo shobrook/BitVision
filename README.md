@@ -15,7 +15,7 @@ Unlike other systems, there's no need to host a server or <!--spin up a Docker c
 
 BitVision's key features are:
 
-- An exchange rate graph
+- A daily exchange rate graph
 - Real-time monitoring of Bitcoin-related news, technical indicators, and blockchain network data
 - Logging of previous transactions and your current account balance
 - Portfolio metrics, including your Sharpe Ratio, buy and sell accuracy, net profit, and returns _[UNDER CONSTRUCTION]_
