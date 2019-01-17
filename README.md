@@ -145,7 +145,7 @@ The trading engine is a proof of concept, not something you should trust to make
 
 1. The Kelly Criterion should be used to allocate a risk-adjusted portion of the user's capital to each trade.
 2. An LSTM network should be used instead of a Logistic Regression model. Price prediction is fundamentally a sequence learning task, which LSTMs are designed for. LSTMs have what's called memory cells, which can store information that lies dozens of time-steps in the past. This is important because, in the market, cause and effect can be quite far apart.
-3. The following should be investigated as potential features: Bitcoin core Github activity, text analysis of Bitcoin-related news, tweets, and Reddit activity, and predictions made by popular Bitcoin forecasting websites or influencers (sadly, it's possible a non-trival number of people base their trades on these forecasts).
+3. The following should be investigated as potential features: Bitcoin core Github activity, text analysis of Bitcoin-related news, tweets, and Reddit activity, and predictions made by popular Bitcoin forecasting websites or influencers (sadly, it's possible a non-trivial number of people base their trades on these forecasts).
 4. Backtesting! And rolling window cross-validation should be tried out, not just holdout.
 
 Aside from the trading engine, there are several improvements that can be made to the BitVision architecture. One long-term goal is to rewrite all the services in Node.js instead of Python, to avoid all the complications that come with cross-language execution. But if you're looking for a smaller issue to help with, plenty can be found [here.](http://github.com/shobrook/BitVision/issues)
