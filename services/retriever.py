@@ -3,6 +3,7 @@
 #########
 
 
+import os
 import json
 import requests
 import moment
@@ -12,6 +13,8 @@ from textblob import TextBlob
 # Local
 from engine import dataset, transformer
 
+DIR_PATH = os.path.dirname(os.path.abspath(__file__))
+
 
 #########
 # HELPERS
@@ -19,7 +22,7 @@ from engine import dataset, transformer
 
 
 def fetch_price_data():
-    with open("./store/ticker.json", 'w') as price_data:
+    with open(os.path.join(DIR_PATH, "../store/ticker.json"), 'w') as price_data:
         try:
             response = requests.get("https://www.bitstamp.net/api/ticker/").json()
 
@@ -39,7 +42,7 @@ def fetch_price_data():
                 "data": json.loads(price_data)["data"]
             }))
 
-    with open("./store/graph.json", 'w') as graph_data:
+    with open(os.path.join(DIR_PATH, "../store/graph.json"), 'w') as graph_data:
         try:
             data = []
             for index, row in dataset("price_data").iterrows():
@@ -60,7 +63,7 @@ def fetch_price_data():
             }))
 
 def fetch_tech_indicators():
-    with open("./store/indicators.json", 'w') as indicators_json:
+    with open(os.path.join(DIR_PATH, "../store/indicators.json"), 'w') as indicators_json:
         try:
             price_data = dataset("price_data")
             indicators = transformer("calculate_indicators")(price_data)
@@ -91,7 +94,7 @@ def fetch_tech_indicators():
             }, indent=2))
 
 def fetch_blockchain_data():
-    with open("./store/blockchain.json", 'w') as blockchain_data_json:
+    with open(os.path.join(DIR_PATH, "../store/blockchain.json"), 'w') as blockchain_data_json:
         try:
             blockchain_data = dataset("blockchain_data")
 
@@ -131,7 +134,7 @@ def fetch_blockchain_data():
             }, indent=2))
 
 def fetch_coindesk_stats():
-    with open("./store/headlines.json", 'w') as headlines_json:
+    with open(os.path.join(DIR_PATH, "../store/headlines.json"), 'w') as headlines_json:
         try:
             html = requests.get("https://www.coindesk.com/")
             soup = BeautifulSoup(html.text, "html.parser")
@@ -182,7 +185,7 @@ def fetch_coindesk_stats():
             }, indent=2))
 
 def fetch_portfolio_stats(client):
-    with open("./store/portfolio.json", 'w') as portfolio_json:
+    with open(os.path.join(DIR_PATH, "../store/portfolio.json"), 'w') as portfolio_json:
         default_data = {
             "account_balance": "$0.00",
             "returns": "0.00%",
@@ -207,7 +210,7 @@ def fetch_portfolio_stats(client):
             }))
 
 def fetch_transaction_data(client):
-    with open("./store/transactions.json", 'w') as transactions:
+    with open(os.path.join(DIR_PATH, "../store/transactions.json"), 'w') as transactions:
         try:
             transactions.write(json.dumps({
                 "error": False,

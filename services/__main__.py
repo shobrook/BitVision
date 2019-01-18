@@ -5,6 +5,7 @@
 #########
 
 
+import os
 import sys
 import json
 from datetime import datetime, timedelta
@@ -14,6 +15,8 @@ from crontab import CronTab
 from retriever import retrieve
 from trader import make_prediction, make_trade, allocate_funds, TradingClient
 
+DIR_PATH = os.path.dirname(os.path.abspath(__file__))
+
 
 ######
 # MAIN
@@ -21,7 +24,7 @@ from trader import make_prediction, make_trade, allocate_funds, TradingClient
 
 
 def action(name):
-    with open("./store/config.json") as config:
+    with open(os.path.join(DIR_PATH, "../store/config.json")) as config:
         config_dict = json.load(config)
         credentials = config_dict["credentials"]
         client = TradingClient(
@@ -31,7 +34,7 @@ def action(name):
         )
 
         if name == "authenticate": # Authenticates Bitstamp credentials
-            with open("./store/config.json", 'w') as new_config:
+            with open(os.path.join(DIR_PATH, "../store/config.json"), 'w') as new_config:
                 try: # Tries to pull account balance; if fails, then invalid creds
                     client.account_balance()
                     logged_in = True
@@ -49,7 +52,7 @@ def action(name):
         elif name == "retrieve_portfolio_stats": # Updates portfolio data
             retrieve(["portfolio_stats", "transaction_log"], client)
         elif name == "toggle_algo":  # Toggles algorithmic trading
-            with open("./store/config.json", 'w') as new_config:
+            with open(os.path.join(DIR_PATH, "../store/config.json"), 'w') as new_config:
                 cron = CronTab(user=True)
                 job_killed = False
 
