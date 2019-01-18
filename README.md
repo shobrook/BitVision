@@ -57,6 +57,12 @@ Once activated, just press `L` in the dashboard and a modal will pop-up asking y
 <p align="center"><img src="resources/demo.gif" width="80%" /></p>
 <p align="center"><i>You can download the color profile used in this demo <a href="https://github.com/shobrook/BitVision/raw/master/resources/BitVision-terminal-profile.terminal">here.</a></i></p>
 
+---
+
+If you’re looking for a technical explanation of BitVision, just scroll on down. But if your only question is, "Will using this make me look like a computer wizard hackerman?", the answer is yes. *Absolutely, yes.*
+
+---
+
 ## How it Works
 
 The command-line interface is built on the Blessed.js library. The trading and charting architecture is built on the SciPy stack. An overview of the BitVision setup is shown below:
