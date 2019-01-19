@@ -59,7 +59,7 @@ Once activated, just press `L` in the dashboard and a modal will pop-up asking y
 
 ---
 
-If you’re looking for a technical explanation of BitVision, just scroll on down. But if your only question is, "Will using this make me look like a computer wizard hackerman?", the answer is yes. *Absolutely, yes.* On that note, here's a quick link to [r/unixporn](https://reddit.com/r/unixporn) for you to post your *sweeet* setup after you get this running.
+If you’re looking for a technical explanation of BitVision, just scroll on down. But if your only question is, "Will using this make me look like a computer wizard hackerman?", the answer is yes. *Absolutely, yes.*
 
 ---
 
