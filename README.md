@@ -51,7 +51,7 @@ If you want to enable trading, follow these instructions to acquire a Bitstamp A
 5.  Click Activate
 6.  Go to your email and click on link sent by Bitstamp to activate the API key
 
-Once activated, just press `L` in the dashboard and a modal will pop-up asking you for your username, API key, and secret. **These will be stored locally on your machine, so be sure to keep them safe.**
+Once activated, just press `L` in the dashboard and a modal will pop-up asking you for your customer ID, API key, and secret. **These will be stored locally on your machine, so be sure to keep them safe.**
 
 <br />
 <p align="center"><img src="resources/demo.gif" width="80%" /></p>
