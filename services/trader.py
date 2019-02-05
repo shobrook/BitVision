@@ -93,10 +93,17 @@ class BaseClient(object):
         Make a POST request.
         """
 
-        data = {}
+        data = self._default_data()
         data.update(kwargs.get('data') or {})
         kwargs['data'] = data
         return self._request(requests.post, *args, **kwargs)
+
+    def _default_data(self):
+        """
+        Default data for a POST request.
+        """
+
+        return {}
 
     def _construct_url(self, url, base, quote):
         """
