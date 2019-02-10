@@ -98,6 +98,7 @@ class BaseClient(object):
         kwargs['data'] = data
         return self._request(requests.post, *args, **kwargs)
 
+    @staticmethod
     def _default_data(self):
         """
         Default data for a POST request.
