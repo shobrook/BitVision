@@ -679,7 +679,7 @@ function fetchIntialData() {
 
 // MAIN //
 
-function main(refreshRate = 120000) {
+function main(refreshRate = 1200000) {
   checkDependencies(() => {
     console.log(splash.logo);
     console.log(splash.description);
@@ -690,9 +690,9 @@ function main(refreshRate = 120000) {
     refreshInterface();
 
     setInterval(() => refreshInterface(), refreshRate);
-    setInterval(() => updateData("TICKER"), refreshRate + 1000);
+    setInterval(() => updateData("TICKER"), refreshRate + 10000);
     setInterval(() => updateData("PORTFOLIO"), refreshRate + 10000);
-    setInterval(() => updateData("NETWORK"), refreshRate) + 1000;
+    setInterval(() => updateData("NETWORK"), refreshRate) + 10000;
     setInterval(() => updateData("HEADLINES"), refreshRate + 10000);
   });
 }
