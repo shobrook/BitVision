@@ -262,8 +262,11 @@ var menubar = null;
 var URLs = null;
 
 function colorize(row) {
-  const rawLabel = row[1].toString();
-  let label = rawLabel.toString().toLowerCase().trim();
+  const rawLabel = row[2].toString();
+  let label = rawLabel
+    .toString()
+    .toLowerCase()
+    .trim();
 
   if (label == "pos" || label == "buy") {
     return `${rawLabel}`.green;
@@ -475,7 +478,7 @@ function createInterface() {
     26,
     20,
     10,
-    7,
+    9,
     blessed.ListTable,
     createListTable("left", padding)
   );
@@ -572,7 +575,7 @@ function refreshInterface() {
   let chartData = buildChartData(graphJSON.data);
   let transactionData = transactionsJSON.data.map(txn => {
     txn[0] = moment(txn[0]).format("M/D H:mm");
-    switch(txn[2]) {
+    switch (txn[2]) {
       case "0":
         txn[2] = "D";
         break;
@@ -586,6 +589,7 @@ function refreshInterface() {
         txn[2] = "SAT";
         break;
     }
+    // txn[2] = colorize(txn);
     return txn;
   });
   let portfolioData = reformatPortfolioData(portfolioJSON.data, [
@@ -711,7 +715,7 @@ function main(refreshRate = 1200000) {
     console.log(splash.description);
 
     createConfig();
-    if ((+new Date() - (getConfig().lastRefresh + (5 * 60 * 1000))) >= 0 ) {
+    if (+new Date() - (getConfig().lastRefresh + 5 * 60 * 1000) >= 0) {
       // we already have quite accurate data, no need to fetch again on startup
       // 5 minutes
       fetchIntialData();
