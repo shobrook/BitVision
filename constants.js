@@ -50,7 +50,8 @@ module.exports = {
     autotrade: {
       enabled: false,
       "next-trade-timestamp-UTC": -1
-    }
+    },
+    lastRefresh: 0
   },
   splash: {
     logo: "\n\n    ██████╗ ██╗████████╗██╗   ██╗██╗███████╗██╗ ██████╗ ███╗   ██╗\n\
