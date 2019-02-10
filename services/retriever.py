@@ -214,7 +214,7 @@ def fetch_transaction_data(client):
         try:
             transactions.write(json.dumps({
                 "error": False,
-                "data": [[txn["datetime"], txn["usd"], txn["btc"], txn["type"]] for txn in client.user_transactions()]
+                "data": [[txn["datetime"], txn["btc"], txn["type"]] for txn in client.user_transactions()]
             }, indent=2))
         except:
             transactions.write(json.dumps({

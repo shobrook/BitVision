@@ -9,6 +9,7 @@ const openBrowser = require("opn");
 const blessed = require("blessed");
 const contrib = require("blessed-contrib");
 const inquirer = require("inquirer");
+const moment = require("moment");
 const { spawnSync, execSync } = require("child_process");
 
 const {
@@ -78,6 +79,13 @@ function clearCredentials() {
 
 function isLoggedIn() {
   return getConfig().logged_in;
+}
+
+function storeLastSync(lastRefresh = +new Date()) {
+  writeJSONFile(filePaths.configPath, {
+    ...getConfig(),
+    lastRefresh
+  });
 }
 
 function createConfig() {
@@ -159,6 +167,7 @@ function updateData(type) {
     case "PORTFOLIO":
       execShellCommand(pyCommands.refreshPortfolio);
   }
+  storeLastSync();
 }
 
 function reformatPriceData(priceData) {
@@ -253,15 +262,16 @@ var menubar = null;
 var URLs = null;
 
 function colorize(row) {
-  let label = row[2].toLowerCase().trim();
+  const rawLabel = row[1].toString();
+  let label = rawLabel.toString().toLowerCase().trim();
 
   if (label == "pos" || label == "buy") {
-    return `${row[2]}`.green;
+    return `${rawLabel}`.green;
   } else if (label == "neg" || label == "sell") {
-    return `${row[2]}`.red;
+    return `${rawLabel}`.red;
   }
 
-  return row[2].yellow;
+  return rawLabel.yellow;
 }
 
 function buildMenuCommands() {
@@ -465,7 +475,7 @@ function createInterface() {
     26,
     20,
     10,
-    9,
+    7,
     blessed.ListTable,
     createListTable("left", padding)
   );
@@ -561,7 +571,21 @@ function refreshInterface() {
   let tickerData = reformatPriceData(tickerJSON.data);
   let chartData = buildChartData(graphJSON.data);
   let transactionData = transactionsJSON.data.map(txn => {
-    txn[2] = colorize(txn);
+    txn[0] = moment(txn[0]).format("M/D H:mm");
+    switch(txn[2]) {
+      case "0":
+        txn[2] = "D";
+        break;
+      case "1":
+        txn[2] = "W";
+        break;
+      case "2":
+        txn[2] = "MT";
+        break;
+      case "14":
+        txn[2] = "SAT";
+        break;
+    }
     return txn;
   });
   let portfolioData = reformatPortfolioData(portfolioJSON.data, [
@@ -584,7 +608,7 @@ function refreshInterface() {
   portfolioData.splice(0, 0, ["Portfolio Stats", "Value"]);
   transactionData.splice(0, 0, ["Date", "Amount", "Type"]);
 
-  if (transactionData.length == 1) {
+  if (transactionData.length === 1) {
     transactionData.splice(1, 0, ["–", "–", "–"]);
   }
 
@@ -675,6 +699,8 @@ function fetchIntialData() {
 
   console.log(splash.fetchingData("transaction history from Bitstamp"));
   updateData("PORTFOLIO");
+
+  storeLastSync();
 }
 
 // MAIN //
@@ -685,7 +711,11 @@ function main(refreshRate = 120000) {
     console.log(splash.description);
 
     createConfig();
-    fetchIntialData();
+    if ((+new Date() - (getConfig().lastRefresh + (5 * 60 * 1000))) >= 0 ) {
+      // we already have quite accurate data, no need to fetch again on startup
+      // 5 minutes
+      fetchIntialData();
+    }
     createInterface();
     refreshInterface();
 
